@@ -24,7 +24,7 @@ setup(
     author_email='travis@gamechanger.io',
     packages=find_packages(),
     install_requires=requirements.install_requires,
-    test_requires=requirements.test_requires,
+    tests_require=requirements.test_requires,
     test_suite="nose.collector",
     zip_safe=False
 )

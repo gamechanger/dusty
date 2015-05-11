@@ -1,0 +1,5 @@
+image: docker.gamechanger.io/python2.7
+script:
+  - cd $REPO
+  - python setup.py test
+  - tests_complete dusty
