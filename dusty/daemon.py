@@ -1,8 +1,6 @@
 import sys
 import logging
 
-from pync import Notifier
-
 from .preflight import preflight_check
 from .notifier import notify
 
