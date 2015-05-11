@@ -6,5 +6,5 @@ script:
   - pip install pylint
   - python setup.py test
   - |
-    pylint --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --reports=y -E y $REPO/dusty
+    pylint --ignored-classes=_socketobject --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --reports=y -E y $REPO/dusty
   - tests_complete dusty
