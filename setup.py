@@ -26,5 +26,7 @@ setup(
     install_requires=requirements.install_requires,
     tests_require=requirements.test_requires,
     test_suite="nose.collector",
+    entry_points={'console_scripts':
+                  ['dustyd = dusty.daemon:main']},
     zip_safe=False
 )
