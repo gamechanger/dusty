@@ -6,6 +6,8 @@ import logging
 import subprocess
 import warnings
 
+from .log import ROOT_LOG_DIR, root_log_dir_is_writable, ensure_log_subdirs_exist
+
 VERSIONS = {
     'nginx': '1.8.0',
     'virtualbox': '4.3.26',
@@ -55,4 +57,7 @@ def preflight_check():
     check_virtualbox()
     check_boot2docker()
     check_docker()
+    if not root_log_dir_is_writable():
+        raise PreflightException('Root log directory {} is not writable'.format(ROOT_LOG_DIR))
+    ensure_log_subdirs_exist()
     logging.info('Completed preflight check successfully')
