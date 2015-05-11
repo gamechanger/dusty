@@ -2,9 +2,12 @@
 when dustyd first starts up. Any failed checks should throw an exception
 which bubbles up to the daemon and causes it to crash."""
 
+import os
 import logging
 import subprocess
 import warnings
+
+from .log import ROOT_LOG_DIR, root_log_dir_is_writable, ensure_log_subdirs_exist
 
 VERSIONS = {
     'nginx': '1.8.0',
@@ -49,10 +52,16 @@ def check_docker():
     installed_version = subprocess.check_output(['docker', '-v']).split(',')[0].split(' ')[-1]
     _maybe_version_warning('docker', installed_version)
 
+def check_root_log_dir():
+    os.access
+
 def preflight_check():
     logging.info('Starting preflight check')
     check_nginx()
     check_virtualbox()
     check_boot2docker()
     check_docker()
+    if not root_log_dir_is_writable():
+        raise PreflightException('Root log directory {} is not writable'.format(ROOT_LOG_DIR))
+    ensure_log_subdirs_exist()
     logging.info('Completed preflight check successfully')
