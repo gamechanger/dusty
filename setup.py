@@ -12,6 +12,8 @@ except:
         raise ImportError('restricted_pkg is required to upload, first do pip install restricted_pkg')
     from setuptools import setup
 
+requirements = imp.load_source('requirements', os.path.realpath('requirements.py'))
+
 setup(
     name='dusty',
     version='0.0.1',
@@ -21,6 +23,8 @@ setup(
     author='GameChanger',
     author_email='travis@gamechanger.io',
     packages=find_packages(),
+    install_requires=requirements.install_requires,
+    test_requires=requirements.test_requires,
     test_suite="nose.collector",
     zip_safe=False
 )
