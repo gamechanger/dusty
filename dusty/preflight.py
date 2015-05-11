@@ -2,7 +2,6 @@
 when dustyd first starts up. Any failed checks should throw an exception
 which bubbles up to the daemon and causes it to crash."""
 
-import os
 import logging
 import subprocess
 import warnings
@@ -51,9 +50,6 @@ def check_docker():
     _assert_executable_exists('docker')
     installed_version = subprocess.check_output(['docker', '-v']).split(',')[0].split(' ')[-1]
     _maybe_version_warning('docker', installed_version)
-
-def check_root_log_dir():
-    os.access
 
 def preflight_check():
     logging.info('Starting preflight check')
