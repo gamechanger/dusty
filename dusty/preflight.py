@@ -7,8 +7,8 @@ import logging
 import subprocess
 import warnings
 
-from .config import write_default_user_config
-from .constants import ROOT_LOG_DIR, LOG_SUBDIRS, SYSTEM_DEPENDENCY_VERSIONS, USER_CONFIG_PATH
+from .config import write_default_config
+from .constants import ROOT_LOG_DIR, LOG_SUBDIRS, SYSTEM_DEPENDENCY_VERSIONS, CONFIG_PATH
 
 class PreflightException(Exception):
     pass
@@ -70,7 +70,7 @@ def preflight_check():
     if not _path_is_writable(ROOT_LOG_DIR):
         raise PreflightException('Root log directory {} is not writable'.format(ROOT_LOG_DIR))
     _ensure_log_subdirs_exist()
-    if not _path_exists(USER_CONFIG_PATH):
-        logging.info('Creating default user config file at {}'.format(USER_CONFIG_PATH))
-        write_default_user_config()
+    if not _path_exists(CONFIG_PATH):
+        logging.info('Creating default config file at {}'.format(CONFIG_PATH))
+        write_default_config()
     logging.info('Completed preflight check successfully')
