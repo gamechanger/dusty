@@ -1,5 +1,7 @@
 import os
 
+SOCKET_TERMINATOR = '\0\0'
+
 ROOT_LOG_DIR = '/var/log/dusty'
 LOG_SUBDIRS = ['nginx']
 
