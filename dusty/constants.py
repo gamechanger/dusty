@@ -1,7 +1,10 @@
+import os
+
 ROOT_LOG_DIR = '/var/log/dusty'
 LOG_SUBDIRS = ['nginx']
 
 SOCKET_PATH = '/var/run/dusty/dusty.sock'
+CONFIG_PATH = '/var/run/dusty/config.yml'
 
 SYSTEM_DEPENDENCY_VERSIONS = {
     'nginx': '1.8.0',

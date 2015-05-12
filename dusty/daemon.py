@@ -21,6 +21,7 @@ def _listen_on_socket():
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.bind(SOCKET_PATH)
     sock.listen(1)
+    logging.info('Listening on socket at {}'.format(SOCKET_PATH))
 
     notify('Dusty is listening for commands')
     atexit.register(notify, 'Dusty daemon has terminated')
@@ -32,7 +33,7 @@ def _listen_on_socket():
                 data = connection.recv(1024)
                 if not data:
                     break
-                print data
+                logging.info('Received command: {}'.format(data))
         finally:
             connection.close()
 
