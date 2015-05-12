@@ -1,10 +1,7 @@
 image: docker.gamechanger.io/python2.7
-env:
-  - REPO=/var/cache/drone/src/github.com/gamechanger/dusty
 script:
   - cd $REPO
   - pip install pylint
   - python setup.py test
   - |
     pylint --ignored-classes=_socketobject --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --reports=y -E y $REPO/dusty
-  - tests_complete dusty
