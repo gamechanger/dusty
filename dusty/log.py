@@ -1,8 +1,12 @@
 import os
+import sys
 import logging
 
-ROOT_LOG_DIR = '/var/log/dusty'
-LOG_SUBDIRS = ['nginx']
+from .constants import ROOT_LOG_DIR, LOG_SUBDIRS
+
+def configure_logging():
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+    logging.captureWarnings(True)
 
 def root_log_dir_is_writable():
     return os.access(ROOT_LOG_DIR, os.W_OK)

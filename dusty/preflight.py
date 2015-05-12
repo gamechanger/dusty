@@ -7,13 +7,7 @@ import subprocess
 import warnings
 
 from .log import ROOT_LOG_DIR, root_log_dir_is_writable, ensure_log_subdirs_exist
-
-VERSIONS = {
-    'nginx': '1.8.0',
-    'virtualbox': '4.3.26',
-    'boot2docker': '1.6.0',
-    'docker': '1.6.0'
-}
+from .constants import SYSTEM_DEPENDENCY_VERSIONS
 
 class PreflightException(Exception):
     pass
@@ -26,10 +20,10 @@ def _assert_executable_exists(executable_name):
         raise PreflightException('Executable not found: {}'.format(executable_name))
 
 def _maybe_version_warning(executable, installed_version):
-    if installed_version != VERSIONS[executable]:
+    if installed_version != SYSTEM_DEPENDENCY_VERSIONS[executable]:
         warnings.warn('Your {} version ({}) deviates from the supported version ({}).'.format(executable,
                                                                                               installed_version,
-                                                                                              VERSIONS[executable]))
+                                                                                              SYSTEM_DEPENDENCY_VERSIONS[executable]))
 
 def check_nginx():
     _assert_executable_exists('nginx')

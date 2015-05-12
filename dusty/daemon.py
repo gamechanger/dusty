@@ -1,16 +1,12 @@
 import os
-import sys
+import atexit
 import logging
 import socket
 
 from .preflight import preflight_check
+from .log import configure_logging
 from .notifier import notify
-
-SOCKET_PATH = '/var/run/dusty/dusty.sock'
-
-def _configure_logging():
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-    logging.captureWarnings(True)
+from .constants import SOCKET_PATH
 
 def _clean_up_existing_socket():
     try:
@@ -27,6 +23,7 @@ def _listen_on_socket():
     sock.listen(1)
 
     notify('Dusty is listening for commands')
+    atexit.register(notify, 'Dusty daemon has terminated')
 
     while True:
         connection, client_address = sock.accept()
@@ -41,7 +38,7 @@ def _listen_on_socket():
 
 def main():
     notify('Dusty initializing...')
-    _configure_logging()
+    configure_logging()
     preflight_check()
     _listen_on_socket()
 
