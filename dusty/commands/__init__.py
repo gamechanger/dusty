@@ -4,7 +4,9 @@ from . import bundle
 
 COMMAND_TREE = {
     'bundle': {
-        'list': bundle.list_bundles
+        'list': bundle.list_bundles,
+        'activate': bundle.activate_bundle,
+        'deactivate': bundle.deactivate_bundle
     }
 }
 

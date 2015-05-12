@@ -11,7 +11,7 @@ def run_command(sock, command):
     while True:
         data = sock.recv(65535)
         if data:
-            sys.stdout.write(data)
+            sys.stdout.write(data.decode('utf-8'))
             if data.startswith('ERROR: '):
                 error_response = True
             if data.endswith(SOCKET_TERMINATOR):
