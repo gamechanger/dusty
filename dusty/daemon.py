@@ -7,6 +7,7 @@ from .preflight import preflight_check
 from .log import configure_logging
 from .notifier import notify
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR
+from .commands import process_command
 
 def _clean_up_existing_socket(socket_path):
     try:
@@ -35,7 +36,7 @@ def _listen_on_socket(socket_path):
                     if not data:
                         break
                     logging.info('Received command: {}'.format(data))
-                    connection.sendall('Received: {}\n'.format(data))
+                    connection.sendall(process_command(data))
                     connection.sendall(SOCKET_TERMINATOR)
             finally:
                 connection.close()
