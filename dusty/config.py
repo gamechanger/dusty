@@ -23,3 +23,11 @@ def get_config():
 def save_config(config):
     with open(CONFIG_PATH, 'w') as f:
         f.write(_dump(config))
+
+def get_config_value(key):
+    return get_config().get(key)
+
+def save_config_value(key, value):
+    current_config = get_config()
+    current_config[key] = value
+    save_config(current_config)
