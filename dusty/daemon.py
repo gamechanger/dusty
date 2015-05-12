@@ -8,20 +8,20 @@ from .log import configure_logging
 from .notifier import notify
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR
 
-def _clean_up_existing_socket():
+def _clean_up_existing_socket(socket_path):
     try:
-        os.unlink(SOCKET_PATH)
+        os.unlink(socket_path)
     except OSError:
-        if os.path.exists(SOCKET_PATH):
+        if os.path.exists(socket_path):
             raise
 
-def _listen_on_socket():
-    _clean_up_existing_socket()
+def _listen_on_socket(socket_path):
+    _clean_up_existing_socket(socket_path)
 
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    sock.bind(SOCKET_PATH)
+    sock.bind(socket_path)
     sock.listen(1)
-    logging.info('Listening on socket at {}'.format(SOCKET_PATH))
+    logging.info('Listening on socket at {}'.format(socket_path))
 
     notify('Dusty is listening for commands')
     atexit.register(notify, 'Dusty daemon has terminated')
@@ -48,7 +48,7 @@ def main():
     notify('Dusty initializing...')
     configure_logging()
     preflight_check()
-    _listen_on_socket()
+    _listen_on_socket(SOCKET_PATH)
 
 if __name__ == '__main__':
     main()
