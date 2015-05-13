@@ -36,7 +36,7 @@ def _listen_on_socket(socket_path):
                     if not data:
                         break
                     logging.info('Received command: {}'.format(data))
-                    connection.sendall(process_command(data))
+                    connection.sendall(process_command(data).encode('utf-8'))
                     connection.sendall(SOCKET_TERMINATOR)
             finally:
                 connection.close()
