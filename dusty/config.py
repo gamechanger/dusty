@@ -4,7 +4,7 @@ as the location of the Dusty specifications on disk."""
 
 import yaml
 
-from .constants import CONFIG_PATH
+from . import constants
 
 def _load(filepath):
     with open(filepath, 'r') as f:
@@ -18,10 +18,10 @@ def write_default_config():
     save_config(default_config)
 
 def get_config():
-    return _load(CONFIG_PATH)
+    return _load(constants.CONFIG_PATH)
 
 def save_config(config):
-    with open(CONFIG_PATH, 'w') as f:
+    with open(constants.CONFIG_PATH, 'w') as f:
         f.write(_dump(config))
 
 def get_config_value(key):
