@@ -30,6 +30,3 @@ def main():
 
     errored = run_command(sock, ' '.join(sys.argv[1:]))
     sys.exit(1 if errored else 0)
-
-if __name__ == '__main__':
-    main()
