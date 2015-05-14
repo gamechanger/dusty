@@ -6,7 +6,7 @@ def _get_dependent(dependent_type, name, specs, root_spec_type=None):
     if root_spec_type is None:
         root_spec_type = dependent_type
     spec = specs[root_spec_type].get(name)
-    if name is None:
+    if spec is None:
         raise RuntimeError("{} {} was referenced but not found".format(root_spec_type, name))
     dependents = spec.get('depends', {}).get(dependent_type, [])
     all_dependents = set(dependents)
@@ -56,34 +56,39 @@ def expand_libs_in_apps(specs):
         if 'depends' in app_spec and 'libs' in app_spec['depends']:
             app_spec['depends']['libs'] = _get_dependent('libs', app_name, specs, 'apps')
 
-def filter_active_libs(specs):
-    '''
-    Removes any lib from specs['libs'] that isn't specified in any specs.apps.depends.libs field
-    '''
+def get_active_libs(specs):
     active_libs = set()
     for app_spec in specs['apps'].values():
         for lib in app_spec.get('depends', {}).get('libs', []):
             active_libs.add(lib)
+    return active_libs
+
+def filter_active_libs(specs):
+    '''
+    Removes any lib from specs['libs'] that isn't specified in any specs.apps.depends.libs field
+    '''
+    active_libs = get_active_libs(specs)
     all_libs = specs['libs'].keys()
     for lib in all_libs:
         if lib not in active_libs:
             del specs['libs'][lib]
 
+def get_active_services(specs):
+    active_services = set()
+    for app_spec in specs['apps'].values():
+        for service in app_spec.get('depends', {}).get('services', []):
+            active_services.add(service)
+    return active_services
+
+
 def filter_active_services(specs):
     '''
     Removes any service from specs['services'] that isn't specified in any specs.apps.depends.services
     '''
+    active_services = get_active_services(specs)
     all_services = specs['services'].keys()
-    active_services = set()
-    for app_spec in specs['apps'].values():
-        print app_spec
-        for service in app_spec.get('depends', {}).get('services', []):
-            active_services.add(service)
-            print service
-    print active_services
     for service in all_services:
         if service not in active_services:
-            print "deleting service {} {}".format(service, active_services)
             del specs['services'][service]
 
 def get_expanded_active_specs(activated_bundles, specs):
