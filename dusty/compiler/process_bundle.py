@@ -52,9 +52,9 @@ def expand_libs_in_apps(specs):
     '''
     Expands specs.apps.depends.libs to include any indirectly required libs
     '''
-    for app_spec in specs['apps'].values():
+    for app_name, app_spec in specs['apps'].iteritems():
         if 'depends' in app_spec and 'libs' in app_spec['depends']:
-            app_spec['depends']['libs'] = _get_dependent('libs', app, specs, 'apps')
+            app_spec['depends']['libs'] = _get_dependent('libs', app_name, specs, 'apps')
 
 def filter_active_libs(specs):
     '''
@@ -76,10 +76,14 @@ def filter_active_services(specs):
     all_services = specs['services'].keys()
     active_services = set()
     for app_spec in specs['apps'].values():
+        print app_spec
         for service in app_spec.get('depends', {}).get('services', []):
             active_services.add(service)
+            print service
+    print active_services
     for service in all_services:
         if service not in active_services:
+            print "deleting service {} {}".format(service, active_services)
             del specs['services'][service]
 
 def get_expanded_active_specs(activated_bundles, specs):
