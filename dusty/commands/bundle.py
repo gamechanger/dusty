@@ -4,6 +4,7 @@ from prettytable import PrettyTable
 
 from ..config import get_config_value, save_config_value
 from ..specs import get_specs
+from ..compiler.process_bundle import get_active_app_info, get_all_services
 
 def list_bundles():
     specs, activated_bundles = get_specs(), get_config_value('bundles')
