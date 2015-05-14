@@ -8,5 +8,5 @@ install_requires = [
 ]
 
 test_requires = [
-    'nose'
+    'nose>=1.3.0',
 ]
