@@ -22,5 +22,5 @@ def process_command(command_string):
                 tree = tree[word]
                 continue
         else:
-            return 'ERROR: Unexpected argument {}, expected one of: {}'.format(word, ', '.join(tree.keys()))
-    return 'ERROR: Unexpected end of command, expected one of: {}'.format(', '.join(tree.keys()))
+            raise ValueError('Unexpected argument {}, expected one of: {}'.format(word, ', '.join(tree.keys())))
+    raise ValueError('Unexpected end of command, expected one of: {}'.format(', '.join(tree.keys())))
