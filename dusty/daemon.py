@@ -37,10 +37,10 @@ def _listen_on_socket(socket_path):
                         break
                     logging.info('Received command: {}'.format(data))
                     try:
-                        result = process_command(data)
+                        for line in process_command(data):
+                            connection.sendall(line.encode('utf-8'))
                     except Exception as e:
-                        result = 'ERROR: {}'.format(e.message)
-                    connection.sendall(result.encode('utf-8'))
+                        connection.sendall('ERROR: {}'.format(e.message).encode('utf-8'))
                     connection.sendall(SOCKET_TERMINATOR)
             finally:
                 connection.close()
