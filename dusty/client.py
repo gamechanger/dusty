@@ -15,7 +15,6 @@ def run_command(sock, command):
             if data.startswith('ERROR: '):
                 error_response = True
             if data.endswith(SOCKET_TERMINATOR):
-                sys.stdout.write('\n')
                 break
         else:
             break

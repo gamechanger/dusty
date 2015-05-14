@@ -41,3 +41,12 @@ def manage_repo(repo_name):
         del config[repo_name]
     save_config_value('repo_overrides', config)
     yield 'Will manage repo {} with Dusty-managed copy of source'.format(repo_name)
+
+def override_repos_from_directory(source_path):
+    yield 'Overriding all repos found at {}'.format(source_path)
+    for repo in _get_all_repos():
+        repo_name = repo.split('/')[-1]
+        repo_path = os.path.join(source_path, repo_name)
+        if os.path.isdir(repo_path):
+            for result in override_repo(repo, repo_path):
+                yield result
