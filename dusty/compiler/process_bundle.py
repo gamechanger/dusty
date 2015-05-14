@@ -1,8 +1,8 @@
 def _get_dependent(dependent_type, name, specs, root_spec_type=None):
-    '''
+    """
     Returns everything of type <dependent_type> that <name>, of type <root_spec_type> depends on
     Names only are returned in a set
-    '''
+    """
     if root_spec_type is None:
         root_spec_type = dependent_type
     spec = specs[root_spec_type].get(name)
@@ -15,18 +15,18 @@ def _get_dependent(dependent_type, name, specs, root_spec_type=None):
     return all_dependents
 
 def filter_active_bundles(activated_bundles, specs):
-    '''
+    """
     Removes all bundles from specs['bundles'] that aren't in activated_bundles
-    '''
+    """
     all_bundles = specs['bundles'].keys()
     for bundle in all_bundles:
         if bundle not in activated_bundles:
             del specs['bundles'][bundle]
 
 def get_active_apps(specs):
-    '''
+    """
     Returns a set of all apps that are required to run any bundle in specs['bundles']
-    '''
+    """
     activated_bundles = specs['bundles'].keys()
     all_active_apps = set()
     for active_bundle in activated_bundles:
@@ -39,9 +39,9 @@ def get_active_apps(specs):
     return all_active_apps
 
 def filter_active_apps(specs):
-    '''
+    """
     Removes all apps from specs['apps'] that aren't required by any bundle in specs['bundles']
-    '''
+    """
     active_apps = get_active_apps(specs)
     all_apps = specs['apps'].keys()
     for app in all_apps:
@@ -49,17 +49,17 @@ def filter_active_apps(specs):
             del specs['apps'][app]
 
 def expand_libs_in_apps(specs):
-    '''
+    """
     Expands specs.apps.depends.libs to include any indirectly required libs
-    '''
+    """
     for app_name, app_spec in specs['apps'].iteritems():
         if 'depends' in app_spec and 'libs' in app_spec['depends']:
             app_spec['depends']['libs'] = _get_dependent('libs', app_name, specs, 'apps')
 
 def get_referenced_libs(specs):
-    '''
+    """
     Returns all libs that are referenced in specs.apps.depends.libs
-    '''
+    """
     active_libs = set()
     for app_spec in specs['apps'].values():
         for lib in app_spec.get('depends', {}).get('libs', []):
@@ -67,9 +67,9 @@ def get_referenced_libs(specs):
     return active_libs
 
 def filter_active_libs(specs):
-    '''
+    """
     Removes any lib from specs['libs'] that isn't specified in any specs.apps.depends.libs field
-    '''
+    """
     active_libs = get_referenced_libs(specs)
     all_libs = specs['libs'].keys()
     for lib in all_libs:
@@ -77,9 +77,9 @@ def filter_active_libs(specs):
             del specs['libs'][lib]
 
 def get_referenced_services(specs):
-    '''
+    """
     Returns all services that are referenced in specs.apps.depends.services
-    '''
+    """
     active_services = set()
     for app_spec in specs['apps'].values():
         for service in app_spec.get('depends', {}).get('services', []):
@@ -87,9 +87,9 @@ def get_referenced_services(specs):
     return active_services
 
 def filter_active_services(specs):
-    '''
+    """
     Removes any service from specs['services'] that isn't specified in any specs.apps.depends.services
-    '''
+    """
     active_services = get_referenced_services(specs)
     all_services = specs['services'].keys()
     for service in all_services:
@@ -97,11 +97,11 @@ def filter_active_services(specs):
             del specs['services'][service]
 
 def get_expanded_active_specs(activated_bundles, specs):
-    '''
+    """
     This function removes any unnecessary bundles, apps, libs, and services that aren't needed by
     the activated_bundles.  It also expands inside specs.apps.depends.libs all libs that are needed
     indirectly by each app
-    '''
+    """
     filter_active_bundles(activated_bundles, specs)
     filter_active_apps(specs)
     expand_libs_in_apps(specs)
