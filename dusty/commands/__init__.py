@@ -1,12 +1,17 @@
 """Entrypoint which the daemon uses for processing incoming commands."""
 
-from . import bundle
+from . import bundle, repos
 
 COMMAND_TREE = {
     'bundle': {
         'list': bundle.list_bundles,
         'activate': bundle.activate_bundle,
         'deactivate': bundle.deactivate_bundle
+    },
+    'repos': {
+        'list': repos.list_repos,
+        'override': repos.override_repo,
+        'manage': repos.manage_repo
     }
 }
 
