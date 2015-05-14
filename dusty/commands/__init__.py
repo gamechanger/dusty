@@ -11,7 +11,8 @@ COMMAND_TREE = {
     'repos': {
         'list': repos.list_repos,
         'override': repos.override_repo,
-        'manage': repos.manage_repo
+        'manage': repos.manage_repo,
+        'from': repos.override_repos_from_directory
     }
 }
 
