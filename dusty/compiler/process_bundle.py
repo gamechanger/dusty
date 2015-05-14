@@ -56,7 +56,10 @@ def expand_libs_in_apps(specs):
         if 'depends' in app_spec and 'libs' in app_spec['depends']:
             app_spec['depends']['libs'] = _get_dependent('libs', app_name, specs, 'apps')
 
-def get_active_libs(specs):
+def get_referenced_libs(specs):
+    '''
+    Returns all libs that are referenced in specs.apps.depends.libs
+    '''
     active_libs = set()
     for app_spec in specs['apps'].values():
         for lib in app_spec.get('depends', {}).get('libs', []):
@@ -67,25 +70,27 @@ def filter_active_libs(specs):
     '''
     Removes any lib from specs['libs'] that isn't specified in any specs.apps.depends.libs field
     '''
-    active_libs = get_active_libs(specs)
+    active_libs = get_referenced_libs(specs)
     all_libs = specs['libs'].keys()
     for lib in all_libs:
         if lib not in active_libs:
             del specs['libs'][lib]
 
-def get_active_services(specs):
+def get_referenced_services(specs):
+    '''
+    Returns all services that are referenced in specs.apps.depends.services
+    '''
     active_services = set()
     for app_spec in specs['apps'].values():
         for service in app_spec.get('depends', {}).get('services', []):
             active_services.add(service)
     return active_services
 
-
 def filter_active_services(specs):
     '''
     Removes any service from specs['services'] that isn't specified in any specs.apps.depends.services
     '''
-    active_services = get_active_services(specs)
+    active_services = get_referenced_services(specs)
     all_services = specs['services'].keys()
     for service in all_services:
         if service not in active_services:
