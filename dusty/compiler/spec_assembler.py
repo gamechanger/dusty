@@ -44,7 +44,7 @@ def _filter_active_apps(specs):
     """
     Removes all apps from specs['apps'] that aren't required by any bundle in specs['bundles']
     """
-    active_apps = _get_active_apps(specs)
+    active_apps = _get_referenced_apps(specs)
     all_apps = specs['apps'].keys()
     for app in all_apps:
         if app not in active_apps:

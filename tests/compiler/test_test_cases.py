@@ -27,7 +27,7 @@ class TestCompilerTestCases(TestCase):
 class TestSpecAssemblerTestCases(TestCase):
     @all_test_cases
     def test_retrieves_downstream_apps(self, test_case, case_specs, assembled_specs):
-        downstream_apps = spec_assembler._get_active_apps(case_specs)
+        downstream_apps = spec_assembler._get_referenced_apps(case_specs)
         assembled_apps = set(assembled_specs['apps'].keys())
         self.assertEqual(downstream_apps, assembled_apps)
 
