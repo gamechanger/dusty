@@ -9,7 +9,7 @@ class TestCompilerTestCases(TestCase):
             pass
 
 
-class TestSpecAssemblerTestCases(TestCases):
+class TestSpecAssemblerTestCases(TestCase):
     def test_spec_assembly_test_cases(self):
         for test_case in get_all_test_cases():
             pass
