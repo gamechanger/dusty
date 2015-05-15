@@ -1,0 +1,5 @@
+simpleapp:
+  image: docker.gamechanger.io/simpleapp
+  command: run-script.sh
+  environment:
+    gcenv: local

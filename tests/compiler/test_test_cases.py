@@ -39,6 +39,7 @@ class TestSpecAssemblerTestCases(TestCase):
 
     @all_test_cases
     def test_assembles_specs(self, test_case, case_specs, assembled_specs):
+        self.maxDiff = None
         activated_bundles = assembled_specs['bundles'].keys()
         spec_assembler._get_expanded_active_specs(activated_bundles, case_specs)
         self.assertEqual(case_specs, assembled_specs)
