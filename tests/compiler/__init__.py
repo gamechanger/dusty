@@ -10,7 +10,7 @@ def get_all_test_cases():
 @nottest
 def resources_for_test_case(test_case):
     resources = {}
-    for key in ['apps', 'libs', 'services']:
+    for key in ['bundles', 'apps', 'libs', 'services']:
         key_path = 'test_cases/{}/{}'.format(test_case, key)
         if resource_isdir(__name__, key_path):
             resources[key] = {resource_name: resource_string(__name__, '{}/{}'.format(key_path, resource_name))
