@@ -2,20 +2,18 @@ from ..config import get_config_value
 from ..specs import get_specs
 
 
-def _get_dependent(dependent_type, name, specs, root_spec_type=None):
+def _get_dependent(dependent_type, name, specs, root_spec_type):
     """
     Returns everything of type <dependent_type> that <name>, of type <root_spec_type> depends on
     Names only are returned in a set
     """
-    if root_spec_type is None:
-        root_spec_type = dependent_type
     spec = specs[root_spec_type].get(name)
     if spec is None:
         raise RuntimeError("{} {} was referenced but not found".format(root_spec_type, name))
     dependents = spec.get('depends', {}).get(dependent_type, [])
     all_dependents = set(dependents)
     for dep in dependents:
-        all_dependents |= _get_dependent(dependent_type, dep, specs)
+        all_dependents |= _get_dependent(dependent_type, dep, specs, dependent_type)
     return all_dependents
 
 def _filter_active_bundles(activated_bundles, specs):
@@ -27,7 +25,7 @@ def _filter_active_bundles(activated_bundles, specs):
         if bundle not in activated_bundles:
             del specs['bundles'][bundle]
 
-def _get_active_apps(specs):
+def _get_referenced_apps(specs):
     """
     Returns a set of all apps that are required to run any bundle in specs['bundles']
     """
@@ -39,7 +37,7 @@ def _get_active_apps(specs):
             raise RuntimeError("Bundle {} is activated, but can't be found in your specs_path".format(active_bundle))
         for app_name in bundle_spec['apps']:
             all_active_apps.add(app_name)
-            all_active_apps |= _get_dependent('apps', app_name, specs)
+            all_active_apps |= _get_dependent('apps', app_name, specs, 'apps')
     return all_active_apps
 
 def _filter_active_apps(specs):
