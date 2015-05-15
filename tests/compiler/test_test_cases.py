@@ -7,3 +7,11 @@ class TestCompilerTestCases(TestCase):
     def test_compiler_test_cases(test_case):
         for test_case in get_all_test_cases():
             pass
+
+
+class TestSpecAssemblerTestCases(TestCases):
+    def test_spec_assembly_test_cases(self):
+        for test_case in get_all_test_cases():
+            pass
+    def test_random_test_case(self, test_case):
+        raise Exception
