@@ -11,6 +11,8 @@ REPOS_PATH = '/etc/dusty/repos'
 
 GIT_USER = 'git'
 
+HOSTS_PATH = '/etc/hosts'
+
 SYSTEM_DEPENDENCY_VERSIONS = {
     'nginx': '1.8.0',
     'virtualbox': '4.3.26',
