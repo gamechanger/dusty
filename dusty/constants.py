@@ -15,6 +15,8 @@ HOSTS_PATH = '/etc/hosts'
 
 VIRTUALBOX_RULE_PREFIX = 'dusty'
 
+LOCALHOST = "127.0.0.1"
+
 SYSTEM_DEPENDENCY_VERSIONS = {
     'nginx': '1.8.0',
     'virtualbox': '4.3.26',

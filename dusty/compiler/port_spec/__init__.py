@@ -1,4 +1,4 @@
-LOCALHOST = "127.0.0.1"
+from dusty.constants import LOCALHOST
 
 class ReusedContainerPort(Exception):
     pass
