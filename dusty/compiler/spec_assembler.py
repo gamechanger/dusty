@@ -33,8 +33,6 @@ def _get_referenced_apps(specs):
     all_active_apps = set()
     for active_bundle in activated_bundles:
         bundle_spec = specs['bundles'].get(active_bundle)
-        if bundle_spec is None:
-            raise RuntimeError("Bundle {} is activated, but can't be found in your specs_path".format(active_bundle))
         for app_name in bundle_spec['apps']:
             all_active_apps.add(app_name)
             all_active_apps |= _get_dependent('apps', app_name, specs, 'apps')
