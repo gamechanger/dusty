@@ -43,3 +43,26 @@ class TestSpecAssemblerTestCases(TestCase):
         activated_bundles = assembled_specs['bundles'].keys()
         spec_assembler._get_expanded_active_specs(activated_bundles, case_specs)
         self.assertEqual(case_specs, assembled_specs)
+
+    def test_get_dependent_traverses_tree(self):
+        specs = {
+            'apps': {
+                'app1': {
+                    'depends': {'apps': ['app2']}
+                },
+                'app2': {
+                    'depends': {'apps': ['app3']}
+                },
+                'app3': {
+                    'depends': {'apps': ['app4', 'app5']}
+                },
+                'app4': {
+                    'depends': {'apps': ['app5']}
+                },
+                'app5': {}
+
+            }
+        }
+        self.assertEqual(set(['app2', 'app3', 'app4', 'app5']),
+            spec_assembler._get_dependent('apps', 'app1', specs, 'apps'))
+
