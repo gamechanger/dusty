@@ -37,7 +37,10 @@ def port_spec_document(expanded_active_specs):
     # port_spec with respect to the apps and the ports they are outputted on
     for app_name in sorted(expanded_active_specs['apps'].keys()):
         app_spec = expanded_active_specs['apps'][app_name]
-        host_forwarding_spec = app_spec['host_forwarding']
+        try:
+            host_forwarding_spec = app_spec['host_forwarding']
+        except KeyError:
+            continue
         container_port = host_forwarding_spec['container_port']
         host_name = host_forwarding_spec['host_name']
         host_full_address = '{}:{}'.format(host_name, host_forwarding_spec['host_port'])
