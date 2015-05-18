@@ -36,6 +36,9 @@ def _remove_existing_forwarding_rules(forwarding_spec):
             logging.warning('Deleting rule failed, possibly because it did not exist. Continuing...')
 
 def update_port_forwarding_from_port_spec(port_spec):
+    """Update the current VirtualBox port mappings from the host OS
+    to the VM to reflect the given port_spec. Overwrites any
+    previous rules set on ports needed by the new spec."""
     vbox_specs = port_spec['virtualbox']
     for forwarding_spec in vbox_specs:
         _remove_existing_forwarding_rules(forwarding_spec)
