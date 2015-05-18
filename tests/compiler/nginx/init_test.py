@@ -27,7 +27,6 @@ class TestPortSpecCompiler(TestCase):
         }
         """)
         output = clense(nginx_configuration_spec(self.port_spec_dict_1))
-        print output
         self.assertEqual(output, expected_output)
 
     def test_nginx_configuration_spec_2(self):
@@ -41,5 +40,16 @@ class TestPortSpecCompiler(TestCase):
         }
         """)
         output = clense(nginx_configuration_spec(self.port_spec_dict_2))
-        print output
         self.assertEqual(output, expected_output)
+
+    def test_nginx_listen_string_1(self):
+        self.assertEqual("listen local.gc.com:80;", _nginx_listen_string(self.port_spec_dict_1['nginx'][0]))
+
+    def test_nginx_listen_string_2(self):
+        self.assertEqual("listen local.gcapi.com:8001;", _nginx_listen_string(self.port_spec_dict_2['nginx'][0]))
+
+    def test_nginx_proxy_string_1(self):
+        self.assertEqual("proxy_pass 127.0.0.1:80;", _nginx_proxy_string(self.port_spec_dict_1['nginx'][0]))
+
+    def test_nginx_proxy_string_2(self):
+        self.assertEqual("proxy_pass 127.0.0.0:8000;", _nginx_proxy_string(self.port_spec_dict_2['nginx'][0]))
