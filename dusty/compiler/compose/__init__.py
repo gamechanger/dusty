@@ -9,7 +9,7 @@ def write_compose_file():
     compose_dict = get_compose_dict()
     with open(constants.COMPOSE_YML_PATH, 'w') as f:
         f.write(yaml.dump(compose_dict))
-    return "Written to {}".format(constants.COMPOSE_YML_PATH)
+    yield "Written to {}".format(constants.COMPOSE_YML_PATH).encode('utf-8')
 
 def get_compose_dict():
     assembled_specs = get_assembled_specs()
