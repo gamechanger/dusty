@@ -54,7 +54,7 @@ def port_spec_document(expanded_active_specs):
         port_spec['docker_compose'][app_name] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
         port_spec['virtualbox'].append(_virtualbox_port_spec(forwarding_port))
         port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port))
-        if not host_name in host_names:
+        if host_name not in host_names:
             port_spec['hosts_file'].append(_hosts_file_port_spec(host_forwarding_spec))
             host_names.add(host_name)
         forwarding_port += 1
