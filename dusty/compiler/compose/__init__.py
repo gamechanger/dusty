@@ -29,7 +29,9 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
     compose_bundle['build'] = "{}/{}".format(repo_path(app_spec['repo']), app_spec.get('build', "."))
     compose_bundle['command'] = _compile_docker_command(app_spec)
     compose_bundle['links'] = app_spec.get('depends', {}).get('services', [])
-    compose_bundle['ports'] = _get_ports_list(app_name, port_specs)
+    port_str = _get_ports_list(app_name, port_specs)
+    if port_str:
+        compose_bundle['ports'] = port_str
     return compose_bundle
 
 def _composed_service_dict(service_name, assembled_specs):
