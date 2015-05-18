@@ -4,11 +4,11 @@ import yaml
 
 from .config import get_config_value
 
-def get_specs(override_specs_path=None):
-    if override_specs_path is None:
-        specs_path = get_config_value('specs_path')
-    else:
-        specs_path = override_specs_path
+def get_specs():
+    specs_path = get_config_value('specs_path')
+    get_specs_from_path(specs_path)
+
+def get_specs_from_path(specs_path):
     specs = {}
     for key in ['bundles', 'apps', 'libs', 'services']:
         specs[key] = {}
@@ -18,3 +18,4 @@ def get_specs(override_specs_path=None):
             with open(spec_path, 'r') as f:
                 specs[key][spec_name] = yaml.load(f.read())
     return specs
+

@@ -4,7 +4,7 @@ import yaml
 
 from nose.tools import nottest
 
-from dusty.specs import get_specs
+from dusty.specs import get_specs_from_path
 
 @nottest
 def get_all_test_cases():
@@ -23,7 +23,7 @@ def resources_for_test_case(test_case):
 @nottest
 def specs_for_test_case(test_case):
     case_path = '{}/test_cases/{}/'.format(__path__[0], test_case)
-    return get_specs(override_specs_path=case_path)
+    return get_specs_from_path(case_path)
 
 @nottest
 def assembled_for_test_case(test_case):
