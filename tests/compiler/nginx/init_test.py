@@ -16,7 +16,7 @@ class TestPortSpecCompiler(TestCase):
                                             'host_address': 'local.gcapi.com',
                                             'host_port': '8001'}]}
 
-    def test_nginx_configuration_spec(self):
+    def test_nginx_configuration_spec_1(self):
         expected_output = clense("""http {
             server {
                 listen local.gc.com:80;
@@ -27,5 +27,19 @@ class TestPortSpecCompiler(TestCase):
         }
         """)
         output = clense(nginx_configuration_spec(self.port_spec_dict_1))
+        print output
+        self.assertEqual(output, expected_output)
+
+    def test_nginx_configuration_spec_2(self):
+        expected_output = clense("""http {
+            server {
+                listen local.gcapi.com:80001;
+                location / {
+                    proxy_pass 127.0.0.0:8000;
+                }
+            }
+        }
+        """)
+        output = clense(nginx_configuration_spec(self.port_spec_dict_2))
         print output
         self.assertEqual(output, expected_output)
