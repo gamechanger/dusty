@@ -43,7 +43,7 @@ def port_spec_document(expanded_active_specs):
 
         if container_port in container_ports:
             raise ReusedContainerPort("{} has already been specified and used".format(container_port))
-        if container_port in container_ports:
+        if host_full_address in host_full_addresses:
             raise ReusedHostFullAddress("{} has already been specified and used".format(host_full_address))
 
         container_ports.add(container_port)
