@@ -4,7 +4,7 @@ import subprocess
 from ... import constants
 
 def _name_for_rule(forwarding_spec, protocol):
-    return '{}_{}_{}'.format(constants.VBOX_RULE_PREFIX, forwarding_spec['host_port'], protocol)
+    return '{}_{}_{}'.format(constants.VIRTUALBOX_RULE_PREFIX, forwarding_spec['host_port'], protocol)
 
 def _add_forwarding_rules(forwarding_spec):
     """Add TCP and UDP forwarding rules from the host OS to
@@ -23,7 +23,7 @@ def _add_forwarding_rules(forwarding_spec):
 
 def _remove_existing_forwarding_rules(forwarding_spec):
     """Remove any existing forwarding rule that may exist for the given
-    host port. It's possible to get VBox to list out the current rules,
+    host port. It's possible to get VirtualBox to list out the current rules,
     but that's got a race condition built into it, so our approach is
     to try to delete the rule and swallow the exception if the rule
     did not exist in the first place."""
@@ -39,7 +39,7 @@ def update_port_forwarding_from_port_spec(port_spec):
     """Update the current VirtualBox port mappings from the host OS
     to the VM to reflect the given port_spec. Overwrites any
     previous rules set on ports needed by the new spec."""
-    vbox_specs = port_spec['virtualbox']
-    for forwarding_spec in vbox_specs:
+    virtualbox_specs = port_spec['virtualbox']
+    for forwarding_spec in virtualbox_specs:
         _remove_existing_forwarding_rules(forwarding_spec)
         _add_forwarding_rules(forwarding_spec)
