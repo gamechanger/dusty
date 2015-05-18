@@ -13,6 +13,8 @@ GIT_USER = 'git'
 
 HOSTS_PATH = '/etc/hosts'
 
+VIRTUALBOX_RULE_PREFIX = 'dusty'
+
 SYSTEM_DEPENDENCY_VERSIONS = {
     'nginx': '1.8.0',
     'virtualbox': '4.3.26',
