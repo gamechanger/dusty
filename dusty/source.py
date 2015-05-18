@@ -13,7 +13,7 @@ from .notifier import notify
 def repo_path(repo_name):
     """Given a repo_name (github.com/gamechanger/gclib), checks if that repo has an
     override, and returns the appropriate directory"""
-    repo_overrides = get_config_value('repo_overrides')
+    repo_overrides = get_config_value('repo_overrides') or {}
     override_dir = repo_overrides.get(repo_name)
     return override_dir if override_dir else _managed_repo_path(repo_name)
 

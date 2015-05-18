@@ -30,7 +30,7 @@ def override_repo(repo_name, source_path):
         raise KeyError('No repo registered named {}'.format(repo_name))
     if not os.path.exists(source_path):
         raise OSError('Source path {} does not exist'.format(source_path))
-    config = get_config_value('repo_overrides')
+    config = get_config_value('repo_overrides') or {}
     config[repo_name] = source_path
     save_config_value('repo_overrides', config)
     yield 'Locally overriding repo {} to use source at {}'.format(repo_name, source_path)
