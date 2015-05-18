@@ -31,7 +31,6 @@ def port_spec_document(expanded_active_specs):
     this includes docker_compose, virtualbox, nginx and hosts_file."""
     forwarding_port = 99666
     port_spec = {'docker_compose':{}, 'virtualbox':[], 'nginx':[], 'hosts_file':[]}
-    container_ports = set()
     host_full_addresses = set()
     host_names = set()
     for app_name in sorted(expanded_active_specs['apps'].keys()):
@@ -43,7 +42,6 @@ def port_spec_document(expanded_active_specs):
 
         if host_full_address in host_full_addresses:
             raise ReusedHostFullAddress("{} has already been specified and used".format(host_full_address))
-        container_ports.add(container_port)
         host_full_addresses.add(host_full_address)
 
         port_spec['docker_compose'][app_name] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
