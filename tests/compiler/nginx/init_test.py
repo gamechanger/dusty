@@ -33,7 +33,7 @@ class TestPortSpecCompiler(TestCase):
     def test_nginx_configuration_spec_2(self):
         expected_output = clense("""http {
             server {
-                listen local.gcapi.com:80001;
+                listen local.gcapi.com:8001;
                 location / {
                     proxy_pass 127.0.0.0:8000;
                 }
