@@ -5,7 +5,7 @@ from dusty.compiler.port_spec import (_docker_compose_port_spec, _virtualbox_por
 class TestPortSpecCompiler(TestCase):
     def setUp(self):
         self.test_host_forwarding_spec_1 = {'container_port': 80, 'host_name': 'local.gc.com', 'host_port': 80}
-        self.test_host_forwarding_spec_1 = {'container_port': 8000, 'host_name': 'local.alex.com', 'host_port': 8001}
+        self.test_host_forwarding_spec_2 = {'container_port': 8000, 'host_name': 'local.alex.com', 'host_port': 8001}
 
     def test_docker_compose_port_spec_1(self):
         self.assertEqual(_docker_compose_port_spec(self.test_host_forwarding_spec_1, '5000'),
@@ -41,12 +41,12 @@ class TestPortSpecCompiler(TestCase):
              'host_port': '8001'})
 
     def test_hosts_file_port_spec_1(self):
-        self.assertEqual(_docker_compose_port_spec(self.test_host_forwarding_spec_1),
+        self.assertEqual(_hosts_forwarding_spec(self.test_host_forwarding_spec_1),
             {'forwarded_ip': LOCALHOST,
             'host_address': 'local.gc.com'})
 
     def test_hosts_file_port_spec_2(self):
-        self.assertEqual(_docker_compose_port_spec(self.test_host_forwarding_spec_2),
+        self.assertEqual(_hosts_forwarding_spec(self.test_host_forwarding_spec_2),
             {'forwarded_ip': LOCALHOST,
              'host_address': 'local.alex.com'})
 
