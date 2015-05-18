@@ -6,7 +6,7 @@ from .config import get_config_value
 
 def get_specs():
     specs_path = get_config_value('specs_path')
-    get_specs_from_path(specs_path)
+    return get_specs_from_path(specs_path)
 
 def get_specs_from_path(specs_path):
     specs = {}
