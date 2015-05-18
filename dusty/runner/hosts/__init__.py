@@ -20,8 +20,7 @@ def _remove_current_dusty_config(hosts):
 def _add_dusty_config(hosts, hosts_spec):
     to_add = '# BEGIN section for Dusty\n'
     for spec in hosts_spec:
-        address, ip = spec['host_address'], spec['forwarded_ip']
-        to_add += '{} {}\n'.format(ip, address)
+        to_add += '{} {}\n'.format(spec['forwarded_ip'], spec['host_address'])
     to_add += '# END section for Dusty\n'
     return hosts + to_add
 
