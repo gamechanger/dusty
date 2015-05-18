@@ -73,7 +73,7 @@ class TestPortSpecCompiler(TestCase):
                                             'host_address': 'local.gc.com'}]}
         self.assertEqual(port_spec_document(expanded_spec), correct_port_spec)
 
-   def test_port_spec_document_2_apps(self):
+    def test_port_spec_document_2_apps(self):
         expanded_spec = {'apps':
                                 {'gcweb':
                                          {'host_forwarding':
