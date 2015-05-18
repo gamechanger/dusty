@@ -1,6 +1,4 @@
 from unittest import TestCase
-
-import dusty.constants
 from dusty.compiler.port_spec import (_docker_compose_port_spec, _virtualbox_port_spec, _nginx_port_spec,
                                       _hosts_forwarding_spec, port_spec_document, LOCALHOST)
 
