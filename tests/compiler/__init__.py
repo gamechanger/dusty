@@ -26,7 +26,7 @@ def specs_for_test_case(test_case):
     return get_specs_from_path(case_path)
 
 @nottest
-def assembled_for_test_case(test_case):
+def assembled_specs_for_test_case(test_case):
     assembled_file = "{}/test_cases/{}/assembled_spec.yml".format(__path__[0], test_case)
     with open(assembled_file, 'r') as f:
         return yaml.load(f.read())

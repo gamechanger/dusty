@@ -4,7 +4,7 @@ from unittest import TestCase
 from nose.tools import nottest
 
 from . import (get_all_test_cases, resources_for_test_case, specs_for_test_case,
-               assembled_for_test_case, nginx_config_for_test_case, docker_compose_yaml_for_test_case)
+               assembled_specs_for_test_case, nginx_config_for_test_case, docker_compose_yaml_for_test_case)
 from dusty.compiler import spec_assembler
 
 @nottest
@@ -13,7 +13,7 @@ def all_test_cases(test_func):
     def inner(cls):
         for test_case in get_all_test_cases():
             case_specs = specs_for_test_case(test_case)
-            assembled_specs = assembled_for_test_case(test_case)
+            assembled_specs = assembled_specs_for_test_case(test_case)
             print "Running test case: {}".format(test_case)
             test_func(cls, test_case, case_specs, assembled_specs)
             print "Test case {} completed".format(test_case)
