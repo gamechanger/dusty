@@ -59,10 +59,31 @@ class TestSpecAssemblerTestCases(TestCase):
                 'app4': {
                     'depends': {'apps': ['app5']}
                 },
-                'app5': {}
-
+                'app5': {},
+                'app6': {}
             }
         }
         self.assertEqual(set(['app2', 'app3', 'app4', 'app5']),
             spec_assembler._get_dependent('apps', 'app1', specs, 'apps'))
 
+    def test_get_dependent_root_type(self):
+        specs = {
+            'apps': {
+                'app1': {
+                    'depends': {
+                        'apps': ['app2'],
+                        'libs': ['lib1']
+                    }
+                },
+                'app2': {}
+            },
+            'libs': {
+                'lib1':{
+                    'depends': {'libs': ['lib2']}
+                },
+                'lib2':{},
+                'lib3': {}
+            }
+        }
+        self.assertEqual(set(['lib1', 'lib2']),
+            spec_assembler._get_dependent('libs', 'app1', specs, 'apps'))
