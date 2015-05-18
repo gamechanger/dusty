@@ -33,6 +33,8 @@ def port_spec_document(expanded_active_specs):
     port_spec = {'docker_compose':{}, 'virtualbox':[], 'nginx':[], 'hosts_file':[]}
     host_full_addresses = set()
     host_names = set()
+    # No matter the order of apps in expanded_active_specs, we want to produce a consistent
+    # port_spec with respect to the apps and the ports they are outputted on
     for app_name in sorted(expanded_active_specs['apps'].keys()):
         app_spec = expanded_active_specs['apps'][app_name]
         host_forwarding_spec = app_spec['host_forwarding']
