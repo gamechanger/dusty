@@ -35,8 +35,8 @@ def update_hosts_from_port_spec(port_spec):
     """Given a port spec, update the hosts file specified at
     constants.HOST_PATH to contain the port mappings specified
     in the spec. Any existing Dusty configurations are replaced."""
+    logging.info('Updating hosts file to match port spec')
     hosts_specs = port_spec['hosts_file']
-    logging.info('Updating hosts file to match spec: {}'.format(hosts_specs))
     current_hosts = _read_hosts(constants.HOSTS_PATH)
     cleared_hosts = _remove_current_dusty_config(current_hosts)
     updated_hosts = cleared_hosts + _dusty_hosts_config(hosts_specs)

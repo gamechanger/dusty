@@ -39,6 +39,7 @@ def update_port_forwarding_from_port_spec(port_spec):
     """Update the current VirtualBox port mappings from the host OS
     to the VM to reflect the given port_spec. Overwrites any
     previous rules set on ports needed by the new spec."""
+    logging.info('Updating port forwarding rules in VirtualBox')
     virtualbox_specs = port_spec['virtualbox']
     for forwarding_spec in virtualbox_specs:
         _remove_existing_forwarding_rules(forwarding_spec)

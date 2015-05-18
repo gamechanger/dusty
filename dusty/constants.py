@@ -2,6 +2,8 @@ import os
 
 SOCKET_TERMINATOR = '\0\0'
 
+LOCALHOST = "127.0.0.1"
+
 ROOT_LOG_DIR = '/var/log/dusty'
 LOG_SUBDIRS = ['nginx']
 
@@ -15,7 +17,8 @@ HOSTS_PATH = '/etc/hosts'
 
 VIRTUALBOX_RULE_PREFIX = 'dusty'
 
-LOCALHOST = "127.0.0.1"
+NGINX_PID_PATH = '/usr/local/var/run/nginx.pid'
+NGINX_CONFIG_INCLUDES_DIR = '/usr/local/etc/nginx/servers'
 
 SYSTEM_DEPENDENCY_VERSIONS = {
     'nginx': '1.8.0',
