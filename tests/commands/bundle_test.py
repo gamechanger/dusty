@@ -15,6 +15,7 @@ class TestBundleCommands(TestCase):
     def setUp(self):
         self.temp_config_path = tempfile.mkstemp()[1]
         self.temp_specs_path = tempfile.mkdtemp()
+        self.old_config_path = dusty.constants.CONFIG_PATH
         dusty.constants.CONFIG_PATH = self.temp_config_path
         write_default_config()
         save_config_value('specs_path', self.temp_specs_path)
@@ -23,6 +24,7 @@ class TestBundleCommands(TestCase):
     def tearDown(self):
         os.remove(self.temp_config_path)
         shutil.rmtree(self.temp_specs_path)
+        dusty.constants.CONFIG_PATH = self.old_config_path
 
     def _assert_listed_bundles(self, result, bundle_active_tuples):
         for index, bundle_active in enumerate(bundle_active_tuples):
