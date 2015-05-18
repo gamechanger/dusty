@@ -13,7 +13,8 @@ COMMAND_TREE = {
         'list': repos.list_repos,
         'override': repos.override_repo,
         'manage': repos.manage_repo,
-        'from': repos.override_repos_from_directory
+        'from': repos.override_repos_from_directory,
+        'update': repos.update_managed_repos
     },
     'compiler': {
         'list': compiler.list_processed_specs
