@@ -17,6 +17,7 @@ class TestNginxRunner(TestCase):
         self._write_pid_file(self.process_id)
 
     def tearDown(self):
+        os.remove(self.temp_pid_path)
         constants.NGINX_PID_PATH = self.old_pid_path
 
     @nottest
