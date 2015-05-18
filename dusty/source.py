@@ -6,10 +6,18 @@ import logging
 
 import git
 
+from .config import get_config_value
 from .constants import GIT_USER, REPOS_PATH
 from .notifier import notify
 
-def _repo_path(repo_name):
+def repo_path(repo_name):
+    """Given a repo_name (github.com/gamechanger/gclib), checks if that repo has an
+    override, and returns the appropriate directory"""
+    repo_overrides = get_config_value('repo_overrides')
+    override_dir = repo_overrides.get(repo_name)
+    return override_dir if override_dir else managed_repo_path(repo_name)
+
+def _managed_repo_path(repo_name):
     return os.path.join(REPOS_PATH, repo_name)
 
 def _short_repo_name(repo_name):
@@ -18,7 +26,7 @@ def _short_repo_name(repo_name):
 def ensure_local_repo(repo_name):
     """Given a repo name (e.g. github.com/gamechanger/gclib), clone the
     repo into Dusty's local repos directory if it does not already exist."""
-    repo_path = _repo_path(repo_name)
+    repo_path = _managed_repo_path(repo_name)
     if os.path.exists(repo_path):
         logging.debug('Repo {} already exists'.format(repo_name))
         return
@@ -39,6 +47,6 @@ def update_local_repo(repo_name):
     logging.info('Updating local repo {}'.format(repo_name))
     notify('Pulling latest updates for {}'.format(_short_repo_name(repo_name)))
 
-    repo_path = _repo_path(repo_name)
+    repo_path = _managed_repo_path(repo_name)
     repo = git.Repo(repo_path)
     repo.remote().pull('master')
