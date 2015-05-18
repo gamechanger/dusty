@@ -15,6 +15,10 @@ def _write_hosts(filepath, contents):
         f.write(contents)
 
 def _remove_current_dusty_config(hosts):
+    """Given a string representing the contents of a hosts
+    file, this function strips out the Dusty config section
+    denominated by the Dusty header and footer. Returns
+    the stripped string."""
     return DUSTY_CONFIG_REGEX.sub("", hosts)
 
 def _dusty_hosts_config(hosts_spec):
@@ -28,6 +32,9 @@ def _dusty_hosts_config(hosts_spec):
     return rules
 
 def update_hosts_from_port_spec(port_spec):
+    """Given a port spec, update the hosts file specified at
+    constants.HOST_PATH to contain the port mappings specified
+    in the spec. Any existing Dusty configurations are replaced."""
     hosts_spec = port_spec['hosts_file']
     logging.info('Updating hosts file to match spec: {}'.format(hosts_spec))
     current_hosts = _read_hosts(constants.HOSTS_PATH)
