@@ -9,35 +9,35 @@ class TestPortSpecCompiler(TestCase):
         self.test_host_forwarding_spec_2 = {'container_port': 8000, 'host_name': 'local.alex.com', 'host_port': 8001}
 
     def test_docker_compose_port_spec_1(self):
-        self.assertEqual(_docker_compose_port_spec(self.test_host_forwarding_spec_1, '99666'),
+        self.assertEqual(_docker_compose_port_spec(self.test_host_forwarding_spec_1, '65000'),
             {'in_container_port': '80',
              'mapped_host_ip': LOCALHOST,
-             'mapped_host_port': '99666'})
+             'mapped_host_port': '65000'})
 
     def test_docker_compose_port_spec_2(self):
-        self.assertEqual(_docker_compose_port_spec(self.test_host_forwarding_spec_2, '99667'),
+        self.assertEqual(_docker_compose_port_spec(self.test_host_forwarding_spec_2, '65001'),
             {'in_container_port': '8000',
              'mapped_host_ip': LOCALHOST,
-             'mapped_host_port': '99667'})
+             'mapped_host_port': '65001'})
 
     def test_virtualbox_port_spec(self):
-        self.assertEqual(_virtualbox_port_spec('99666'),
+        self.assertEqual(_virtualbox_port_spec('65000'),
             {'guest_ip': LOCALHOST,
-             'guest_port': '99666',
+             'guest_port': '65000',
              'host_ip': LOCALHOST,
-             'host_port': '99666'})
+             'host_port': '65000'})
 
     def test_nginx_port_spec_1(self):
-        self.assertEqual(_nginx_port_spec(self.test_host_forwarding_spec_1, '99666'),
+        self.assertEqual(_nginx_port_spec(self.test_host_forwarding_spec_1, '65000'),
             {'proxied_ip': LOCALHOST,
-             'proxied_port': '99666',
+             'proxied_port': '65000',
              'host_address': 'local.gc.com',
              'host_port': '80'})
 
     def test_nginx_port_spec_2(self):
-        self.assertEqual(_nginx_port_spec(self.test_host_forwarding_spec_2, '99667'),
+        self.assertEqual(_nginx_port_spec(self.test_host_forwarding_spec_2, '65001'),
             {'proxied_ip': LOCALHOST,
-             'proxied_port': '99667',
+             'proxied_port': '65001',
              'host_address': 'local.alex.com',
              'host_port': '8001'})
 
@@ -61,13 +61,13 @@ class TestPortSpecCompiler(TestCase):
         correct_port_spec = {'docker_compose':{'gcweb':
                                                        {'in_container_port': '80',
                                                         'mapped_host_ip': LOCALHOST,
-                                                        'mapped_host_port': '99666'}},
+                                                        'mapped_host_port': '65000'}},
                              'virtualbox':[{'guest_ip': LOCALHOST,
-                                            'guest_port': '99666',
+                                            'guest_port': '65000',
                                             'host_ip': LOCALHOST,
-                                            'host_port': '99666'}],
+                                            'host_port': '65000'}],
                              'nginx':[{'proxied_ip': LOCALHOST,
-                                       'proxied_port': '99666',
+                                       'proxied_port': '65000',
                                        'host_address': 'local.gc.com',
                                        'host_port': '80'}],
                              'hosts_file':[{'forwarded_ip': LOCALHOST,
@@ -89,25 +89,25 @@ class TestPortSpecCompiler(TestCase):
         correct_port_spec = {'docker_compose':{'gcweb':
                                                        {'in_container_port': '80',
                                                         'mapped_host_ip': LOCALHOST,
-                                                        'mapped_host_port': '99667'},
+                                                        'mapped_host_port': '65001'},
                                                'gcapi':
                                                        {'in_container_port': '8001',
                                                         'mapped_host_ip': LOCALHOST,
-                                                        'mapped_host_port': '99666'}},
+                                                        'mapped_host_port': '65000'}},
                              'virtualbox':[{'guest_ip': LOCALHOST,
-                                            'guest_port': '99666',
+                                            'guest_port': '65000',
                                             'host_ip': LOCALHOST,
-                                            'host_port': '99666'},
+                                            'host_port': '65000'},
                                            {'guest_ip': LOCALHOST,
-                                            'guest_port': '99667',
+                                            'guest_port': '65001',
                                             'host_ip': LOCALHOST,
-                                            'host_port': '99667'}],
+                                            'host_port': '65001'}],
                              'nginx':[{'proxied_ip': LOCALHOST,
-                                       'proxied_port': '99666',
+                                       'proxied_port': '65000',
                                        'host_address': 'local.gcapi.com',
                                        'host_port': '8000'},
                                       {'proxied_ip': LOCALHOST,
-                                       'proxied_port': '99667',
+                                       'proxied_port': '65001',
                                        'host_address': 'local.gc.com',
                                        'host_port': '80'}],
                              'hosts_file':[{'forwarded_ip': LOCALHOST,
@@ -132,25 +132,25 @@ class TestPortSpecCompiler(TestCase):
         correct_port_spec = {'docker_compose':{'gcweb':
                                                        {'in_container_port': '80',
                                                         'mapped_host_ip': LOCALHOST,
-                                                        'mapped_host_port': '99667'},
+                                                        'mapped_host_port': '65001'},
                                                'gcapi':
                                                        {'in_container_port': '8001',
                                                         'mapped_host_ip': LOCALHOST,
-                                                        'mapped_host_port': '99666'}},
+                                                        'mapped_host_port': '65000'}},
                              'virtualbox':[{'guest_ip': LOCALHOST,
-                                            'guest_port': '99666',
+                                            'guest_port': '65000',
                                             'host_ip': LOCALHOST,
-                                            'host_port': '99666'},
+                                            'host_port': '65000'},
                                            {'guest_ip': LOCALHOST,
-                                            'guest_port': '99667',
+                                            'guest_port': '65001',
                                             'host_ip': LOCALHOST,
-                                            'host_port': '99667'}],
+                                            'host_port': '65001'}],
                              'nginx':[{'proxied_ip': LOCALHOST,
-                                       'proxied_port': '99666',
+                                       'proxied_port': '65000',
                                        'host_address': 'local.gc.com',
                                        'host_port': '8000'},
                                       {'proxied_ip': LOCALHOST,
-                                       'proxied_port': '99667',
+                                       'proxied_port': '65001',
                                        'host_address': 'local.gc.com',
                                        'host_port': '80'}],
                              'hosts_file':[{'forwarded_ip': LOCALHOST,
