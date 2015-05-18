@@ -9,4 +9,5 @@ install_requires = [
 
 test_requires = [
     'nose>=1.3.0',
+    'mock>=1.0.1',
 ]
