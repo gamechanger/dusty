@@ -37,7 +37,8 @@ def port_spec_document(expanded_active_specs):
     container_ports = set()
     host_full_addresses = set()
     host_names = set()
-    for app_name, app_spec in expanded_active_specs['apps'].iteritems():
+    for app_name in sorted(expanded_active_specs['apps'].keys()):
+        app_spec = expanded_active_specs['apps'][app_name]
         host_forwarding_spec = app_spec['host_forwarding']
         container_port = host_forwarding_spec['container_port']
         host_name = host_forwarding_spec['host_name']

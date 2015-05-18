@@ -89,11 +89,11 @@ class TestPortSpecCompiler(TestCase):
         correct_port_spec = {'docker_compose':{'gcweb':
                                                        {'in_container_port': '80',
                                                         'mapped_host_ip': LOCALHOST,
-                                                        'mapped_host_port': '5000'},
+                                                        'mapped_host_port': '5001'},
                                                'gcapi':
                                                        {'in_container_port': '8001',
                                                         'mapped_host_ip': LOCALHOST,
-                                                        'mapped_host_port': '5001'}},
+                                                        'mapped_host_port': '5000'}},
                              'virtualbox':[{'guest_ip': LOCALHOST,
                                             'guest_port': '5000',
                                             'host_ip': LOCALHOST,
@@ -104,16 +104,17 @@ class TestPortSpecCompiler(TestCase):
                                             'host_port': '5001'}],
                              'nginx':[{'proxied_ip': LOCALHOST,
                                        'proxied_port': '5000',
-                                       'host_address': 'local.gc.com',
-                                       'host_port': '80'},
+                                       'host_address': 'local.gcapi.com',
+                                       'host_port': '8000'},
                                       {'proxied_ip': LOCALHOST,
                                        'proxied_port': '5001',
-                                       'host_address': 'local.gcapi.com',
-                                       'host_port': '8000'}],
+                                       'host_address': 'local.gc.com',
+                                       'host_port': '80'}],
                              'hosts_file':[{'forwarded_ip': LOCALHOST,
-                                            'host_address': 'local.gc.com'},
+                                            'host_address': 'local.gcapi.com'},
                                           {'forwarded_ip': LOCALHOST,
-                                            'host_address': 'local.gcapi.com'}]}
+                                            'host_address': 'local.gc.com'}]}
+        print port_spec_document(expanded_spec)
         self.assertEqual(port_spec_document(expanded_spec), correct_port_spec)
 
     def test_port_spec_document_2_apps_same_host_port(self):
@@ -131,11 +132,11 @@ class TestPortSpecCompiler(TestCase):
         correct_port_spec = {'docker_compose':{'gcweb':
                                                        {'in_container_port': '80',
                                                         'mapped_host_ip': LOCALHOST,
-                                                        'mapped_host_port': '5000'},
+                                                        'mapped_host_port': '5001'},
                                                'gcapi':
                                                        {'in_container_port': '8001',
                                                         'mapped_host_ip': LOCALHOST,
-                                                        'mapped_host_port': '5001'}},
+                                                        'mapped_host_port': '5000'}},
                              'virtualbox':[{'guest_ip': LOCALHOST,
                                             'guest_port': '5000',
                                             'host_ip': LOCALHOST,
@@ -147,11 +148,11 @@ class TestPortSpecCompiler(TestCase):
                              'nginx':[{'proxied_ip': LOCALHOST,
                                        'proxied_port': '5000',
                                        'host_address': 'local.gc.com',
-                                       'host_port': '80'},
+                                       'host_port': '8000'},
                                       {'proxied_ip': LOCALHOST,
                                        'proxied_port': '5001',
                                        'host_address': 'local.gc.com',
-                                       'host_port': '8000'}],
+                                       'host_port': '80'}],
                              'hosts_file':[{'forwarded_ip': LOCALHOST,
                                             'host_address': 'local.gc.com'}]}
         self.assertEqual(port_spec_document(expanded_spec), correct_port_spec)
