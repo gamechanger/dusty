@@ -5,7 +5,7 @@ import textwrap
 from unittest import TestCase
 
 import dusty.constants
-from dusty.runner.hosts import (_remove_current_dusty_config, _add_dusty_config,
+from dusty.runner.hosts import (_remove_current_dusty_config, _dusty_hosts_config,
                                 update_hosts_from_port_spec, _read_hosts)
 
 class TestHostsRunner(TestCase):
@@ -27,13 +27,9 @@ class TestHostsRunner(TestCase):
         os.remove(self.temp_hosts_path)
         dusty.constants.HOSTS_PATH = self.old_hosts_path
 
-    def test_add_dusty_config_from_blank(self):
-        result = _add_dusty_config('', self.test_spec)
+    def test_dusty_hosts_config(self):
+        result = _dusty_hosts_config(self.test_spec)
         self.assertEqual(result, self.spec_output)
-
-    def test_add_dusty_config_from_starting(self):
-        result = _add_dusty_config(self.non_spec_starter, self.test_spec)
-        self.assertEqual(result, self.non_spec_starter + self.spec_output)
 
     def test_remove_current_dusty_config_from_blank(self):
         result = _remove_current_dusty_config(self.spec_output)
