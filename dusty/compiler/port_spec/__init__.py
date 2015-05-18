@@ -9,17 +9,17 @@ class ReusedHostFullAddress(Exception):
 def _docker_compose_port_spec(host_forwarding_spec, host_port):
     return {'in_container_port': str(host_forwarding_spec['container_port']),
             'mapped_host_ip': LOCALHOST,
-            'mapped_host_port': host_port}
+            'mapped_host_port': str(host_port)}
 
 def _virtualbox_port_spec(port):
     return {'guest_ip': LOCALHOST,
-            'guest_port': port,
+            'guest_port': str(port),
             'host_ip': LOCALHOST,
-            'host_port': port}
+            'host_port': str(port)}
 
 def _nginx_port_spec(host_forwarding_spec, port):
     return {'proxied_ip': LOCALHOST,
-            'proxied_port': port,
+            'proxied_port': str(port),
             'host_address': host_forwarding_spec['host_name'],
             'host_port': str(host_forwarding_spec['host_port'])}
 
@@ -50,9 +50,9 @@ def port_spec_document(expanded_active_specs):
 
         container_ports.add(container_port)
         host_full_addresses.add(host_full_address)
-        port_spec['docker_compose'][app_name] = _docker_compose_port_spec(host_forwarding_spec, str(forwarding_port))
-        port_spec['virtualbox'].append(_virtualbox_port_spec(str(forwarding_port)))
-        port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, str(forwarding_port)))
+        port_spec['docker_compose'][app_name] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
+        port_spec['virtualbox'].append(_virtualbox_port_spec(forwarding_port))
+        port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port))
         if not host_name in host_names:
             port_spec['hosts_file'].append(_hosts_file_port_spec(host_forwarding_spec))
             host_names.add(host_name)
