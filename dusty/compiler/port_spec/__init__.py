@@ -23,7 +23,7 @@ def _nginx_port_spec(host_forwarding_spec, port):
             'host_address': host_forwarding_spec['host_name'],
             'host_port': str(host_forwarding_spec['host_port'])}
 
-def _hosts_forwarding_spec(host_forwarding_spec):
+def _hosts_file_port_spec(host_forwarding_spec):
     return {'forwarded_ip': LOCALHOST,
             'host_address': host_forwarding_spec['host_name']}
 
@@ -39,7 +39,7 @@ def port_spec_document(expanded_active_specs):
         host_forwarding_spec = app_spec['host_forwarding']
         container_port = host_forwarding_spec['container_port']
         host_name = host_forwarding_spec['host_name']
-        host_full_address = '{}:{}'.format(host_name, host_port)
+        host_full_address = '{}:{}'.format(host_name, host_forwarding_spec['host_port'])
 
         if container_port in container_ports:
             raise ReusedContainerPort("{} has already been specified and used".format(container_port))
@@ -48,12 +48,12 @@ def port_spec_document(expanded_active_specs):
 
         container_ports.add(container_port)
         host_full_addresses.add(host_full_address)
-        port_spec['docker_compose']['app_name'] = _docker_compose_port_spec(host_forwarding_spec, str(forwarding_port))
+        port_spec['docker_compose'][app_name] = _docker_compose_port_spec(host_forwarding_spec, str(forwarding_port))
         port_spec['virtualbox'].append(_virtualbox_port_spec(str(forwarding_port)))
         port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, str(forwarding_port)))
         if not host_name in host_names:
             port_spec['hosts_file'].append(_hosts_file_port_spec(host_forwarding_spec))
-            host_name.add(host_name)
+            host_names.add(host_name)
         forwarding_port += 1
     return port_spec
 
