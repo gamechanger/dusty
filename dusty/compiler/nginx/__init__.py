@@ -20,6 +20,6 @@ def _nginx_server_spec(port_spec):
 def nginx_configuration_spec(port_spec_dict):
     nginx_string_spec = "http { \n"
     for port_spec in port_spec_dict['nginx']:
-        string_spec += _nginx_server_spec(port_spec)
-    string_spec += "}\n"
-    return string_spec
+        nginx_string_spec += _nginx_server_spec(port_spec)
+    nginx_string_spec += "}\n"
+    return nginx_string_spec

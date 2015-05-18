@@ -2,6 +2,9 @@ from unittest import TestCase
 from dusty.compiler.nginx import (nginx_configuration_spec, _nginx_listen_string, _nginx_location_spec,
                                   _nginx_proxy_string, _nginx_server_spec)
 
+def clense(string):
+    return string.replace("\n", "").replace("\t", "").replace(" ", "")
+
 class TestPortSpecCompiler(TestCase):
     def setUp(self):
         self.port_spec_dict_1 = {'nginx': [{'proxied_ip': '127.0.0.1',
@@ -14,9 +17,7 @@ class TestPortSpecCompiler(TestCase):
                                             'host_port': '8001'}]}
 
     def test_nginx_configuration_spec(self):
-        expected_output =
-        """
-        http {
+        expected_output = clense("""http {
             server {
                 listen local.gc.com:80;
                 location / {
@@ -24,6 +25,7 @@ class TestPortSpecCompiler(TestCase):
                 }
             }
         }
-        """
-        output = nginx_configuration_spec(self.port_spec_dict_1)
+        """)
+        output = clense(nginx_configuration_spec(self.port_spec_dict_1))
+        print output
         self.assertEqual(output, expected_output)
