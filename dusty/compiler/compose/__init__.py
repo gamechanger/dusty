@@ -1,5 +1,4 @@
 import yaml
-import pprint
 
 from .. import get_assembled_specs
 from ...source import repo_path
@@ -8,9 +7,8 @@ from ... import constants
 
 def write_compose_file():
     compose_dict = get_compose_dict()
-    print pprint.pformat(compose_dict)
     with open("{}/docker-compose.yml".format(constants.COMPOSE_DIR), 'w') as f:
-        f.write(yaml.dump(compose_dict, default_flow_style=False, width=10000))
+        f.write(yaml.dump(compose_dict, default_flow_style=False))
     yield "Written to {}".format("{}/docker-compose.yml".format(constants.COMPOSE_DIR)).encode('utf-8')
 
 def get_compose_dict():
