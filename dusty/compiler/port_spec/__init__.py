@@ -42,25 +42,8 @@ def add_container_ports(host_forwarding_spec, container_ports):
 def add_host_names(host_forwarding_spec, port_mappings, host_names):
     host_name = host_forwarding_spec['host_name']
     if host_name not in host_names:
-        port_mappings['hosts_file']  = _hosts_file_port_spec(host_forwarding_spec)
+        port_mappings['hosts_file'].append(_hosts_file_port_spec(host_forwarding_spec))
         host_names.add(host_name)
-
-def host_forwarding_port_mappings(host_forwarding_spec, forwarding_port, container_ports, host_full_addresses, host_names):
-    """ Given a specific host_forwarding dictionary found in an dusty app spec, it will return the port_mappings for that
-    host_forwarding. Currently this will include docker_compose, virtualbox, nginx and hosts_file"""
-    port_mappings = {'docker_compose': None, 'virtualbox': None, 'nginx': None, 'hosts_file': None}
-
-    add_full_addresses(host_forwarding_spec, host_full_addresses)
-    add_container_ports(host_forwarding_spec, container_ports)
-
-    port_mappings['docker_compose'] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
-    port_mappings['virtualbox'] = _virtualbox_port_spec(forwarding_port)
-    port_mappings['nginx'] = _nginx_port_spec(host_forwarding_spec, forwarding_port)
-
-    add_host_names(host_forwarding_spec, port_mappings, host_names)
-
-    return port_mappings
-
 
 def port_spec_document(expanded_active_specs):
     """ Given a dictionary containing the expanded dusty DAG specs this function will
@@ -78,12 +61,14 @@ def port_spec_document(expanded_active_specs):
             continue
         container_ports = set()
         for host_forwarding_spec in app_spec['host_forwarding']:
-            host_forwarding_port_spec = host_forwarding_port_mappings(host_forwarding_spec, forwarding_port, container_ports, host_full_addresses, host_names)
-            port_spec['docker_compose'][app_name] = host_forwarding_port_spec['docker_compose']
-            port_spec['virtualbox'].append(host_forwarding_port_spec['virtualbox'])
-            port_spec['nginx'].append(host_forwarding_port_spec['nginx'])
-            if host_forwarding_port_spec['hosts_file'] is not None:
-                port_spec['hosts_file'].append(host_forwarding_port_spec['hosts_file'])
+            add_full_addresses(host_forwarding_spec, host_full_addresses)
+            add_container_ports(host_forwarding_spec, container_ports)
+
+            port_spec['docker_compose'][app_name] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
+            port_spec['virtualbox'].append(_virtualbox_port_spec(forwarding_port))
+            port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port))
+
+            add_host_names(host_forwarding_spec, port_spec, host_names)
             forwarding_port += 1
     return port_spec
 
