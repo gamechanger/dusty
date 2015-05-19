@@ -6,7 +6,7 @@ from unittest import TestCase
 
 import dusty.constants
 from dusty.config import write_default_config, save_config_value, get_config_value
-from dusty.commands.manage_config import list_config, set_value
+from dusty.commands.manage_config import list_config, save_value
 from ..fixtures import basic_specs_fixture
 
 class TestManageConfigCommands(TestCase):
@@ -30,16 +30,16 @@ class TestManageConfigCommands(TestCase):
         self.assertEquals(result, self.expected_config)
 
     def test_set_value_changes_value(self):
-        set_value('specs_path', '~/here').next()
+        save_value('specs_path', '~/here').next()
         result = list_config().next()
         self.assertEquals(result, {'bundles': [], 'specs_path': '~/here', 'repo_overrides': {}})
 
     def test_set_value_no_changes_1(self):
-        set_value('specs_pathers', '~/here').next()
+        save_value('specs_pathers', '~/here').next()
         result = list_config().next()
         self.assertEquals(result, self.expected_config)
 
     def test_set_value_no_changes_2(self):
-        set_value('bundles', '~/here').next()
+        save_value('bundles', '~/here').next()
         result = list_config().next()
         self.assertEquals(result, self.expected_config)
