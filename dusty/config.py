@@ -14,7 +14,7 @@ def _dump(doc):
     return yaml.dump(doc, default_flow_style=False)
 
 def write_default_config():
-    default_config = {'bundles': [], 'specs_path': '~/dusty-specs', 'repo_overrides': {}}
+    default_config = {'bundles': [], 'repo_overrides': {}}
     save_config(default_config)
 
 def get_config():
