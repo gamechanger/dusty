@@ -37,5 +37,7 @@ def assert_config_key(key, empty_value=None):
     in the app config. Useful for enforcing that certain keys are
     present before entering codepaths that depend on them."""
     value = get_config_value(key)
-    if value is None or empty_value is not None and value == empty_value :
+    if value is None:
         raise KeyError('Configuration key {} is required'.format(key))
+    elif empty_value is not None and value == empty_value:
+        raise KeyError('Configuration key {} cannot have empty value of {}'.format(key, empty_value))
