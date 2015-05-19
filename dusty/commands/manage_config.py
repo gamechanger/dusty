@@ -7,6 +7,7 @@ def list_config():
 def save_value(key=None, value=None):
     if key == None and value == None:
         yield 'Call with arguments `key value`, where key is in {}'.format(CONFIG_KEY_WHITE_LIST)
+        return
     elif value == None:
         raise ValueError('Value cannot be None')
     config = get_config()
