@@ -29,6 +29,8 @@ def _hosts_file_port_spec(host_forwarding_spec):
 
 
 def host_forwarding_spec_document(host_forwarding_spec, forwarding_port, container_ports, host_full_addresses, host_names):
+    """ Given a specific host_forwarding dictionary found in an dusty app spec, it will return the port_mappings for that
+    host_forwarding. Currently this will include docker_compose, virtualbox, nginx and hosts_file"""
     port_spec = {'docker_compose': None, 'virtualbox': None, 'nginx': None, 'hosts_file': None}
     container_port = host_forwarding_spec['container_port']
     host_name = host_forwarding_spec['host_name']
@@ -48,6 +50,7 @@ def host_forwarding_spec_document(host_forwarding_spec, forwarding_port, contain
         port_spec['hosts_file']  = _hosts_file_port_spec(host_forwarding_spec)
         host_names.add(host_name)
     return port_spec
+
 
 def port_spec_document(expanded_active_specs):
     """ Given a dictionary containing the expanded dusty DAG specs this function will
