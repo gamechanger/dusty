@@ -16,6 +16,7 @@ def get_compose_dict(assembled_specs, port_specs):
     return compose_dict
 
 def _composed_app_dict(app_name, assembled_specs, port_specs):
+    logging.info("Compiling compose dict for app {}".format(app_name))
     app_spec = assembled_specs['apps'][app_name]
     compose_dict = app_spec.get("compose", {})
     if 'image' in app_spec and 'build' in app_spec:
