@@ -31,3 +31,10 @@ def save_config_value(key, value):
     current_config = get_config()
     current_config[key] = value
     save_config(current_config)
+
+def assert_config_key(key):
+    """Raises a KeyError if the given key is not currently present
+    in the app config. Useful for enforcing that certain keys are
+    present before entering codepaths that depend on them."""
+    if get_config_value(key) is None:
+        raise KeyError('Configuration key {} is required'.format(key))

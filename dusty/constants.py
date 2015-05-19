@@ -9,7 +9,8 @@ LOG_SUBDIRS = ['nginx']
 
 SOCKET_PATH = '/var/run/dusty/dusty.sock'
 CONFIG_PATH = '/etc/dusty/config.yml'
-REPOS_PATH = '/etc/dusty/repos'
+REPOS_DIR = '/etc/dusty/repos'
+COMPOSE_DIR = '/etc/dusty/compose'
 
 GIT_USER = 'git'
 
