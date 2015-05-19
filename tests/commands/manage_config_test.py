@@ -29,17 +29,20 @@ class TestManageConfigCommands(TestCase):
         result = list_config().next()
         self.assertEquals(result, self.expected_config)
 
-    def test_set_value_changes_value(self):
+    def test_set_value_changes_value_1(self):
         save_value('specs_path', '~/here').next()
         result = list_config().next()
         self.assertEquals(result, {'bundles': [], 'specs_path': '~/here', 'repo_overrides': {}})
 
-    def test_set_value_no_changes_1(self):
+    def test_set_value_changes_value_2(self):
         save_value('specs_pathers', '~/here').next()
         result = list_config().next()
-        self.assertEquals(result, self.expected_config)
+        self.assertEquals(result, {'bundles': [], 'specs_path': self.temp_specs_path, 'repo_overrides': {}, 'specs_pathers': '~/here'})
 
     def test_set_value_no_changes_2(self):
-        save_value('bundles', '~/here').next()
+        try:
+            save_value('bundles', '~/here').next()
+        except:
+            pass
         result = list_config().next()
         self.assertEquals(result, self.expected_config)
