@@ -2,7 +2,7 @@ from unittest import TestCase
 from dusty.compiler.nginx import (nginx_configuration_spec, _nginx_listen_string, _nginx_location_spec,
                                   _nginx_proxy_string, _nginx_server_spec)
 
-def clense(string):
+def cleanse(string):
     return string.replace("\n", "").replace("\t", "").replace(" ", "")
 
 class TestPortSpecCompiler(TestCase):
@@ -17,7 +17,7 @@ class TestPortSpecCompiler(TestCase):
                                             'host_port': '8001'}]}
 
     def test_nginx_configuration_spec_1(self):
-        expected_output = clense("""http {
+        expected_output = cleanse("""http {
             server {
                 listen local.gc.com:80;
                 location / {
@@ -26,11 +26,11 @@ class TestPortSpecCompiler(TestCase):
             }
         }
         """)
-        output = clense(nginx_configuration_spec(self.port_spec_dict_1))
+        output = cleanse(nginx_configuration_spec(self.port_spec_dict_1))
         self.assertEqual(output, expected_output)
 
     def test_nginx_configuration_spec_2(self):
-        expected_output = clense("""http {
+        expected_output = cleanse("""http {
             server {
                 listen local.gcapi.com:8001;
                 location / {
@@ -39,7 +39,7 @@ class TestPortSpecCompiler(TestCase):
             }
         }
         """)
-        output = clense(nginx_configuration_spec(self.port_spec_dict_2))
+        output = cleanse(nginx_configuration_spec(self.port_spec_dict_2))
         self.assertEqual(output, expected_output)
 
     def test_nginx_configuration_spec_3(self):
@@ -52,7 +52,7 @@ class TestPortSpecCompiler(TestCase):
                                 'host_address': 'local.gc.com',
                                 'host_port': '80'}]}
 
-        expected_output = clense("""http {
+        expected_output = cleanse("""http {
             server {
                 listen local.gcapi.com:8001;
                 location / {
@@ -67,8 +67,7 @@ class TestPortSpecCompiler(TestCase):
             }
         }
         """)
-        output = clense(nginx_configuration_spec(port_spec))
-        print output
+        output = cleanse(nginx_configuration_spec(port_spec))
         self.assertEqual(output, expected_output)
 
 
