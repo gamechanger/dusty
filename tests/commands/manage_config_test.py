@@ -18,6 +18,7 @@ class TestManageConfigCommands(TestCase):
         write_default_config()
         save_config_value('specs_path', self.temp_specs_path)
         basic_specs_fixture()
+        dusty.constants.CONFIG_KEY_WHITELIST = ['bundles', 'repo_overrides', 'specs_path', 'docker_user']
         self.expected_config = {'bundles': [], 'specs_path': self.temp_specs_path, 'repo_overrides': {}}
 
     def tearDown(self):
