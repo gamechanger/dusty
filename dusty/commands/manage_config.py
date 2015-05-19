@@ -1,4 +1,4 @@
-from ..config import get_config, save_config
+from ..config import get_config, save_config_value
 
 def list_config():
      yield get_config()
