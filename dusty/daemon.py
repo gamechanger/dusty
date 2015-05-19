@@ -2,8 +2,6 @@ import os
 import atexit
 import logging
 import socket
-import traceback
-import sys
 
 from .preflight import preflight_check
 from .log import configure_logging
@@ -42,9 +40,6 @@ def _listen_on_socket(socket_path):
                         for line in process_command(data):
                             connection.sendall('{}\n'.format(line.encode('utf-8')))
                     except Exception as e:
-                        exc_type, exc_value, exc_traceback = sys.exc_info()
-                        traceback.print_exception(exc_type, exc_value, exc_traceback,
-                              limit=100, file=sys.stdout)
                         connection.sendall('ERROR: {}\n'.format(e.message).encode('utf-8'))
                     connection.sendall(SOCKET_TERMINATOR)
             finally:
