@@ -5,12 +5,6 @@ from ...source import repo_path
 from ..port_spec import port_spec_document
 from ... import constants
 
-def write_compose_file():
-    compose_dict = get_compose_dict()
-    with open("{}/docker-compose.yml".format(constants.COMPOSE_DIR), 'w') as f:
-        f.write(yaml.dump(compose_dict, default_flow_style=False))
-    yield "Written to {}".format("{}/docker-compose.yml".format(constants.COMPOSE_DIR)).encode('utf-8')
-
 def get_compose_dict():
     assembled_specs = get_assembled_specs()
     port_specs = port_spec_document(assembled_specs)

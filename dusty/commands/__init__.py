@@ -17,8 +17,7 @@ COMMAND_TREE = {
         'update': repos.update_managed_repos
     },
     'compiler': {
-        'list': compiler.list_processed_specs,
-        'compose': compiler.compose.write_compose_file
+        'list': compiler.list_processed_specs
     }
 }
 
