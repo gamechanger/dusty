@@ -3,6 +3,9 @@ from dusty.constants import LOCALHOST
 class ReusedHostFullAddress(Exception):
     pass
 
+class ReusedContainerPort(Exception):
+    pass
+
 def _docker_compose_port_spec(host_forwarding_spec, host_port):
     return {'in_container_port': str(host_forwarding_spec['container_port']),
             'mapped_host_ip': LOCALHOST,
@@ -39,6 +42,7 @@ def port_spec_document(expanded_active_specs):
         app_spec = expanded_active_specs['apps'][app_name]
         if 'host_forwarding' not in app_spec:
             continue
+        container_ports = set()
         for host_forwarding_spec in app_spec['host_forwarding']:
             container_port = host_forwarding_spec['container_port']
             host_name = host_forwarding_spec['host_name']
@@ -47,6 +51,9 @@ def port_spec_document(expanded_active_specs):
             if host_full_address in host_full_addresses:
                 raise ReusedHostFullAddress("{} has already been specified and used".format(host_full_address))
             host_full_addresses.add(host_full_address)
+            if container_port in container_ports:
+                raise ReusedContainerPort("{} has already been specified and used".format(container_port))
+            container_ports.add(container_port)
 
             port_spec['docker_compose'][app_name] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
             port_spec['virtualbox'].append(_virtualbox_port_spec(forwarding_port))

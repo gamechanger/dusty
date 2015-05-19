@@ -1,7 +1,7 @@
 from unittest import TestCase
 from dusty.compiler.port_spec import (_docker_compose_port_spec, _virtualbox_port_spec, _nginx_port_spec,
                                       _hosts_file_port_spec, port_spec_document, LOCALHOST,
-                                      ReusedHostFullAddress)
+                                      ReusedHostFullAddress, ReusedContainerPort)
 
 class TestPortSpecCompiler(TestCase):
     def setUp(self):
@@ -160,3 +160,18 @@ class TestPortSpecCompiler(TestCase):
         with self.assertRaises(ReusedHostFullAddress):
             port_spec_document(expanded_spec)
 
+    def test_port_spec_throws_container_port(self):
+        expanded_spec = {'apps':
+                                {'gcweb':
+                                         {'host_forwarding':[{'host_name': 'local.gc.com',
+                                                             'host_port': 80,
+                                                             'container_port': 80},
+                                                             {'host_name': 'local.gc.com',
+                                                             'host_port': 81,
+                                                             'container_port': 80}]},
+                                 'gcapi':
+                                         {'host_forwarding':[{'host_name': 'local.gc.com',
+                                                             'host_port': 82,
+                                                             'container_port': 81}]}}}
+        with self.assertRaises(ReusedContainerPort):
+            port_spec_document(expanded_spec)
