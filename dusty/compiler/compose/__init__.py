@@ -5,9 +5,7 @@ from ...source import repo_path
 from ..port_spec import port_spec_document
 from ... import constants
 
-def get_compose_dict():
-    assembled_specs = get_assembled_specs()
-    port_specs = port_spec_document(assembled_specs)
+def get_compose_dict(assembled_specs, port_specs):
     compose_dict = {}
     for app_name in assembled_specs['apps'].keys():
         compose_dict[app_name] = _composed_app_dict(app_name, assembled_specs, port_specs)
