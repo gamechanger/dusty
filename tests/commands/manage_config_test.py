@@ -35,9 +35,17 @@ class TestManageConfigCommands(TestCase):
         self.assertEquals(result, {'bundles': [], 'specs_path': '~/here', 'repo_overrides': {}})
 
     def test_set_value_changes_value_2(self):
-        save_value('specs_pathers', '~/here').next()
+        save_value('docker_user', '~/here').next()
         result = list_config().next()
-        self.assertEquals(result, {'bundles': [], 'specs_path': self.temp_specs_path, 'repo_overrides': {}, 'specs_pathers': '~/here'})
+        self.assertEquals(result, {'bundles': [], 'specs_path': self.temp_specs_path, 'repo_overrides': {}, 'docker_user': '~/here'})
+
+    def test_set_value_no_changes_1(self):
+        try:
+            save_value('specs_pathers', '~/here').next()
+        except:
+            pass
+        result = list_config().next()
+        self.assertEquals(result, self.expected_config)
 
     def test_set_value_no_changes_2(self):
         try:
