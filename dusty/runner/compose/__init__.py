@@ -42,12 +42,14 @@ def _composefile_path():
     return os.path.join(constants.COMPOSE_DIR, 'docker-compose.yml')
 
 def _write_composefile(compose_config):
+    logging.info('Writing new Composefile')
     if not os.path.exists(constants.COMPOSE_DIR):
         os.makedirs(constants.COMPOSE_DIR)
     with open(_composefile_path(), 'w') as f:
         f.write(yaml.dump(compose_config, default_flow_style=False))
 
 def _compose_up():
+    logging.info('Running docker-compose up')
     _check_call_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl'],
                         env=_get_docker_env())
 
