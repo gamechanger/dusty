@@ -1,7 +1,7 @@
 from ..config import get_config, save_config
 
 def list_config():
-     yield str(get_config())
+     yield get_config()
 
 def set_value(key, value):
     config = get_config()
