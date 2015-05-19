@@ -5,10 +5,10 @@ def list_config():
      yield get_config()
 
 def save_value(key=None, value=None):
-    if key == None and value == None:
+    if key is None and value is None:
         yield 'Call with arguments `key value`, where key is in {}'.format(CONFIG_KEY_WHITELIST)
         return
-    elif value == None:
+    elif value is None:
         raise ValueError('Value cannot be None')
     config = get_config()
     if key not in CONFIG_KEY_WHITELIST:
