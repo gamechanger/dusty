@@ -69,7 +69,6 @@ def port_spec_document(expanded_active_specs):
         container_ports = set()
         for host_forwarding_spec in app_spec['host_forwarding']:
             host_forwarding_port_spec = host_forwarding_spec_document(host_forwarding_spec, forwarding_port, container_ports, host_full_addresses, host_names)
-            print host_forwarding_port_spec
             port_spec['docker_compose'][app_name] = host_forwarding_port_spec['docker_compose']
             port_spec['virtualbox'].append(host_forwarding_port_spec['virtualbox'])
             port_spec['nginx'].append(host_forwarding_port_spec['nginx'])

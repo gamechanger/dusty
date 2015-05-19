@@ -108,7 +108,6 @@ class TestPortSpecCompiler(TestCase):
                                             'host_address': 'local.gcapi.com'},
                                           {'forwarded_ip': LOCALHOST,
                                             'host_address': 'local.gc.com'}]}
-        print port_spec_document(expanded_spec)
         self.assertEqual(port_spec_document(expanded_spec), correct_port_spec)
 
     def test_port_spec_document_2_apps_same_host_port(self):
