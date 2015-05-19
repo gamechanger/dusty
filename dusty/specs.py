@@ -5,7 +5,7 @@ import yaml
 from .config import get_config_value, assert_config_key
 
 def get_specs():
-    assert_config_key('specs_path', '')
+    assert_config_key('specs_path')
     specs_path = get_config_value('specs_path')
     return get_specs_from_path(specs_path)
 

@@ -32,12 +32,13 @@ def save_config_value(key, value):
     current_config[key] = value
     save_config(current_config)
 
-def assert_config_key(key, empty_value=None):
+def assert_config_key(key):
     """Raises a KeyError if the given key is not currently present
-    in the app config. Useful for enforcing that certain keys are
-    present before entering codepaths that depend on them."""
+    in the app config. It also ensures that keys with string values
+    do not contain empty strings. Useful for enforcing that certain
+    keys are present before entering codepaths that depend on them."""
     value = get_config_value(key)
     if value is None:
         raise KeyError('Configuration key {} is required'.format(key))
-    elif empty_value is not None and value == empty_value:
-        raise KeyError('Configuration key {} cannot have empty value of {}'.format(key, empty_value))
+    elif isinstance(value, basestring) and value == '':
+        raise KeyError('Configuration key {} cannot be an empty string'.format(key))
