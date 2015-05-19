@@ -18,6 +18,7 @@ class TestManageConfigCommands(TestCase):
         write_default_config()
         save_config_value('specs_path', self.temp_specs_path)
         basic_specs_fixture()
+        dusty.constants.CONFIG_KEY_WHITELIST = ['bundles', 'repo_overrides', 'specs_path', 'docker_user']
         self.expected_config = {'bundles': [], 'specs_path': self.temp_specs_path, 'repo_overrides': {}}
 
     def tearDown(self):
@@ -29,20 +30,28 @@ class TestManageConfigCommands(TestCase):
         result = list_config().next()
         self.assertEquals(result, self.expected_config)
 
-    def test_set_value_changes_value_1(self):
+    def test_save_value_changes_value_1(self):
         save_value('specs_path', '~/here').next()
         result = list_config().next()
         self.assertEquals(result, {'bundles': [], 'specs_path': '~/here', 'repo_overrides': {}})
 
-    def test_set_value_changes_value_2(self):
-        save_value('specs_pathers', '~/here').next()
+    def test_save_value_changes_value_2(self):
+        save_value('docker_user', '~/here').next()
         result = list_config().next()
-        self.assertEquals(result, {'bundles': [], 'specs_path': self.temp_specs_path, 'repo_overrides': {}, 'specs_pathers': '~/here'})
+        self.assertEquals(result, {'bundles': [], 'specs_path': self.temp_specs_path, 'repo_overrides': {}, 'docker_user': '~/here'})
 
-    def test_set_value_no_changes_2(self):
-        try:
+    def test_save_value_no_changes_1(self):
+        with self.assertRaises(KeyError):
+            save_value('specs_pathers', '~/here').next()
+
+    def test_save_value_no_changes_2(self):
+        with self.assertRaises(KeyError):
             save_value('bundles', '~/here').next()
-        except:
-            pass
-        result = list_config().next()
-        self.assertEquals(result, self.expected_config)
+
+    def test_save_value_no_arguemnts(self):
+        result = save_value().next()
+        self.assertEquals(result, "Call with arguments `key value`, where key is in {}".format(dusty.constants.CONFIG_KEY_WHITELIST))
+
+    def test_save_value_one_argument(self):
+        with self.assertRaises(ValueError):
+            save_value('specs_path').next()

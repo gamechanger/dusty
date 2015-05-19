@@ -38,7 +38,10 @@ def _listen_on_socket(socket_path):
                     logging.info('Received command: {}'.format(data))
                     try:
                         for line in process_command(data):
-                            connection.sendall('{}\n'.format(line.encode('utf-8')))
+                            encoded_line = line
+                            if isinstance(encoded_line, basestring):
+                                encoded_line = line.encode('utf-8')
+                            connection.sendall('{}\n'.format(encoded_line))
                     except Exception as e:
                         connection.sendall('ERROR: {}\n'.format(e.message).encode('utf-8'))
                     connection.sendall(SOCKET_TERMINATOR)
