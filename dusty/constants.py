@@ -28,7 +28,7 @@ SYSTEM_DEPENDENCY_VERSIONS = {
     'docker': '1.6.0'
 }
 
-CONFIG_KEY_WHITE_LIST = [
+CONFIG_KEY_WHITELIST = [
     'bundles',
     'repo_overrides',
     'specs_path',

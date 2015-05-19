@@ -40,24 +40,16 @@ class TestManageConfigCommands(TestCase):
         self.assertEquals(result, {'bundles': [], 'specs_path': self.temp_specs_path, 'repo_overrides': {}, 'docker_user': '~/here'})
 
     def test_save_value_no_changes_1(self):
-        try:
+        with self.assertRaises(KeyError):
             save_value('specs_pathers', '~/here').next()
-        except:
-            pass
-        result = list_config().next()
-        self.assertEquals(result, self.expected_config)
 
     def test_save_value_no_changes_2(self):
-        try:
+        with self.assertRaises(KeyError):
             save_value('bundles', '~/here').next()
-        except:
-            pass
-        result = list_config().next()
-        self.assertEquals(result, self.expected_config)
 
     def test_save_value_no_arguemnts(self):
         result = save_value().next()
-        self.assertEquals(result, "Call with arguments `key value`, where key is in {}".format(dusty.constants.CONFIG_KEY_WHITE_LIST))
+        self.assertEquals(result, "Call with arguments `key value`, where key is in {}".format(dusty.constants.CONFIG_KEY_WHITELIST))
 
     def test_save_value_one_argument(self):
         with self.assertRaises(ValueError):
