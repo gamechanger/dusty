@@ -10,7 +10,7 @@ def write_compose_file():
     compose_dict = get_compose_dict()
     print pprint.pformat(compose_dict)
     with open(constants.COMPOSE_YML_PATH, 'w') as f:
-        f.write(yaml.dump(compose_dict, default_flow_style=False))
+        f.write(yaml.dump(compose_dict, default_flow_style=False, width=10000))
     yield "Written to {}".format(constants.COMPOSE_YML_PATH).encode('utf-8')
 
 def get_compose_dict():
@@ -26,9 +26,10 @@ def get_compose_dict():
 def _composed_app_dict(app_name, assembled_specs, port_specs):
     app_spec = assembled_specs['apps'][app_name]
     compose_bundle = app_spec.get("compose", {})
-    compose_bundle['build'] = "{}/{}".format(repo_path(app_spec['repo']), app_spec.get('build', "."))
+    compose_bundle['image'] = app_spec['image']
     compose_bundle['command'] = _compile_docker_command(app_spec)
     compose_bundle['links'] = app_spec.get('depends', {}).get('services', [])
+    compose_bundle['volumes'] = _get_compose_volumes(app_name, assembled_specs)
     port_str = _get_ports_list(app_name, port_specs)
     if port_str:
         compose_bundle['ports'] = port_str
@@ -46,8 +47,33 @@ def _get_ports_list(app_name, port_specs):
 def _compile_docker_command(app_spec):
     first_run_file = constants.FIRST_RUN_FILE
     command = []
-    command.append("if [ ! -f {} ]; then".format(first_run_file))
-    command.append(app_spec['commands'].get("once", ""))
-    command.append("touch {}; fi".format(first_run_file))
+    command.append("export PATH=$PATH:{}".format(_container_code_path(app_spec)))
+    command.append("if [ ! -f {} ]".format(first_run_file))
+    once_command = app_spec['commands'].get("once", "")
+    command.append("then touch {}; fi".format(first_run_file))
+    if once_command:
+        command.append(once_command)
     command.append(app_spec['commands']['always'])
     return "bash -c \"{}\"".format('; '.join(command))
+
+def _get_compose_volumes(app_name, assembled_specs):
+    app_spec = assembled_specs['apps'][app_name]
+    volumes = []
+    volumes.append(_get_app_volume_mount(app_spec))
+    volumes += _get_libs_volume_mounts(app_name, assembled_specs)
+    return volumes
+
+def _get_app_volume_mount(app_spec):
+    app_repo_path = repo_path(app_spec['repo'])
+    return "{}:{}".format(app_repo_path, _container_code_path(app_spec))
+
+def _container_code_path(spec):
+    return "/gc/{}".format(spec['repo'].split('/')[-1])
+
+def _get_libs_volume_mounts(app_name, assembled_specs):
+    volumes = []
+    for lib_name in assembled_specs['apps'][app_name].get('depends', {}).get('libs', []):
+        lib_spec = assembled_specs['libs'][lib_name]
+        lib_repo_path = repo_path(lib_spec['repo'])
+        volumes.append("{}:{}".format(lib_repo_path, _container_code_path(lib_spec)))
+    return volumes
