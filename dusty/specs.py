@@ -2,15 +2,11 @@ import os
 import glob
 import yaml
 
-from .config import get_config_value
-
-class SpecsPathNotSet(Exception):
-    pass
+from .config import get_config_value, assert_config_key
 
 def get_specs():
+    assert_config_key('specs_path', '')
     specs_path = get_config_value('specs_path')
-    if not specs_path:
-        raise SpecsPathNotSet('Your specs_path is not set. Please use the `dusty config set` command to set it')
     return get_specs_from_path(specs_path)
 
 def get_specs_from_path(specs_path):
