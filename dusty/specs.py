@@ -4,8 +4,15 @@ import yaml
 
 from .config import get_config_value
 
+class SpecsPathNotSet(Exception):
+    pass
+
 def get_specs():
+    import logging
     specs_path = get_config_value('specs_path')
+    logging.error(specs_path)
+    if not specs_path:
+        raise SpecsPathNotSet('Your specs_path is not set. Please use the `dusty config set` command to set it')
     return get_specs_from_path(specs_path)
 
 def get_specs_from_path(specs_path):
