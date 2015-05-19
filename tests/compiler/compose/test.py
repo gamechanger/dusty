@@ -107,6 +107,7 @@ class TestComposeCompiler(TestCase):
                         'apps': ['app2']
                     },
                     'image': 'awesomeGCimage'
+                    'mount': '/gc/app1'
                 }
             },
             'libs': {

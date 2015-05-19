@@ -1,3 +1,5 @@
+import logging
+
 import yaml
 
 from .. import get_assembled_specs
@@ -16,7 +18,14 @@ def get_compose_dict(assembled_specs, port_specs):
 def _composed_app_dict(app_name, assembled_specs, port_specs):
     app_spec = assembled_specs['apps'][app_name]
     compose_bundle = app_spec.get("compose", {})
-    compose_bundle['image'] = app_spec['image']
+    if 'image' in app_spec and 'build' in app_spec:
+        raise RuntimeError("image and build are both specified in the spec for {}".format(app_name))
+    if 'image' in app_spec:
+        compose_bundle['image'] = app_spec['image']
+    elif 'build' in app_spec:
+        compose_bundle['build'] = app_spec['build']
+    else:
+        raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
     compose_bundle['command'] = _compile_docker_command(app_spec)
     compose_bundle['links'] = app_spec.get('depends', {}).get('services', []) + app_spec.get('depends', {}).get('apps', [])
     compose_bundle['volumes'] = _get_compose_volumes(app_name, assembled_specs)
@@ -59,7 +68,7 @@ def _get_app_volume_mount(app_spec):
     return "{}:{}".format(app_repo_path, _container_code_path(app_spec))
 
 def _container_code_path(spec):
-    return "/gc/{}".format(spec['repo'].split('/')[-1])
+    return spec['mount']
 
 def _get_libs_volume_mounts(app_name, assembled_specs):
     volumes = []
