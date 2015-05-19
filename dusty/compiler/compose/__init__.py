@@ -9,7 +9,7 @@ from ... import constants
 def write_compose_file():
     compose_dict = get_compose_dict()
     print pprint.pformat(compose_dict)
-    with open(constants.COMPOSE_YML_PATH, 'w') as f:
+    with open("{}/docker-compose.yml".format(constants.COMPOSE_DIR), 'w') as f:
         f.write(yaml.dump(compose_dict, default_flow_style=False, width=10000))
     yield "Written to {}".format(constants.COMPOSE_YML_PATH).encode('utf-8')
 

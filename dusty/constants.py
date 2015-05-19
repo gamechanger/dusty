@@ -12,7 +12,6 @@ CONFIG_PATH = '/etc/dusty/config.yml'
 REPOS_DIR = '/etc/dusty/repos'
 COMPOSE_DIR = '/etc/dusty/compose'
 FIRST_RUN_FILE = '/var/docker_first_time_started'
-COMPOSE_YML_PATH = '/etc/dusty/docker-compose.yml'
 
 GIT_USER = 'git'
 
