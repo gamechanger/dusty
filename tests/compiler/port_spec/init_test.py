@@ -54,9 +54,9 @@ class TestPortSpecCompiler(TestCase):
     def test_port_spec_document_1_app(self):
         expanded_spec = {'apps':
                                 {'gcweb':
-                                         {'host_forwarding':{'host_name': 'local.gc.com',
+                                         {'host_forwarding':[{'host_name': 'local.gc.com',
                                                              'host_port': 80,
-                                                             'container_port': 80}}}}
+                                                             'container_port': 80}]}}}
         correct_port_spec = {'docker_compose':{'gcweb':{'in_container_port': '80',
                                                         'mapped_host_ip': LOCALHOST,
                                                         'mapped_host_port': '65000'}},
@@ -75,13 +75,13 @@ class TestPortSpecCompiler(TestCase):
     def test_port_spec_document_2_apps(self):
         expanded_spec = {'apps':
                                 {'gcweb':
-                                         {'host_forwarding':{'host_name': 'local.gc.com',
+                                         {'host_forwarding':[{'host_name': 'local.gc.com',
                                                              'host_port': 80,
-                                                             'container_port': 80}},
+                                                             'container_port': 80}]},
                                 'gcapi':
-                                         {'host_forwarding':{'host_name': 'local.gcapi.com',
+                                         {'host_forwarding':[{'host_name': 'local.gcapi.com',
                                                              'host_port': 8000,
-                                                             'container_port': 8001}}}}
+                                                             'container_port': 8001}]}}}
         correct_port_spec = {'docker_compose':{'gcweb':{'in_container_port': '80',
                                                         'mapped_host_ip': LOCALHOST,
                                                         'mapped_host_port': '65001'},
@@ -114,13 +114,13 @@ class TestPortSpecCompiler(TestCase):
     def test_port_spec_document_2_apps_same_host_port(self):
         expanded_spec = {'apps':
                                 {'gcweb':
-                                         {'host_forwarding':{'host_name': 'local.gc.com',
+                                         {'host_forwarding':[{'host_name': 'local.gc.com',
                                                              'host_port': 80,
-                                                             'container_port': 80}},
+                                                             'container_port': 80}]},
                                  'gcapi':
-                                         {'host_forwarding':{'host_name': 'local.gc.com',
+                                         {'host_forwarding':[{'host_name': 'local.gc.com',
                                                              'host_port': 8000,
-                                                             'container_port': 8001}}}}
+                                                             'container_port': 8001}]}}}
         correct_port_spec = {'docker_compose':{'gcweb':{'in_container_port': '80',
                                                         'mapped_host_ip': LOCALHOST,
                                                         'mapped_host_port': '65001'},
@@ -150,13 +150,13 @@ class TestPortSpecCompiler(TestCase):
     def test_port_spec_throws_full_address_error(self):
         expanded_spec = {'apps':
                                 {'gcweb':
-                                         {'host_forwarding':{'host_name': 'local.gc.com',
+                                         {'host_forwarding':[{'host_name': 'local.gc.com',
                                                              'host_port': 80,
-                                                             'container_port': 80}},
+                                                             'container_port': 80}]},
                                  'gcapi':
-                                         {'host_forwarding':{'host_name': 'local.gc.com',
+                                         {'host_forwarding':[{'host_name': 'local.gc.com',
                                                              'host_port': 80,
-                                                             'container_port': 81}}}}
+                                                             'container_port': 81}]}}}
         with self.assertRaises(ReusedHostFullAddress):
             port_spec_document(expanded_spec)
 

@@ -39,22 +39,22 @@ def port_spec_document(expanded_active_specs):
         app_spec = expanded_active_specs['apps'][app_name]
         if 'host_forwarding' not in app_spec:
             continue
-        host_forwarding_spec = app_spec['host_forwarding']
-        container_port = host_forwarding_spec['container_port']
-        host_name = host_forwarding_spec['host_name']
-        host_full_address = '{}:{}'.format(host_name, host_forwarding_spec['host_port'])
+        for host_forwarding_spec in app_spec['host_forwarding']:
+            container_port = host_forwarding_spec['container_port']
+            host_name = host_forwarding_spec['host_name']
+            host_full_address = '{}:{}'.format(host_name, host_forwarding_spec['host_port'])
 
-        if host_full_address in host_full_addresses:
-            raise ReusedHostFullAddress("{} has already been specified and used".format(host_full_address))
-        host_full_addresses.add(host_full_address)
+            if host_full_address in host_full_addresses:
+                raise ReusedHostFullAddress("{} has already been specified and used".format(host_full_address))
+            host_full_addresses.add(host_full_address)
 
-        port_spec['docker_compose'][app_name] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
-        port_spec['virtualbox'].append(_virtualbox_port_spec(forwarding_port))
-        port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port))
-        if host_name not in host_names:
-            port_spec['hosts_file'].append(_hosts_file_port_spec(host_forwarding_spec))
-            host_names.add(host_name)
-        forwarding_port += 1
+            port_spec['docker_compose'][app_name] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
+            port_spec['virtualbox'].append(_virtualbox_port_spec(forwarding_port))
+            port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port))
+            if host_name not in host_names:
+                port_spec['hosts_file'].append(_hosts_file_port_spec(host_forwarding_spec))
+                host_names.add(host_name)
+            forwarding_port += 1
     return port_spec
 
 
