@@ -3,10 +3,11 @@ import tempfile
 import shutil
 
 from unittest import TestCase
+from mock import patch
 import yaml
 
 from dusty import constants
-from dusty.runner.compose import _write_composefile
+from dusty.runner.compose import _write_composefile, _get_docker_env
 
 class TestComposeRunner(TestCase):
     def setUp(self):
@@ -24,3 +25,14 @@ class TestComposeRunner(TestCase):
         _write_composefile(self.test_spec)
         written = open(self.temp_compose_path, 'r').read()
         self.assertItemsEqual(yaml.load(written), self.test_spec)
+
+    @patch('dusty.runner.compose._check_output_demoted')
+    def test_get_docker_env(self, fake_check_output):
+        fake_check_output.return_value = """    export DOCKER_TLS_VERIFY=1
+        export DOCKER_HOST=tcp://192.168.59.103:2376
+        export DOCKER_CERT_PATH=/Users/root/.boot2docker/certs/boot2docker-vm"""
+        expected = {'DOCKER_TLS_VERIFY': '1',
+                    'DOCKER_HOST': 'tcp://192.168.59.103:2376',
+                    'DOCKER_CERT_PATH': '/Users/root/.boot2docker/certs/boot2docker-vm'}
+        result = _get_docker_env()
+        self.assertItemsEqual(result, expected)
