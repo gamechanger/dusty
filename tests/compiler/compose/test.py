@@ -17,6 +17,7 @@ class TestComposeCompiler(TestCase):
             'apps': {
                 'app1': {
                     'repo': '/cool/repo/app1',
+                    'mount': '/gc/app1',
                     'depends': {
                         'libs': ['lib1', 'lib2']
                     }
@@ -25,9 +26,11 @@ class TestComposeCompiler(TestCase):
             'libs': {
                 'lib1': {
                     'repo': '/cool/repo/lib1',
+                    'mount': '/gc/lib1'
                 },
                 'lib2': {
                     'repo': '/cool/repo/lib2',
+                    'mount': '/gc/lib2'
                 },
                 'lib3': {
                     'repo': '/cool/repo/lib3',
@@ -44,7 +47,8 @@ class TestComposeCompiler(TestCase):
 
     def test_compile_command_with_once(self, *args):
         app_spec = {
-            'repo': 'cool/repo/app1',
+            'repo': '/cool/repo/app1',
+            'mount': '/gc/app1',
             'commands': {
                 'once': "one_time.sh",
                 'always': "always.sh"
@@ -61,7 +65,8 @@ class TestComposeCompiler(TestCase):
 
     def test_compile_command_without_once(self, *args):
         app_spec = {
-            'repo': 'cool/repo/app1',
+            'repo': '/cool/repo/app1',
+            'mount': '/gc/app1',
             'commands': {
                 'always': "always.sh"
             }
@@ -106,19 +111,22 @@ class TestComposeCompiler(TestCase):
                         'services': ['service1', 'service2'],
                         'apps': ['app2']
                     },
-                    'image': 'awesomeGCimage'
+                    'image': 'awesomeGCimage',
                     'mount': '/gc/app1'
                 }
             },
             'libs': {
                 'lib1': {
                     'repo': '/cool/repo/lib1',
+                    'mount': '/gc/lib1'
                 },
                 'lib2': {
                     'repo': '/cool/repo/lib2',
+                    'mount': '/gc/lib2'
                 },
                 'lib3': {
                     'repo': '/cool/repo/lib3',
+                    'mount': '/gc/lib3'
                 }
             },
             'services':{
