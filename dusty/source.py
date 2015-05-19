@@ -7,7 +7,7 @@ import logging
 import git
 
 from .config import get_config_value
-from .constants import GIT_USER, REPOS_PATH
+from .constants import GIT_USER, REPOS_DIR
 from .notifier import notify
 
 def repo_path(repo_name):
@@ -18,7 +18,7 @@ def repo_path(repo_name):
     return override_dir if override_dir else _managed_repo_path(repo_name)
 
 def _managed_repo_path(repo_name):
-    return os.path.join(REPOS_PATH, repo_name)
+    return os.path.join(REPOS_DIR, repo_name)
 
 def _short_repo_name(repo_name):
     return repo_name.split('/')[-1]
