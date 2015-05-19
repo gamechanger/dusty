@@ -17,22 +17,23 @@ def get_compose_dict(assembled_specs, port_specs):
 
 def _composed_app_dict(app_name, assembled_specs, port_specs):
     app_spec = assembled_specs['apps'][app_name]
-    compose_bundle = app_spec.get("compose", {})
+    compose_dict = app_spec.get("compose", {})
     if 'image' in app_spec and 'build' in app_spec:
         raise RuntimeError("image and build are both specified in the spec for {}".format(app_name))
     if 'image' in app_spec:
-        compose_bundle['image'] = app_spec['image']
+        logging.info
+        compose_dict['image'] = app_spec['image']
     elif 'build' in app_spec:
-        compose_bundle['build'] = app_spec['build']
+        compose_dict['build'] = app_spec['build']
     else:
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
-    compose_bundle['command'] = _compile_docker_command(app_spec)
-    compose_bundle['links'] = app_spec.get('depends', {}).get('services', []) + app_spec.get('depends', {}).get('apps', [])
-    compose_bundle['volumes'] = _get_compose_volumes(app_name, assembled_specs)
+    compose_dict['command'] = _compile_docker_command(app_spec)
+    compose_dict['links'] = app_spec.get('depends', {}).get('services', []) + app_spec.get('depends', {}).get('apps', [])
+    compose_dict['volumes'] = _get_compose_volumes(app_name, assembled_specs)
     port_list = _get_ports_list(app_name, port_specs)
     if port_list:
-        compose_bundle['ports'] = port_list
-    return compose_bundle
+        compose_dict['ports'] = port_list
+    return compose_dict
 
 def _composed_service_dict(service_name, assembled_specs):
     return assembled_specs['services'][service_name]
