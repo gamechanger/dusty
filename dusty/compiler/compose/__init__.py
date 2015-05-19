@@ -20,7 +20,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
     compose_dict = app_spec.get("compose", {})
     if 'image' in app_spec and 'build' in app_spec:
         raise RuntimeError("image and build are both specified in the spec for {}".format(app_name))
-    if 'image' in app_spec:
+    elif 'image' in app_spec:
         logging.info
         compose_dict['image'] = app_spec['image']
     elif 'build' in app_spec:
