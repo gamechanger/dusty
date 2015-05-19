@@ -27,3 +27,10 @@ SYSTEM_DEPENDENCY_VERSIONS = {
     'boot2docker': '1.6.0',
     'docker': '1.6.0'
 }
+
+CONFIG_KEY_WHITE_LIST = [
+    'bundles',
+    'repo_overrides',
+    'specs_path',
+    'docker_user'
+]
