@@ -1,6 +1,6 @@
 """Entrypoint which the daemon uses for processing incoming commands."""
 
-from . import bundle, repos
+from . import bundle, repos, manage_config
 from .. import compiler
 
 COMMAND_TREE = {
@@ -18,6 +18,10 @@ COMMAND_TREE = {
     },
     'compiler': {
         'list': compiler.list_processed_specs
+    },
+    'config': {
+        'list': manage_config.list_config,
+        'set': manage_config.save_value
     }
 }
 
