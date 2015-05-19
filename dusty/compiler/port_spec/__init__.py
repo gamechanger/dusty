@@ -28,10 +28,10 @@ def _hosts_file_port_spec(host_forwarding_spec):
             'host_address': host_forwarding_spec['host_name']}
 
 
-def host_forwarding_spec_document(host_forwarding_spec, forwarding_port, container_ports, host_full_addresses, host_names):
+def host_forwarding_port_mappings(host_forwarding_spec, forwarding_port, container_ports, host_full_addresses, host_names):
     """ Given a specific host_forwarding dictionary found in an dusty app spec, it will return the port_mappings for that
     host_forwarding. Currently this will include docker_compose, virtualbox, nginx and hosts_file"""
-    port_spec = {'docker_compose': None, 'virtualbox': None, 'nginx': None, 'hosts_file': None}
+    port_mappings = {'docker_compose': None, 'virtualbox': None, 'nginx': None, 'hosts_file': None}
     container_port = host_forwarding_spec['container_port']
     host_name = host_forwarding_spec['host_name']
     host_full_address = '{}:{}'.format(host_name, host_forwarding_spec['host_port'])
@@ -43,13 +43,13 @@ def host_forwarding_spec_document(host_forwarding_spec, forwarding_port, contain
         raise ReusedContainerPort("{} has already been specified and used".format(container_port))
     container_ports.add(container_port)
 
-    port_spec['docker_compose'] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
-    port_spec['virtualbox'] = _virtualbox_port_spec(forwarding_port)
-    port_spec['nginx'] = _nginx_port_spec(host_forwarding_spec, forwarding_port)
+    port_mappings['docker_compose'] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
+    port_mappings['virtualbox'] = _virtualbox_port_spec(forwarding_port)
+    port_mappings['nginx'] = _nginx_port_spec(host_forwarding_spec, forwarding_port)
     if host_name not in host_names:
-        port_spec['hosts_file']  = _hosts_file_port_spec(host_forwarding_spec)
+        port_mappings['hosts_file']  = _hosts_file_port_spec(host_forwarding_spec)
         host_names.add(host_name)
-    return port_spec
+    return port_mappings
 
 
 def port_spec_document(expanded_active_specs):
@@ -68,7 +68,7 @@ def port_spec_document(expanded_active_specs):
             continue
         container_ports = set()
         for host_forwarding_spec in app_spec['host_forwarding']:
-            host_forwarding_port_spec = host_forwarding_spec_document(host_forwarding_spec, forwarding_port, container_ports, host_full_addresses, host_names)
+            host_forwarding_port_spec = host_forwarding_port_mappings(host_forwarding_spec, forwarding_port, container_ports, host_full_addresses, host_names)
             port_spec['docker_compose'][app_name] = host_forwarding_port_spec['docker_compose']
             port_spec['virtualbox'].append(host_forwarding_port_spec['virtualbox'])
             port_spec['nginx'].append(host_forwarding_port_spec['nginx'])
