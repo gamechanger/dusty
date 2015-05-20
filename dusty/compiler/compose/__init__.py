@@ -28,7 +28,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
         compose_dict['build'] = app_spec['build']
     else:
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
-    compose_dict['command'] = _compile_docker_command(app_spec)
+    compose_dict['command'] = _compile_docker_command(app_name, assembled_specs)
     compose_dict['links'] = app_spec.get('depends', {}).get('services', []) + app_spec.get('depends', {}).get('apps', [])
     compose_dict['volumes'] = _get_compose_volumes(app_name, assembled_specs)
     port_list = _get_ports_list(app_name, port_specs)
@@ -45,9 +45,11 @@ def _get_ports_list(app_name, port_specs):
     return ["{}:{}".format(port_spec['mapped_host_port'],
         port_spec['in_container_port']) for port_spec in port_specs['docker_compose'][app_name]]
 
-def _compile_docker_command(app_spec):
+def _compile_docker_command(app_name, assembled_specs):
+    app_spec = assembled_specs['apps'][app_name]
     first_run_file = constants.FIRST_RUN_FILE_PATH
     command = []
+    command += _lib_install_commands_for_app(app_name, assembled_specs)
     command.append("export PATH=$PATH:{}".format(_container_code_path(app_spec)))
     command.append("if [ ! -f {} ]".format(first_run_file))
     once_command = app_spec['commands'].get("once", "")
@@ -57,6 +59,19 @@ def _compile_docker_command(app_spec):
     command.append("fi")
     command.append(app_spec['commands']['always'])
     return "sh -c \"{}\"".format('; '.join(command))
+
+def _lib_install_commands_for_app(app_name, assembled_specs):
+    libs = assembled_specs['apps'][app_name].get('depends', {}).get('libs', [])
+    commands = []
+    for lib in libs:
+        lib_spec = assembled_specs['libs'][lib]
+        commands.append(_lib_install_command(lib_spec))
+    return commands
+
+def _lib_install_command(lib_spec):
+    lib_dir = lib_spec['mount']
+    install_command = lib_spec['install']
+    return "cd {} && {}".format(lib_dir, install_command)
 
 def _get_compose_volumes(app_name, assembled_specs):
     app_spec = assembled_specs['apps'][app_name]
