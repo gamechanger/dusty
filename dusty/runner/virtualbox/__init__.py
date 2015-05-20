@@ -19,7 +19,7 @@ def _add_forwarding_rules(forwarding_spec):
                                                forwarding_spec['guest_ip'],
                                                forwarding_spec['guest_port'])
         logging.info('Adding local forwarding rule: {}'.format(rule_spec))
-        subprocess.check_call(['VBoxManage', 'control-vm', 'boot2docker-vm', 'natpf1', rule_spec])
+        subprocess.check_call(['VBoxManage', 'controlvm', 'boot2docker-vm', 'natpf1', rule_spec])
 
 def _remove_existing_forwarding_rules(forwarding_spec):
     """Remove any existing forwarding rule that may exist for the given
@@ -30,7 +30,7 @@ def _remove_existing_forwarding_rules(forwarding_spec):
     logging.info('Removing local forwarding rules from spec: {}'.format(forwarding_spec))
     for protocol in ['tcp', 'udp']:
         try:
-            subprocess.check_call(['VBoxManage', 'control-vm', 'boot2docker-vm',
+            subprocess.check_call(['VBoxManage', 'controlvm', 'boot2docker-vm',
                                    'natpf1', 'delete', _name_for_rule(forwarding_spec, protocol)])
         except subprocess.CalledProcessError:
             logging.warning('Deleting rule failed, possibly because it did not exist. Continuing...')

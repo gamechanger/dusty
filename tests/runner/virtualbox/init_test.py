@@ -19,11 +19,11 @@ class TestVirtualBoxRunner(TestCase):
 
     @nottest
     def _add_call(self, rule_spec):
-        return call(['VBoxManage', 'control-vm', 'boot2docker-vm', 'natpf1', rule_spec])
+        return call(['VBoxManage', 'controlvm', 'boot2docker-vm', 'natpf1', rule_spec])
 
     @nottest
     def _delete_call(self, rule_name):
-        return call(['VBoxManage', 'control-vm', 'boot2docker-vm', 'natpf1', 'delete', rule_name])
+        return call(['VBoxManage', 'controlvm', 'boot2docker-vm', 'natpf1', 'delete', rule_name])
 
     @patch('subprocess.check_call')
     def test_add_forwarding_rules(self, fake_check_call):
