@@ -1,5 +1,5 @@
 def _nginx_proxy_string(port_spec):
-    return "proxy_pass {}:{};".format(port_spec['proxied_ip'], port_spec['proxied_port'])
+    return "proxy_pass http://{}:{};".format(port_spec['proxied_ip'], port_spec['proxied_port'])
 
 def _nginx_location_spec(port_spec):
     """This will output the nginx location config string for speicfic port spec """

@@ -21,7 +21,7 @@ class TestPortSpecCompiler(TestCase):
             server {
                 listen local.gc.com:80;
                 location / {
-                    proxy_pass 127.0.0.1:80;
+                    proxy_pass http://127.0.0.1:80;
                 }
             }
         }
@@ -34,7 +34,7 @@ class TestPortSpecCompiler(TestCase):
             server {
                 listen local.gcapi.com:8001;
                 location / {
-                    proxy_pass 127.0.0.0:8000;
+                    proxy_pass http://127.0.0.0:8000;
                 }
             }
         }
@@ -56,13 +56,13 @@ class TestPortSpecCompiler(TestCase):
             server {
                 listen local.gcapi.com:8001;
                 location / {
-                    proxy_pass 127.0.0.0:8000;
+                    proxy_pass http://127.0.0.0:8000;
                 }
             }
             server {
                 listen local.gc.com:80;
                 location / {
-                    proxy_pass 127.0.0.1:80;
+                    proxy_pass http://127.0.0.1:80;
                 }
             }
         }
@@ -78,7 +78,7 @@ class TestPortSpecCompiler(TestCase):
         self.assertEqual("listen local.gcapi.com:8001;", _nginx_listen_string(self.port_spec_dict_2['nginx'][0]))
 
     def test_nginx_proxy_string_1(self):
-        self.assertEqual("proxy_pass 127.0.0.1:80;", _nginx_proxy_string(self.port_spec_dict_1['nginx'][0]))
+        self.assertEqual("proxy_pass http://127.0.0.1:80;", _nginx_proxy_string(self.port_spec_dict_1['nginx'][0]))
 
     def test_nginx_proxy_string_2(self):
-        self.assertEqual("proxy_pass 127.0.0.0:8000;", _nginx_proxy_string(self.port_spec_dict_2['nginx'][0]))
+        self.assertEqual("proxy_pass http://127.0.0.0:8000;", _nginx_proxy_string(self.port_spec_dict_2['nginx'][0]))
