@@ -6,7 +6,7 @@ from unittest import TestCase
 
 import dusty.constants
 from dusty.config import write_default_config, save_config_value, get_config_value
-from dusty.commands.manage_config import list_config, save_value
+from dusty.commands.manage_config import list_config, save_value, _eligible_config_keys_for_setting
 from ..fixtures import basic_specs_fixture
 
 class TestManageConfigCommands(TestCase):
@@ -25,6 +25,9 @@ class TestManageConfigCommands(TestCase):
         os.remove(self.temp_config_path)
         shutil.rmtree(self.temp_specs_path)
         dusty.constants.CONFIG_PATH = self.old_config_path
+
+    def test_eligible_config_key_for_setting(self):
+        self.assertItemsEqual(_eligible_config_keys_for_setting(), ['specs_path', 'docker_user'])
 
     def test_list_config(self):
         result = list_config().next()
@@ -50,7 +53,7 @@ class TestManageConfigCommands(TestCase):
 
     def test_save_value_no_arguemnts(self):
         result = save_value().next()
-        self.assertEquals(result, "Call with arguments `key value`, where key is in {}".format(dusty.constants.CONFIG_KEY_WHITELIST))
+        self.assertEquals(result, "Call with arguments `key value`, where key is in {}".format(['specs_path', 'docker_user']))
 
     def test_save_value_one_argument(self):
         with self.assertRaises(ValueError):
