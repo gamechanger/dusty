@@ -1,13 +1,14 @@
 import os
 import tempfile
 import shutil
+import textwrap
 
 from unittest import TestCase
 from mock import patch
 import yaml
 
 from dusty import constants
-from dusty.systems.compose import _write_composefile, _get_docker_env
+from dusty.systems.compose import _write_composefile, _get_docker_env, _dusty_shared_folder_already_exists
 
 class TestComposeRunner(TestCase):
     def setUp(self):
@@ -36,3 +37,25 @@ class TestComposeRunner(TestCase):
                     'DOCKER_CERT_PATH': '/Users/root/.boot2docker/certs/boot2docker-vm'}
         result = _get_docker_env()
         self.assertItemsEqual(result, expected)
+
+    @patch('dusty.systems.compose._check_output_demoted')
+    def test_dusty_shared_folder_already_exists_false(self, fake_check_output):
+        fake_check_output.return_value = textwrap.dedent("""\
+        vrde="off"
+        usb="off"
+        ehci="off"
+        SharedFolderNameMachineMapping1="Users"
+        SharedFolderPathMachineMapping1="/Users"
+        """)
+        self.assertFalse(_dusty_shared_folder_already_exists())
+
+    @patch('dusty.systems.compose._check_output_demoted')
+    def test_dusty_shared_folder_already_exists_true(self, fake_check_output):
+        fake_check_output.return_value = textwrap.dedent("""\
+        vrde="off"
+        usb="off"
+        ehci="off"
+        SharedFolderNameMachineMapping1="dusty"
+        SharedFolderPathMachineMapping1="/etc/dusty"
+        """)
+        self.assertTrue(_dusty_shared_folder_already_exists())
