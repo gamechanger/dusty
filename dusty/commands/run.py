@@ -14,6 +14,7 @@ def start_local_env():
     compose_config = compose_compiler.get_compose_dict(assembled_spec, port_spec)
 
     hosts.update_hosts_file_from_port_spec(port_spec)
+    virtualbox.initialize_docker_vm()
     virtualbox.update_virtualbox_port_forwarding_from_port_spec(port_spec)
     nginx.update_nginx_from_config(nginx_config)
     compose.update_running_containers_from_spec(compose_config)
