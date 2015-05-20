@@ -30,18 +30,13 @@ def _dusty_shared_folder_already_exists():
     output = _check_output_demoted(['VBoxManage', 'showvminfo', 'boot2docker-vm', '--machinereadable'])
     return re.compile('^SharedFolderName.*dusty', re.MULTILINE).search(output) is not None
 
-def _docker_vm_is_running():
-    """Return boolean of whether the boot2docker VM is currently running."""
-    return _check_output_demoted(['boot2docker', 'status']).strip() == 'running'
-
 def _ensure_dusty_shared_folder_exists():
     """Create the dusty shared folder in the boot2docker VM if it does
     not already exist. Creating shared folders requires the VM to
     be powered down."""
     if not _dusty_shared_folder_already_exists():
-        if _docker_vm_is_running():
-            logging.info('Stopping boot2docker VM to allow creation of shared volume')
-            _check_call_demoted(['boot2docker', 'stop'])
+        logging.info('Stopping boot2docker VM to allow creation of shared volume')
+        _check_call_demoted(['boot2docker', 'stop'])
         logging.info('Creating dusty shared folder inside boot2docker VM')
         _check_call_demoted(['VBoxManage', 'sharedfolder', 'add', 'boot2docker-vm',
                              '--name', 'dusty', '--hostpath', constants.CONFIG_DIR])
