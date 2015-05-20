@@ -73,7 +73,7 @@ def _ensure_docker_vm_is_started():
     check_call_demoted(['boot2docker', 'start'])
 
 def initialize_docker_vm():
-    assert_config_key('docker_user')
+    assert_config_key('mac_username')
     _ensure_docker_vm_exists()
     _ensure_dusty_shared_folder_exists()
     _ensure_docker_vm_is_started()
@@ -83,7 +83,7 @@ def update_virtualbox_port_forwarding_from_port_spec(port_spec):
     """Update the current VirtualBox port mappings from the host OS
     to the VM to reflect the given port_spec. Overwrites any
     previous rules set on ports needed by the new spec."""
-    assert_config_key('docker_user')
+    assert_config_key('mac_username')
     logging.info('Updating port forwarding rules in VirtualBox')
     virtualbox_specs = port_spec['virtualbox']
     for forwarding_spec in virtualbox_specs:

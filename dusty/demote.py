@@ -18,7 +18,7 @@ def _check_demoted(fn, shell_args, env=None):
         passed_env.update(env)
     else:
         passed_env = None
-    return fn(shell_args, preexec_fn=_demote_to_user(get_config_value('docker_user')), env=passed_env)
+    return fn(shell_args, preexec_fn=_demote_to_user(get_config_value('mac_username')), env=passed_env)
 
 def check_call_demoted(shell_args, env=None):
     return _check_demoted(subprocess.check_call, shell_args, env)

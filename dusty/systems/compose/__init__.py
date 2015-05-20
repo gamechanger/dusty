@@ -38,6 +38,6 @@ def update_running_containers_from_spec(compose_config):
     writes it to the Compose spec folder so Compose can pick it
     up, then does everything needed to make sure boot2docker is
     up and running containers with the updated config."""
-    assert_config_key('docker_user')
+    assert_config_key('mac_username')
     _write_composefile(compose_config)
     _compose_up()

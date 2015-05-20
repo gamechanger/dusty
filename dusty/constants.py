@@ -35,5 +35,5 @@ CONFIG_KEY_WHITELIST = [
     'bundles',
     'repo_overrides',
     'specs_path',
-    'docker_user'
+    'mac_username'
 ]
