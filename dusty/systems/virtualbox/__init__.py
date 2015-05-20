@@ -5,7 +5,7 @@ import subprocess
 
 from ... import constants
 from ...config import get_config_value
-from ...demote import demote_to_user, check_call_demoted, check_output_demoted
+from ...demote import check_call_demoted, check_output_demoted
 
 def _name_for_rule(forwarding_spec, protocol):
     return '{}_{}_{}'.format(constants.VIRTUALBOX_RULE_PREFIX, forwarding_spec['host_port'], protocol)
