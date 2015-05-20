@@ -18,7 +18,7 @@ class TestManageConfigCommands(TestCase):
         write_default_config()
         save_config_value('specs_path', self.temp_specs_path)
         basic_specs_fixture()
-        dusty.constants.CONFIG_KEY_WHITELIST = ['bundles', 'repo_overrides', 'specs_path', 'docker_user']
+        dusty.constants.CONFIG_SETTINGS = {k: '' for k in ['bundles', 'repo_overrides', 'specs_path', 'docker_user']}
         self.expected_config = {'bundles': [], 'specs_path': self.temp_specs_path, 'repo_overrides': {}}
 
     def tearDown(self):
@@ -53,7 +53,7 @@ class TestManageConfigCommands(TestCase):
 
     def test_save_value_no_arguemnts(self):
         result = save_value().next()
-        self.assertEquals(result, "Call with arguments `key value`, where key is in {}".format(['specs_path', 'docker_user']))
+        self.assertEquals(result, "Call with arguments `key value`, where key is in {}".format(['docker_user', 'specs_path']))
 
     def test_save_value_one_argument(self):
         with self.assertRaises(ValueError):
