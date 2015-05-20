@@ -6,7 +6,7 @@ from unittest import TestCase
 
 import dusty.constants
 from dusty.config import write_default_config, save_config_value, get_config_value
-from dusty.commands.manage_config import list_config, save_value, _eligible_config_keys_for_setting
+from dusty.commands.manage_config import list_config_values, save_value, _eligible_config_keys_for_setting
 from ..fixtures import basic_specs_fixture
 
 class TestManageConfigCommands(TestCase):
@@ -29,18 +29,18 @@ class TestManageConfigCommands(TestCase):
     def test_eligible_config_key_for_setting(self):
         self.assertItemsEqual(_eligible_config_keys_for_setting(), ['specs_path', 'docker_user'])
 
-    def test_list_config(self):
-        result = list_config().next()
+    def test_list_config_values(self):
+        result = list_config_values().next()
         self.assertEquals(result, self.expected_config)
 
     def test_save_value_changes_value_1(self):
         save_value('specs_path', '~/here').next()
-        result = list_config().next()
+        result = list_config_values().next()
         self.assertEquals(result, {'bundles': [], 'specs_path': '~/here', 'repo_overrides': {}})
 
     def test_save_value_changes_value_2(self):
         save_value('docker_user', '~/here').next()
-        result = list_config().next()
+        result = list_config_values().next()
         self.assertEquals(result, {'bundles': [], 'specs_path': self.temp_specs_path, 'repo_overrides': {}, 'docker_user': '~/here'})
 
     def test_save_value_no_changes_1(self):
