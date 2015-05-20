@@ -44,7 +44,6 @@ def _listen_on_socket(socket_path):
                                 encoded_line = line.encode('utf-8')
                             connection.sendall('{}\n'.format(encoded_line))
                     except Exception as e:
-                        raise
                         connection.sendall('ERROR: {}\n'.format(e.message).encode('utf-8'))
                         connection.sendall(SOCKET_ERROR_TERMINATOR)
                     else:
