@@ -21,6 +21,7 @@ def _listen_on_socket(socket_path):
 
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.bind(socket_path)
+    os.chmod(socket_path, 0777) # don't delete the 0, it makes Python interpret this as octal
     sock.listen(1)
     logging.info('Listening on socket at {}'.format(socket_path))
 
