@@ -1,12 +1,17 @@
 from ..config import get_config, save_config_value
 from .. import constants
 
+def _eligible_config_keys_for_setting():
+     config = get_config()
+     return [key for key in constants.CONFIG_KEY_WHITELIST
+             if key not in config or isinstance(config[key], basestring)]
+
 def list_config():
      yield get_config()
 
 def save_value(key=None, value=None):
     if key is None and value is None:
-        yield 'Call with arguments `key value`, where key is in {}'.format(constants.CONFIG_KEY_WHITELIST)
+        yield 'Call with arguments `key value`, where key is in {}'.format(_eligible_config_keys_for_setting())
         return
     elif value is None:
         raise ValueError('Value cannot be None')
@@ -18,4 +23,3 @@ def save_value(key=None, value=None):
     else:
         save_config_value(key, value)
         yield 'Set {} to {} in your config'.format(key, value)
-
