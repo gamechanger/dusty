@@ -1,6 +1,6 @@
 """Entrypoint which the daemon uses for processing incoming commands."""
 
-from . import bundle, repos, manage_config
+from . import bundle, repos, manage_config, run
 from .. import compiler
 
 COMMAND_TREE = {
@@ -20,7 +20,8 @@ COMMAND_TREE = {
         'list': manage_config.list_config,
         'listvalues': manage_config.list_config_values,
         'set': manage_config.save_value
-    }
+    },
+    'run': run.start_local_env
 }
 
 def process_command(command_string):
