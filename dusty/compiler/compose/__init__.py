@@ -4,7 +4,6 @@ import yaml
 
 from .. import get_assembled_specs
 from ...source import repo_path
-from ..port_spec import port_spec_document
 from ... import constants
 
 def get_compose_dict(assembled_specs, port_specs):

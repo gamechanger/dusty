@@ -1,6 +1,6 @@
 from unittest import TestCase
 from dusty.compiler.port_spec import (_docker_compose_port_spec, _virtualbox_port_spec, _nginx_port_spec,
-                                      _hosts_file_port_spec, port_spec_document, LOCALHOST,
+                                      _hosts_file_port_spec, get_port_spec_document, LOCALHOST,
                                       ReusedHostFullAddress, ReusedContainerPort)
 
 class TestPortSpecCompiler(TestCase):
@@ -51,7 +51,7 @@ class TestPortSpecCompiler(TestCase):
             {'forwarded_ip': LOCALHOST,
              'host_address': 'local.alex.com'})
 
-    def test_port_spec_document_1_app(self):
+    def test_get_port_spec_document_1_app(self):
         expanded_spec = {'apps':
                                 {'gcweb':
                                          {'host_forwarding':[{'host_name': 'local.gc.com',
@@ -70,9 +70,9 @@ class TestPortSpecCompiler(TestCase):
                                        'host_port': '80'}],
                              'hosts_file':[{'forwarded_ip': LOCALHOST,
                                             'host_address': 'local.gc.com'}]}
-        self.assertEqual(port_spec_document(expanded_spec), correct_port_spec)
+        self.assertEqual(get_port_spec_document(expanded_spec), correct_port_spec)
 
-    def test_port_spec_document_2_apps(self):
+    def test_get_port_spec_document_2_apps(self):
         expanded_spec = {'apps':
                                 {'gcweb':
                                          {'host_forwarding':[{'host_name': 'local.gc.com',
@@ -108,9 +108,9 @@ class TestPortSpecCompiler(TestCase):
                                             'host_address': 'local.gcapi.com'},
                                           {'forwarded_ip': LOCALHOST,
                                             'host_address': 'local.gc.com'}]}
-        self.assertEqual(port_spec_document(expanded_spec), correct_port_spec)
+        self.assertEqual(get_port_spec_document(expanded_spec), correct_port_spec)
 
-    def test_port_spec_document_2_apps_same_host_port(self):
+    def test_get_port_spec_document_2_apps_same_host_port(self):
         expanded_spec = {'apps':
                                 {'gcweb':
                                          {'host_forwarding':[{'host_name': 'local.gc.com',
@@ -144,7 +144,7 @@ class TestPortSpecCompiler(TestCase):
                                        'host_port': '80'}],
                              'hosts_file':[{'forwarded_ip': LOCALHOST,
                                             'host_address': 'local.gc.com'}]}
-        self.assertEqual(port_spec_document(expanded_spec), correct_port_spec)
+        self.assertEqual(get_port_spec_document(expanded_spec), correct_port_spec)
 
     def test_port_spec_throws_full_address_error(self):
         expanded_spec = {'apps':
@@ -157,7 +157,7 @@ class TestPortSpecCompiler(TestCase):
                                                              'host_port': 80,
                                                              'container_port': 81}]}}}
         with self.assertRaises(ReusedHostFullAddress):
-            port_spec_document(expanded_spec)
+            get_port_spec_document(expanded_spec)
 
     def test_port_spec_throws_container_port(self):
         expanded_spec = {'apps':
@@ -173,4 +173,4 @@ class TestPortSpecCompiler(TestCase):
                                                              'host_port': 82,
                                                              'container_port': 81}]}}}
         with self.assertRaises(ReusedContainerPort):
-            port_spec_document(expanded_spec)
+            get_port_spec_document(expanded_spec)

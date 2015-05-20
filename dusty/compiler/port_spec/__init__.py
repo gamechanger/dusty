@@ -45,7 +45,7 @@ def add_host_names(host_forwarding_spec, port_mappings, host_names):
         port_mappings['hosts_file'].append(_hosts_file_port_spec(host_forwarding_spec))
         host_names.add(host_name)
 
-def port_spec_document(expanded_active_specs):
+def get_port_spec_document(expanded_active_specs):
     """ Given a dictionary containing the expanded dusty DAG specs this function will
     return a dictionary containing the port mappings needed by downstream methods.  Currently
     this includes docker_compose, virtualbox, nginx and hosts_file."""
