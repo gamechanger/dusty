@@ -5,8 +5,8 @@ import textwrap
 from unittest import TestCase
 
 import dusty.constants
-from dusty.runner.hosts import (_remove_current_dusty_config, _dusty_hosts_config,
-                                update_hosts_from_port_spec, _read_hosts)
+from dusty.systems.hosts import (_remove_current_dusty_config, _dusty_hosts_config,
+                                update_hosts_file_from_port_spec, _read_hosts)
 
 class TestHostsRunner(TestCase):
     def setUp(self):
@@ -39,6 +39,6 @@ class TestHostsRunner(TestCase):
         result = _remove_current_dusty_config(self.non_spec_starter + self.spec_output)
         self.assertEqual(result, self.non_spec_starter)
 
-    def test_update_hosts_from_port_spec(self):
-        update_hosts_from_port_spec({'hosts_file': self.test_spec})
+    def test_update_hosts_file_from_port_spec(self):
+        update_hosts_file_from_port_spec({'hosts_file': self.test_spec})
         self.assertEqual(_read_hosts(dusty.constants.HOSTS_PATH), self.spec_output)
