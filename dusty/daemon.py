@@ -6,7 +6,7 @@ import socket
 from .preflight import preflight_check
 from .log import configure_logging
 from .notifier import notify
-from .constants import SOCKET_PATH, SOCKET_TERMINATOR
+from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .commands import process_command
 
 def _clean_up_existing_socket(socket_path):
@@ -45,7 +45,9 @@ def _listen_on_socket(socket_path):
                             connection.sendall('{}\n'.format(encoded_line))
                     except Exception as e:
                         connection.sendall('ERROR: {}\n'.format(e.message).encode('utf-8'))
-                    connection.sendall(SOCKET_TERMINATOR)
+                        connection.sendall(SOCKET_ERROR_TERMINATOR)
+                    else:
+                        connection.sendall(SOCKET_TERMINATOR)
             finally:
                 connection.close()
         except KeyboardInterrupt:

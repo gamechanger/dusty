@@ -1,6 +1,7 @@
 import os
 
 SOCKET_TERMINATOR = '\0\0'
+SOCKET_ERROR_TERMINATOR = '\0\1'
 
 LOCALHOST = "127.0.0.1"
 

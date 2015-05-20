@@ -3,7 +3,7 @@
 import sys
 import socket
 
-from .constants import SOCKET_PATH, SOCKET_TERMINATOR
+from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .commands import COMMAND_TREE
 
 def run_command(sock, command):
@@ -13,9 +13,10 @@ def run_command(sock, command):
         data = sock.recv(65535)
         if data:
             sys.stdout.write(data.decode('utf-8'))
-            if data.startswith('ERROR: '):
-                error_response = True
             if data.endswith(SOCKET_TERMINATOR):
+                break
+            elif data.endswith(SOCKET_ERROR_TERMINATOR):
+                error_response = True
                 break
         else:
             break
