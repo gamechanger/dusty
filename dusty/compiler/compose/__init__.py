@@ -41,8 +41,8 @@ def _composed_service_dict(service_name, assembled_specs):
 def _get_ports_list(app_name, port_specs):
     if app_name not in port_specs['docker_compose']:
         return []
-    return ["{}:{}".format(port_spec['mapped_host_port'],
-        port_spec['in_container_port']) for port_spec in port_specs['docker_compose'][app_name]]
+    return ["{}:{}".format(port_spec['mapped_host_port'], port_spec['in_container_port'])
+            for port_spec in port_specs['docker_compose'][app_name]]
 
 def _compile_docker_command(app_name, assembled_specs):
     app_spec = assembled_specs['apps'][app_name]
