@@ -33,9 +33,9 @@ SYSTEM_DEPENDENCY_VERSIONS = {
     'docker': '1.6.0'
 }
 
-CONFIG_KEY_WHITELIST = [
-    'bundles',
-    'repo_overrides',
-    'specs_path',
-    'mac_username'
-]
+CONFIG_SETTINGS = {
+    'bundles': 'All currently activated bundles. These are the bundles that Dusty will set up for you when you run "dusty up".',
+    'repo_overrides': 'All known repos for which Dusty will use your specified override instead of its own managed copy of the repository. You should override repos which you are actively developing so that Dusty uses your development version inside containers.',
+    'mac_username': 'The user on the host OS who will own and be able to access the boot2docker VM. Dusty runs all VirtualBox, boot2docker, Docker, and Docker Compose commands as this user.',
+    'specs_path': 'About to be deleted...'
+}

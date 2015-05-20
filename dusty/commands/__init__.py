@@ -18,6 +18,7 @@ COMMAND_TREE = {
     },
     'config': {
         'list': manage_config.list_config,
+        'listvalues': manage_config.list_config_values,
         'set': manage_config.save_value
     }
 }
