@@ -71,6 +71,8 @@ def get_port_spec_document(expanded_active_specs):
 
             add_host_names(host_forwarding_spec, port_spec, host_names)
             forwarding_port += 1
+    import logging
+    logging.info(port_spec)
     return port_spec
 
 
