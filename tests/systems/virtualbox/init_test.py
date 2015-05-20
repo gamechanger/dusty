@@ -46,8 +46,9 @@ class TestVirtualBoxRunner(TestCase):
                                           self._delete_call('dusty_5001_tcp'),
                                           self._delete_call('dusty_5001_udp')])
 
+    @patch('dusty.systems.virtualbox.assert_config_key')
     @patch('dusty.systems.virtualbox.check_call_demoted')
-    def test_update_virtualbox_port_forwarding_from_port_spec(self, fake_check_call):
+    def test_update_virtualbox_port_forwarding_from_port_spec(self, fake_check_call, fake_assert_config_key):
         update_virtualbox_port_forwarding_from_port_spec({'virtualbox': self.test_spec})
         fake_check_call.assert_has_calls([self._delete_call('dusty_5000_tcp'),
                                           self._delete_call('dusty_5000_udp'),
