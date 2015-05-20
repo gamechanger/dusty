@@ -1,6 +1,7 @@
 import os
 import pwd
 import subprocess
+from copy import copy
 
 from .config import get_config_value
 
