@@ -2,7 +2,7 @@ import logging
 
 import yaml
 
-from .. import get_assembled_specs
+from ..spec_assembler import get_assembled_specs
 from ...source import repo_path
 from ... import constants
 

@@ -16,9 +16,6 @@ COMMAND_TREE = {
         'from': repos.override_repos_from_directory,
         'update': repos.update_managed_repos
     },
-    'compiler': {
-        'list': compiler.list_processed_specs
-    },
     'config': {
         'list': manage_config.list_config,
         'set': manage_config.save_value
