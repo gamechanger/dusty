@@ -67,10 +67,16 @@ def _ensure_docker_vm_exists():
     logging.info('Initializing boot2docker, this will take a while the first time it runs')
     check_call_demoted(['boot2docker', 'init'])
 
-def _ensure_docker_vm_is_online():
+def _ensure_docker_vm_is_started():
     """Start the boot2docker VM if it is not already running."""
     logging.info('Making sure the boot2docker VM is started')
     check_call_demoted(['boot2docker', 'start'])
+
+def initialize_docker_vm():
+    _ensure_docker_vm_exists()
+    _ensure_dusty_shared_folder_exists()
+    _ensure_docker_vm_is_started()
+    _ensure_dusty_shared_folder_is_mounted()
 
 def update_virtualbox_port_forwarding_from_port_spec(port_spec):
     """Update the current VirtualBox port mappings from the host OS
