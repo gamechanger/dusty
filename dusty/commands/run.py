@@ -17,3 +17,5 @@ def start_local_env():
     virtualbox.update_virtualbox_port_forwarding_from_port_spec(port_spec)
     nginx.update_nginx_from_config(nginx_config)
     compose.update_running_containers_from_spec(compose_config)
+
+    yield "Your local environment is now started"
