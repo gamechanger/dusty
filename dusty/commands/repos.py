@@ -3,12 +3,13 @@ import os
 from prettytable import PrettyTable
 
 from ..config import get_config_value, save_config_value
-from ..specs import get_specs
+from ..specs import get_specs, get_specs_repo
 from ..compiler.spec_assembler import get_assembled_specs
 from ..source import update_local_repo
 
 def _get_all_repos(active_only=False):
     repos = set()
+    repos.add(get_specs_repo())
     specs = get_assembled_specs() if active_only else get_specs()
     for type_key in ['apps', 'libs']:
         for spec in specs[type_key].itervalues():

@@ -3,10 +3,16 @@ import glob
 import yaml
 
 from .config import get_config_value, assert_config_key
+from .source import repo_path
+
+def get_specs_repo():
+    return get_config_value('specs_repo')
+
+def get_specs_path():
+    return repo_path(get_specs_repo())
 
 def get_specs():
-    assert_config_key('specs_path')
-    specs_path = get_config_value('specs_path')
+    specs_path = get_specs_path()
     return get_specs_from_path(specs_path)
 
 def get_specs_from_path(specs_path):

@@ -1,10 +1,10 @@
 import os
 import yaml
 
-from dusty.config import get_config_value
+from dusty.specs import get_specs_path
 
 def _write(spec_type, name, spec_doc):
-    spec_type_path = os.path.join(get_config_value('specs_path'), '{}s'.format(spec_type))
+    spec_type_path = os.path.join(get_specs_path(), '{}s'.format(spec_type))
     try:
         os.makedirs(spec_type_path)
     except OSError:
