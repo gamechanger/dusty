@@ -6,7 +6,7 @@ from mock import patch
 from nose.tools import nottest
 
 from dusty import constants
-from dusty.runner.nginx import _get_nginx_pid, _ensure_nginx_running_with_latest_config
+from dusty.systems.nginx import _get_nginx_pid, _ensure_nginx_running_with_latest_config
 
 class TestNginxRunner(TestCase):
     def setUp(self):

@@ -5,7 +5,7 @@ import textwrap
 from unittest import TestCase
 
 import dusty.constants
-from dusty.runner.hosts import (_remove_current_dusty_config, _dusty_hosts_config,
+from dusty.systems.hosts import (_remove_current_dusty_config, _dusty_hosts_config,
                                 update_hosts_from_port_spec, _read_hosts)
 
 class TestHostsRunner(TestCase):

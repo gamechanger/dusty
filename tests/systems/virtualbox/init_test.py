@@ -2,7 +2,7 @@ from unittest import TestCase
 from mock import patch, call
 from nose.tools import nottest
 
-from dusty.runner.virtualbox import (_name_for_rule, _add_forwarding_rules,
+from dusty.systems.virtualbox import (_name_for_rule, _add_forwarding_rules,
                                      _remove_existing_forwarding_rules,
                                      update_port_forwarding_from_port_spec)
 
