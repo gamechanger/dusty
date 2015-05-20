@@ -19,7 +19,7 @@ def _nginx_server_spec(port_spec):
     server_string_spec += "\t }\n"
     return server_string_spec
 
-def nginx_configuration_spec(port_spec_dict):
+def get_nginx_configuration_spec(port_spec_dict):
     """This function will take in a port spec as specified by the port_spec compiler and
     will output an nginx web proxy config string. This string can then be written to a file
     and used running nginx """
