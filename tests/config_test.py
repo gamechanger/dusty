@@ -10,7 +10,7 @@ class TestConfig(TestCase):
         self.temp_config_path = tempfile.mkstemp()[1]
         self.old_config_path = constants.CONFIG_PATH
         constants.CONFIG_PATH = self.temp_config_path
-        self.test_config = {'bundles': ['bundle-a'], 'repo_overrides': {'repo-a': '/var/run/repo-a'}, 'docker_user': 'root'}
+        self.test_config = {'bundles': ['bundle-a'], 'repo_overrides': {'repo-a': '/var/run/repo-a'}, 'mac_username': 'root'}
 
     def tearDown(self):
         constants.CONFIG_PATH = self.old_config_path
@@ -24,7 +24,7 @@ class TestConfig(TestCase):
         config.save_config(self.test_config)
         self.assertItemsEqual(config.get_config_value('bundles'), ['bundle-a'])
         self.assertItemsEqual(config.get_config_value('repo_overrides'), {'repo-a': '/var/run/repo-a'})
-        self.assertEqual(config.get_config_value('docker_user'), 'root')
+        self.assertEqual(config.get_config_value('mac_username'), 'root')
 
     def test_save_config_value(self):
         config.save_config(self.test_config)
@@ -36,6 +36,6 @@ class TestConfig(TestCase):
 
     def test_assert_config_key(self):
         config.save_config(self.test_config)
-        config.assert_config_key('docker_user')
+        config.assert_config_key('mac_username')
         with self.assertRaises(KeyError):
             config.assert_config_key('nonexistent_key')
