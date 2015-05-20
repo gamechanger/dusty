@@ -4,7 +4,7 @@ from nose.tools import nottest
 
 from dusty.systems.virtualbox import (_name_for_rule, _add_forwarding_rules,
                                      _remove_existing_forwarding_rules,
-                                     update_port_forwarding_from_port_spec)
+                                     update_virtualbox_port_forwarding_from_port_spec)
 
 class TestVirtualBoxRunner(TestCase):
     def setUp(self):
@@ -44,8 +44,8 @@ class TestVirtualBoxRunner(TestCase):
                                           self._delete_call('dusty_5001_udp')])
 
     @patch('subprocess.check_call')
-    def test_update_port_forwarding_from_port_spec(self, fake_check_call):
-        update_port_forwarding_from_port_spec({'virtualbox': self.test_spec})
+    def test_update_virtualbox_port_forwarding_from_port_spec(self, fake_check_call):
+        update_virtualbox_port_forwarding_from_port_spec({'virtualbox': self.test_spec})
         fake_check_call.assert_has_calls([self._delete_call('dusty_5000_tcp'),
                                           self._delete_call('dusty_5000_udp'),
                                           self._add_call('dusty_5000_tcp,tcp,127.0.0.1,5000,,55000'),
