@@ -7,8 +7,9 @@ LOCALHOST = "127.0.0.1"
 ROOT_LOG_DIR = '/var/log/dusty'
 LOG_SUBDIRS = ['nginx']
 
-SOCKET_PATH = '/var/run/dusty/dusty.sock'
-FIRST_RUN_FILE_PATH = '/var/run/dusty/docker_first_time_started'
+RUN_DIR = '/var/run/dusty'
+SOCKET_PATH = os.path.join(RUN_DIR, 'dusty.sock')
+FIRST_RUN_FILE_PATH = os.path.join(RUN_DIR, 'docker_first_time_started')
 
 CONFIG_DIR = '/etc/dusty'
 CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.yml')

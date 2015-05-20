@@ -8,7 +8,7 @@ import subprocess
 import warnings
 
 from .config import write_default_config
-from .constants import ROOT_LOG_DIR, LOG_SUBDIRS, SYSTEM_DEPENDENCY_VERSIONS, CONFIG_PATH
+from .constants import RUN_DIR, ROOT_LOG_DIR, LOG_SUBDIRS, SYSTEM_DEPENDENCY_VERSIONS, CONFIG_PATH
 
 class PreflightException(Exception):
     pass
@@ -46,11 +46,13 @@ def _check_docker():
     installed_version = subprocess.check_output(['docker', '-v']).split(',')[0].split(' ')[-1]
     _maybe_version_warning('docker', installed_version)
 
-def _path_exists(path):
-    return os.access(path, os.F_OK)
+def _ensure_run_dir_exists():
+    if not os.path.exists(RUN_DIR):
+        os.makedirs(RUN_DIR)
 
-def _path_is_writable(path):
-    return os.access(path, os.W_OK)
+def _ensure_root_log_dir_exists():
+    if not os.path.exists(ROOT_LOG_DIR):
+        os.makedirs(ROOT_LOG_DIR)
 
 def _ensure_log_subdirs_exist():
     for subdir in LOG_SUBDIRS:
@@ -65,12 +67,10 @@ def preflight_check():
     _check_virtualbox()
     _check_boot2docker()
     _check_docker()
-    if not _path_exists(ROOT_LOG_DIR):
-        raise PreflightException('Root log directory {} does not exist'.format(ROOT_LOG_DIR))
-    if not _path_is_writable(ROOT_LOG_DIR):
-        raise PreflightException('Root log directory {} is not writable'.format(ROOT_LOG_DIR))
+    _ensure_run_dir_exists()
+    _ensure_root_log_dir_exists()
     _ensure_log_subdirs_exist()
-    if not _path_exists(CONFIG_PATH):
+    if not os.path.exists(CONFIG_PATH):
         logging.info('Creating default config file at {}'.format(CONFIG_PATH))
         write_default_config()
     logging.info('Completed preflight check successfully')
