@@ -9,7 +9,7 @@ import yaml
 from dusty import constants
 from dusty.systems.compose import _write_composefile, _get_docker_env
 
-class TestComposeRunner(TestCase):
+class TestComposeSystem(TestCase):
     def setUp(self):
         self.temp_compose_dir = tempfile.mkdtemp()
         self.temp_compose_path = os.path.join(self.temp_compose_dir, 'docker-compose.yml')

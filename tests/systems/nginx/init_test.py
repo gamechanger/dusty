@@ -8,7 +8,7 @@ from nose.tools import nottest
 from dusty import constants
 from dusty.systems.nginx import _get_nginx_pid, _ensure_nginx_running_with_latest_config
 
-class TestNginxRunner(TestCase):
+class TestNginxSystem(TestCase):
     def setUp(self):
         self.temp_pid_path = tempfile.mkstemp()[1]
         self.old_pid_path = constants.NGINX_PID_PATH

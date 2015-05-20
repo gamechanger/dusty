@@ -9,7 +9,7 @@ from dusty.systems.virtualbox import (_name_for_rule, _add_forwarding_rules,
                                       update_virtualbox_port_forwarding_from_port_spec,
                                       _dusty_shared_folder_already_exists)
 
-class TestVirtualBoxRunner(TestCase):
+class TestVirtualBoxSystem(TestCase):
     def setUp(self):
         self.test_spec = [{'host_ip': '127.0.0.1', 'host_port': '5000',
                            'guest_ip': '', 'guest_port': '55000'},
