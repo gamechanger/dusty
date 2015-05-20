@@ -26,8 +26,10 @@ class TestComposeRunner(TestCase):
         written = open(self.temp_compose_path, 'r').read()
         self.assertItemsEqual(yaml.load(written), self.test_spec)
 
-    @patch('dusty.systems.compose._check_output_demoted')
-    def test_get_docker_env(self, fake_check_output):
+    @patch('dusty.demote.get_config_value')
+    @patch('dusty.systems.compose.check_output_demoted')
+    def test_get_docker_env(self, fake_check_output, fake_config_value):
+        fake_config_value.return_value = 'root'
         fake_check_output.return_value = """    export DOCKER_TLS_VERIFY=1
         export DOCKER_HOST=tcp://192.168.59.103:2376
         export DOCKER_CERT_PATH=/Users/root/.boot2docker/certs/boot2docker-vm"""
