@@ -59,12 +59,13 @@ def get_port_spec_document(expanded_active_specs):
         app_spec = expanded_active_specs['apps'][app_name]
         if 'host_forwarding' not in app_spec:
             continue
+        port_spec['docker_compose'][app_name] = []
         container_ports = set()
         for host_forwarding_spec in app_spec['host_forwarding']:
             add_full_addresses(host_forwarding_spec, host_full_addresses)
             add_container_ports(host_forwarding_spec, container_ports)
 
-            port_spec['docker_compose'][app_name] = _docker_compose_port_spec(host_forwarding_spec, forwarding_port)
+            port_spec['docker_compose'][app_name].append(_docker_compose_port_spec(host_forwarding_spec, forwarding_port))
             port_spec['virtualbox'].append(_virtualbox_port_spec(forwarding_port))
             port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port))
 
