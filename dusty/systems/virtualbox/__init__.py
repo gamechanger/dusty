@@ -64,7 +64,7 @@ def _ensure_dusty_shared_folder_is_mounted():
 
 def _ensure_persist_dir_is_linked():
     logging.info('Linking /persist to VBox disk (if it is not already linked)')
-    mount_if_cmd = 'if [ ! -d /persist ]; then sudo mkdir /persist; sudo ln -s /mnt/sda1/persist /persist; fi'
+    mount_if_cmd = 'if [ ! -d /persist ]; then sudo mkdir /mnt/sda1/persist; sudo ln -s /mnt/sda1/persist /persist; fi'
     check_call_demoted(['boot2docker', 'ssh', mount_if_cmd])
 
 def _ensure_docker_vm_exists():
