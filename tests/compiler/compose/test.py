@@ -80,6 +80,7 @@ class TestComposeCompiler(TestCase):
     def test_compile_command_with_once(self, *args):
         expected_command_list = ["sh -c \"cd /gc/lib1 && ./install.sh",
                                  " cd /gc/lib2 && python setup.py develop",
+                                 " cd /gc/app1",
                                  " export PATH=$PATH:/gc/app1",
                                  " if [ ! -f /var/run/dusty/docker_first_time_started ]",
                                  " then touch /var/run/dusty/docker_first_time_started",
@@ -94,6 +95,7 @@ class TestComposeCompiler(TestCase):
         del new_specs['apps']['app1']['commands']['once']
         expected_command_list = ["sh -c \"cd /gc/lib1 && ./install.sh",
                                  " cd /gc/lib2 && python setup.py develop",
+                                 " cd /gc/app1",
                                  " export PATH=$PATH:/gc/app1",
                                  " if [ ! -f /var/run/dusty/docker_first_time_started ]",
                                  " then touch /var/run/dusty/docker_first_time_started",
