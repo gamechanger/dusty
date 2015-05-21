@@ -7,11 +7,11 @@ import shutil
 from unittest import TestCase
 
 from dusty.config import get_config_value
-from dusty.commands.bundle import list_bundles, activate_bundle, deactivate_bundle
+from dusty.commands.bundles import list_bundles, activate_bundle, deactivate_bundle
 from dusty.specs import get_specs_repo
 from ..utils import setup_test, teardown_test
 
-class TestBundleCommands(TestCase):
+class TestBundlesCommands(TestCase):
     def setUp(self):
         setup_test(self)
 
