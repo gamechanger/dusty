@@ -8,17 +8,28 @@ def start_local_env():
     systems will in turn launch the services needed to make the
     local environment go"""
     active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
+    yield "Compiling together the assembled specs"
     assembled_spec = spec_assembler.get_assembled_specs()
+    yield "Compiling the port specs"
     port_spec = port_spec_compiler.get_port_spec_document(assembled_spec)
+    yield "Compiling the nginx config"
     nginx_config = nginx_compiler.get_nginx_configuration_spec(port_spec)
+    yield "Compiling docker-compose config"
     compose_config = compose_compiler.get_compose_dict(assembled_spec, port_spec)
 
+    yield "Saving port forwarding to hosts file"
     hosts.update_hosts_file_from_port_spec(port_spec)
+    yield "Ensuring virtualbox vm is running"
     virtualbox.initialize_docker_vm()
+    yield "Saving port to virtualbox vm"
     virtualbox.update_virtualbox_port_forwarding_from_port_spec(port_spec)
     rsync.sync_repos(active_repos)
+    yield "Saving nginx config and ensure nginx is running"
     nginx.update_nginx_from_config(nginx_config)
-    compose.update_running_containers_from_spec(compose_config)
+    yield "Saving docker-compose config and starting all containers"
+    docker_compose_generator = compose.update_running_containers_from_spec(compose_config)
+    for yielded_stream in docker_compose_generator:
+        yield yielded_stream
 
     yield "Your local environment is now started"
 
