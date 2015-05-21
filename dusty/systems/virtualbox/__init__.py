@@ -62,6 +62,11 @@ def _ensure_dusty_shared_folder_is_mounted():
     mount_if_cmd = 'if [ ! -d "{}" ]; then {}; fi'.format(constants.CONFIG_DIR, mount_cmd)
     check_call_demoted(['boot2docker', 'ssh', mount_if_cmd])
 
+def _ensure_persist_dir_is_linked():
+    logging.info('Linking /persist to VBox disk (if it is not already linked)')
+    mount_if_cmd = 'if [ ! -d /persist ]; then sudo mkdir /mnt/sda1/persist; sudo ln -s /mnt/sda1/persist /persist; fi'
+    check_call_demoted(['boot2docker', 'ssh', mount_if_cmd])
+
 def _ensure_docker_vm_exists():
     """Initialize the boot2docker VM if it does not already exist."""
     logging.info('Initializing boot2docker, this will take a while the first time it runs')
@@ -77,6 +82,7 @@ def initialize_docker_vm():
     _ensure_docker_vm_exists()
     _ensure_dusty_shared_folder_exists()
     _ensure_docker_vm_is_started()
+    _ensure_persist_dir_is_linked()
     _ensure_dusty_shared_folder_is_mounted()
 
 def update_virtualbox_port_forwarding_from_port_spec(port_spec):
