@@ -30,7 +30,7 @@ def _write_composefile(compose_config):
 
 def _compose_up():
     logging.info('Running docker-compose up')
-    check_call_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl'],
+    return check_output_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl'],
                        env=_get_docker_env())
 
 def _compose_stop():
@@ -43,7 +43,7 @@ def update_running_containers_from_spec(compose_config):
     up, then does everything needed to make sure boot2docker is
     up and running containers with the updated config."""
     assert_config_key('mac_username')
-    _write_composefile(compose_config)
+    yield _write_composefile(compose_config)
     _compose_up()
 
 def stop_running_containers():
