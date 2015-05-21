@@ -62,19 +62,19 @@ def _get_referenced_services(specs):
             active_services.add(service)
     return active_services
 
-def _filter_active(type, specs):
+def _filter_active(spec_type, specs):
     get_referenced = {
         'bundles': _get_active_bundles,
         'apps': _get_referenced_apps,
         'libs': _get_referenced_libs,
         'services': _get_referenced_services
     }
-    active = get_referenced[type](specs)
-    all_type = specs[type].keys()
-    for item_name in all_type:
+    active = get_referenced[spec_type](specs)
+    all_specs = specs[spec_type].keys()
+    for item_name in all_specs:
         if item_name not in active:
-            del specs[type][item_name]
-    logging.info("Spec Assembler: filtered active {} to {}".format(type, set(specs[type].keys())))
+            del specs[spec_type][item_name]
+    logging.info("Spec Assembler: filtered active {} to {}".format(spec_type, set(specs[spec_type].keys())))
 
 def _get_expanded_active_specs(specs):
     """
