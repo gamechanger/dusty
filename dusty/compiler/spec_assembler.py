@@ -1,3 +1,5 @@
+import logging
+
 from ..config import get_config_value
 from ..specs import get_specs
 
@@ -16,14 +18,8 @@ def _get_dependent(dependent_type, name, specs, root_spec_type):
         all_dependents |= _get_dependent(dependent_type, dep, specs, dependent_type)
     return all_dependents
 
-def _filter_active_bundles(activated_bundles, specs):
-    """
-    Removes all bundles from specs['bundles'] that aren't in activated_bundles
-    """
-    all_bundles = specs['bundles'].keys()
-    for bundle in all_bundles:
-        if bundle not in activated_bundles:
-            del specs['bundles'][bundle]
+def _get_active_bundles(specs):
+    return set(get_config_value('bundles'))
 
 def _get_referenced_apps(specs):
     """
@@ -37,16 +33,6 @@ def _get_referenced_apps(specs):
             all_active_apps.add(app_name)
             all_active_apps |= _get_dependent('apps', app_name, specs, 'apps')
     return all_active_apps
-
-def _filter_active_apps(specs):
-    """
-    Removes all apps from specs['apps'] that aren't required by any bundle in specs['bundles']
-    """
-    active_apps = _get_referenced_apps(specs)
-    all_apps = specs['apps'].keys()
-    for app in all_apps:
-        if app not in active_apps:
-            del specs['apps'][app]
 
 def _expand_libs_in_apps(specs):
     """
@@ -66,16 +52,6 @@ def _get_referenced_libs(specs):
             active_libs.add(lib)
     return active_libs
 
-def _filter_active_libs(specs):
-    """
-    Removes any lib from specs['libs'] that isn't specified in any specs.apps.depends.libs field
-    """
-    active_libs = _get_referenced_libs(specs)
-    all_libs = specs['libs'].keys()
-    for lib in all_libs:
-        if lib not in active_libs:
-            del specs['libs'][lib]
-
 def _get_referenced_services(specs):
     """
     Returns all services that are referenced in specs.apps.depends.services
@@ -86,31 +62,35 @@ def _get_referenced_services(specs):
             active_services.add(service)
     return active_services
 
-def _filter_active_services(specs):
-    """
-    Removes any service from specs['services'] that isn't specified in any specs.apps.depends.services
-    """
-    active_services = _get_referenced_services(specs)
-    all_services = specs['services'].keys()
-    for service in all_services:
-        if service not in active_services:
-            del specs['services'][service]
+def _filter_active(type, specs):
+    get_referenced = {
+        'bundles': _get_active_bundles,
+        'apps': _get_referenced_apps,
+        'libs': _get_referenced_libs,
+        'services': _get_referenced_services
+    }
+    active = get_referenced[type](specs)
+    all_type = specs[type].keys()
+    for item_name in all_type:
+        if item_name not in active:
+            del specs[type][item_name]
+    logging.info("Spec Assembler: filtered active {} to {}".format(type, set(specs[type].keys())))
 
-def _get_expanded_active_specs(activated_bundles, specs):
+def _get_expanded_active_specs(specs):
     """
     This function removes any unnecessary bundles, apps, libs, and services that aren't needed by
     the activated_bundles.  It also expands inside specs.apps.depends.libs all libs that are needed
     indirectly by each app
     """
-    _filter_active_bundles(activated_bundles, specs)
-    _filter_active_apps(specs)
+    _filter_active('bundles', specs)
+    _filter_active('apps', specs)
     _expand_libs_in_apps(specs)
-    _filter_active_libs(specs)
-    _filter_active_services(specs)
+    _filter_active('libs', specs)
+    _filter_active('services', specs)
 
 def get_assembled_specs():
-    activated_bundles = set(get_config_value('bundles'))
+    logging.info("Spec Assembler: running...")
     specs = get_specs()
-    _get_expanded_active_specs(activated_bundles, specs)
+    _get_expanded_active_specs(specs)
     return specs
 

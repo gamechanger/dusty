@@ -25,4 +25,3 @@ def get_specs_from_path(specs_path):
             with open(spec_path, 'r') as f:
                 specs[key][spec_name] = yaml.load(f.read())
     return specs
-

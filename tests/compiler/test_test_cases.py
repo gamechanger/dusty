@@ -1,5 +1,6 @@
 from functools import wraps
 from unittest import TestCase
+from mock import patch
 
 from nose.tools import nottest
 
@@ -38,10 +39,13 @@ class TestSpecAssemblerTestCases(TestCase):
             self.assertEqual(set(app.get('depends', {}).get('libs', [])), set(assembled_specs['apps'][app_name].get('depends', {}).get('libs', [])))
 
     @all_test_configs
-    def test_assembles_specs(self, test_config, case_specs, assembled_specs):
+    def test_assembles_specs(self, test_config, case_specs, assembled_specs, *args):
         self.maxDiff = None
-        activated_bundles = assembled_specs['bundles'].keys()
-        spec_assembler._get_expanded_active_specs(activated_bundles, case_specs)
+        bundles = case_specs['bundles'].keys()
+        @patch('dusty.compiler.spec_assembler._get_active_bundles', return_value=bundles)
+        def run_patched_assembler(case_specs, *args):
+            spec_assembler._get_expanded_active_specs(case_specs)
+        run_patched_assembler(case_specs)
         self.assertEqual(case_specs, assembled_specs)
 
     def test_get_dependent_traverses_tree(self):
