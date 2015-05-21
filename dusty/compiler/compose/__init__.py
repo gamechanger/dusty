@@ -62,7 +62,7 @@ def _compile_docker_command(app_name, assembled_specs):
     first_run_file = constants.FIRST_RUN_FILE_PATH
     command = []
     command += _lib_install_commands_for_app(app_name, assembled_specs)
-    command += "cd {}".format(_container_code_path(app_spec))
+    command.append("cd {}".format(_container_code_path(app_spec)))
     command.append("export PATH=$PATH:{}".format(_container_code_path(app_spec)))
     command.append("if [ ! -f {} ]".format(first_run_file))
     once_command = app_spec['commands'].get("once", "")
