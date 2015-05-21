@@ -30,9 +30,9 @@ def _write_composefile(compose_config):
 
 def _compose_up():
     logging.info('Running docker-compose up')
-    output= check_output_and_error_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl'],
+    output = check_output_and_error_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl'],
                        env=_get_docker_env())
-    logging.error(output)
+    logging.info(output)
     return output
 
 def _compose_stop():

@@ -19,9 +19,6 @@ def _check_demoted(fn, shell_args, env=None, **kwargs):
     else:
         passed_env = None
     output = fn(shell_args, preexec_fn=_demote_to_user(get_config_value('mac_username')), env=passed_env, **kwargs)
-    import logging
-    logging.error('check deomted')
-    logging.error(output)
     return output
 
 def check_call_demoted(shell_args, env=None):

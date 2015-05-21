@@ -27,11 +27,8 @@ def start_local_env():
     yield "Saving nginx config and ensure nginx is running"
     nginx.update_nginx_from_config(nginx_config)
     yield "Saving docker-compose config and starting all containers"
-    import logging
     docker_compose_generator = compose.update_running_containers_from_spec(compose_config)
-    logging.error(docker_compose_generator)
     for yielded_stream in docker_compose_generator:
-        logging.error(yielded_stream)
         yield yielded_stream
 
     yield "Your local environment is now started"
