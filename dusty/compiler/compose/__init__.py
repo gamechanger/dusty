@@ -18,7 +18,7 @@ def get_compose_dict(assembled_specs, port_specs):
 
 def _composed_app_dict(app_name, assembled_specs, port_specs):
     """ This function returns a dictionary of the docker-compose.yml specifications for one app """
-    logging.info("Compiling compose dict for app {}".format(app_name))
+    logging.info("Compose Compiler: Compiling dict for app {}".format(app_name))
     app_spec = assembled_specs['apps'][app_name]
     compose_dict = app_spec.get("compose", {})
     if 'image' in app_spec and 'build' in app_spec:
@@ -31,11 +31,15 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
     else:
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
     compose_dict['command'] = _compile_docker_command(app_name, assembled_specs)
+    logging.info("Compose Compiler: compiled command {}".format(compose_dict['command']))
     compose_dict['links'] = app_spec.get('depends', {}).get('services', []) + app_spec.get('depends', {}).get('apps', [])
+    logging.info("Compose Compiler: links {}".format(compose_dict['links']))
     compose_dict['volumes'] = _get_compose_volumes(app_name, assembled_specs)
+    logging.info("Compose Compiler: volumes {}".format(compose_dict['volumes']))
     port_list = _get_ports_list(app_name, port_specs)
     if port_list:
         compose_dict['ports'] = port_list
+    logging.info("Compose Compiler: ports {}".format(port_list))
     return compose_dict
 
 def _composed_service_dict(service_name, assembled_specs):
