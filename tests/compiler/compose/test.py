@@ -83,7 +83,8 @@ class TestComposeCompiler(TestCase):
                                  " cd /gc/app1",
                                  " export PATH=$PATH:/gc/app1",
                                  " if [ ! -f /var/run/dusty/docker_first_time_started ]",
-                                 " then touch /var/run/dusty/docker_first_time_started",
+                                 " then mkdir -p /var/run/dusty",
+                                 " touch /var/run/dusty/docker_first_time_started",
                                  " one_time.sh",
                                  " fi",
                                  " always.sh\""]
@@ -98,7 +99,8 @@ class TestComposeCompiler(TestCase):
                                  " cd /gc/app1",
                                  " export PATH=$PATH:/gc/app1",
                                  " if [ ! -f /var/run/dusty/docker_first_time_started ]",
-                                 " then touch /var/run/dusty/docker_first_time_started",
+                                 " then mkdir -p /var/run/dusty",
+                                 " touch /var/run/dusty/docker_first_time_started",
                                  " fi",
                                  " always.sh\""]
         returned_command = _compile_docker_command('app1', new_specs).split(";")
