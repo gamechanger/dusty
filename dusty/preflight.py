@@ -8,7 +8,7 @@ import subprocess
 import warnings
 
 from .config import write_default_config
-from .constants import RUN_DIR, ROOT_LOG_DIR, LOG_SUBDIRS, SYSTEM_DEPENDENCY_VERSIONS, CONFIG_PATH
+from .constants import RUN_DIR, ROOT_LOG_DIR, LOG_SUBDIRS, SYSTEM_DEPENDENCY_VERSIONS, CONFIG_DIR, CONFIG_PATH
 
 class PreflightException(Exception):
     pass
@@ -57,6 +57,10 @@ def _ensure_root_log_dir_exists():
     if not os.path.exists(ROOT_LOG_DIR):
         os.makedirs(ROOT_LOG_DIR)
 
+def _ensure_config_dir_exists():
+    if not os.path.exists(CONFIG_DIR):
+        os.makedirs(CONFIG_DIR)
+
 def _ensure_log_subdirs_exist():
     for subdir in LOG_SUBDIRS:
         subdir_path = os.path.join(ROOT_LOG_DIR, subdir)
@@ -73,6 +77,7 @@ def preflight_check():
     _check_docker()
     _ensure_run_dir_exists()
     _ensure_root_log_dir_exists()
+    _ensure_config_dir_exists()
     _ensure_log_subdirs_exist()
     if not os.path.exists(CONFIG_PATH):
         logging.info('Creating default config file at {}'.format(CONFIG_PATH))
