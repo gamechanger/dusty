@@ -10,6 +10,9 @@ from .config import get_config_value
 from .constants import GIT_USER, REPOS_DIR
 from .notifier import notify
 
+def repo_is_overridden(repo_name):
+    return repo_name in get_config_value('repo_overrides')
+
 def repo_path(repo_name):
     """Given a repo_name (github.com/gamechanger/gclib), checks if that repo has an
     override, and returns the appropriate directory"""

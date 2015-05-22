@@ -3,22 +3,11 @@ import os
 from prettytable import PrettyTable
 
 from ..config import get_config_value, save_config_value
-from ..specs import get_specs, get_specs_repo
-from ..compiler.spec_assembler import get_assembled_specs
+from ..compiler.spec_assembler import get_specs, get_specs_repo, get_all_repos, get_assembled_specs
 from ..source import update_local_repo
 
-def _get_all_repos(active_only=False):
-    repos = set()
-    repos.add(get_specs_repo())
-    specs = get_assembled_specs() if active_only else get_specs()
-    for type_key in ['apps', 'libs']:
-        for spec in specs[type_key].itervalues():
-            if 'repo' in spec:
-                repos.add(spec['repo'])
-    return repos
-
 def list_repos():
-    repos, overrides = _get_all_repos(), get_config_value('repo_overrides')
+    repos, overrides = get_all_repos(), get_config_value('repo_overrides')
     table = PrettyTable(['Name', 'Local Override'])
     for repo in repos:
         table.add_row([repo,
@@ -26,7 +15,7 @@ def list_repos():
     yield table.get_string(sortby='Name')
 
 def override_repo(repo_name, source_path):
-    repos = _get_all_repos()
+    repos = get_all_repos()
     if repo_name not in repos:
         raise KeyError('No repo registered named {}'.format(repo_name))
     if not os.path.exists(source_path):
@@ -37,7 +26,7 @@ def override_repo(repo_name, source_path):
     yield 'Locally overriding repo {} to use source at {}'.format(repo_name, source_path)
 
 def manage_repo(repo_name):
-    repos = _get_all_repos()
+    repos = get_all_repos()
     if repo_name not in repos:
         raise KeyError('No repo registered named {}'.format(repo_name))
     config = get_config_value('repo_overrides')
@@ -48,7 +37,7 @@ def manage_repo(repo_name):
 
 def override_repos_from_directory(source_path):
     yield 'Overriding all repos found at {}'.format(source_path)
-    for repo in _get_all_repos():
+    for repo in get_all_repos():
         repo_name = repo.split('/')[-1]
         repo_path = os.path.join(source_path, repo_name)
         if os.path.isdir(repo_path):
@@ -60,7 +49,7 @@ def update_managed_repos():
     copy to bring it up to date with the latest master."""
     yield 'Pulling latest updates for all active managed repos'
     overrides = set(get_config_value('repo_overrides'))
-    for repo_name in _get_all_repos(active_only=True):
+    for repo_name in get_all_repos(active_only=True):
         if repo_name not in overrides:
             yield 'Updating managed copy of {}'.format(repo_name)
             update_local_repo(repo_name)
