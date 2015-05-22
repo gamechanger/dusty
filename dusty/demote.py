@@ -30,7 +30,11 @@ def check_output_demoted(shell_args, env=None):
     return _check_demoted(subprocess.check_output, shell_args, env)
 
 def check_and_log_output_and_error_demoted(shell_args, env=None):
+    total_output = ""
     logger = logging.getLogger(SOCKET_LOGGER_NAME)
     process = _check_demoted(subprocess.Popen, shell_args, env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for output in iter(process.stdout.readline, ''):
+        total_output += output
         logger.info(output)
+    logging.info('Ouput was {}'.format(total_output))
+    return total_output

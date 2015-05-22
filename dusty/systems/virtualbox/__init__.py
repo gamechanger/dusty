@@ -25,7 +25,6 @@ def _add_forwarding_rules(forwarding_spec):
                                                forwarding_spec['guest_ip'],
                                                forwarding_spec['guest_port'])
         message = 'Adding local forwarding rule: {}'.format(rule_spec)
-        logging.info(message)
         logger.info(message)
         check_and_log_output_and_error_demoted(['VBoxManage', 'controlvm', 'boot2docker-vm', 'natpf1', rule_spec])
 
