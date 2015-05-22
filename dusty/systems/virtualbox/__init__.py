@@ -44,7 +44,7 @@ def _remove_existing_forwarding_rules(forwarding_spec):
 
 def _ensure_rsync_is_installed():
     logging.info('Installing rsync inside the Docker VM')
-    check_call_demoted(['boot2docker', 'ssh', 'tce-load -wi rsync'])
+    check_and_log_output_and_error_demoted(['boot2docker', 'ssh', 'tce-load -wi rsync'])
 
 def _ensure_persist_dir_is_linked():
     logging.info('Linking {} to VBox disk (if it is not already linked)'.format(constants.VM_PERSIST_DIR))
