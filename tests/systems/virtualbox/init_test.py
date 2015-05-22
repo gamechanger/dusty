@@ -58,25 +58,3 @@ class TestVirtualBoxSystem(TestCase):
                                           self._delete_call('dusty_5001_udp'),
                                           self._add_call('dusty_5001_tcp,tcp,127.0.0.2,5001,,55001'),
                                           self._add_call('dusty_5001_udp,udp,127.0.0.2,5001,,55001')])
-
-    @patch('dusty.systems.virtualbox.check_output_demoted')
-    def test_dusty_shared_folder_already_exists_false(self, fake_check_output):
-        fake_check_output.return_value = textwrap.dedent("""\
-        vrde="off"
-        usb="off"
-        ehci="off"
-        SharedFolderNameMachineMapping1="Users"
-        SharedFolderPathMachineMapping1="/Users"
-        """)
-        self.assertFalse(_dusty_shared_folder_already_exists())
-
-    @patch('dusty.systems.virtualbox.check_output_demoted')
-    def test_dusty_shared_folder_already_exists_true(self, fake_check_output):
-        fake_check_output.return_value = textwrap.dedent("""\
-        vrde="off"
-        usb="off"
-        ehci="off"
-        SharedFolderNameMachineMapping1="dusty"
-        SharedFolderPathMachineMapping1="/etc/dusty"
-        """)
-        self.assertTrue(_dusty_shared_folder_already_exists())
