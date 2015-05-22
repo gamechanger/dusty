@@ -53,17 +53,6 @@ def _ensure_persist_dir_is_linked():
     check_and_log_output_and_error_demoted(['boot2docker', 'ssh', mkdir_if_cmd])
     check_and_log_output_and_error_demoted(['boot2docker', 'ssh', mount_if_cmd])
 
-def _ensure_dusty_shared_folder_exists():
-    """Create the dusty shared folder in the boot2docker VM if it does
-    not already exist. Creating shared folders requires the VM to
-    be powered down."""
-    if not _dusty_shared_folder_already_exists():
-        logging.info('Stopping boot2docker VM to allow creation of shared volume')
-        check_and_log_output_and_error_demoted(['boot2docker', 'stop'])
-        logging.info('Creating dusty shared folder inside boot2docker VM')
-        check_and_log_output_and_error_demoted(['VBoxManage', 'sharedfolder', 'add', 'boot2docker-vm',
-                             '--name', 'dusty', '--hostpath', constants.CONFIG_DIR])
-
 def _ensure_docker_vm_exists():
     """Initialize the boot2docker VM if it does not already exist."""
     logging.info('Initializing boot2docker, this will take a while the first time it runs')
