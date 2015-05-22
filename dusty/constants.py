@@ -17,8 +17,8 @@ CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.yml')
 REPOS_DIR = os.path.join(CONFIG_DIR, 'repos')
 COMPOSE_DIR = os.path.join(CONFIG_DIR, 'compose')
 
-CONTAINER_PERSIST_DIR = '/persist'
-CONTAINER_REPOS_DIR = os.path.join(CONTAINER_PERSIST_DIR, 'repos')
+VM_PERSIST_DIR = '/persist'
+VM_REPOS_DIR = os.path.join(VM_PERSIST_DIR, 'repos')
 
 GIT_USER = 'git'
 

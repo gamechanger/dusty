@@ -24,6 +24,6 @@ def sync_active_repos():
     assert_config_key('mac_username')
     for repo_name in get_all_repos(active_only=True, include_specs_repo=False):
         repo_type = 'overridden' if repo_is_overridden(repo_name) else 'Dusty-managed'
-        remote_path = os.path.join(constants.CONTAINER_REPOS_DIR, repo_name)
+        remote_path = os.path.join(constants.VM_REPOS_DIR, repo_name)
         logging.info('Syncing {} repo {} to remote at {}'.format(repo_type, repo_name, remote_path))
         _sync_dir(repo_path(repo_name), remote_path)

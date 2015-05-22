@@ -44,9 +44,9 @@ def _ensure_rsync_is_installed():
     check_call_demoted(['boot2docker', 'ssh', 'tce-load -wi rsync'])
 
 def _ensure_persist_dir_is_linked():
-    logging.info('Linking {} to VBox disk (if it is not already linked)'.format(constants.CONTAINER_PERSIST_DIR))
-    mkdir_if_cmd = 'if [ ! -d /mnt/sda1{0} ]; then sudo mkdir /mnt/sda1{0}; fi'.format(constants.CONTAINER_PERSIST_DIR)
-    mount_if_cmd = 'if [ ! -d {0} ]; then sudo ln -s /mnt/sda1{0} {0}; fi'.format(constants.CONTAINER_PERSIST_DIR)
+    logging.info('Linking {} to VBox disk (if it is not already linked)'.format(constants.VM_PERSIST_DIR))
+    mkdir_if_cmd = 'if [ ! -d /mnt/sda1{0} ]; then sudo mkdir /mnt/sda1{0}; fi'.format(constants.VM_PERSIST_DIR)
+    mount_if_cmd = 'if [ ! -d {0} ]; then sudo ln -s /mnt/sda1{0} {0}; fi'.format(constants.VM_PERSIST_DIR)
     check_call_demoted(['boot2docker', 'ssh', mkdir_if_cmd])
     check_call_demoted(['boot2docker', 'ssh', mount_if_cmd])
 
