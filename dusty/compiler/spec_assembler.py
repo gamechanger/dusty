@@ -4,7 +4,7 @@ import yaml
 import logging
 
 from ..config import get_config_value, assert_config_key
-from ..source import repo_path
+from ..source import local_repo_path
 
 
 def _get_dependent(dependent_type, name, specs, root_spec_type):
@@ -102,7 +102,7 @@ def get_specs_repo():
     return get_config_value('specs_repo')
 
 def get_specs_path():
-    return repo_path(get_specs_repo())
+    return local_repo_path(get_specs_repo())
 
 def get_specs():
     specs_path = get_specs_path()

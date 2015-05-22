@@ -7,21 +7,24 @@ import logging
 import git
 
 from .config import get_config_value
-from .constants import GIT_USER, REPOS_DIR
+from . import constants
 from .notifier import notify
 
 def repo_is_overridden(repo_name):
     return repo_name in get_config_value('repo_overrides')
 
-def repo_path(repo_name):
+def local_repo_path(repo_name):
     """Given a repo_name (github.com/gamechanger/gclib), checks if that repo has an
     override, and returns the appropriate directory"""
     repo_overrides = get_config_value('repo_overrides')
     override_dir = repo_overrides.get(repo_name)
     return override_dir if override_dir else _managed_repo_path(repo_name)
 
+def vm_repo_path(repo_name):
+    return os.path.join(constants.VM_REPOS_DIR, repo_name)
+
 def _managed_repo_path(repo_name):
-    return os.path.join(REPOS_DIR, repo_name)
+    return os.path.join(constants.REPOS_DIR, repo_name)
 
 def _short_repo_name(repo_name):
     return repo_name.split('/')[-1]
@@ -40,7 +43,7 @@ def ensure_local_repo(repo_name):
     repo_path_parent = os.path.split(repo_path)[0]
     if not os.path.exists(repo_path_parent):
         os.makedirs(repo_path_parent)
-    repo = git.Repo.clone_from('ssh://{}@{}'.format(GIT_USER, repo_name), repo_path)
+    repo = git.Repo.clone_from('ssh://{}@{}'.format(constants.GIT_USER, repo_name), repo_path)
 
 def update_local_repo(repo_name):
     """Given a repo name (e.g. github.com/gamechanger/gclib), pull the latest
