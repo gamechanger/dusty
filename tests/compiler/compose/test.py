@@ -63,10 +63,10 @@ basic_port_specs = {
 }
 
 
-def repo_path(name):
+def vm_repo_path(name):
     return "/Users/gc/{}".format(name.split('/')[-1])
 
-@patch('dusty.compiler.compose.repo_path', side_effect=repo_path)
+@patch('dusty.compiler.compose.vm_repo_path', side_effect=vm_repo_path)
 class TestComposeCompiler(TestCase):
     def test_composed_volumes(self, *args):
         expected_volumes = [
@@ -152,4 +152,3 @@ class TestComposeCompiler(TestCase):
     def test_lib_installs_for_app(self, fake_lib_install, *args):
         _lib_install_commands_for_app('app1', basic_specs)
         fake_lib_install.assert_has_calls([call(basic_specs['libs']['lib1']), call(basic_specs['libs']['lib2'])])
-
