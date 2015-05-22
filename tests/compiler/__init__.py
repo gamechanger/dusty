@@ -4,7 +4,7 @@ import yaml
 
 from nose.tools import nottest
 
-from dusty.specs import get_specs_from_path
+from dusty.compiler.spec_assembler import get_specs_from_path
 
 @nottest
 def get_all_test_configs():

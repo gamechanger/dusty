@@ -1,7 +1,7 @@
 import os
 import yaml
 
-from dusty.specs import get_specs_path
+from dusty.compiler.spec_assembler import get_specs_path
 
 def _write(spec_type, name, spec_doc):
     spec_type_path = os.path.join(get_specs_path(), '{}s'.format(spec_type))

@@ -6,7 +6,7 @@ from unittest import TestCase
 
 import dusty.constants
 from dusty.commands.manage_config import list_config_values, save_value, _eligible_config_keys_for_setting
-from dusty.specs import get_specs_repo
+from dusty.compiler.spec_assembler import get_specs_repo
 from ..utils import setup_test, teardown_test
 
 class TestManageConfigCommands(TestCase):

@@ -11,7 +11,7 @@ from dusty.config import get_config_value
 from dusty.commands.bundles import activate_bundle
 from dusty.commands.repos import (list_repos, override_repo, manage_repo,
                                   override_repos_from_directory, update_managed_repos)
-from dusty.specs import get_specs_repo
+from dusty.compiler.spec_assembler import get_specs_repo
 from ..utils import run, setup_test, teardown_test
 
 class TestReposCommands(TestCase):

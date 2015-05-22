@@ -1,7 +1,10 @@
+import os
+import glob
+import yaml
 import logging
 
-from ..config import get_config_value
-from ..specs import get_specs
+from ..config import get_config_value, assert_config_key
+from ..source import repo_path
 
 
 def _get_dependent(dependent_type, name, specs, root_spec_type):
@@ -94,3 +97,35 @@ def get_assembled_specs():
     _get_expanded_active_specs(specs)
     return specs
 
+def get_specs_repo():
+    assert_config_key('specs_repo')
+    return get_config_value('specs_repo')
+
+def get_specs_path():
+    return repo_path(get_specs_repo())
+
+def get_specs():
+    specs_path = get_specs_path()
+    return get_specs_from_path(specs_path)
+
+def get_specs_from_path(specs_path):
+    specs = {}
+    for key in ['bundles', 'apps', 'libs', 'services']:
+        specs[key] = {}
+        key_path = os.path.join(specs_path, key)
+        for spec_path in glob.glob('{}/*.yml'.format(key_path)):
+            spec_name = os.path.splitext(os.path.split(spec_path)[-1])[0]
+            with open(spec_path, 'r') as f:
+                specs[key][spec_name] = yaml.load(f.read())
+    return specs
+
+def get_all_repos(active_only=False, include_specs_repo=True):
+    repos = set()
+    if include_specs_repo:
+        repos.add(get_specs_repo())
+    specs = get_assembled_specs() if active_only else get_specs()
+    for type_key in ['apps', 'libs']:
+        for spec in specs[type_key].itervalues():
+            if 'repo' in spec:
+                repos.add(spec['repo'])
+    return repos

@@ -6,7 +6,7 @@ from nose.tools import nottest
 
 import dusty.constants
 from dusty.config import write_default_config, save_config_value
-from dusty.specs import get_specs_repo
+from dusty.compiler.spec_assembler import get_specs_repo
 from dusty.commands.repos import override_repo
 from .fixtures import basic_specs_fixture
 

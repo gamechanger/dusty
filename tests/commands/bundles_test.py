@@ -8,7 +8,7 @@ from unittest import TestCase
 
 from dusty.config import get_config_value
 from dusty.commands.bundles import list_bundles, activate_bundle, deactivate_bundle
-from dusty.specs import get_specs_repo
+from dusty.compiler.spec_assembler import get_specs_repo
 from ..utils import setup_test, teardown_test
 
 class TestBundlesCommands(TestCase):
