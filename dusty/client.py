@@ -25,7 +25,6 @@ def run_command(sock, command):
 
 def main():
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    sock.settimeout(.2)
     try:
         sock.connect(SOCKET_PATH)
     except:

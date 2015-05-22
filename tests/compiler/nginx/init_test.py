@@ -1,6 +1,6 @@
 from unittest import TestCase
 from dusty.compiler.nginx import (get_nginx_configuration_spec, _nginx_listen_string, _nginx_location_spec,
-                                  _nginx_proxy_string, _nginx_server_spec)
+                                  _nginx_proxy_string, _nginx_server_spec, _nginx_server_name_string)
 
 def cleanse(string):
     return string.replace("\n", "").replace("\t", "").replace(" ", "")
@@ -19,7 +19,8 @@ class TestPortSpecCompiler(TestCase):
     def test_get_nginx_configuration_spec_1(self):
         expected_output = cleanse("""http {
             server {
-                listen local.gc.com:80;
+                listen 80;
+                server_name local.gc.com;
                 location / {
                     proxy_pass http://127.0.0.1:80;
                 }
@@ -32,7 +33,8 @@ class TestPortSpecCompiler(TestCase):
     def test_get_nginx_configuration_spec_2(self):
         expected_output = cleanse("""http {
             server {
-                listen local.gcapi.com:8001;
+                listen 8001;
+                server_name local.gcapi.com;
                 location / {
                     proxy_pass http://127.0.0.0:8000;
                 }
@@ -54,13 +56,15 @@ class TestPortSpecCompiler(TestCase):
 
         expected_output = cleanse("""http {
             server {
-                listen local.gcapi.com:8001;
+                listen 8001;
+                server_name local.gcapi.com;
                 location / {
                     proxy_pass http://127.0.0.0:8000;
                 }
             }
             server {
-                listen local.gc.com:80;
+                listen 80;
+                server_name local.gc.com;
                 location / {
                     proxy_pass http://127.0.0.1:80;
                 }
@@ -72,10 +76,16 @@ class TestPortSpecCompiler(TestCase):
 
 
     def test_nginx_listen_string_1(self):
-        self.assertEqual("listen local.gc.com:80;", _nginx_listen_string(self.port_spec_dict_1['nginx'][0]))
+        self.assertEqual("listen 80;", _nginx_listen_string(self.port_spec_dict_1['nginx'][0]))
 
     def test_nginx_listen_string_2(self):
-        self.assertEqual("listen local.gcapi.com:8001;", _nginx_listen_string(self.port_spec_dict_2['nginx'][0]))
+        self.assertEqual("listen 8001;", _nginx_listen_string(self.port_spec_dict_2['nginx'][0]))
+
+    def test_nginx_server_name_string_1(self):
+        self.assertEqual("server_name local.gc.com;", _nginx_server_name_string(self.port_spec_dict_1['nginx'][0]))
+
+    def test_nginx_server_name_string_2(self):
+        self.assertEqual("server_name local.gcapi.com;", _nginx_server_name_string(self.port_spec_dict_2['nginx'][0]))
 
     def test_nginx_proxy_string_1(self):
         self.assertEqual("proxy_pass http://127.0.0.1:80;", _nginx_proxy_string(self.port_spec_dict_1['nginx'][0]))
