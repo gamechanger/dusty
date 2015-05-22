@@ -30,6 +30,7 @@ def main():
     except:
         print 'Couldn\'t connect to dusty\'s socket; make sure the daemon is running!'
         sys.exit(1)
+    sock.settimeout(None)
     if len(sys.argv) == 1:
         print 'Accepted commands: {}'.format(', '.join(sorted(COMMAND_TREE.keys())))
         return
