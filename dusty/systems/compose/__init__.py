@@ -9,6 +9,8 @@ import yaml
 from ... import constants
 from ...config import get_config_value, assert_config_key
 from ...demote import check_output_demoted, check_call_demoted, check_output_and_error_demoted
+from ...log import get_socket_logger
+#logger = get_socket_logger()
 
 def _get_docker_env():
     output = check_output_demoted(['boot2docker', 'shellinit'])
