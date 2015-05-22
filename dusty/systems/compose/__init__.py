@@ -44,11 +44,9 @@ def update_running_containers_from_spec(compose_config):
     up, then does everything needed to make sure boot2docker is
     up and running containers with the updated config."""
     assert_config_key('mac_username')
-    yield _write_composefile(compose_config)
+    _write_composefile(compose_config)
     _compose_up()
 
 def stop_running_containers():
     """Stop running containers owned by Dusty."""
     _compose_stop()
-    _write_composefile(compose_config)
-    _compose_up()
