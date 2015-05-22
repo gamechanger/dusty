@@ -31,6 +31,9 @@ def _check_nginx():
     installed_version = subprocess.check_output(['nginx', '-v'], stderr=subprocess.STDOUT).strip().split('/')[-1]
     _maybe_version_warning('nginx', installed_version)
 
+def _check_rsync():
+    _assert_executable_exists('rsync')
+
 def _check_virtualbox():
     _assert_executable_exists('VBoxManage')
     installed_version = subprocess.check_output(['VBoxManage', '-v']).split('r')[0]
@@ -64,6 +67,7 @@ def _ensure_log_subdirs_exist():
 def preflight_check():
     logging.info('Starting preflight check')
     _check_nginx()
+    _check_rsync()
     _check_virtualbox()
     _check_boot2docker()
     _check_docker()
