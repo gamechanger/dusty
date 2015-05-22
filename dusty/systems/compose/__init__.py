@@ -8,7 +8,7 @@ import yaml
 
 from ... import constants
 from ...config import get_config_value, assert_config_key
-from ...demote import check_output_demoted, check_call_demoted
+from ...demote import check_output_demoted, check_and_log_output_and_error_demoted
 
 def _get_docker_env():
     output = check_output_demoted(['boot2docker', 'shellinit'])
@@ -30,12 +30,13 @@ def _write_composefile(compose_config):
 
 def _compose_up():
     logging.info('Running docker-compose up')
-    check_call_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl'],
+    check_and_log_output_and_error_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl'],
                        env=_get_docker_env())
+
 
 def _compose_stop():
     logging.info('Running docker-compose stop')
-    check_call_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'stop', '-t', '1'])
+    check_and_log_output_and_error_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'stop', '-t', '1'])
 
 def update_running_containers_from_spec(compose_config):
     """Takes in a Compose spec from the Dusty Compose compiler,

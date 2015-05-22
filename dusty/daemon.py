@@ -4,7 +4,7 @@ import logging
 import socket
 
 from .preflight import preflight_check
-from .log import configure_logging
+from .log import configure_logging, make_socket_logger, close_socket_logger
 from .notifier import notify
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .commands import process_command
@@ -31,6 +31,7 @@ def _listen_on_socket(socket_path):
     while True:
         try:
             connection, client_address = sock.accept()
+            make_socket_logger(connection)
             try:
                 while True:
                     data = connection.recv(1024)
@@ -50,6 +51,7 @@ def _listen_on_socket(socket_path):
                     else:
                         connection.sendall(SOCKET_TERMINATOR)
             finally:
+                close_socket_logger()
                 connection.close()
         except KeyboardInterrupt:
             break
