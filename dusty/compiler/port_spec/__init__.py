@@ -12,7 +12,7 @@ def _docker_compose_port_spec(host_forwarding_spec, host_port):
             'mapped_host_port': str(host_port)}
 
 def _virtualbox_port_spec(port):
-    return {'guest_ip': LOCALHOST,
+    return {'guest_ip': '',
             'guest_port': str(port),
             'host_ip': LOCALHOST,
             'host_port': str(port)}
@@ -72,5 +72,3 @@ def get_port_spec_document(expanded_active_specs):
             add_host_names(host_forwarding_spec, port_spec, host_names)
             forwarding_port += 1
     return port_spec
-
-
