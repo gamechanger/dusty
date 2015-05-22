@@ -66,7 +66,7 @@ def _compile_docker_command(app_name, assembled_specs):
     command.append("export PATH=$PATH:{}".format(_container_code_path(app_spec)))
     command.append("if [ ! -f {} ]".format(first_run_file))
     once_command = app_spec['commands'].get("once", "")
-    command.append("then touch {}".format(first_run_file))
+    command.append("then mkdir -p {}; touch {}".format(constants.RUN_DIR, first_run_file))
     if once_command:
         command.append(once_command)
     command.append("fi")
