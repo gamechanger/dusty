@@ -6,8 +6,7 @@ import subprocess
 from ... import constants
 from ...config import get_config_value, assert_config_key
 from ...demote import check_and_log_output_and_error_demoted, check_output_demoted
-
-logger = logging.getLogger(constants.SOCKET_LOGGER_NAME)
+from ...log import log_to_client
 
 def _name_for_rule(forwarding_spec, protocol):
     return '{}_{}_{}'.format(constants.VIRTUALBOX_RULE_PREFIX, forwarding_spec['host_port'], protocol)
@@ -25,7 +24,7 @@ def _add_forwarding_rules(forwarding_spec):
                                                forwarding_spec['guest_ip'],
                                                forwarding_spec['guest_port'])
         message = 'Adding local forwarding rule: {}'.format(rule_spec)
-        logger.info(message)
+        log_to_client(message)
         check_and_log_output_and_error_demoted(['VBoxManage', 'controlvm', 'boot2docker-vm', 'natpf1', rule_spec])
 
 def _remove_existing_forwarding_rules(forwarding_spec):

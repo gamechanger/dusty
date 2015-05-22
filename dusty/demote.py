@@ -5,7 +5,7 @@ import logging
 from copy import copy
 
 from .config import get_config_value
-from .constants import SOCKET_LOGGER_NAME
+from .log import log_to_client
 
 def _demote_to_user(user_name):
     def _demote():
@@ -31,10 +31,9 @@ def check_output_demoted(shell_args, env=None):
 
 def check_and_log_output_and_error_demoted(shell_args, env=None):
     total_output = ""
-    logger = logging.getLogger(SOCKET_LOGGER_NAME)
     process = _check_demoted(subprocess.Popen, shell_args, env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for output in iter(process.stdout.readline, ''):
         total_output += output
-        logger.info(output)
+        log_to_client(output)
     logging.info('Ouput was {}'.format(total_output))
     return total_output
