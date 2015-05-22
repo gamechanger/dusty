@@ -6,8 +6,7 @@ from nose.tools import nottest
 
 from dusty.systems.virtualbox import (_name_for_rule, _add_forwarding_rules,
                                       _remove_existing_forwarding_rules,
-                                      update_virtualbox_port_forwarding_from_port_spec,
-                                      _dusty_shared_folder_already_exists)
+                                      update_virtualbox_port_forwarding_from_port_spec)
 
 class TestVirtualBoxSystem(TestCase):
     def setUp(self):
