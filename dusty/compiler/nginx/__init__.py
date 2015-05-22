@@ -9,12 +9,16 @@ def _nginx_location_spec(port_spec):
     return location_string_spec
 
 def _nginx_listen_string(port_spec):
-    return "listen {}:{};".format(port_spec['host_address'], port_spec['host_port'])
+    return "listen {};".format(port_spec['host_port'])
+
+def _nginx_server_name_string(port_spec):
+    return "server_name {};".format(port_spec['host_address'])
 
 def _nginx_server_spec(port_spec):
     """This will output the nginx server config string for speicfic port spec """
     server_string_spec = "\t server {\n"
     server_string_spec += "\t \t {}\n".format(_nginx_listen_string(port_spec))
+    server_string_spec += "\t \t {}\n".format(_nginx_server_name_string(port_spec))
     server_string_spec += _nginx_location_spec(port_spec)
     server_string_spec += "\t }\n"
     return server_string_spec
