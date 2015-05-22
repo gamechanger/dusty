@@ -21,7 +21,8 @@ COMMAND_TREE = {
         'listvalues': manage_config.list_config_values,
         'set': manage_config.save_value
     },
-    'up': run.start_local_env
+    'up': run.start_local_env,
+    'stop': run.stop_local_env
 }
 
 def process_command(command_string):

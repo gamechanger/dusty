@@ -33,6 +33,10 @@ def _compose_up():
     check_call_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl'],
                        env=_get_docker_env())
 
+def _compose_stop():
+    logging.info('Running docker-compose stop')
+    check_call_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'stop', '-t', '1'])
+
 def update_running_containers_from_spec(compose_config):
     """Takes in a Compose spec from the Dusty Compose compiler,
     writes it to the Compose spec folder so Compose can pick it
@@ -41,3 +45,7 @@ def update_running_containers_from_spec(compose_config):
     assert_config_key('mac_username')
     _write_composefile(compose_config)
     _compose_up()
+
+def stop_running_containers():
+    """Stop running containers owned by Dusty."""
+    _compose_stop()

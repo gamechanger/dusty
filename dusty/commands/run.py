@@ -21,3 +21,10 @@ def start_local_env():
     compose.update_running_containers_from_spec(compose_config)
 
     yield "Your local environment is now started"
+
+def stop_local_env():
+    """Stop any currently running Docker containers associated with
+    Dusty. Does not remove the containers."""
+    yield "Stopping all running containers associated with Dusty"
+    compose.stop_running_containers()
+    yield "Dusty containers are stopped"
