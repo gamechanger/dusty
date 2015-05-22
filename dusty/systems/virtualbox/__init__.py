@@ -39,28 +39,9 @@ def _remove_existing_forwarding_rules(forwarding_spec):
         except subprocess.CalledProcessError:
             logging.warning('Deleting rule failed, possibly because it did not exist. Continuing...')
 
-def _dusty_shared_folder_already_exists():
-    """Return boolean indicating whether the dusty shared folder
-    has already been created in the boot2docker VM."""
-    output = check_output_demoted(['VBoxManage', 'showvminfo', 'boot2docker-vm', '--machinereadable'])
-    return re.compile('^SharedFolderName.*dusty', re.MULTILINE).search(output) is not None
-
-def _ensure_dusty_shared_folder_exists():
-    """Create the dusty shared folder in the boot2docker VM if it does
-    not already exist. Creating shared folders requires the VM to
-    be powered down."""
-    if not _dusty_shared_folder_already_exists():
-        logging.info('Stopping boot2docker VM to allow creation of shared volume')
-        check_call_demoted(['boot2docker', 'stop'])
-        logging.info('Creating dusty shared folder inside boot2docker VM')
-        check_call_demoted(['VBoxManage', 'sharedfolder', 'add', 'boot2docker-vm',
-                             '--name', 'dusty', '--hostpath', constants.CONFIG_DIR])
-
-def _ensure_dusty_shared_folder_is_mounted():
-    logging.info('Mounting dusty shared folder (if it is not already mounted)')
-    mount_cmd = 'sudo mkdir {0}; sudo mount -t vboxsf -o uid=1000,gid=50 dusty {0}'.format(constants.CONFIG_DIR)
-    mount_if_cmd = 'if [ ! -d "{}" ]; then {}; fi'.format(constants.CONFIG_DIR, mount_cmd)
-    check_call_demoted(['boot2docker', 'ssh', mount_if_cmd])
+def _ensure_rsync_is_installed():
+    logging.info('Installing rsync inside the Docker VM')
+    check_call_demoted(['boot2docker', 'ssh', 'tce-load -wi rsync'])
 
 def _ensure_persist_dir_is_linked():
     logging.info('Linking /persist to VBox disk (if it is not already linked)')
@@ -80,10 +61,9 @@ def _ensure_docker_vm_is_started():
 def initialize_docker_vm():
     assert_config_key('mac_username')
     _ensure_docker_vm_exists()
-    _ensure_dusty_shared_folder_exists()
     _ensure_docker_vm_is_started()
+    _ensure_rsync_is_installed()
     _ensure_persist_dir_is_linked()
-    _ensure_dusty_shared_folder_is_mounted()
 
 def update_virtualbox_port_forwarding_from_port_spec(port_spec):
     """Update the current VirtualBox port mappings from the host OS
