@@ -4,9 +4,9 @@ import logging
 import socket
 
 from .preflight import preflight_check
-from .log import configure_logging, make_socket_logger, get_socket_logger
+from .log import configure_logging, make_socket_logger, close_socket_logger
 from .notifier import notify
-from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
+from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR, SOCKET_LOGGER_NAME
 from .commands import process_command
 
 def _clean_up_existing_socket(socket_path):
@@ -51,6 +51,7 @@ def _listen_on_socket(socket_path):
                     else:
                         connection.sendall(SOCKET_TERMINATOR)
             finally:
+                close_socket_logger()
                 connection.close()
         except KeyboardInterrupt:
             break

@@ -1,9 +1,11 @@
 import os
 import pwd
 import subprocess
+import logging
 from copy import copy
 
 from .config import get_config_value
+from .constants import SOCKET_LOGGER_NAME
 
 def _demote_to_user(user_name):
     def _demote():
@@ -27,6 +29,8 @@ def check_call_demoted(shell_args, env=None):
 def check_output_demoted(shell_args, env=None):
     return _check_demoted(subprocess.check_output, shell_args, env)
 
-def check_output_and_error_demoted(shell_args, env=None):
+def check_and_log_output_and_error_demoted(shell_args, env=None):
+    logger = logging.getLogger(SOCKET_LOGGER_NAME)
     process = _check_demoted(subprocess.Popen, shell_args, env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    return process.stdout.read()
+    for output in iter(process.stdout.readline, ''):
+        logger.info(output)

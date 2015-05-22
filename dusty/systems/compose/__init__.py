@@ -8,9 +8,7 @@ import yaml
 
 from ... import constants
 from ...config import get_config_value, assert_config_key
-from ...demote import check_output_demoted, check_call_demoted, check_output_and_error_demoted
-from ...log import get_socket_logger
-#logger = get_socket_logger()
+from ...demote import check_output_demoted, check_and_log_output_and_error_demoted
 
 def _get_docker_env():
     output = check_output_demoted(['boot2docker', 'shellinit'])
@@ -32,10 +30,9 @@ def _write_composefile(compose_config):
 
 def _compose_up():
     logging.info('Running docker-compose up')
-    output = check_output_and_error_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl'],
+    check_and_log_output_and_error_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl'],
                        env=_get_docker_env())
-    logging.info(output)
-    return output
+
 
 def _compose_stop():
     logging.info('Running docker-compose stop')
@@ -54,4 +51,4 @@ def stop_running_containers():
     """Stop running containers owned by Dusty."""
     _compose_stop()
     _write_composefile(compose_config)
-    yield _compose_up()
+    _compose_up()
