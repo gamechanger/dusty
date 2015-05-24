@@ -25,5 +25,5 @@ def sync_repos(repos):
     for repo_name in repos:
         repo_type = 'overridden' if repo_is_overridden(repo_name) else 'Dusty-managed'
         remote_path = vm_repo_path(repo_name)
-        log_to_client('Syncing {} repo {} to remote at {}\n'.format(repo_type, repo_name, remote_path))
+        log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo_name, remote_path))
         _sync_dir(local_repo_path(repo_name), remote_path)
