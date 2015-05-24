@@ -49,6 +49,11 @@ def _check_docker():
     installed_version = subprocess.check_output(['docker', '-v']).split(',')[0].split(' ')[-1]
     _maybe_version_warning('docker', installed_version)
 
+def _check_docker_compose():
+    _assert_executable_exists('docker-compose')
+    installed_version = subprocess.check_output(['docker-compose', '--version']).split(' ')[1].strip()
+    _maybe_version_warning('docker-compose', installed_version)
+
 def _ensure_run_dir_exists():
     if not os.path.exists(RUN_DIR):
         os.makedirs(RUN_DIR)
@@ -75,6 +80,7 @@ def preflight_check():
     _check_virtualbox()
     _check_boot2docker()
     _check_docker()
+    _check_docker_compose()
     _ensure_run_dir_exists()
     _ensure_root_log_dir_exists()
     _ensure_config_dir_exists()
