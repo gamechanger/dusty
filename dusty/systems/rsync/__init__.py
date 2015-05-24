@@ -6,6 +6,7 @@ from ... import constants
 from ...config import get_config_value, assert_config_key
 from ...demote import check_call_demoted
 from ...source import local_repo_path, vm_repo_path, repo_is_overridden
+from ...log import log_to_client
 
 def _ensure_remote_dir_exists(remote_dir):
     check_call_demoted(['boot2docker', 'ssh', 'sudo mkdir -p {0}; sudo chown -R docker {0}'.format(remote_dir)])
@@ -24,5 +25,5 @@ def sync_repos(repos):
     for repo_name in repos:
         repo_type = 'overridden' if repo_is_overridden(repo_name) else 'Dusty-managed'
         remote_path = vm_repo_path(repo_name)
-        logging.info('Syncing {} repo {} to remote at {}'.format(repo_type, repo_name, remote_path))
+        log_to_client('Syncing {} repo {} to remote at {}\n'.format(repo_type, repo_name, remote_path))
         _sync_dir(local_repo_path(repo_name), remote_path)
