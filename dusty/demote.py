@@ -35,5 +35,4 @@ def check_and_log_output_and_error_demoted(shell_args, env=None):
     for output in iter(process.stdout.readline, ''):
         total_output += output
         log_to_client(output)
-    logging.info('Output was {}'.format(total_output.strip()))
     return total_output
