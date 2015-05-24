@@ -36,7 +36,9 @@ def _compose_up():
 
 def _compose_stop():
     logging.info('Running docker-compose stop')
-    check_and_log_output_and_error_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'stop', '-t', '1'])
+    check_and_log_output_and_error_demoted(['docker-compose', '-f', _composefile_path(),
+                                            '-p', 'dusty', 'stop', '-t', '1'],
+                                           env=_get_docker_env())
 
 def update_running_containers_from_spec(compose_config):
     """Takes in a Compose spec from the Dusty Compose compiler,
