@@ -25,6 +25,7 @@ def start_local_env():
     virtualbox.initialize_docker_vm()
     log_to_client("Saving port to virtualbox vm\n")
     virtualbox.update_virtualbox_port_forwarding_from_port_spec(port_spec)
+    log_to_client("Syncing local repos to the VM\n")
     rsync.sync_repos(active_repos)
     log_to_client("Saving nginx config and ensure nginx is running\n")
     nginx.update_nginx_from_config(nginx_config)

@@ -21,7 +21,7 @@ def setup_test(cls):
     cls.temp_repos_path = tempfile.mkdtemp()
     dusty.constants.CONFIG_PATH = cls.temp_config_path
     write_default_config()
-    save_config_value('specs_repo', 'github/gamechange/dusty-specs')
+    save_config_value('specs_repo', 'github.com/org/dusty-specs')
     run(override_repo(get_specs_repo(), cls.temp_specs_path))
     basic_specs_fixture()
 

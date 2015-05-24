@@ -14,7 +14,7 @@ class TestManageConfigCommands(TestCase):
         setup_test(self)
         self.old_config_path = dusty.constants.CONFIG_PATH
         dusty.constants.CONFIG_SETTINGS = {k: '' for k in ['bundles', 'repo_overrides', 'specs_repo', 'docker_user']}
-        self.expected_config = {'bundles': [], 'repo_overrides': {get_specs_repo(): self.temp_specs_path}, 'specs_repo': 'github/gamechange/dusty-specs'}
+        self.expected_config = {'bundles': [], 'repo_overrides': {get_specs_repo(): self.temp_specs_path}, 'specs_repo': 'github.com/org/dusty-specs'}
 
     def tearDown(self):
         teardown_test(self)
@@ -30,7 +30,7 @@ class TestManageConfigCommands(TestCase):
     def test_save_value_changes_value(self):
         save_value('docker_user', '~/here').next()
         result = list_config_values().next()
-        self.assertEquals(result, {'bundles': [], 'repo_overrides': {get_specs_repo(): self.temp_specs_path}, 'docker_user': '~/here', 'specs_repo': 'github/gamechange/dusty-specs'})
+        self.assertEquals(result, {'bundles': [], 'repo_overrides': {get_specs_repo(): self.temp_specs_path}, 'docker_user': '~/here', 'specs_repo': 'github.com/org/dusty-specs'})
 
     def test_save_value_no_changes(self):
         with self.assertRaises(KeyError):
