@@ -23,7 +23,7 @@ def _add_forwarding_rules(forwarding_spec):
                                                forwarding_spec['host_port'],
                                                forwarding_spec['guest_ip'],
                                                forwarding_spec['guest_port'])
-        log_to_client('Adding local forwarding rule: {}\n'.format(rule_spec))
+        log_to_client('Adding local forwarding rule: {}'.format(rule_spec))
         check_and_log_output_and_error_demoted(['VBoxManage', 'controlvm', 'boot2docker-vm', 'natpf1', rule_spec])
 
 def _remove_existing_forwarding_rules(forwarding_spec):
