@@ -102,13 +102,13 @@ def update_running_containers_from_spec(compose_config):
 def stop_running_services(services=None):
     """Stop running containers owned by Dusty, or a specific
     list of Compose services if provided."""
-    if not services:
+    if services is None:
         services = []
     _compose_stop(services)
 
 def restart_running_services(services=None):
     """Restart containers owned by Dusty, or a specific
     list of Compose services if provided."""
-    if not services:
+    if services is None:
         services = []
     _compose_restart(services)
