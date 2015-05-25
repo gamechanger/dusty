@@ -8,7 +8,7 @@ def start_local_env():
     """ This command will use the compilers to get compose specs
     will pass those specs to the systems that need them. Those
     systems will in turn launch the services needed to make the
-    local environment go"""
+    local environment go."""
     active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
     log_to_client("Compiling together the assembled specs")
     assembled_spec = spec_assembler.get_assembled_specs()
@@ -34,9 +34,15 @@ def start_local_env():
 
     yield "Your local environment is now started"
 
-def stop_local_env():
+def stop_local_env(*services):
     """Stop any currently running Docker containers associated with
-    Dusty. Does not remove the containers."""
-    yield "Stopping all running containers associated with Dusty"
-    compose.stop_running_containers()
-    yield "Dusty containers are stopped"
+    Dusty. Does not remove the containers.
+
+    Here, "services" refers to the Compose version of the term,
+    so any existing running container, by name. This includes Dusty
+    apps and services."""
+    if services:
+        yield "Stopping the following services: {}".format(', '.join(services))
+    else:
+        yield "Stopping all running containers associated with Dusty"
+    compose.stop_running_containers(services)

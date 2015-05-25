@@ -34,11 +34,13 @@ def _compose_up():
                                             'up', '-d', '--allow-insecure-ssl'],
                                            env=_get_docker_env())
 
-def _compose_stop():
+def _compose_stop(services):
     logging.info('Running docker-compose stop')
-    check_and_log_output_and_error_demoted(['docker-compose', '-f', _composefile_path(),
-                                            '-p', 'dusty', 'stop', '-t', '1'],
-                                           env=_get_docker_env())
+    command = ['docker-compose', '-f', _composefile_path(),
+               '-p', 'dusty', 'stop', '-t', '1']
+    if services:
+        command += services
+    check_and_log_output_and_error_demoted(command, env=_get_docker_env())
 
 def update_running_containers_from_spec(compose_config):
     """Takes in a Compose spec from the Dusty Compose compiler,
@@ -49,6 +51,9 @@ def update_running_containers_from_spec(compose_config):
     _write_composefile(compose_config)
     _compose_up()
 
-def stop_running_containers():
-    """Stop running containers owned by Dusty."""
-    _compose_stop()
+def stop_running_containers(services=None):
+    """Stop running containers owned by Dusty, or a specific
+    list of Compose services if provided."""
+    if not services:
+        services = []
+    _compose_stop(services)
