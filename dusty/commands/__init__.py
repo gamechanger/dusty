@@ -23,7 +23,8 @@ COMMAND_TREE = {
         'set': manage_config.save_value
     },
     'up': run.start_local_env,
-    'stop': run.stop_local_env
+    'stop': run.stop_services,
+    'restart': run.restart_services
 }
 
 def process_command(command_string):
