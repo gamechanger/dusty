@@ -61,6 +61,28 @@ def _compose_stop(services):
         command += services
     check_and_log_output_and_error_demoted(command, env=_get_docker_env())
 
+def _get_dusty_containers(client, services):
+    """Get a list of containers associated with the list
+    of services. If no services are provided, attempts to
+    return all containers associated with Dusty."""
+    if services:
+        return [container
+                for container in client.containers()
+                if any('/dusty_{}_1'.format(service) in container.get('Names', [])
+                       for service in services)]
+    else:
+        return [container
+                for container in client.containers()
+                if any(name.startswith('/dusty') for name in container.get('Names', []))]
+
+def _get_canonical_container_name(container):
+    """Return the canonical container name, which should be
+    of the form dusty_<service_name>_1. Containers are returned
+    from the Python client with many names based on the containers
+    to which they are linked, but simply taking the shortest name
+    should be sufficient to get us the shortest one."""
+    return sorted(container['Names'], key=lambda name: len(name))[0][1:]
+
 def _compose_restart(services):
     """Well, this is annoying. Compose 1.2 shipped with the
     restart functionality fucking broken, so we can't set a faster
@@ -71,24 +93,14 @@ def _compose_restart(services):
     Relevant fix which will make it into the next release:
     https://github.com/docker/compose/pull/1318"""
 
-    def _get_actual_name(container):
-        return sorted(container['Names'], key=lambda name: len(name))[0][1:]
-
     def _restart_container(client, container):
-        log_to_client('Restarting {}'.format(_get_actual_name(container)))
+        log_to_client('Restarting {}'.format(_get_canonical_container_name(container)))
         client.restart(container['Id'], timeout=1)
 
     logging.info('Restarting service containers from list: {}'.format(services))
     client = _get_docker_client()
-    if services:
-        for container in client.containers(all=True):
-            if any('/dusty_{}_1'.format(service) in container.get('Names', [])
-                   for service in services):
-                _restart_container(client, container)
-    else:
-        for container in client.containers(all=True):
-            if any(name.startswith('/dusty') for name in container.get('Names', [])):
-                _restart_container(client, container)
+    for container in _get_dusty_containers(client, services):
+        _restart_container(client, container)
 
 def update_running_containers_from_spec(compose_config):
     """Takes in a Compose spec from the Dusty Compose compiler,
