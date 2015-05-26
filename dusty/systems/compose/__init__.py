@@ -125,6 +125,6 @@ def restart_running_services(services=None):
         services = []
     _compose_restart(services)
 
-def get_dusty_containers(service_names):
+def get_dusty_containers(app_or_service_names):
     client = _get_docker_client()
-    return _get_dusty_containers(client, service_names)
+    return _get_dusty_containers(client, app_or_service_names)
