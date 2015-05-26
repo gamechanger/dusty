@@ -54,4 +54,7 @@ def update_managed_repos():
         if repo_name not in overrides:
             log_to_client('Updating managed copy of {}'.format(repo_name))
             update_local_repo(repo_name)
-    return []
+
+def update_managed_repos_command():
+    update_managed_repos()
+    yield "Finished updating Dusty-managed active repos"

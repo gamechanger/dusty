@@ -14,7 +14,7 @@ COMMAND_TREE = {
         'override': repos.override_repo,
         'manage': repos.manage_repo,
         'from': repos.override_repos_from_directory,
-        'update': repos.update_managed_repos
+        'update': repos.update_managed_repos_command
     },
     'sync': sync.sync_repos,
     'config': {
