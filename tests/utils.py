@@ -16,8 +16,6 @@ def run(generator):
 
 @nottest
 def setup_test(cls):
-    import logging
-    logging.error("FSDFLKS:DFJSL:FJSD:LF  sadfasdfasdf")
     cls.temp_config_path = tempfile.mkstemp()[1]
     cls.temp_specs_path = tempfile.mkdtemp()
     cls.temp_repos_path = tempfile.mkdtemp()
