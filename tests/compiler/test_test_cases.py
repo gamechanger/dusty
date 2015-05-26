@@ -135,3 +135,8 @@ class TestExpectedRunningContainers(TestCase):
                  }}
         fake_get_assembled_specs.return_value = specs
         self.assertEqual(spec_assembler.get_expected_number_of_running_containers(), 4)
+    def test_get_repo_of_app_or_service_app(self):
+        self.assertEqual(spec_assembler.get_repo_of_app_or_service('app-a'), 'github.com/app/a')
+
+    def test_get_repo_of_app_or_service_lib(self):
+        self.assertEqual(spec_assembler.get_repo_of_app_or_service('lib-a'), 'github.com/lib/a')

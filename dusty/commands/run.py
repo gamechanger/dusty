@@ -37,29 +37,21 @@ def start_local_env():
 
     yield "Your local environment is now started"
 
-def stop_services(*services):
+def stop_apps_or_services(*apps_or_services):
     """Stop any currently running Docker containers associated with
-    Dusty, or associated with the provided services. Does not remove
-    the service's containers.
-
-    Here, "services" refers to the Compose version of the term,
-    so any existing running container, by name. This includes Dusty
-    apps and services."""
-    if services:
-        yield "Stopping the following services: {}".format(', '.join(services))
+    Dusty, or associated with the provided apps_or_services. Does not remove
+    the service's containers."""
+    if apps_or_services:
+        yield "Stopping the following apps or services: {}".format(', '.join(apps_or_services))
     else:
         yield "Stopping all running containers associated with Dusty"
-    compose.stop_running_services(services)
+    compose.stop_running_services(apps_or_services)
 
-def restart_services(*services):
+def restart_apps_or_services(*apps_or_services):
     """Restart any containers associated with Dusty, or associated with
-    the provided services.
-
-    Here, "services" refers to the Compose version of the term,
-    so any existing running container, by name. This includes Dusty
-    apps and services."""
-    if services:
-        yield "Restarting the following services: {}".format(', '.join(services))
+    the provided apps_or_services."""
+    if apps_or_services:
+        yield "Restarting the following apps or services: {}".format(', '.join(apps_or_services))
     else:
         yield "Restarting all active containers associated with Dusty"
-    compose.restart_running_services(services)
+    compose.restart_running_services(apps_or_services)
