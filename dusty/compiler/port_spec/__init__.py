@@ -1,4 +1,5 @@
-from dusty.constants import LOCALHOST
+from ...constants import LOCALHOST
+from ...systems.virtualbox import get_docker_vm_ip
 
 class ReusedHostFullAddress(Exception):
     pass
@@ -8,18 +9,11 @@ class ReusedContainerPort(Exception):
 
 def _docker_compose_port_spec(host_forwarding_spec, host_port):
     return {'in_container_port': str(host_forwarding_spec['container_port']),
-            'mapped_host_ip': LOCALHOST,
             'mapped_host_port': str(host_port)}
 
-def _virtualbox_port_spec(port):
-    return {'guest_ip': '',
-            'guest_port': str(port),
-            'host_ip': LOCALHOST,
-            'host_port': str(port)}
-
-def _nginx_port_spec(host_forwarding_spec, port):
-    return {'proxied_ip': LOCALHOST,
-            'proxied_port': str(port),
+def _nginx_port_spec(host_forwarding_spec, port, boot2docker_ip):
+    return {'proxied_port': str(port),
+            'boot2docker_ip': boot2docker_ip,
             'host_address': host_forwarding_spec['host_name'],
             'host_port': str(host_forwarding_spec['host_port'])}
 
@@ -45,12 +39,12 @@ def add_host_names(host_forwarding_spec, port_mappings, host_names):
         port_mappings['hosts_file'].append(_hosts_file_port_spec(host_forwarding_spec))
         host_names.add(host_name)
 
-def get_port_spec_document(expanded_active_specs):
+def get_port_spec_document(expanded_active_specs, boot2docker_ip):
     """ Given a dictionary containing the expanded dusty DAG specs this function will
     return a dictionary containing the port mappings needed by downstream methods.  Currently
     this includes docker_compose, virtualbox, nginx and hosts_file."""
     forwarding_port = 65000
-    port_spec = {'docker_compose':{}, 'virtualbox':[], 'nginx':[], 'hosts_file':[]}
+    port_spec = {'docker_compose':{}, 'nginx':[], 'hosts_file':[]}
     host_full_addresses = set()
     host_names = set()
     # No matter the order of apps in expanded_active_specs, we want to produce a consistent
@@ -66,8 +60,7 @@ def get_port_spec_document(expanded_active_specs):
             add_container_ports(host_forwarding_spec, container_ports)
 
             port_spec['docker_compose'][app_name].append(_docker_compose_port_spec(host_forwarding_spec, forwarding_port))
-            port_spec['virtualbox'].append(_virtualbox_port_spec(forwarding_port))
-            port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port))
+            port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port, boot2docker_ip))
 
             add_host_names(host_forwarding_spec, port_spec, host_names)
             forwarding_port += 1
