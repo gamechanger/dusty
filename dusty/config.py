@@ -21,6 +21,8 @@ def get_config():
     return _load(constants.CONFIG_PATH)
 
 def save_config(config):
+    import logging
+    logging.info(config)
     with open(constants.CONFIG_PATH, 'w') as f:
         f.write(_dump(config))
 
