@@ -29,10 +29,10 @@ def is_client_command(args):
     return False
 
 def main():
+    errored = 0
     if len(sys.argv) == 1:
         print 'Accepted commands: {}'.format(', '.join(sorted(COMMAND_TREE.keys())))
-        return
-    if is_client_command(sys.argv[1:]):
+    elif is_client_command(sys.argv[1:]):
         errored = process_command(' '.join(sys.argv[1:]))
     else:
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -43,6 +43,9 @@ def main():
             print 'Couldn\'t connect to dusty\'s socket; make sure the daemon is running, and that it\'s not connected to another client'
             sys.exit(1)
         sock.settimeout(None)
-
-        errored = run_command(sock, ' '.join(sys.argv[1:]))
+        try:
+            errored = run_command(sock, ' '.join(sys.argv[1:]))
+        except KeyboardInterrupt:
+            print "Dusty Client stopping on KeyboardInterrupt..."
+            print "-----Dusty Daemon is still processing your last command!-----"
     sys.exit(1 if errored else 0)
