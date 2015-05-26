@@ -2,10 +2,11 @@ import os
 import pwd
 import subprocess
 import logging
+from threading import Thread
 from copy import copy
 
 from .config import get_config_value
-from .log import log_to_client
+from .log import log_to_client, log_to_client_only
 
 def _demote_to_user(user_name):
     def _demote():
@@ -36,3 +37,8 @@ def check_and_log_output_and_error_demoted(shell_args, env=None):
         total_output += output
         log_to_client(output.strip())
     return total_output
+
+def thread_output_client_only(shell_args, env=None):
+    process = _check_demoted(subprocess.Popen, shell_args, env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for output in iter(process.stdout.readline, ''):
+        log_to_client_only(output.strip())

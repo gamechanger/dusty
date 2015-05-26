@@ -1,7 +1,7 @@
 import sys
 import logging
 import logging.handlers
-from .constants import SOCKET_PATH, SOCKET_LOGGER_NAME
+from .constants import SOCKET_PATH, SOCKET_LOGGER_NAME, SOCKET_ONLY_LOGGER_NAME
 
 handler = None
 
@@ -24,6 +24,12 @@ def make_socket_logger(connection_socket):
     logger = logging.getLogger(SOCKET_LOGGER_NAME)
     handler = DustySocketHandler(connection_socket)
     logger.addHandler(handler)
+    make_socket_only_logger()
+
+def make_socket_only_logger():
+    logger = logging.getLogger(SOCKET_ONLY_LOGGER_NAME)
+    logger.addHandler(handler)
+    logger.propagate = False
 
 def log_to_client(message):
     logger = logging.getLogger(SOCKET_LOGGER_NAME)
@@ -34,3 +40,7 @@ def close_socket_logger():
     logger = logging.getLogger(SOCKET_LOGGER_NAME)
     logger.removeHandler(handler)
     handler = None
+
+def log_to_client_only(message):
+    logger = logging.getLogger(SOCKET_ONLY_LOGGER_NAME)
+    logger.info(message)

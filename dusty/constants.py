@@ -9,6 +9,7 @@ ROOT_LOG_DIR = '/var/log/dusty'
 LOG_SUBDIRS = ['nginx']
 
 SOCKET_LOGGER_NAME = 'socket_logger'
+SOCKET_ONLY_LOGGER_NAME = 'client_only_logger'
 
 RUN_DIR = '/var/run/dusty'
 SOCKET_PATH = os.path.join(RUN_DIR, 'dusty.sock')
