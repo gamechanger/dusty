@@ -7,4 +7,3 @@ def call_command_from_client(shell_args, env=None):
         subprocess.call(shell_args, env=env)
     except KeyboardInterrupt:
         print "KeyboardInterrupt; terminating"
-        pass
