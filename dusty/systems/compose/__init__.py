@@ -124,3 +124,7 @@ def restart_running_services(services=None):
     if services is None:
         services = []
     _compose_restart(services)
+
+def get_dusty_containers(app_or_service_names):
+    client = _get_docker_client()
+    return _get_dusty_containers(client, app_or_service_names)
