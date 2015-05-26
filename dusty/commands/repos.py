@@ -5,6 +5,7 @@ from prettytable import PrettyTable
 from ..config import get_config_value, save_config_value
 from ..compiler.spec_assembler import get_specs, get_specs_repo, get_all_repos, get_assembled_specs
 from ..source import update_local_repo
+from ..log import log_to_client
 
 def list_repos():
     repos, overrides = get_all_repos(), get_config_value('repo_overrides')
@@ -47,9 +48,9 @@ def override_repos_from_directory(source_path):
 def update_managed_repos():
     """For any active, managed repos, update the Dusty-managed
     copy to bring it up to date with the latest master."""
-    yield 'Pulling latest updates for all active managed repos'
+    log_to_client('Pulling latest updates for all active managed repos:')
     overrides = set(get_config_value('repo_overrides'))
     for repo_name in get_all_repos(active_only=True):
         if repo_name not in overrides:
-            yield 'Updating managed copy of {}'.format(repo_name)
+            log_to_client('Updating managed copy of {}'.format(repo_name))
             update_local_repo(repo_name)

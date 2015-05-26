@@ -3,6 +3,7 @@ from ..compiler import (compose as compose_compiler, nginx as nginx_compiler,
                         port_spec as port_spec_compiler, spec_assembler)
 from ..systems import compose, hosts, nginx, virtualbox, rsync
 from ..log import log_to_client
+from .repos import update_managed_repos
 
 def start_local_env():
     """ This command will use the compilers to get compose specs
@@ -10,6 +11,7 @@ def start_local_env():
     systems will in turn launch the services needed to make the
     local environment go."""
     active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
+    update_managed_repos()
     log_to_client("Compiling together the assembled specs")
     assembled_spec = spec_assembler.get_assembled_specs()
 
