@@ -7,7 +7,7 @@ from ...config import get_config_value, assert_config_key
 from ...demote import check_call_demoted
 from ...source import local_repo_path, vm_repo_path, repo_is_overridden
 from ...log import log_to_client
-from dusty.compiler.spec_assembler import get_repo_of_app_or_service
+from dusty.compiler.spec_assembler import get_repo_of_app_or_library
 
 def _ensure_remote_dir_exists(remote_dir):
     check_call_demoted(['boot2docker', 'ssh', 'sudo mkdir -p {0}; sudo chown -R docker {0}'.format(remote_dir)])
@@ -32,5 +32,5 @@ def sync_repos(repos):
 def sync_repos_by_app_or_service_name(app_or_service_names):
     repos = []
     for app_or_service_name in app_or_service_names:
-        repos.append(get_repo_of_app_or_service(app_or_service_name))
+        repos.append(get_repo_of_app_or_library(app_or_service_name))
     sync_repos(repos)

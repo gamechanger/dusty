@@ -144,11 +144,11 @@ class TestSpecAssemblerGetRepoTestCases(TestCase):
     def tearDown(self):
         teardown_test(self)
     def test_get_repo_of_app_or_service_app(self):
-        self.assertEqual(spec_assembler.get_repo_of_app_or_service('app-a'), 'github.com/app/a')
+        self.assertEqual(spec_assembler.get_repo_of_app_or_library('app-a'), 'github.com/app/a')
 
     def test_get_repo_of_app_or_service_lib(self):
-        self.assertEqual(spec_assembler.get_repo_of_app_or_service('lib-a'), 'github.com/lib/a')
+        self.assertEqual(spec_assembler.get_repo_of_app_or_library('lib-a'), 'github.com/lib/a')
 
     def test_get_repo_of_app_or_service_neither(self):
         with self.assertRaises(KeyError):
-            spec_assembler.get_repo_of_app_or_service('lib-b')
+            spec_assembler.get_repo_of_app_or_library('lib-b')
