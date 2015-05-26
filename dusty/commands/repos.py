@@ -54,3 +54,4 @@ def update_managed_repos():
         if repo_name not in overrides:
             log_to_client('Updating managed copy of {}'.format(repo_name))
             update_local_repo(repo_name)
+    return []

@@ -39,7 +39,7 @@ def _listen_on_socket(socket_path):
                         break
                     logging.info('Received command: {}'.format(data))
                     try:
-                        for line in process_command(data) or []:
+                        for line in process_command(data):
                             encoded_line = line
                             if isinstance(encoded_line, basestring):
                                 encoded_line = line.encode('utf-8')
