@@ -8,38 +8,6 @@ from ...config import get_config_value, assert_config_key
 from ...demote import check_and_log_output_and_error_demoted, check_output_demoted
 from ...log import log_to_client
 
-def _name_for_rule(forwarding_spec, protocol):
-    return '{}_{}_{}'.format(constants.VIRTUALBOX_RULE_PREFIX, forwarding_spec['host_port'], protocol)
-
-def _add_forwarding_rules(forwarding_spec):
-    """Add TCP and UDP forwarding rules from the host OS to
-    the Docker VM in VirtualBox, according to the forwarding spec
-    passed down from the port compiler."""
-    logging.info('Adding local forwarding rules from spec: {}'.format(forwarding_spec))
-    for protocol in ['tcp', 'udp']:
-        rule_spec = '{},{},{},{},{},{}'.format(_name_for_rule(forwarding_spec, protocol),
-                                               protocol,
-                                               forwarding_spec['host_ip'],
-                                               forwarding_spec['host_port'],
-                                               forwarding_spec['guest_ip'],
-                                               forwarding_spec['guest_port'])
-        log_to_client('Adding local forwarding rule: {}'.format(rule_spec))
-        check_and_log_output_and_error_demoted(['VBoxManage', 'controlvm', 'boot2docker-vm', 'natpf1', rule_spec])
-
-def _remove_existing_forwarding_rules(forwarding_spec):
-    """Remove any existing forwarding rule that may exist for the given
-    host port. It's possible to get VirtualBox to list out the current rules,
-    but that's got a race condition built into it, so our approach is
-    to try to delete the rule and swallow the exception if the rule
-    did not exist in the first place."""
-    logging.info('Removing local forwarding rules from spec: {}'.format(forwarding_spec))
-    for protocol in ['tcp', 'udp']:
-        try:
-            check_and_log_output_and_error_demoted(['VBoxManage', 'controlvm', 'boot2docker-vm',
-                                 'natpf1', 'delete', _name_for_rule(forwarding_spec, protocol)])
-        except subprocess.CalledProcessError:
-            logging.warning('Deleting rule failed, possibly because it did not exist. Continuing...')
-
 def _ensure_rsync_is_installed():
     logging.info('Installing rsync inside the Docker VM')
     check_and_log_output_and_error_demoted(['boot2docker', 'ssh', 'tce-load -wi rsync'])
