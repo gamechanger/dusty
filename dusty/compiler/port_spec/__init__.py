@@ -11,12 +11,6 @@ def _docker_compose_port_spec(host_forwarding_spec, host_port):
     return {'in_container_port': str(host_forwarding_spec['container_port']),
             'mapped_host_port': str(host_port)}
 
-# def _virtualbox_port_spec(port):
-#     return {'guest_ip': '',
-#             'guest_port': str(port),
-#             'host_ip': LOCALHOST,
-#             'host_port': str(port)}
-
 def _nginx_port_spec(host_forwarding_spec, port):
     return {'proxied_port': str(port),
             'host_address': host_forwarding_spec['host_name'],
@@ -49,7 +43,7 @@ def get_port_spec_document(expanded_active_specs):
     return a dictionary containing the port mappings needed by downstream methods.  Currently
     this includes docker_compose, virtualbox, nginx and hosts_file."""
     forwarding_port = 65000
-    port_spec = {'docker_compose':{}, 'virtualbox':[], 'nginx':[], 'hosts_file':[]}
+    port_spec = {'docker_compose':{}, 'nginx':[], 'hosts_file':[]}
     host_full_addresses = set()
     host_names = set()
     # No matter the order of apps in expanded_active_specs, we want to produce a consistent

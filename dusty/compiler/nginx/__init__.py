@@ -31,4 +31,5 @@ def get_nginx_configuration_spec(port_spec_dict):
     for port_spec in port_spec_dict['nginx']:
         nginx_string_spec += _nginx_server_spec(port_spec)
     nginx_string_spec += "}}\n"
-    return nginx_string_spec
+    return ""
+    # return nginx_string_spec
