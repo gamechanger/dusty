@@ -68,13 +68,9 @@ def initialize_docker_vm():
     _ensure_rsync_is_installed()
     _ensure_persist_dir_is_linked()
 
-def update_virtualbox_port_forwarding_from_port_spec(port_spec):
-    """Update the current VirtualBox port mappings from the host OS
-    to the VM to reflect the given port_spec. Overwrites any
-    previous rules set on ports needed by the new spec."""
-    assert_config_key('mac_username')
-    logging.info('Updating port forwarding rules in VirtualBox')
-    virtualbox_specs = port_spec['virtualbox']
-    for forwarding_spec in virtualbox_specs:
-        _remove_existing_forwarding_rules(forwarding_spec)
-        _add_forwarding_rules(forwarding_spec)
+def get_docker_vm_ip():
+    """Checks boot2docker's IP, assuming that the VM is started"""
+    logging.info("Checking boot2docker's ip")
+    maybe_ip = check_and_log_output_and_error_demoted(['boot2docker', 'ip']).rstrip()
+    print "MAYBEIP: {}".format(maybe_ip)
+    return maybe_ip
