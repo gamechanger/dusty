@@ -59,7 +59,6 @@ def get_port_spec_document(expanded_active_specs):
             add_container_ports(host_forwarding_spec, container_ports)
 
             port_spec['docker_compose'][app_name].append(_docker_compose_port_spec(host_forwarding_spec, forwarding_port))
-            # port_spec['virtualbox'].append(_virtualbox_port_spec(forwarding_port))
             port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port))
 
             add_host_names(host_forwarding_spec, port_spec, host_names)

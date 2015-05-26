@@ -42,8 +42,6 @@ def _write_nginx_config(nginx_config, vm_ip):
     """Writes the config file from the Dusty Nginx compiler
     to the Nginx includes directory, which should be included
     in the main nginx.conf."""
-    print nginx_config
-    print vm_ip
     with open(os.path.join(constants.NGINX_CONFIG_INCLUDES_DIR, 'dusty.conf'), 'w') as f:
         f.write(nginx_config.format(vm_ip))
 
