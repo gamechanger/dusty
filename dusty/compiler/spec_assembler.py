@@ -120,7 +120,7 @@ def get_repo_of_app_or_service(app_or_service_name):
         return specs['apps'][app_or_service_name]['repo']
     elif app_or_service_name in specs['libs']:
         return specs['libs'][app_or_service_name]['repo']
-    raise KeyError('did not find app or service with name'.format(app_or_service_name))
+    raise KeyError('did not find app or service with name {}'.format(app_or_service_name))
 
 def get_specs_from_path(specs_path):
     specs = {}
