@@ -12,8 +12,13 @@ def start_local_env():
     active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
     log_to_client("Compiling together the assembled specs")
     assembled_spec = spec_assembler.get_assembled_specs()
+
+    log_to_client("Ensuring virtualbox vm is running")
+    virtualbox.initialize_docker_vm()
+    docker_ip = virtualbox.get_docker_vm_ip()
+
     log_to_client("Compiling the port specs")
-    port_spec = port_spec_compiler.get_port_spec_document(assembled_spec)
+    port_spec = port_spec_compiler.get_port_spec_document(assembled_spec, docker_ip)
     log_to_client("Compiling the nginx config")
     nginx_config = nginx_compiler.get_nginx_configuration_spec(port_spec)
     log_to_client("Compiling docker-compose config")
@@ -21,13 +26,10 @@ def start_local_env():
 
     log_to_client("Saving port forwarding to hosts file")
     hosts.update_hosts_file_from_port_spec(port_spec)
-    log_to_client("Ensuring virtualbox vm is running")
-    virtualbox.initialize_docker_vm()
-    docker_ip = virtualbox.get_docker_vm_ip()
     log_to_client("Syncing local repos to the VM")
     rsync.sync_repos(active_repos)
     log_to_client("Saving nginx config and ensure nginx is running")
-    nginx.update_nginx_from_config(nginx_config, docker_ip)
+    nginx.update_nginx_from_config(nginx_config)
     log_to_client("Saving docker-compose config and starting all containers")
     compose.update_running_containers_from_spec(compose_config)
 

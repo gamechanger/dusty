@@ -38,18 +38,18 @@ def _ensure_nginx_running_with_latest_config():
     else:
         _start_nginx()
 
-def _write_nginx_config(nginx_config, vm_ip):
+def _write_nginx_config(nginx_config):
     """Writes the config file from the Dusty Nginx compiler
     to the Nginx includes directory, which should be included
     in the main nginx.conf."""
     with open(os.path.join(constants.NGINX_CONFIG_INCLUDES_DIR, 'dusty.conf'), 'w') as f:
-        f.write(nginx_config.format(vm_ip))
+        f.write(nginx_config)
 
-def update_nginx_from_config(nginx_config, vm_ip):
+def update_nginx_from_config(nginx_config):
     """Write the given config to disk as a Dusty sub-config
     in the Nginx includes directory. Then, either start nginx
     or tell it to reload its config to pick up what we've
     just written."""
     logging.info('Updating nginx with new Dusty config')
-    _write_nginx_config(nginx_config, vm_ip)
+    _write_nginx_config(nginx_config)
     _ensure_nginx_running_with_latest_config()
