@@ -19,6 +19,7 @@ class TestPortSpecCompiler(TestCase):
     def test_get_nginx_configuration_spec_1(self):
         expected_output = cleanse("""http {
             server {
+                client_max_body_size 500M;
                 listen 80;
                 server_name local.gc.com;
                 location / {
@@ -33,6 +34,7 @@ class TestPortSpecCompiler(TestCase):
     def test_get_nginx_configuration_spec_2(self):
         expected_output = cleanse("""http {
             server {
+                client_max_body_size 500M;
                 listen 8001;
                 server_name local.gcapi.com;
                 location / {
@@ -56,6 +58,7 @@ class TestPortSpecCompiler(TestCase):
 
         expected_output = cleanse("""http {
             server {
+                client_max_body_size 500M;
                 listen 8001;
                 server_name local.gcapi.com;
                 location / {
@@ -63,6 +66,7 @@ class TestPortSpecCompiler(TestCase):
                 }
             }
             server {
+                client_max_body_size 500M;
                 listen 80;
                 server_name local.gc.com;
                 location / {

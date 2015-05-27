@@ -19,7 +19,7 @@ CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.yml')
 REPOS_DIR = os.path.join(CONFIG_DIR, 'repos')
 COMPOSE_DIR = os.path.join(CONFIG_DIR, 'compose')
 
-NGINX_MAX_FILE_SIZE = "50M"
+NGINX_MAX_FILE_SIZE = "500M"
 
 VM_PERSIST_DIR = '/persist'
 VM_REPOS_DIR = os.path.join(VM_PERSIST_DIR, 'repos')
