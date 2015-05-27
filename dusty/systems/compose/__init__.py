@@ -61,18 +61,18 @@ def _compose_stop(services):
         command += services
     check_and_log_output_and_error_demoted(command, env=_get_docker_env())
 
-def _get_dusty_containers(client, services):
+def _get_dusty_containers(client, services, include_exited=False):
     """Get a list of containers associated with the list
     of services. If no services are provided, attempts to
     return all containers associated with Dusty."""
     if services:
         return [container
-                for container in client.containers()
+                for container in client.containers(all=include_exited)
                 if any('/dusty_{}_1'.format(service) in container.get('Names', [])
                        for service in services)]
     else:
         return [container
-                for container in client.containers()
+                for container in client.containers(all=include_exited)
                 if any(name.startswith('/dusty') for name in container.get('Names', []))]
 
 def _get_canonical_container_name(container):
@@ -142,3 +142,32 @@ def restart_running_services(services=None):
 def get_dusty_containers(app_or_service_names):
     client = _get_docker_client()
     return _get_dusty_containers(client, app_or_service_names)
+
+def _get_exited_dusty_containers(client):
+    all_containers = _get_dusty_containers(client, None, include_exited=True)
+    stopped_containers = []
+    for container in all_containers:
+        if 'Exited' in container['Status']:
+            stopped_containers.append(container)
+
+def remove_exited_dusty_containers():
+    client = _get_docker_client()
+    exited_containers = _get_exited_dusty_containers(client)
+    for container in exited_containers:
+        log_to_client("Removing container {}".format(container['Names'][0]))
+        client.remove_container(container['Id'])
+    return exited_containers
+
+def remove_unreferenced_images():
+    client = _get_docker_client()
+    images = client.images(all=True)
+    removed = []
+    for image in images:
+        try:
+            client.remove_image(image['Id'])
+        except Exception as e:
+            logging.info("Couldn't remove image {}".format(image['RepoTags']))
+        else:
+            log_to_client("Removed Image {}".format(image['RepoTags']))
+            removed.append(image)
+    return removed
