@@ -23,11 +23,13 @@ def _check_demoted(fn, shell_args, env=None, **kwargs):
     output = fn(shell_args, preexec_fn=_demote_to_user(get_config_value('mac_username')), env=passed_env, **kwargs)
     return output
 
-def check_call_demoted(shell_args, env=None):
-    return _check_demoted(subprocess.check_call, shell_args, env)
+def check_call_demoted(shell_args, env=None, redirect_stderr=False):
+    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
+    return _check_demoted(subprocess.check_call, shell_args, env, **kwargs)
 
-def check_output_demoted(shell_args, env=None):
-    return _check_demoted(subprocess.check_output, shell_args, env)
+def check_output_demoted(shell_args, env=None, redirect_stderr=False):
+    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
+    return _check_demoted(subprocess.check_output, shell_args, env, **kwargs)
 
 def check_and_log_output_and_error_demoted(shell_args, env=None):
     total_output = ""
