@@ -11,6 +11,7 @@ from ... import constants
 from ...log import log_to_client
 from ...config import get_config_value, assert_config_key
 from ...demote import check_output_demoted, check_and_log_output_and_error_demoted
+from ...compiler.spec_assembler import get_expected_number_of_running_containers
 
 def _get_docker_client():
     """Ripped off and slightly modified based on docker-py's
@@ -99,8 +100,14 @@ def _compose_restart(services):
 
     logging.info('Restarting service containers from list: {}'.format(services))
     client = _get_docker_client()
-    for container in _get_dusty_containers(client, services):
-        _restart_container(client, container)
+    dusty_containers = _get_dusty_containers(client, services)
+    expected_number_of_containers = get_expected_number_of_running_containers()
+    if len(dusty_containers) != expected_number_of_containers:
+        log_to_client("Not going to restart containers. Expected number of containers {} does not match {}".format(expected_number_of_containers, len(dusty_containers)))
+        raise RuntimeError("Please use `docker ps -a` to view crashed containers")
+    else:
+        for container in dusty_containers:
+            _restart_container(client, container)
 
 def update_running_containers_from_spec(compose_config):
     """Takes in a Compose spec from the Dusty Compose compiler,
