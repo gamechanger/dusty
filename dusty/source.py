@@ -3,12 +3,14 @@ repositories managed by Dusty itself."""
 
 import os
 import logging
+from contextlib import contextmanager
 
 import git
 
 from .config import get_config_value
 from . import constants
 from .notifier import notify
+from .log import log_to_client
 
 def repo_is_overridden(repo_name):
     return repo_name in get_config_value('repo_overrides')
@@ -29,6 +31,16 @@ def _managed_repo_path(repo_name):
 def _short_repo_name(repo_name):
     return repo_name.split('/')[-1]
 
+@contextmanager
+def git_error_handling():
+    try:
+        yield
+    except git.exc.GitCommandError:
+        log_to_client('ERROR: Git command failed. If you are trying to access a private repo, '
+                      'please make sure you have added your SSH key to the SSH agent using: '
+                      'ssh-add <SSH key filepath>')
+        raise
+
 def ensure_local_repo(repo_name):
     """Given a repo name (e.g. github.com/gamechanger/gclib), clone the
     repo into Dusty's local repos directory if it does not already exist."""
@@ -43,7 +55,8 @@ def ensure_local_repo(repo_name):
     repo_path_parent = os.path.split(repo_path)[0]
     if not os.path.exists(repo_path_parent):
         os.makedirs(repo_path_parent)
-    repo = git.Repo.clone_from('ssh://{}@{}'.format(constants.GIT_USER, repo_name), repo_path)
+    with git_error_handling():
+        repo = git.Repo.clone_from('ssh://{}@{}'.format(constants.GIT_USER, repo_name), repo_path)
 
 def update_local_repo(repo_name):
     """Given a repo name (e.g. github.com/gamechanger/gclib), pull the latest
@@ -55,4 +68,5 @@ def update_local_repo(repo_name):
 
     repo_path = _managed_repo_path(repo_name)
     repo = git.Repo(repo_path)
-    repo.remote().pull('master')
+    with git_error_handling():
+        repo.remote().pull('master')
