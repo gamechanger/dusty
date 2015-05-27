@@ -35,11 +35,3 @@ class TestManageConfigCommands(TestCase):
     def test_save_value_no_changes(self):
         with self.assertRaises(KeyError):
             save_value('bundles', '~/here').next()
-
-    def test_save_value_no_arguemnts(self):
-        result = save_value().next()
-        self.assertEquals(result, "Call with arguments `key value`, where key is in {}".format(['docker_user', 'specs_repo']))
-
-    def test_save_value_one_argument(self):
-        with self.assertRaises(ValueError):
-            save_value('specs_repo').next()

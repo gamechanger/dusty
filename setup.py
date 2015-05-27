@@ -28,6 +28,6 @@ setup(
     test_suite="nose.collector",
     entry_points={'console_scripts':
                   ['dustyd = dusty.daemon:main',
-                   'dusty = dusty.client:main']},
+                   'dusty = dusty.cli.__init__:main']},
     zip_safe=False
 )
