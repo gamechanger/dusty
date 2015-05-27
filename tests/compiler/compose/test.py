@@ -35,10 +35,6 @@ basic_specs = {
             'repo': '/cool/repo/lib2',
             'mount': '/gc/lib2',
             'install': 'python setup.py develop'
-        },
-        'lib3': {
-            'repo': '/cool/repo/lib3',
-            'mount': '/gc/lib3'
         }
     },
     'services':{
