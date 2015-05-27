@@ -1,3 +1,4 @@
+from ...constants import NGINX_MAX_FILE_SIZE
 def _nginx_proxy_string(port_spec):
     return "proxy_pass http://{}:{};".format(port_spec['boot2docker_ip'], port_spec['proxied_port'])
 
@@ -14,9 +15,13 @@ def _nginx_listen_string(port_spec):
 def _nginx_server_name_string(port_spec):
     return "server_name {};".format(port_spec['host_address'])
 
+def _nginx_max_file_size_string():
+    return "client_max_body_size {};".format(NGINX_MAX_FILE_SIZE)
+
 def _nginx_server_spec(port_spec):
     """This will output the nginx server config string for speicfic port spec """
     server_string_spec = "\t server {\n"
+    server_string_spec += "\t \t {}\n".format(_nginx_max_file_size_string())
     server_string_spec += "\t \t {}\n".format(_nginx_listen_string(port_spec))
     server_string_spec += "\t \t {}\n".format(_nginx_server_name_string(port_spec))
     server_string_spec += _nginx_location_spec(port_spec)
