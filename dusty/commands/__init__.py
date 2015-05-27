@@ -1,6 +1,6 @@
 """Entrypoint which the daemon uses for processing incoming commands."""
 
-from . import bundles, repos, sync, manage_config, run, logs
+from . import bundles, repos, sync, manage_config, run, logs, dump
 from .. import compiler
 
 COMMAND_TREE = {
@@ -28,7 +28,8 @@ COMMAND_TREE = {
     'logs': {
         'tail': logs.tail_container_logs,
         'stream': logs.stream_container_logs
-    }
+    },
+    'dump': dump.dump_diagnostics
 }
 
 def process_command(command_string):
