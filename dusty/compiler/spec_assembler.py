@@ -91,6 +91,10 @@ def _get_expanded_active_specs(specs):
     _filter_active('libs', specs)
     _filter_active('services', specs)
 
+def get_expected_number_of_running_containers():
+    assembled_specs = get_assembled_specs()
+    return len(assembled_specs['apps']) + len(assembled_specs['services'])
+
 def get_assembled_specs():
     logging.info("Spec Assembler: running...")
     specs = get_specs()
