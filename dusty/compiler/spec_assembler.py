@@ -115,12 +115,23 @@ def get_specs():
     return get_specs_from_path(specs_path)
 
 def get_repo_of_app_or_library(app_or_library_name):
+    """ This function takes an app or library name and will return the corresponding repo
+    for that app or library"""
     specs = get_specs()
     if app_or_library_name in specs['apps']:
         return specs['apps'][app_or_library_name]['repo']
     elif app_or_library_name in specs['libs']:
         return specs['libs'][app_or_library_name]['repo']
     raise KeyError('did not find app or service with name {}'.format(app_or_library_name))
+
+def get_expanded_dependent_apps_and_libs(app_name):
+    """ Given an app_name, this function will return you back a recursive list of all
+    apps and libs that this app depends on"""
+    specs = get_specs()
+    app = specs['apps'][app_name]
+    dependent_apps = _get_dependent('apps', app_name, specs, 'apps')
+    depenedent_libs = _get_dependent('libs', app_name, specs, 'apps')
+    return list(dependent_apps) + list(depenedent_libs)
 
 def get_specs_from_path(specs_path):
     specs = {}
