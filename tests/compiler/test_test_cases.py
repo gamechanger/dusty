@@ -91,3 +91,47 @@ class TestSpecAssemblerTestCases(TestCase):
         }
         self.assertEqual(set(['lib1', 'lib2']),
             spec_assembler._get_dependent('libs', 'app1', specs, 'apps'))
+
+class TestExpectedRunningContainers(TestCase):
+    @patch('dusty.compiler.spec_assembler.get_assembled_specs')
+    def test_get_expected_number_of_running_containers_1(self, fake_get_assembled_specs):
+        specs = {'apps': {
+                    'app1': {},
+                    'app2': {}},
+                 'libs': {
+                    'lib1': {},
+                    'lib2': {}
+                 },
+                 'services': {
+                    'sev1': {},
+                    'sev2': {}
+                 },
+                 'bundles': {
+                    'bun1': {},
+                    'bun2': {}
+                 }}
+        fake_get_assembled_specs.return_value = specs
+        self.assertEqual(spec_assembler.get_expected_number_of_running_containers(), 4)
+
+
+    @patch('dusty.compiler.spec_assembler.get_assembled_specs')
+    def test_get_expected_number_of_running_containers_2(self, fake_get_assembled_specs):
+        specs = {'apps': {
+                    'app1': {}},
+                 'libs': {
+                    'lib1': {},
+                    'lib2': {}
+                 },
+                 'services': {
+                    'sev1': {},
+                    'sev2': {},
+                    'sev3': {}
+                 },
+                 'bundles': {
+                    'bun1': {},
+                    'bun2': {},
+                    'bun1': {},
+                    'bun2': {}
+                 }}
+        fake_get_assembled_specs.return_value = specs
+        self.assertEqual(spec_assembler.get_expected_number_of_running_containers(), 4)

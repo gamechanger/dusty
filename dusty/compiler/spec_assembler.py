@@ -92,6 +92,8 @@ def _get_expanded_active_specs(specs):
     _filter_active('services', specs)
 
 def get_expected_number_of_running_containers():
+    """ This will return the number of containers expected to be running based off of
+    your current config"""
     assembled_specs = get_assembled_specs()
     return len(assembled_specs['apps']) + len(assembled_specs['services'])
 
