@@ -80,7 +80,9 @@ def _lib_install_commands_for_app(app_name, assembled_specs):
     commands = []
     for lib in libs:
         lib_spec = assembled_specs['libs'][lib]
-        commands.append(_lib_install_command(lib_spec))
+        install_command = _lib_install_command(lib_spec)
+        if install_command:
+            commands.append(install_command)
     return commands
 
 def _lib_install_command(lib_spec):

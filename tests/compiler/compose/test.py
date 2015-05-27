@@ -157,4 +157,9 @@ class TestComposeCompiler(TestCase):
     @patch('dusty.compiler.compose._lib_install_command')
     def test_lib_installs_for_app(self, fake_lib_install, *args):
         _lib_install_commands_for_app('app1', basic_specs)
-        fake_lib_install.assert_has_calls([call(basic_specs['libs']['lib1']), call(basic_specs['libs']['lib2'])])
+        # Mock is weird, it picks up on the truthiness calls we do
+        # on the result after we call the function
+        fake_lib_install.assert_has_calls([call(basic_specs['libs']['lib1']),
+                                           call().__nonzero__(),
+                                           call(basic_specs['libs']['lib2']),
+                                           call().__nonzero__()])
