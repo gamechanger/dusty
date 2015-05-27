@@ -47,7 +47,7 @@ def _listen_on_socket(socket_path):
                     except Exception as e:
                         logging.exception("Daemon encountered exception while processing command")
                         error_msg = e.message if e.message else str(e)
-                        connection.sendall('ERROR: {}\n'.format(e.message).encode('utf-8'))
+                        connection.sendall('ERROR: {}\n'.format(error_msg).encode('utf-8'))
                         connection.sendall(SOCKET_ERROR_TERMINATOR)
                     else:
                         connection.sendall(SOCKET_TERMINATOR)
