@@ -37,5 +37,5 @@ def check_and_log_output_and_error_demoted(shell_args, env=None):
         log_to_client(output.strip())
     return_code = process.wait()
     if return_code != 0:
-        raise RuntimeError("Subprocess with args {} returned non-zero code {}".format(shell_args, return_code))
+        raise subprocess.CalledProcessError(return_code, ' '.join(shell_args))
     return total_output
