@@ -54,5 +54,7 @@ def restart_apps_or_services(*app_or_service_names):
         yield "Restarting the following apps or services: {}".format(', '.join(app_or_service_names))
     else:
         yield "Restarting all active containers associated with Dusty"
-    rsync.sync_repos_by_app_or_service_name(app_or_service_names)
+    specs = spec_assembler.get_specs()
+    app_names = [app_name for app_name in app_or_service_names if app_name in specs['apps']]
+    rsync.sync_repos_by_app_name(app_names)
     compose.restart_running_services(app_or_service_names)

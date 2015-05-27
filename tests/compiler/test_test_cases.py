@@ -153,18 +153,4 @@ class TestSpecAssemblerGetRepoTestCases(TestCase):
         with self.assertRaises(KeyError):
             spec_assembler.get_repo_of_app_or_library('lib-b')
 
-class TestSpecAssemblerExpandedDependencies(TestCase):
-    @patch('dusty.compiler.spec_assembler.get_specs')
-    def test_get_expanded_dependent_apps_and_libs_simple(self, fake_get_specs):
-        specs = {
-            'apps': {
-                'app1': {
-                    'depends': {'apps': ['app2']}},
-                'app2': {
-                    'depends': {}
-                }}
-        }
-        fake_get_specs.return_value = specs
-        self.assertEqual(spec_assembler.get_expanded_dependent_apps_and_libs('app1'), ['app2'])
-
 
