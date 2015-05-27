@@ -35,11 +35,6 @@ basic_specs = {
             'repo': '/cool/repo/lib2',
             'mount': '/gc/lib2',
             'install': 'python setup.py develop'
-        },
-        'lib3': {
-            'repo': '/cool/repo/lib3',
-            'mount': '/gc/lib3',
-            'intstall': 'blah'
         }
     },
     'services':{
@@ -147,6 +142,15 @@ class TestComposeCompiler(TestCase):
             'install': 'python install.py some args'
         }
         expected_command = "cd /mount/point && python install.py some args"
+        actual_command = _lib_install_command(lib_spec)
+        self.assertEqual(expected_command, actual_command)
+
+    def test_lib_install_command_with_no_install_spec(self, *args):
+        lib_spec = {
+            'repo': 'some repo',
+            'mount': '/mount/point'
+        }
+        expected_command = ""
         actual_command = _lib_install_command(lib_spec)
         self.assertEqual(expected_command, actual_command)
 
