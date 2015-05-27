@@ -35,4 +35,10 @@ def check_and_log_output_and_error_demoted(shell_args, env=None):
     for output in iter(process.stdout.readline, ''):
         total_output += output
         log_to_client(output.strip())
+    return_code = process.returncode
+    if return_code is None:
+        logging.info("Subprocess closed stdout before returning... waiting for return code...")
+        return_code = process.wait()
+    if return_code != 0:
+        raise RuntimeError("Subprocess with args {} returned non-zero code {}".format(shell_args, return_code))
     return total_output
