@@ -61,7 +61,8 @@ class TestSource(TestCase):
         self.assertFalse(fake_clone_from.called)
 
     @patch('git.Repo')
-    def test_update_local_repo(self, fake_repo):
+    @patch('dusty.source.ensure_local_repo')
+    def test_update_local_repo(self, fake_local_repo, fake_repo):
         repo_mock = Mock()
         pull_mock = Mock()
         repo_mock.remote.return_value = pull_mock
