@@ -35,4 +35,7 @@ def check_and_log_output_and_error_demoted(shell_args, env=None):
     for output in iter(process.stdout.readline, ''):
         total_output += output
         log_to_client(output.strip())
+    return_code = process.wait()
+    if return_code != 0:
+        raise subprocess.CalledProcessError(return_code, ' '.join(shell_args))
     return total_output
