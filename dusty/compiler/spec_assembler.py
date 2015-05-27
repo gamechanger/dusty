@@ -124,11 +124,6 @@ def get_repo_of_app_or_library(app_or_library_name):
         return specs['libs'][app_or_library_name]['repo']
     raise KeyError('did not find app or service with name {}'.format(app_or_library_name))
 
-def get_dependent_libs_of_app(app_name):
-    """ Given an app_name, this function will return you back a recursive list of all
-    libs that this app depends on"""
-    return _get_dependent('libs', app_name, get_specs(), 'apps')
-
 def get_specs_from_path(specs_path):
     specs = {}
     for key in ['bundles', 'apps', 'libs', 'services']:
