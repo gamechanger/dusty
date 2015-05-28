@@ -13,22 +13,23 @@ def _is_short_name(repo_name):
 def _expand_repo_name(short_repo_name):
     match = None
     for repo_name in get_all_repos():
-        if short_repo_name in repo_name and match is None:
+        short_name = _shorten_name(repo_name)
+        if short_repo_name == short_name and match is None:
             match = repo_name
-        elif short_repo_name in repo_name:
+        elif short_repo_name == short_name:
             raise RuntimeError('Short repo name {} is ambiguous. It matches both {} and {}'.format(short_repo_name, match, repo_name))
     if match is None:
         raise RuntimeError("Short repo name {} does not match any full repo names".format(short_repo_name))
     else:
         return match
 
-def _shorten_name(repo_name):
-    return repo_name.split('/')[-1]
-
 def _get_expanded_repo_name(repo_name):
     if _is_short_name(repo_name):
         return _expand_repo_name(repo_name)
     return repo_name
+
+def _shorten_name(repo_name):
+    return repo_name.split('/')[-1]
 
 def list_repos():
     repos, overrides = get_all_repos(), get_config_value('repo_overrides')
