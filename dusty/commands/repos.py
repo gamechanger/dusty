@@ -12,7 +12,7 @@ def _is_short_name(repo_name):
 
 def _expand_repo_name(short_repo_name):
     match = None
-    for repo_name in get_all_repos()
+    for repo_name in get_all_repos():
         if short_repo_name in repo_name and match is None:
             match = repo_name
         elif short_repo_name in repo_name:
@@ -22,6 +22,9 @@ def _expand_repo_name(short_repo_name):
     else:
         return match
 
+def _shorten_name(repo_name):
+    return repo_name.split('/')[-1]
+
 def _get_expanded_repo_name(repo_name):
     if _is_short_name(repo_name):
         return _expand_repo_name(repo_name)
@@ -29,9 +32,9 @@ def _get_expanded_repo_name(repo_name):
 
 def list_repos():
     repos, overrides = get_all_repos(), get_config_value('repo_overrides')
-    table = PrettyTable(['Name', 'Local Override'])
+    table = PrettyTable(['Full Name', 'Short Name', 'Local Override'])
     for repo in repos:
-        table.add_row([repo,
+        table.add_row([repo, _shorten_name(repo),
                        overrides[repo] if repo in overrides else ''])
     log_to_client(table.get_string(sortby='Name'))
 
