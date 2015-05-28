@@ -1,18 +1,22 @@
+import logging
+
 import docker
+
+from ..log import log_to_client
 from ..systems.compose import remove_exited_dusty_containers, remove_unreferenced_images
 from ..systems.virtualbox import get_docker_vm_disk_info
 
 def cleanup_inactive_containers():
-    yield "Cleaning up exited containers:"
+    log_to_client("Cleaning up exited containers:")
     containers = remove_exited_dusty_containers()
-    yield "Done cleaning {} containers".format(len(containers))
+    log_to_client("Done cleaning {} containers".format(len(containers)))
 
 def cleanup_images():
-    yield "Cleaning up docker images without containers:"
+    log_to_client("Cleaning up docker images without containers:")
     images = remove_unreferenced_images()
-    yield "Done removing {} images".format(len(images))
+    log_to_client("Done removing {} images".format(len(images)))
 
 def inspect_vm_disk():
-    yield "Boot2Docker VM Disk Usage:"
-    yield get_docker_vm_disk_info()
+    log_to_client("Boot2Docker VM Disk Usage:")
+    log_to_client(get_docker_vm_disk_info())
 

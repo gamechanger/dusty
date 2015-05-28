@@ -149,6 +149,7 @@ def _get_exited_dusty_containers(client):
     for container in all_containers:
         if 'Exited' in container['Status']:
             stopped_containers.append(container)
+    return stopped_containers
 
 def remove_exited_dusty_containers():
     client = _get_docker_client()
