@@ -23,7 +23,6 @@ import socket
 from docopt import docopt
 
 from ..constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
-from ..client import connect_to_daemon, run_command
 from ..payload import Payload
 from . import bundles, config, dump, logs, repos, restart, stop, sync, up
 
