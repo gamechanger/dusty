@@ -9,7 +9,8 @@ from mock import patch, call
 from dusty.config import get_config_value
 from dusty.commands.bundles import activate_bundle
 from dusty.commands.repos import (list_repos, override_repo, manage_repo,
-                                  override_repos_from_directory, update_managed_repos)
+                                  override_repos_from_directory, update_managed_repos,
+                                  _expand_repo_name)
 from dusty.compiler.spec_assembler import get_specs_repo
 from ..utils import DustyTestCase
 
@@ -79,3 +80,21 @@ class TestReposCommands(DustyTestCase):
         activate_bundle('bundle-b')
         update_managed_repos()
         fake_update_local_repo.assert_has_calls([call('github.com/app/a'), call('github.com/app/b')])
+
+    @patch('dusty.commands.repos.get_all_repos')
+    def test_expand_repo_name_real_name(self, fake_get_repos):
+      fake_get_repos.return_value = set(['github.com/app/a', 'github.com/app/b'])
+      self.assertEquals(_expand_repo_name('a'), 'github.com/app/a')
+
+    @patch('dusty.commands.repos.get_all_repos')
+    def test_expand_repo_name_conflict(self, fake_get_repos):
+      fake_get_repos.return_value = set(['github.com/app/a', 'github.com/lib/a'])
+      with self.assertRaises(RuntimeError):
+        _expand_repo_name('a')
+
+    @patch('dusty.commands.repos.get_all_repos')
+    def test_expand_repo_name_not_found(self, fake_get_repos):
+      fake_get_repos.return_value = set(['github.com/app/a', 'github.com/lib/b'])
+      with self.assertRaises(RuntimeError):
+        _expand_repo_name('c')
+
