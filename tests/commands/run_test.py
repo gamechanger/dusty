@@ -36,8 +36,7 @@ class TestRunCommands(TestCase):
         }
         fake_get_assembled_specs.return_value = specs
         fake_get_specs.return_value = specs
-        for _ in restart_apps_or_services('app-a', 'app-b'):
-            pass
+        restart_apps_or_services('app-a', 'app-b')
         fake_rsync.sync_repos_by_app_name.assert_has_calls([call(['app-a', 'app-b'])])
 
     @patch('dusty.commands.run.compose.restart_running_services')
@@ -78,8 +77,7 @@ class TestRunCommands(TestCase):
         }
         fake_get_assembled_specs.return_value = specs
         fake_get_specs.return_value = specs
-        for _ in restart_apps_or_services('app-a', 'app-b', 'ser-a'):
-            pass
+        restart_apps_or_services('app-a', 'app-b', 'ser-a')
         fake_rsync.sync_repos_by_app_name.assert_has_calls([call(['app-a', 'app-b'])])
 
     @patch('dusty.commands.run.compose.restart_running_services')
@@ -120,11 +118,8 @@ class TestRunCommands(TestCase):
         }
         fake_get_assembled_specs.return_value = specs
         fake_get_specs.return_value = specs
-        for _ in restart_apps_or_services('app-a', 'ser-a'):
-            pass
+        restart_apps_or_services('app-a', 'ser-a')
         fake_rsync.sync_repos_by_app_name.assert_has_calls([call(['app-a'])])
-
-
 
     @patch('dusty.commands.run.compose.restart_running_services')
     @patch('dusty.commands.run.rsync')
@@ -164,7 +159,5 @@ class TestRunCommands(TestCase):
         }
         fake_get_assembled_specs.return_value = specs
         fake_get_specs.return_value = specs
-        for _ in restart_apps_or_services():
-            pass
+        restart_apps_or_services()
         fake_rsync.sync_repos.assert_has_calls([call(set(['github.com/app/a', 'github.com/app/b', 'github.com/lib/a', 'github.com/lib/b']))])
-

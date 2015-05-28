@@ -4,6 +4,7 @@ from prettytable import PrettyTable
 
 from ..config import get_config, save_config_value
 from .. import constants
+from ..log import log_to_client
 
 def _eligible_config_keys_for_setting():
      config = get_config()
@@ -15,10 +16,10 @@ def list_config():
      table = PrettyTable(['Key', 'Description', 'Value'])
      for key, description in constants.CONFIG_SETTINGS.iteritems():
           table.add_row([key, '\n'.join(textwrap.wrap(description, 80)), config.get(key)])
-     yield table.get_string(sortby='Key')
+     log_to_client(table.get_string(sortby='Key'))
 
 def list_config_values():
-     yield get_config()
+     log_to_client(get_config())
 
 def save_value(key, value):
     config = get_config()
@@ -28,4 +29,4 @@ def save_value(key, value):
         raise KeyError('You can only modify string values in your config. {} has type {}'.format(key, type(config[key])))
     else:
         save_config_value(key, value)
-        yield 'Set {} to {} in your config'.format(key, value)
+        log_to_client('Set {} to {} in your config'.format(key, value))

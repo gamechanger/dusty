@@ -27,7 +27,7 @@ from docopt import docopt
 
 from ..payload import Payload
 from ..commands.repos import (list_repos, override_repo, manage_repo,
-                              override_repos_from_directory, update_managed_repos_command)
+                              override_repos_from_directory, update_managed_repos)
 
 def main(argv):
     args = docopt(__doc__, argv)
@@ -40,4 +40,4 @@ def main(argv):
     elif args['from']:
         return Payload(override_repos_from_directory, args['<source_path>'])
     elif args['update']:
-        return Payload(update_managed_repos_command)
+        return Payload(update_managed_repos)
