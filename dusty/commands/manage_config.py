@@ -20,12 +20,7 @@ def list_config():
 def list_config_values():
      yield get_config()
 
-def save_value(key=None, value=None):
-    if key is None and value is None:
-        yield 'Call with arguments `key value`, where key is in {}'.format(_eligible_config_keys_for_setting())
-        return
-    elif value is None:
-        raise ValueError('Value cannot be None')
+def save_value(key, value):
     config = get_config()
     if key not in constants.CONFIG_SETTINGS:
         raise KeyError('Your key {} must be in the list {}'.format(key, sorted(constants.CONFIG_SETTINGS.keys())))

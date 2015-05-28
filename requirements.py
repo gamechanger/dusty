@@ -5,6 +5,7 @@ install_requires = [
     'PyYAML>=3.11',
     'PrettyTable>=0.7.0',
     'GitPython>=1.0.1',
+    'docopt==0.6.2',
 ]
 
 test_requires = [

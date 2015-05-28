@@ -7,7 +7,7 @@ from .preflight import preflight_check
 from .log import configure_logging, make_socket_logger, close_socket_logger
 from .notifier import notify
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
-from .commands import process_command
+from .payload import Payload
 
 def _clean_up_existing_socket(socket_path):
     try:
@@ -37,9 +37,10 @@ def _listen_on_socket(socket_path):
                     data = connection.recv(1024)
                     if not data:
                         break
-                    logging.info('Received command: {}'.format(data))
+                    fn, args, kwargs = Payload.deserialize(data)
+                    logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
                     try:
-                        for line in process_command(data):
+                        for line in fn(*args, **kwargs):
                             encoded_line = line
                             if isinstance(encoded_line, basestring):
                                 encoded_line = line.encode('utf-8')
