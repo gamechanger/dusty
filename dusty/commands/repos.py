@@ -7,6 +7,26 @@ from ..compiler.spec_assembler import get_specs, get_specs_repo, get_all_repos, 
 from ..source import update_local_repo
 from ..log import log_to_client
 
+def _is_short_name(repo_name):
+    return '/' in repo_name
+
+def _expand_repo_name(short_repo_name):
+    match = None
+    for repo_name in get_all_repos()
+        if short_repo_name in repo_name and match is None:
+            match = repo_name
+        elif short_repo_name in repo_name:
+            raise RuntimeError('Short repo name {} is ambiguous. It matches both {} and {}'.format(short_repo_name, match, repo_name))
+    if match is None:
+        raise RuntimeError("Short repo name {} does not match any full repo names".format(short_repo_name))
+    else:
+        return match
+
+def _get_expanded_repo_name(repo_name):
+    if _is_short_name(repo_name):
+        return _expand_repo_name(repo_name)
+    return repo_name
+
 def list_repos():
     repos, overrides = get_all_repos(), get_config_value('repo_overrides')
     table = PrettyTable(['Name', 'Local Override'])
@@ -16,6 +36,7 @@ def list_repos():
     log_to_client(table.get_string(sortby='Name'))
 
 def override_repo(repo_name, source_path):
+    repo_name = _get_expanded_repo_name(repo_name)
     repos = get_all_repos()
     if repo_name not in repos:
         raise KeyError('No repo registered named {}'.format(repo_name))
@@ -27,6 +48,7 @@ def override_repo(repo_name, source_path):
     log_to_client('Locally overriding repo {} to use source at {}'.format(repo_name, source_path))
 
 def manage_repo(repo_name):
+    repo_name = _get_expanded_repo_name(repo_name)
     repos = get_all_repos()
     if repo_name not in repos:
         raise KeyError('No repo registered named {}'.format(repo_name))
