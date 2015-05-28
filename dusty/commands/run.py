@@ -1,4 +1,3 @@
-import logging
 from ..compiler import (compose as compose_compiler, nginx as nginx_compiler,
                         port_spec as port_spec_compiler, spec_assembler)
 from ..systems import compose, hosts, nginx, virtualbox, rsync
