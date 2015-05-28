@@ -8,7 +8,7 @@ from ..source import update_local_repo
 from ..log import log_to_client
 
 def _is_short_name(repo_name):
-    return '/' in repo_name
+    return '/' not in repo_name
 
 def _expand_repo_name(short_repo_name):
     match = None
