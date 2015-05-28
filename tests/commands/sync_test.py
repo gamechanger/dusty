@@ -3,7 +3,7 @@ from mock import patch, call
 
 from dusty.commands.sync import sync_repos
 from dusty.commands.bundles import activate_bundle
-from ..utils import run, setup_test, teardown_test
+from ..utils import setup_test, teardown_test
 
 class TestSyncCommand(TestCase):
     def setUp(self):

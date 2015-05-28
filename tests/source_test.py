@@ -6,7 +6,7 @@ import git
 from unittest import TestCase
 from mock import Mock, patch
 
-from .utils import setup_test, teardown_test, run
+from .utils import setup_test, teardown_test
 from dusty.commands.repos import override_repo
 from dusty.source import (repo_is_overridden, local_repo_path, _short_repo_name,
                           git_error_handling, ensure_local_repo, update_local_repo)
@@ -21,7 +21,7 @@ class TestSource(TestCase):
         shutil.rmtree(self.temp_dir)
 
     def test_repo_is_overridden_true(self):
-        run(override_repo('github.com/app/a', self.temp_dir))
+        override_repo('github.com/app/a', self.temp_dir)
         self.assertTrue(repo_is_overridden('github.com/app/a'))
 
     def test_repo_is_overridden_false(self):
@@ -32,7 +32,7 @@ class TestSource(TestCase):
                          '/etc/dusty/repos/github.com/app/a')
 
     def test_local_repo_path_with_override(self):
-        run(override_repo('github.com/app/a', self.temp_dir))
+        override_repo('github.com/app/a', self.temp_dir)
         self.assertEqual(local_repo_path('github.com/app/a'), self.temp_dir)
 
     def test_short_repo_name(self):
