@@ -1,9 +1,17 @@
 """Configure Dusty.
 
+For a description of all available config keys,
+run `config list`.
+
 Usage:
   config list
   config listvalues
   config set <key> <value>
+
+Commands:
+  list          List all config keys with descriptions and current values.
+  listvalues    List all config keys in machine-readable format.
+  set           Set a string config key to a new value.
 """
 
 from docopt import docopt

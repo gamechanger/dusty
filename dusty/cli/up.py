@@ -1,5 +1,10 @@
-"""Fully initialize all components of the Dusty system. Containers
-for activated bundles will be started.
+"""Fully initialize all components of the Dusty system.
+
+Up compiles your specs (subject to your activated bundles),
+configures local port forwarding through your hosts file and
+nginx, initializes your boot2docker VM and prepares it for
+use by Dusty, and starts any containers specified by your
+currently activated bundles.
 
 Usage:
   up

@@ -1,7 +1,11 @@
-"""Tail out Docker logs for a Dusty process.
+"""Tail out Docker logs for a container running a Dusty application
+or service.
 
 Usage:
   logs tail <service>
+
+Commands:
+  tail    Tail the stdout/stderr output of a container.
 """
 
 from docopt import docopt

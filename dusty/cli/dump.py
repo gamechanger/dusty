@@ -1,7 +1,10 @@
-"""Return diagnostic data, useful for filing bug reports.
+"""Output diagnostic data, useful for filing bug reports.
 
 Usage:
   dump
+
+Commands:
+  dump    Output diagnostic data from your system.
 """
 
 from docopt import docopt

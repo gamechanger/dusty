@@ -1,4 +1,9 @@
-"""Restart Dusty services.
+"""Restart containers associated with Dusty apps or services.
+
+Upon restart, an app container will execute the command specified
+in its `commands.always` spec key. Restarting app containers will
+also perform a sync of any local repos needed inside the container
+prior to restarting.
 
 Usage:
   restart [<services>...]

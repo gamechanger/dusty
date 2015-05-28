@@ -1,5 +1,10 @@
 """Sync repos from the local filesystem to the boot2docker VM.
 
+Sync uses rsync under the hood to quickly sync files between
+your local filesystem and the boot2docker VM. Sync will use
+either the Dusty-managed version of a repo or your overridden
+version, depending on the current repo settings.
+
 Usage:
   sync <repos>...
 """

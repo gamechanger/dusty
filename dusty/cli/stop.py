@@ -1,5 +1,7 @@
 """Stop containers associated with Dusty apps and services.
 
+This does not remove the containers.
+
 Usage:
   stop [<services>...]
 """
