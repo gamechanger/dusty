@@ -101,7 +101,7 @@ def _compose_restart(services):
     logging.info('Restarting service containers from list: {}'.format(services))
     client = _get_docker_client()
     dusty_containers = _get_dusty_containers(client, services)
-    expected_number_of_containers = get_expected_number_of_running_containers()
+    expected_number_of_containers = get_expected_number_of_running_containers() if len(services) == 0 else len(services)
     if len(dusty_containers) != expected_number_of_containers:
         log_to_client("Not going to restart containers. Expected number of containers {} does not match {}".format(expected_number_of_containers, len(dusty_containers)))
         raise RuntimeError("Please use `docker ps -a` to view crashed containers")

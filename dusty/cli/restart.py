@@ -1,7 +1,7 @@
 """Restart Dusty services.
 
 Usage:
-  restart <services>...
+  restart [<services>...]
 """
 
 from docopt import docopt
