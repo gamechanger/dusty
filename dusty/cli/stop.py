@@ -1,7 +1,7 @@
 """Stop containers associated with Dusty apps and services.
 
 Usage:
-  stop <services>...
+  stop [<services>...]
 """
 
 from docopt import docopt

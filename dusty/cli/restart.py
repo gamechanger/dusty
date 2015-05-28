@@ -1,7 +1,7 @@
 """Restart Dusty services.
 
 Usage:
-  restart <services>...
+  restart [<services>...]
 """
 
 from docopt import docopt
@@ -11,4 +11,7 @@ from ..commands.run import restart_apps_or_services
 
 def main(argv):
     args = docopt(__doc__, argv)
-    return Payload(restart_apps_or_services, *args['<services>'])
+    if len(args['<services>']) > 0:
+        return Payload(restart_apps_or_services, *args['<services>'])
+    else:
+        return Payload(restart_apps_or_services)
