@@ -2,14 +2,14 @@ import os
 import tempfile
 import textwrap
 
-from unittest import TestCase
-
 import dusty.constants
 from dusty.systems.hosts import (_remove_current_dusty_config, _dusty_hosts_config,
                                 update_hosts_file_from_port_spec, _read_hosts)
+from ...utils import DustyTestCase
 
-class TestHostsSystem(TestCase):
+class TestHostsSystem(DustyTestCase):
     def setUp(self):
+        super(TestHostsSystem, self).setUp()
         self.temp_hosts_path = tempfile.mkstemp()[1]
         self.old_hosts_path = dusty.constants.HOSTS_PATH
         dusty.constants.HOSTS_PATH = self.temp_hosts_path
@@ -24,6 +24,7 @@ class TestHostsSystem(TestCase):
         self.non_spec_starter = "127.0.0.1 some-host.local.com\n"
 
     def tearDown(self):
+        super(TestHostsSystem, self).tearDown()
         os.remove(self.temp_hosts_path)
         dusty.constants.HOSTS_PATH = self.old_hosts_path
 

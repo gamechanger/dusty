@@ -1,5 +1,4 @@
 from functools import wraps
-from unittest import TestCase
 from mock import patch
 
 from nose.tools import nottest
@@ -7,7 +6,7 @@ from nose.tools import nottest
 from . import (get_all_test_configs, resources_for_test_config, specs_for_test_config,
                assembled_specs_for_test_config, nginx_config_for_test_config, docker_compose_yaml_for_test_config)
 from dusty.compiler import spec_assembler
-from ..utils import setup_test, teardown_test
+from ..utils import DustyTestCase
 
 @nottest
 def all_test_configs(test_func):
@@ -21,12 +20,12 @@ def all_test_configs(test_func):
             print "Test case {} completed".format(test_config)
     return inner
 
-class TestCompilerTestCases(TestCase):
+class TestCompilerTestCases(DustyTestCase):
     def test_compiler_test_configs(test_config):
         for test_config in get_all_test_configs():
             pass
 
-class TestSpecAssemblerTestCases(TestCase):
+class TestSpecAssemblerTestCases(DustyTestCase):
     @all_test_configs
     def test_retrieves_downstream_apps(self, test_config, case_specs, assembled_specs):
         downstream_apps = spec_assembler._get_referenced_apps(case_specs)
@@ -93,7 +92,7 @@ class TestSpecAssemblerTestCases(TestCase):
         self.assertEqual(set(['lib1', 'lib2']),
             spec_assembler._get_dependent('libs', 'app1', specs, 'apps'))
 
-class TestExpectedRunningContainers(TestCase):
+class TestExpectedRunningContainers(DustyTestCase):
     @patch('dusty.compiler.spec_assembler.get_assembled_specs')
     def test_get_expected_number_of_running_containers_1(self, fake_get_assembled_specs):
         specs = {'apps': {
@@ -137,12 +136,7 @@ class TestExpectedRunningContainers(TestCase):
         fake_get_assembled_specs.return_value = specs
         self.assertEqual(spec_assembler.get_expected_number_of_running_containers(), 4)
 
-class TestSpecAssemblerGetRepoTestCases(TestCase):
-    def setUp(self):
-        setup_test(self)
-
-    def tearDown(self):
-        teardown_test(self)
+class TestSpecAssemblerGetRepoTestCases(DustyTestCase):
     def test_get_repo_of_app_or_service_app(self):
         self.assertEqual(spec_assembler.get_repo_of_app_or_library('app-a'), 'github.com/app/a')
 
@@ -152,5 +146,3 @@ class TestSpecAssemblerGetRepoTestCases(TestCase):
     def test_get_repo_of_app_or_service_neither(self):
         with self.assertRaises(KeyError):
             spec_assembler.get_repo_of_app_or_library('lib-b')
-
-

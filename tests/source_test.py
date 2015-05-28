@@ -3,21 +3,20 @@ import tempfile
 import shutil
 
 import git
-from unittest import TestCase
 from mock import Mock, patch
 
-from .utils import setup_test, teardown_test
+from .utils import DustyTestCase
 from dusty.commands.repos import override_repo
 from dusty.source import (repo_is_overridden, local_repo_path, _short_repo_name,
                           git_error_handling, ensure_local_repo, update_local_repo)
 
-class TestSource(TestCase):
+class TestSource(DustyTestCase):
     def setUp(self):
-        setup_test(self)
+        super(TestSource, self).setUp()
         self.temp_dir = tempfile.mkdtemp()
 
     def tearDown(self):
-        teardown_test(self)
+        super(TestSource, self).tearDown()
         shutil.rmtree(self.temp_dir)
 
     def test_repo_is_overridden_true(self):

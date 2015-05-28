@@ -2,16 +2,17 @@ import os
 import tempfile
 import shutil
 
-from unittest import TestCase
 from mock import Mock, patch
 import yaml
 
 from dusty import constants
 from dusty.systems.compose import (_write_composefile, _get_docker_env,
                                    _get_dusty_containers, _get_canonical_container_name)
+from ...utils import DustyTestCase
 
-class TestComposeSystem(TestCase):
+class TestComposeSystem(DustyTestCase):
     def setUp(self):
+        super(TestComposeSystem, self).setUp()
         self.temp_compose_dir = tempfile.mkdtemp()
         self.temp_compose_path = os.path.join(self.temp_compose_dir, 'docker-compose.yml')
         self.old_compose_dir = constants.COMPOSE_DIR
@@ -24,6 +25,7 @@ class TestComposeSystem(TestCase):
         self.fake_docker_client.containers.return_value = self.containers_return
 
     def tearDown(self):
+        super(TestComposeSystem, self).tearDown()
         constants.COMPOSE_DIR = self.old_compose_dir
         shutil.rmtree(self.temp_compose_dir)
 

@@ -4,20 +4,12 @@ import os
 import tempfile
 import shutil
 
-from unittest import TestCase
-
 from dusty.config import get_config_value
 from dusty.commands.bundles import list_bundles, activate_bundle, deactivate_bundle
 from dusty.compiler.spec_assembler import get_specs_repo
-from ..utils import setup_test, teardown_test
+from ..utils import DustyTestCase
 
-class TestBundlesCommands(TestCase):
-    def setUp(self):
-        setup_test(self)
-
-    def tearDown(self):
-        teardown_test(self)
-
+class TestBundlesCommands(DustyTestCase):
     def _assert_listed_bundles(self, result, bundle_active_tuples):
         for index, bundle_active in enumerate(bundle_active_tuples):
             bundle, activated = bundle_active

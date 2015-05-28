@@ -1,18 +1,14 @@
-from unittest import TestCase
 from mock import patch, call
 
 from dusty.commands.sync import sync_repos
 from dusty.commands.bundles import activate_bundle
-from ..utils import setup_test, teardown_test
+from ..utils import DustyTestCase
 
-class TestSyncCommand(TestCase):
+class TestSyncCommand(DustyTestCase):
     def setUp(self):
-        setup_test(self)
+        super(TestSyncCommand, self).setUp()
         activate_bundle('bundle-a')
         activate_bundle('bundle-b')
-
-    def tearDown(self):
-        teardown_test(self)
 
     @patch('dusty.commands.sync.perform_sync_repos')
     def test_sync_repos_no_args(self, fake_sync):

@@ -1,20 +1,13 @@
 import os
 import tempfile
 
-from unittest import TestCase
-
+from .utils import DustyTestCase
 from dusty import constants, config
 
-class TestConfig(TestCase):
+class TestConfig(DustyTestCase):
     def setUp(self):
-        self.temp_config_path = tempfile.mkstemp()[1]
-        self.old_config_path = constants.CONFIG_PATH
-        constants.CONFIG_PATH = self.temp_config_path
+        super(TestConfig, self).setUp()
         self.test_config = {'bundles': ['bundle-a'], 'repo_overrides': {'repo-a': '/var/run/repo-a'}, 'mac_username': 'root'}
-
-    def tearDown(self):
-        constants.CONFIG_PATH = self.old_config_path
-        os.remove(self.temp_config_path)
 
     def test_save_and_get_config(self):
         config.save_config(self.test_config)

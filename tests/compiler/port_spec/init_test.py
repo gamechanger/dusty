@@ -1,10 +1,11 @@
-from unittest import TestCase
+from ...utils import DustyTestCase
 from dusty.compiler.port_spec import (_docker_compose_port_spec, _nginx_port_spec,
                                       _hosts_file_port_spec, get_port_spec_document, LOCALHOST,
                                       ReusedHostFullAddress, ReusedContainerPort)
 
-class TestPortSpecCompiler(TestCase):
+class TestPortSpecCompiler(DustyTestCase):
     def setUp(self):
+        super(TestPortSpecCompiler, self).setUp()
         self.test_host_forwarding_spec_1 = {'container_port': 80, 'host_name': 'local.gc.com', 'host_port': 80}
         self.test_host_forwarding_spec_2 = {'container_port': 8000, 'host_name': 'local.alex.com', 'host_port': 8001}
 

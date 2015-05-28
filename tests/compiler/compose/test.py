@@ -1,4 +1,3 @@
-from unittest import TestCase
 from mock import patch, call
 from copy import copy
 
@@ -7,6 +6,7 @@ from dusty.compiler.compose import (get_compose_dict, _composed_app_dict, _compo
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
                                     _lib_install_command, _lib_install_commands_for_app)
 from ..test_test_cases import all_test_configs
+from ...utils import DustyTestCase
 
 basic_specs = {
     'apps': {
@@ -62,7 +62,7 @@ def vm_repo_path(name):
     return "/Users/gc/{}".format(name.split('/')[-1])
 
 @patch('dusty.compiler.compose.vm_repo_path', side_effect=vm_repo_path)
-class TestComposeCompiler(TestCase):
+class TestComposeCompiler(DustyTestCase):
     def test_composed_volumes(self, *args):
         expected_volumes = [
             '/Users/gc/app1:/gc/app1',

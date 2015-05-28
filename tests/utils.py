@@ -3,6 +3,7 @@ import shutil
 import tempfile
 import logging
 
+from unittest import TestCase
 from nose.tools import nottest
 
 import dusty.constants
@@ -19,23 +20,28 @@ class TestCaptureHandler(logging.Handler):
     def emit(self, record):
         self.lst.append(self.format(record))
 
-@nottest
-def setup_test(obj):
-    obj.temp_config_path = tempfile.mkstemp()[1]
-    obj.temp_specs_path = tempfile.mkdtemp()
-    obj.temp_repos_path = tempfile.mkdtemp()
-    dusty.constants.CONFIG_PATH = obj.temp_config_path
-    write_default_config()
-    save_config_value('specs_repo', 'github.com/org/dusty-specs')
-    override_repo(get_specs_repo(), obj.temp_specs_path)
-    basic_specs_fixture()
-    obj.client_output = []
-    obj.capture_handler = TestCaptureHandler(obj.client_output)
-    logging.getLogger(dusty.constants.SOCKET_LOGGER_NAME).addHandler(obj.capture_handler)
+class DustyTestCase(TestCase):
+    def setUp(self):
+        self.temp_config_path = tempfile.mkstemp()[1]
+        self.temp_specs_path = tempfile.mkdtemp()
+        self.temp_repos_path = tempfile.mkdtemp()
 
-@nottest
-def teardown_test(obj):
-    os.remove(obj.temp_config_path)
-    shutil.rmtree(obj.temp_specs_path)
-    shutil.rmtree(obj.temp_repos_path)
-    logging.getLogger(dusty.constants.SOCKET_LOGGER_NAME).removeHandler(obj.capture_handler)
+        dusty.constants.CONFIG_PATH = self.temp_config_path
+        write_default_config()
+        save_config_value('specs_repo', 'github.com/org/dusty-specs')
+        override_repo(get_specs_repo(), self.temp_specs_path)
+        basic_specs_fixture()
+
+        self.client_output = []
+        self.capture_handler = TestCaptureHandler(self.client_output)
+        logging.getLogger(dusty.constants.SOCKET_LOGGER_NAME).addHandler(self.capture_handler)
+
+    def tearDown(self):
+        os.remove(self.temp_config_path)
+        shutil.rmtree(self.temp_specs_path)
+        shutil.rmtree(self.temp_repos_path)
+        logging.getLogger(dusty.constants.SOCKET_LOGGER_NAME).removeHandler(self.capture_handler)
+
+    @property
+    def last_client_output(self):
+        return self.client_output[-1] if self.client_output else None

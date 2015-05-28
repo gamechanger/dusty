@@ -1,10 +1,9 @@
-from unittest import TestCase
 from mock import patch, call
 
-from ...utils import setup_test, teardown_test
+from ...utils import DustyTestCase
 from dusty.systems.rsync import sync_repos_by_app_name
 
-class TestRysnc(TestCase):
+class TestRysnc(DustyTestCase):
 
     @patch('dusty.systems.rsync.sync_repos')
     @patch('dusty.systems.rsync.get_assembled_specs')

@@ -4,7 +4,6 @@ import os
 import tempfile
 import shutil
 
-from unittest import TestCase
 from mock import patch, call
 
 from dusty.config import get_config_value
@@ -12,16 +11,13 @@ from dusty.commands.bundles import activate_bundle
 from dusty.commands.repos import (list_repos, override_repo, manage_repo,
                                   override_repos_from_directory, update_managed_repos)
 from dusty.compiler.spec_assembler import get_specs_repo
-from ..utils import setup_test, teardown_test
+from ..utils import DustyTestCase
 
-class TestReposCommands(TestCase):
+class TestReposCommands(DustyTestCase):
     def setUp(self):
-        setup_test(self)
+        super(TestReposCommands, self).setUp()
         os.mkdir(os.path.join(self.temp_repos_path, 'a'))
         os.mkdir(os.path.join(self.temp_repos_path, 'b'))
-
-    def tearDown(self):
-        teardown_test(self)
 
     def _assert_listed_repos(self, result, repo_override_tuples):
         for index, repo_override in enumerate(repo_override_tuples):
