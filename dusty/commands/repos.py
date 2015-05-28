@@ -36,7 +36,7 @@ def list_repos():
     for repo in repos:
         table.add_row([repo, _shorten_name(repo),
                        overrides[repo] if repo in overrides else ''])
-    log_to_client(table.get_string(sortby='Name'))
+    log_to_client(table.get_string(sortby='Full Name'))
 
 def override_repo(repo_name, source_path):
     repo_name = _get_expanded_repo_name(repo_name)
