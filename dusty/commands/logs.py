@@ -1,11 +1,8 @@
-from .client import call_command_from_client
+import os
+
 from ..systems.compose import get_dusty_containers
+from .utils import _executable_path
 
 def tail_container_logs(app_or_service_name):
     container = get_dusty_containers([app_or_service_name])[0]
-    call_command_from_client(['boot2docker', 'ssh', 'docker', 'logs', container['Id']])
-
-def stream_container_logs(app_or_service_name):
-    container = get_dusty_containers([app_or_service_name])[0]
-    call_command_from_client(['boot2docker', 'ssh', 'docker', 'logs', '-f', container['Id']])
-
+    os.execl(_executable_path('docker'), 'docker', 'logs', '-f', container['Id'])
