@@ -114,6 +114,16 @@ def get_specs():
     specs_path = get_specs_path()
     return get_specs_from_path(specs_path)
 
+def get_repo_of_app_or_library(app_or_library_name):
+    """ This function takes an app or library name and will return the corresponding repo
+    for that app or library"""
+    specs = get_specs()
+    if app_or_library_name in specs['apps']:
+        return specs['apps'][app_or_library_name]['repo']
+    elif app_or_library_name in specs['libs']:
+        return specs['libs'][app_or_library_name]['repo']
+    raise KeyError('did not find app or service with name {}'.format(app_or_library_name))
+
 def get_specs_from_path(specs_path):
     specs = {}
     for key in ['bundles', 'apps', 'libs', 'services']:

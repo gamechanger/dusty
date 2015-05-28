@@ -23,8 +23,8 @@ COMMAND_TREE = {
         'set': manage_config.save_value
     },
     'up': run.start_local_env,
-    'stop': run.stop_services,
-    'restart': run.restart_services,
+    'stop': run.stop_apps_or_services,
+    'restart': run.restart_apps_or_services,
     'logs': {
         'tail': logs.tail_container_logs,
         'stream': logs.stream_container_logs

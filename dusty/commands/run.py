@@ -1,4 +1,3 @@
-import logging
 from ..compiler import (compose as compose_compiler, nginx as nginx_compiler,
                         port_spec as port_spec_compiler, spec_assembler)
 from ..systems import compose, hosts, nginx, virtualbox, rsync
@@ -37,29 +36,27 @@ def start_local_env():
 
     yield "Your local environment is now started"
 
-def stop_services(*services):
+def stop_apps_or_services(*app_or_service_names):
     """Stop any currently running Docker containers associated with
-    Dusty, or associated with the provided services. Does not remove
-    the service's containers.
-
-    Here, "services" refers to the Compose version of the term,
-    so any existing running container, by name. This includes Dusty
-    apps and services."""
-    if services:
-        yield "Stopping the following services: {}".format(', '.join(services))
+    Dusty, or associated with the provided apps_or_services. Does not remove
+    the service's containers."""
+    if app_or_service_names:
+        yield "Stopping the following apps or services: {}".format(', '.join(app_or_service_names))
     else:
         yield "Stopping all running containers associated with Dusty"
-    compose.stop_running_services(services)
+    compose.stop_running_services(app_or_service_names)
 
-def restart_services(*services):
+def restart_apps_or_services(*app_or_service_names):
     """Restart any containers associated with Dusty, or associated with
-    the provided services.
-
-    Here, "services" refers to the Compose version of the term,
-    so any existing running container, by name. This includes Dusty
-    apps and services."""
-    if services:
-        yield "Restarting the following services: {}".format(', '.join(services))
+    the provided app_or_service_names."""
+    if app_or_service_names:
+        yield "Restarting the following apps or services: {}".format(', '.join(app_or_service_names))
     else:
         yield "Restarting all active containers associated with Dusty"
-    compose.restart_running_services(services)
+    if len(app_or_service_names) > 0:
+        specs = spec_assembler.get_specs()
+        app_names = [app_name for app_name in app_or_service_names if app_name in specs['apps']]
+        rsync.sync_repos_by_app_name(app_names)
+    else:
+        rsync.sync_repos(spec_assembler.get_all_repos(active_only=True, include_specs_repo=False))
+    compose.restart_running_services(app_or_service_names)

@@ -65,7 +65,8 @@ class TestReposCommands(TestCase):
         run(override_repos_from_directory(self.temp_repos_path))
         self.assertItemsEqual(get_config_value('repo_overrides'), {get_specs_repo(): self.temp_specs_path,
                                                                    'github.com/app/a': os.path.join(self.temp_repos_path, 'a'),
-                                                                   'github.com/app/b': os.path.join(self.temp_repos_path, 'b')})
+                                                                   'github.com/app/b': os.path.join(self.temp_repos_path, 'b'),
+                                                                   'github.com/lib/a': os.path.join(self.temp_repos_path, 'a')})
 
     @patch('dusty.commands.repos.update_local_repo')
     def test_update_managed_repos(self, fake_update_local_repo):
