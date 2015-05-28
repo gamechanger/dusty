@@ -20,14 +20,14 @@ class TestBundlesCommands(DustyTestCase):
 
     def test_list_bundles_with_none_activated(self):
         list_bundles()
-        self._assert_listed_bundles(self.client_output[-1],
+        self._assert_listed_bundles(self.last_client_output,
                                     [['bundle-a', False],
                                      ['bundle-b', False]])
 
     def test_list_bundles_with_one_activated(self):
         activate_bundle('bundle-a')
         list_bundles()
-        self._assert_listed_bundles(self.client_output[-1],
+        self._assert_listed_bundles(self.last_client_output,
                                     [['bundle-a', True],
                                      ['bundle-b', False]])
 
@@ -35,7 +35,7 @@ class TestBundlesCommands(DustyTestCase):
         activate_bundle('bundle-a')
         activate_bundle('bundle-b')
         list_bundles()
-        self._assert_listed_bundles(self.client_output[-1],
+        self._assert_listed_bundles(self.last_client_output,
                                     [['bundle-a', True],
                                      ['bundle-b', True]])
 

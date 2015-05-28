@@ -29,14 +29,14 @@ class TestReposCommands(DustyTestCase):
 
     def test_list_repos_with_no_overrides(self):
         list_repos()
-        self._assert_listed_repos(self.client_output[-1],
+        self._assert_listed_repos(self.last_client_output,
                                   [['github.com/app/a', False],
                                    ['github.com/app/b', False]])
 
     def test_list_repos_with_one_override(self):
         override_repo('github.com/app/a', self.temp_specs_path)
         list_repos()
-        self._assert_listed_repos(self.client_output[-1],
+        self._assert_listed_repos(self.last_client_output,
                                   [['github.com/app/a', self.temp_specs_path],
                                    ['github.com/app/b', False]])
 
@@ -44,7 +44,7 @@ class TestReposCommands(DustyTestCase):
         override_repo('github.com/app/a', self.temp_specs_path)
         override_repo('github.com/app/b', self.temp_specs_path)
         list_repos()
-        self._assert_listed_repos(self.client_output[-1],
+        self._assert_listed_repos(self.last_client_output,
                                   [['github.com/app/a', self.temp_specs_path],
                                    ['github.com/app/b', self.temp_specs_path]])
 

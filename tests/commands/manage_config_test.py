@@ -24,12 +24,12 @@ class TestManageConfigCommands(DustyTestCase):
 
     def test_list_config_values(self):
         list_config_values()
-        self.assertItemsEqual(json.loads(self.client_output[-1].replace('\'', '\"')), self.expected_config)
+        self.assertItemsEqual(json.loads(self.last_client_output.replace('\'', '\"')), self.expected_config)
 
     def test_save_value_changes_value(self):
         save_value('docker_user', '~/here')
         list_config_values()
-        self.assertItemsEqual(json.loads(self.client_output[-1].replace('\'', '\"')),
+        self.assertItemsEqual(json.loads(self.last_client_output.replace('\'', '\"')),
                               {'bundles': [],
                                'repo_overrides': {get_specs_repo(): self.temp_specs_path},
                                'docker_user': '~/here',
