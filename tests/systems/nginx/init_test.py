@@ -1,15 +1,16 @@
 import os
 import tempfile
 
-from unittest import TestCase
 from mock import patch
 from nose.tools import nottest
 
 from dusty import constants
 from dusty.systems.nginx import _get_nginx_pid, _ensure_nginx_running_with_latest_config
+from ...utils import DustyTestCase
 
-class TestNginxSystem(TestCase):
+class TestNginxSystem(DustyTestCase):
     def setUp(self):
+        super(TestNginxSystem, self).setUp()
         self.temp_pid_path = tempfile.mkstemp()[1]
         self.old_pid_path = constants.NGINX_PID_PATH
         constants.NGINX_PID_PATH = self.temp_pid_path
@@ -17,6 +18,7 @@ class TestNginxSystem(TestCase):
         self._write_pid_file(self.process_id)
 
     def tearDown(self):
+        super(TestNginxSystem, self).tearDown()
         os.remove(self.temp_pid_path)
         constants.NGINX_PID_PATH = self.old_pid_path
 

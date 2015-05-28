@@ -4,7 +4,6 @@ import os
 import tempfile
 import shutil
 
-from unittest import TestCase
 from mock import patch, call
 
 from dusty.config import get_config_value
@@ -12,16 +11,13 @@ from dusty.commands.bundles import activate_bundle
 from dusty.commands.repos import (list_repos, override_repo, manage_repo,
                                   override_repos_from_directory, update_managed_repos)
 from dusty.compiler.spec_assembler import get_specs_repo
-from ..utils import setup_test, teardown_test
+from ..utils import DustyTestCase
 
-class TestReposCommands(TestCase):
+class TestReposCommands(DustyTestCase):
     def setUp(self):
-        setup_test(self)
+        super(TestReposCommands, self).setUp()
         os.mkdir(os.path.join(self.temp_repos_path, 'a'))
         os.mkdir(os.path.join(self.temp_repos_path, 'b'))
-
-    def tearDown(self):
-        teardown_test(self)
 
     def _assert_listed_repos(self, result, repo_override_tuples):
         for index, repo_override in enumerate(repo_override_tuples):
@@ -33,14 +29,14 @@ class TestReposCommands(TestCase):
 
     def test_list_repos_with_no_overrides(self):
         list_repos()
-        self._assert_listed_repos(self.client_output[-1],
+        self._assert_listed_repos(self.last_client_output,
                                   [['github.com/app/a', False],
                                    ['github.com/app/b', False]])
 
     def test_list_repos_with_one_override(self):
         override_repo('github.com/app/a', self.temp_specs_path)
         list_repos()
-        self._assert_listed_repos(self.client_output[-1],
+        self._assert_listed_repos(self.last_client_output,
                                   [['github.com/app/a', self.temp_specs_path],
                                    ['github.com/app/b', False]])
 
@@ -48,7 +44,7 @@ class TestReposCommands(TestCase):
         override_repo('github.com/app/a', self.temp_specs_path)
         override_repo('github.com/app/b', self.temp_specs_path)
         list_repos()
-        self._assert_listed_repos(self.client_output[-1],
+        self._assert_listed_repos(self.last_client_output,
                                   [['github.com/app/a', self.temp_specs_path],
                                    ['github.com/app/b', self.temp_specs_path]])
 

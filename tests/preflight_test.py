@@ -1,8 +1,7 @@
-from unittest import TestCase
-
+from .utils import DustyTestCase
 from dusty.preflight import _assert_executable_exists, PreflightException
 
-class PreflightTest(TestCase):
+class PreflightTest(DustyTestCase):
     def test_assert_executable_exists(self):
         _assert_executable_exists('python')
 

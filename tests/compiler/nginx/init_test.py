@@ -1,12 +1,13 @@
-from unittest import TestCase
+from ...utils import DustyTestCase
 from dusty.compiler.nginx import (get_nginx_configuration_spec, _nginx_listen_string, _nginx_location_spec,
                                   _nginx_proxy_string, _nginx_server_spec, _nginx_server_name_string)
 
 def cleanse(string):
     return string.replace("\n", "").replace("\t", "").replace(" ", "")
 
-class TestPortSpecCompiler(TestCase):
+class TestPortSpecCompiler(DustyTestCase):
     def setUp(self):
+        super(TestPortSpecCompiler, self).setUp()
         self.port_spec_dict_1 = {'nginx': [{'proxied_port':'80',
                                             'boot2docker_ip': '127.0.0.0',
                                             'host_address': 'local.gc.com',

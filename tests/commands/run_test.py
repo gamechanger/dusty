@@ -1,8 +1,9 @@
-from unittest import TestCase
 from mock import patch, call
-from dusty.commands.run import restart_apps_or_services
 
-class TestRunCommands(TestCase):
+from dusty.commands.run import restart_apps_or_services
+from ..utils import DustyTestCase
+
+class TestRunCommands(DustyTestCase):
     @patch('dusty.commands.run.compose.restart_running_services')
     @patch('dusty.commands.run.rsync')
     @patch('dusty.commands.run.spec_assembler.get_specs')
