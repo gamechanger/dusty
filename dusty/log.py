@@ -12,7 +12,7 @@ class DustySocketHandler(logging.Handler):
 
     def emit(self, record):
         msg = self.format(record)
-        self.connection_socket.sendall("{}\n".format(msg.strip()))
+        self.connection_socket.sendall("{}\n".format(msg.encode('utf-8').strip()))
 
 
 def configure_logging():
