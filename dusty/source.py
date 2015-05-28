@@ -28,7 +28,7 @@ def vm_repo_path(repo_name):
 def _managed_repo_path(repo_name):
     return os.path.join(constants.REPOS_DIR, repo_name)
 
-def _short_repo_name(repo_name):
+def short_repo_name(repo_name):
     return repo_name.split('/')[-1]
 
 @contextmanager
@@ -50,7 +50,7 @@ def ensure_local_repo(repo_name):
         return
 
     logging.info('Initiating clone of local repo {}'.format(repo_name))
-    notify('Cloning repository {}'.format(_short_repo_name(repo_name)))
+    notify('Cloning repository {}'.format(short_repo_name(repo_name)))
 
     repo_path_parent = os.path.split(repo_path)[0]
     if not os.path.exists(repo_path_parent):
@@ -64,7 +64,7 @@ def update_local_repo(repo_name):
     ensure_local_repo(repo_name)
 
     logging.info('Updating local repo {}'.format(repo_name))
-    notify('Pulling latest updates for {}'.format(_short_repo_name(repo_name)))
+    notify('Pulling latest updates for {}'.format(short_repo_name(repo_name)))
 
     repo_path = _managed_repo_path(repo_name)
     repo = git.Repo(repo_path)

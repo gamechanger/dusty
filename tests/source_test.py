@@ -7,7 +7,7 @@ from mock import Mock, patch
 
 from .utils import DustyTestCase
 from dusty.commands.repos import override_repo
-from dusty.source import (repo_is_overridden, local_repo_path, _short_repo_name,
+from dusty.source import (repo_is_overridden, local_repo_path, short_repo_name,
                           git_error_handling, ensure_local_repo, update_local_repo)
 
 class TestSource(DustyTestCase):
@@ -35,7 +35,7 @@ class TestSource(DustyTestCase):
         self.assertEqual(local_repo_path('github.com/app/a'), self.temp_dir)
 
     def test_short_repo_name(self):
-        self.assertEqual(_short_repo_name('github.com/app/a'), 'a')
+        self.assertEqual(short_repo_name('github.com/app/a'), 'a')
 
     @patch('dusty.source.log_to_client')
     def test_git_error_handling(self, fake_log_to_client):
