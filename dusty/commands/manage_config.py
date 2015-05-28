@@ -15,7 +15,9 @@ def list_config():
      config = get_config()
      table = PrettyTable(['Key', 'Description', 'Value'])
      for key, description in constants.CONFIG_SETTINGS.iteritems():
-          table.add_row([key, '\n'.join(textwrap.wrap(description, 80)), config.get(key)])
+          table.add_row([key,
+                         '\n'.join(textwrap.wrap(description, 80)),
+                         '\n'.join(textwrap.wrap(str(config.get(key)), 80))])
      log_to_client(table.get_string(sortby='Key'))
 
 def list_config_values():
