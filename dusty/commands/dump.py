@@ -27,4 +27,3 @@ def dump_diagnostics():
             output = e.output
         log_to_client(output)
         log_to_client('')
-    yield ''

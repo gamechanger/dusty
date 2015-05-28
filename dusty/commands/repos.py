@@ -13,7 +13,7 @@ def list_repos():
     for repo in repos:
         table.add_row([repo,
                        overrides[repo] if repo in overrides else ''])
-    yield table.get_string(sortby='Name')
+    log_to_client(table.get_string(sortby='Name'))
 
 def override_repo(repo_name, source_path):
     repos = get_all_repos()
@@ -24,7 +24,7 @@ def override_repo(repo_name, source_path):
     config = get_config_value('repo_overrides')
     config[repo_name] = source_path
     save_config_value('repo_overrides', config)
-    yield 'Locally overriding repo {} to use source at {}'.format(repo_name, source_path)
+    log_to_client('Locally overriding repo {} to use source at {}'.format(repo_name, source_path))
 
 def manage_repo(repo_name):
     repos = get_all_repos()
@@ -34,16 +34,15 @@ def manage_repo(repo_name):
     if repo_name in config:
         del config[repo_name]
     save_config_value('repo_overrides', config)
-    yield 'Will manage repo {} with Dusty-managed copy of source'.format(repo_name)
+    log_to_client('Will manage repo {} with Dusty-managed copy of source'.format(repo_name))
 
 def override_repos_from_directory(source_path):
-    yield 'Overriding all repos found at {}'.format(source_path)
+    log_to_client('Overriding all repos found at {}'.format(source_path))
     for repo in get_all_repos():
         repo_name = repo.split('/')[-1]
         repo_path = os.path.join(source_path, repo_name)
         if os.path.isdir(repo_path):
-            for result in override_repo(repo, repo_path):
-                yield result
+            override_repo(repo, repo_path)
 
 def update_managed_repos():
     """For any active, managed repos, update the Dusty-managed
@@ -54,7 +53,3 @@ def update_managed_repos():
         if repo_name not in overrides:
             log_to_client('Updating managed copy of {}'.format(repo_name))
             update_local_repo(repo_name)
-
-def update_managed_repos_command():
-    update_managed_repos()
-    yield "Finished updating Dusty-managed active repos"

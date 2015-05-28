@@ -34,25 +34,25 @@ def start_local_env():
     log_to_client("Saving docker-compose config and starting all containers")
     compose.update_running_containers_from_spec(compose_config)
 
-    yield "Your local environment is now started"
+    log_to_client("Your local environment is now started")
 
 def stop_apps_or_services(*app_or_service_names):
     """Stop any currently running Docker containers associated with
     Dusty, or associated with the provided apps_or_services. Does not remove
     the service's containers."""
     if app_or_service_names:
-        yield "Stopping the following apps or services: {}".format(', '.join(app_or_service_names))
+        log_to_client("Stopping the following apps or services: {}".format(', '.join(app_or_service_names)))
     else:
-        yield "Stopping all running containers associated with Dusty"
+        log_to_client("Stopping all running containers associated with Dusty")
     compose.stop_running_services(app_or_service_names)
 
 def restart_apps_or_services(*app_or_service_names):
     """Restart any containers associated with Dusty, or associated with
     the provided app_or_service_names."""
     if app_or_service_names:
-        yield "Restarting the following apps or services: {}".format(', '.join(app_or_service_names))
+        log_to_client("Restarting the following apps or services: {}".format(', '.join(app_or_service_names)))
     else:
-        yield "Restarting all active containers associated with Dusty"
+        log_to_client("Restarting all active containers associated with Dusty")
     if len(app_or_service_names) > 0:
         specs = spec_assembler.get_specs()
         app_names = [app_name for app_name in app_or_service_names if app_name in specs['apps']]

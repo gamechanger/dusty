@@ -4,6 +4,7 @@ from prettytable import PrettyTable
 
 from ..config import get_config_value, save_config_value
 from ..compiler.spec_assembler import get_specs
+from ..log import log_to_client
 
 def list_bundles():
     specs, activated_bundles = get_specs(), get_config_value('bundles')
@@ -12,7 +13,7 @@ def list_bundles():
         table.add_row([bundle,
                        bundle_spec['description'],
                        u"✓" if bundle in activated_bundles else ""])
-    yield table.get_string(sortby="Name")
+    log_to_client(table.get_string(sortby="Name"))
 
 def activate_bundle(bundle_name):
     specs = get_specs()
@@ -22,7 +23,7 @@ def activate_bundle(bundle_name):
     if bundle_name not in activated_bundles:
         activated_bundles.add(bundle_name)
         save_config_value('bundles', list(activated_bundles))
-    yield 'Activated bundle {}'.format(bundle_name)
+    log_to_client('Activated bundle {}'.format(bundle_name))
 
 def deactivate_bundle(bundle_name):
     specs = get_specs()
@@ -32,4 +33,4 @@ def deactivate_bundle(bundle_name):
     if bundle_name in activated_bundles:
         activated_bundles.remove(bundle_name)
         save_config_value('bundles', list(activated_bundles))
-    yield 'Deactivated bundle {}'.format(bundle_name)
+    log_to_client('Deactivated bundle {}'.format(bundle_name))

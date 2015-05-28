@@ -1,6 +1,7 @@
 import os
 import tempfile
 import shutil
+import json
 
 from unittest import TestCase
 
@@ -24,14 +25,18 @@ class TestManageConfigCommands(TestCase):
         self.assertItemsEqual(_eligible_config_keys_for_setting(), ['specs_repo', 'docker_user'])
 
     def test_list_config_values(self):
-        result = list_config_values().next()
-        self.assertEquals(result, self.expected_config)
+        list_config_values()
+        self.assertItemsEqual(json.loads(self.client_output[-1].replace('\'', '\"')), self.expected_config)
 
     def test_save_value_changes_value(self):
-        save_value('docker_user', '~/here').next()
-        result = list_config_values().next()
-        self.assertEquals(result, {'bundles': [], 'repo_overrides': {get_specs_repo(): self.temp_specs_path}, 'docker_user': '~/here', 'specs_repo': 'github.com/org/dusty-specs'})
+        save_value('docker_user', '~/here')
+        list_config_values()
+        self.assertItemsEqual(json.loads(self.client_output[-1].replace('\'', '\"')),
+                              {'bundles': [],
+                               'repo_overrides': {get_specs_repo(): self.temp_specs_path},
+                               'docker_user': '~/here',
+                               'specs_repo': 'github.com/org/dusty-specs'})
 
     def test_save_value_no_changes(self):
         with self.assertRaises(KeyError):
-            save_value('bundles', '~/here').next()
+            save_value('bundles', '~/here')

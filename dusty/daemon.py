@@ -40,11 +40,7 @@ def _listen_on_socket(socket_path):
                     fn, args, kwargs = Payload.deserialize(data)
                     logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
                     try:
-                        for line in fn(*args, **kwargs):
-                            encoded_line = line
-                            if isinstance(encoded_line, basestring):
-                                encoded_line = line.encode('utf-8')
-                            connection.sendall('{}\n'.format(encoded_line))
+                        fn(*args, **kwargs)
                     except Exception as e:
                         logging.exception("Daemon encountered exception while processing command")
                         error_msg = e.message if e.message else str(e)
