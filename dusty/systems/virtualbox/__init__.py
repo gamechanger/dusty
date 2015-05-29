@@ -1,7 +1,6 @@
 import os
 import re
 import logging
-import subprocess
 
 from ... import constants
 from ...config import get_config_value, assert_config_key

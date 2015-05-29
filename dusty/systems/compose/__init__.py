@@ -1,6 +1,5 @@
 import os
 import logging
-import subprocess
 from copy import copy
 import re
 
