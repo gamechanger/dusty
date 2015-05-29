@@ -193,7 +193,7 @@ def remove_images():
     dusty_images = get_dusty_images()
     all_images = client.images(all=True)
     for image in all_images:
-        if image['RepoTags'][0] in dusty_images:
+        if set(image['RepoTags']).intersection(dusty_images):
             try:
                 client.remove_image(image['Id'])
             except Exception as e:
