@@ -19,9 +19,15 @@ commands_schema = Schema({
     'once': {'type': basestring}
     })
 
-scripts_schema = Schema({
-
+script_schema = Schema({
+    'description': {'type': basestring},
+    'command': {'type': basestring, 'required': True}
     })
+
+def get_scripts_schema(document):
+    scripts_keys = document.keys()
+    schema_dict = {key: {'type': script_schema} for key in scripts_keys}
+    return Schema(schema_dict)
 
 app_schema = Schema({
     'repo': {'type': basestring, 'required': True},
@@ -31,6 +37,6 @@ app_schema = Schema({
     'build': {'type': basestring},
     'mount': {'type': basestring},
     'commands': {'type': commands_schema},
-    'scripts': {'type': scripts_schema},
+    'scripts': {'type': get_scripts_schema},
     'compose': {'type': dict},
     })
