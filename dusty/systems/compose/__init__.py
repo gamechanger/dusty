@@ -47,7 +47,7 @@ def _write_composefile(compose_config):
     with open(_composefile_path(), 'w') as f:
         f.write(yaml.dump(compose_config, default_flow_style=False))
 
-def _compose_up(recreate_containers):
+def _compose_up(recreate_containers=True):
     logging.info('Running docker-compose up')
     command = ['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl']
     if not recreate_containers:
