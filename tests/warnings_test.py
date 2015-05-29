@@ -11,9 +11,9 @@ class TestWarnings(DustyTestCase):
         message_1 = 'Something is wrong, yo'
         message_2 = 'Yo this thing is also wrong'
         self.warnings.warn(message_1)
-        self.assertEqual(self.warnings.stored, [message_1])
+        self.assertEqual(self.warnings._stored, [message_1])
         self.warnings.warn(message_2)
-        self.assertEqual(self.warnings.stored, [message_1, message_2])
+        self.assertEqual(self.warnings._stored, [message_1, message_2])
 
     def test_has_warnings(self):
         self.assertFalse(self.warnings.has_warnings)
