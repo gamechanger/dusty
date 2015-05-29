@@ -21,3 +21,4 @@ def basic_specs_fixture():
                                                     'command': 'ls /'}}})
     _write('app', 'app-b', {'repo': 'github.com/app/b', 'image': 'app/b'})
     _write('lib', 'lib-a', {'repo': 'github.com/lib/a', 'image': 'lib/a'})
+    _write('service', 'service-a', {'image': 'service/a'})
