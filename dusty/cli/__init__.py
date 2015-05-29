@@ -6,6 +6,7 @@ Usage:
 Commands:
   bundles    Manage which sets of applications to run
   config     Get or set Dusty config variables
+  disk       Manage and inspect the boot2docker VM's disk usage
   dump       Print diagnostic information for bug reports
   logs       Tail logs for a Dusty-managed service
   repos      Manage Git repos used for running Dusty applications
@@ -26,11 +27,12 @@ from docopt import docopt
 
 from ..constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from ..payload import Payload
-from . import bundles, config, dump, logs, repos, restart, script, shell, stop, sync, up
+from . import bundles, config, dump, disk, logs, repos, restart, script, shell, stop, sync, up
 
 MODULE_MAP = {
     'bundles': bundles,
     'config': config,
+    'disk': disk,
     'dump': dump,
     'logs': logs,
     'repos': repos,

@@ -38,6 +38,22 @@ def initialize_docker_vm():
 def get_docker_vm_ip():
     """Checks boot2docker's IP, assuming that the VM is started"""
     logging.info("Checking boot2docker's ip")
-    maybe_ip = check_and_log_output_and_error_demoted(['boot2docker', 'ip']).rstrip()
-    print "MAYBEIP: {}".format(maybe_ip)
-    return maybe_ip
+    ip = check_and_log_output_and_error_demoted(['boot2docker', 'ip']).rstrip()
+    return ip
+
+def _format_df_line(line):
+    split_line = line.split()
+    usage_pct = split_line[4]
+    total = split_line[1]
+    used = split_line[2]
+    free = split_line[3]
+    formatted_usage = "Usage: {}\n".format(usage_pct)
+    formatted_usage += "Total Size: {}\n".format(total)
+    formatted_usage += "Used: {}\n".format(used)
+    formatted_usage += "Free: {}".format(free)
+    return formatted_usage
+
+def get_docker_vm_disk_info():
+    df_output = check_output_demoted(['boot2docker', 'ssh', 'df', '-h', '|', 'grep', '/dev/sda1'])
+    output_lines = df_output.split('\n')
+    return _format_df_line(output_lines[0])
