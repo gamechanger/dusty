@@ -4,8 +4,8 @@ from ..systems import compose, hosts, nginx, virtualbox, rsync
 from ..log import log_to_client
 from .repos import update_managed_repos
 
-def start_local_env():
-    """ This command will use the compilers to get compose specs
+def start_local_env(recreate_containers=True):
+    """This command will use the compilers to get compose specs
     will pass those specs to the systems that need them. Those
     systems will in turn launch the services needed to make the
     local environment go."""
@@ -34,7 +34,7 @@ def start_local_env():
     log_to_client("Saving nginx config and ensure nginx is running")
     nginx.update_nginx_from_config(nginx_config)
     log_to_client("Saving docker-compose config and starting all containers")
-    compose.update_running_containers_from_spec(compose_config)
+    compose.update_running_containers_from_spec(compose_config, recreate_containers=recreate_containers)
 
     log_to_client("Your local environment is now started")
 
