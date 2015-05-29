@@ -7,7 +7,9 @@ import yaml
 
 from dusty import constants
 from dusty.systems.compose import (_write_composefile, _get_docker_env,
-                                   _get_dusty_containers, _get_canonical_container_name)
+                                   _get_dusty_containers, _get_canonical_container_name,
+                                   _get_exited_dusty_containers, get_dusty_images)
+from dusty.compiler.spec_assembler import get_specs
 from ...utils import DustyTestCase
 
 class TestComposeSystem(DustyTestCase):
@@ -19,10 +21,12 @@ class TestComposeSystem(DustyTestCase):
         constants.COMPOSE_DIR = self.temp_compose_dir
         self.test_spec = {'app-a': {'image': 'app/a'}}
 
-        self.containers_return = [{'Names': ['/dusty_app-a_1']},
-                                  {'Names': ['/dusty_app-b_1', '/dusty_app-a_1/dusty_app-b_1']}]
+        self.containers_return = [{'Names': ['/dusty_app-a_1'], 'Status': 'Exited'},
+                                  {'Names': ['/dusty_app-b_1', '/dusty_app-a_1/dusty_app-b_1'], 'Status': 'Running'},
+                                  {'Names': ['/some-random-image']}]
         self.fake_docker_client = Mock()
         self.fake_docker_client.containers.return_value = self.containers_return
+        # self.fake_docker_client.
 
     def tearDown(self):
         super(TestComposeSystem, self).tearDown()
@@ -49,7 +53,7 @@ class TestComposeSystem(DustyTestCase):
 
     def test_get_dusty_containers_falsy(self):
         self.assertEqual(_get_dusty_containers(self.fake_docker_client, []),
-                         self.containers_return)
+                         self.containers_return[:-1])
 
     def test_get_dusty_containers_short_name(self):
         self.assertEqual(_get_dusty_containers(self.fake_docker_client, ['app-a']),
@@ -61,3 +65,9 @@ class TestComposeSystem(DustyTestCase):
 
     def test_get_canonical_container_name(self):
         self.assertEqual(_get_canonical_container_name(self.containers_return[1]), 'dusty_app-b_1')
+
+    def test_get_exited_containers(self):
+        self.assertEqual(_get_exited_dusty_containers(self.fake_docker_client), [self.containers_return[0]])
+
+    def test_get_dusty_images(self):
+        self.assertEqual(get_dusty_images(), set(['app/a:latest', 'app/b:latest']))
