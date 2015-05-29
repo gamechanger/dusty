@@ -6,7 +6,7 @@ class Warnings(object):
 
     @property
     def has_warnings(self):
-        return self.stored != []
+        return len(self.stored) != 0
 
     def warn(self, message):
         self.stored.append(message)
