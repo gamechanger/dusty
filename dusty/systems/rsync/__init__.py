@@ -13,7 +13,7 @@ from dusty.compiler.spec_assembler import get_repo_of_app_or_library, get_assemb
 def _ensure_remote_dir_exists(remote_dir):
     check_call_demoted(['boot2docker', 'ssh', 'sudo mkdir -p {0}; sudo chown -R docker {0}'.format(remote_dir)])
 
-def _sync_dir(local_dir, remote_dir):
+def _sync_local_dir_to_vm(local_dir, remote_dir):
     _ensure_remote_dir_exists(remote_dir)
     ssh_opts = 'ssh -p 2022 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /Users/{}/.ssh/id_boot2docker'.format(get_config_value('mac_username'))
     command = ['rsync', '-e', ssh_opts, '-az', '--exclude', '*/.git', '--force',
@@ -29,7 +29,7 @@ def sync_repos(repos):
         repo_type = 'overridden' if repo_is_overridden(repo_name) else 'Dusty-managed'
         remote_path = vm_repo_path(repo_name)
         log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo_name, remote_path))
-        _sync_dir(local_repo_path(repo_name), remote_path)
+        _sync_local_dir_to_vm(local_repo_path(repo_name), remote_path)
 
 def sync_repos_by_app_name(app_names):
     repos = set()
