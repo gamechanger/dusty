@@ -10,7 +10,7 @@ import subprocess
 import warnings
 
 from .config import write_default_config
-from .constants import RUN_DIR, ROOT_LOG_DIR, LOG_SUBDIRS, SYSTEM_DEPENDENCY_VERSIONS, CONFIG_DIR, CONFIG_PATH
+from . import constants
 from .warnings import daemon_warnings
 
 class PreflightException(Exception):
@@ -24,10 +24,10 @@ def _assert_executable_exists(executable_name):
         raise PreflightException('Executable not found: {}'.format(executable_name))
 
 def _maybe_version_warning(executable, installed_version):
-    if installed_version != SYSTEM_DEPENDENCY_VERSIONS[executable]:
+    if installed_version != constants.SYSTEM_DEPENDENCY_VERSIONS[executable]:
         message = 'Your {} version ({}) deviates from the supported version ({}).'.format(executable,
                                                                                           installed_version,
-                                                                                          SYSTEM_DEPENDENCY_VERSIONS[executable])
+                                                                                          constants.SYSTEM_DEPENDENCY_VERSIONS[executable])
         warnings.warn(message)
         daemon_warnings.warn(message)
 
@@ -59,21 +59,25 @@ def _check_docker_compose():
     installed_version = subprocess.check_output(['docker-compose', '--version']).split(' ')[1].strip()
     _maybe_version_warning('docker-compose', installed_version)
 
+def _assert_hosts_file_is_writable():
+    if not os.access(constants.HOSTS_PATH, os.W_OK):
+        raise OSError('Hosts file at {} is not writable'.format(constants.HOSTS_PATH))
+
 def _ensure_run_dir_exists():
-    if not os.path.exists(RUN_DIR):
-        os.makedirs(RUN_DIR)
+    if not os.path.exists(constants.RUN_DIR):
+        os.makedirs(constants.RUN_DIR)
 
 def _ensure_root_log_dir_exists():
-    if not os.path.exists(ROOT_LOG_DIR):
-        os.makedirs(ROOT_LOG_DIR)
+    if not os.path.exists(constants.ROOT_LOG_DIR):
+        os.makedirs(constants.ROOT_LOG_DIR)
 
 def _ensure_config_dir_exists():
-    if not os.path.exists(CONFIG_DIR):
-        os.makedirs(CONFIG_DIR)
+    if not os.path.exists(constants.CONFIG_DIR):
+        os.makedirs(constants.CONFIG_DIR)
 
 def _ensure_log_subdirs_exist():
-    for subdir in LOG_SUBDIRS:
-        subdir_path = os.path.join(ROOT_LOG_DIR, subdir)
+    for subdir in constants.LOG_SUBDIRS:
+        subdir_path = os.path.join(constants.ROOT_LOG_DIR, subdir)
         if not os.path.exists(subdir_path):
             logging.info('Creating logging subdir {}'.format(subdir_path))
             os.mkdir(subdir_path)
@@ -86,11 +90,12 @@ def preflight_check():
     _check_boot2docker()
     _check_docker()
     _check_docker_compose()
+    _assert_hosts_file_is_writable()
     _ensure_run_dir_exists()
     _ensure_root_log_dir_exists()
     _ensure_config_dir_exists()
     _ensure_log_subdirs_exist()
-    if not os.path.exists(CONFIG_PATH):
-        logging.info('Creating default config file at {}'.format(CONFIG_PATH))
+    if not os.path.exists(constants.CONFIG_PATH):
+        logging.info('Creating default config file at {}'.format(constants.CONFIG_PATH))
         write_default_config()
     logging.info('Completed preflight check successfully')
