@@ -9,7 +9,7 @@ import docker
 from ... import constants
 from ...log import log_to_client
 from ...config import get_config_value, assert_config_key
-from ...demote import check_output_demoted, check_and_log_output_and_error_demoted, docker_config_up_log_demoted
+from ...demote import check_output_demoted, check_and_log_output_and_error_demoted
 from ...compiler.spec_assembler import get_expected_number_of_running_containers, get_specs
 
 def _get_docker_client():
@@ -52,7 +52,7 @@ def _compose_up(recreate_containers=True):
     command = ['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl']
     if not recreate_containers:
         command.append('--no-recreate')
-    docker_config_up_log_demoted(command, env=_get_docker_env())
+    check_and_log_output_and_error_demoted(command, env=_get_docker_env(), strip_newlines=True)
 
 def _compose_stop(services):
     logging.info('Running docker-compose stop')
