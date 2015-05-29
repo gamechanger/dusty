@@ -38,9 +38,8 @@ def initialize_docker_vm():
 def get_docker_vm_ip():
     """Checks boot2docker's IP, assuming that the VM is started"""
     logging.info("Checking boot2docker's ip")
-    maybe_ip = check_and_log_output_and_error_demoted(['boot2docker', 'ip']).rstrip()
-    print "MAYBEIP: {}".format(maybe_ip)
-    return maybe_ip
+    ip = check_and_log_output_and_error_demoted(['boot2docker', 'ip']).rstrip()
+    return ip
 
 def _format_df_line(line):
     split_line = line.split()
