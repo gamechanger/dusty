@@ -15,7 +15,7 @@ def _ensure_remote_dir_exists(remote_dir):
 def _sync_dir(local_dir, remote_dir):
     _ensure_remote_dir_exists(remote_dir)
     ssh_opts = 'ssh -p 2022 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /Users/{}/.ssh/id_boot2docker'.format(get_config_value('mac_username'))
-    command = ['rsync', '-e', ssh_opts, '-az', '--exclude', '*/.git', '--delete', '--force',
+    command = ['rsync', '-e', ssh_opts, '-az', '--exclude', '*/.git', '--force',
                '{}/'.format(local_dir), 'docker@localhost:{}'.format(remote_dir)]
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
     check_call(command)
