@@ -28,4 +28,4 @@ def execute_script(app_name, script_name):
         raise KeyError('No script found named {} in specs for app {}'.format(script_name, app_name))
 
     container_name = 'dusty_{}_1'.format(app_name)
-    exec_docker('exec', container_name, 'sh', '-c', app_specs['scripts'][script_name]['command'])
+    exec_docker('exec', '-ti', container_name, 'sh', '-c', app_specs['scripts'][script_name]['command'])
