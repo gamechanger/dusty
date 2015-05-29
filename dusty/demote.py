@@ -31,12 +31,13 @@ def check_output_demoted(shell_args, env=None, redirect_stderr=False):
     kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
     return _check_demoted(subprocess.check_output, shell_args, env, **kwargs)
 
-def check_and_log_output_and_error_demoted(shell_args, env=None):
+def check_and_log_output_and_error_demoted(shell_args, env=None, strip_newlines=False):
     total_output = ""
     process = _check_demoted(subprocess.Popen, shell_args, env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for output in iter(process.stdout.readline, ''):
-        total_output += output
-        log_to_client(output.strip())
+        if not strip_newlines or output.strip('\n') != '':
+            total_output += output
+            log_to_client(output.strip())
     return_code = process.wait()
     if return_code != 0:
         raise subprocess.CalledProcessError(return_code, ' '.join(shell_args))
