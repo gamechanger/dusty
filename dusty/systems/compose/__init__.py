@@ -152,6 +152,7 @@ def _get_exited_dusty_containers(client):
     return stopped_containers
 
 def remove_exited_dusty_containers():
+    """Removed all dusty containers with 'Exited' in their status"""
     client = _get_docker_client()
     exited_containers = _get_exited_dusty_containers(client)
     removed_containers = []
@@ -177,12 +178,19 @@ def _remove_dangling_images(client):
             removed.append(image)
     return removed
 
-def remove_images():
-    client = _get_docker_client()
-    removed = _remove_dangling_images(client)
+def get_dusty_images():
+    """Returns all images listed in dusty specs (apps + bundles), in the form repository:tag.  Tag will be set to latest
+    if no tag is specified in the specs"""
     specs = get_specs()
     dusty_image_names = [spec['image'] for spec in specs.get('apps', {}).values() + specs.get('services', {}).values() if 'image' in spec]
     dusty_images = set([name  if ':' in name else "{}:latest".format(name) for name in dusty_image_names])
+    return dusty_images
+
+def remove_images():
+    """Removes all dangling images as well as all images referenced in a dusty spec; forceful removal is not used"""
+    client = _get_docker_client()
+    removed = _remove_dangling_images(client)
+    dusty_images = get_dusty_images()
     all_images = client.images(all=True)
     for image in all_images:
         if image['RepoTags'][0] in dusty_images:
