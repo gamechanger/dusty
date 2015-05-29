@@ -3,8 +3,9 @@ import subprocess
 from .. import constants
 from ..log import log_to_client
 from ..demote import check_output_demoted
+from ..warnings import daemon_warnings
 
-DIAGNOSTIC_COMMANDS = [
+DIAGNOSTIC_SUBPROCESS_COMMANDS = [
     ['nginx', '-v'],
     ['which', 'rsync'],
     ['VBoxManage', '-v'],
@@ -17,8 +18,12 @@ DIAGNOSTIC_COMMANDS = [
     ['ssh-add', '-l']
 ]
 
+DIAGNOSTIC_DUSTY_COMMANDS = [
+    ('Daemon Warnings', daemon_warnings.pretty)
+]
+
 def dump_diagnostics():
-    for command in DIAGNOSTIC_COMMANDS:
+    for command in DIAGNOSTIC_SUBPROCESS_COMMANDS:
         log_to_client('COMMAND: {}'.format(' '.join(command)))
         log_to_client('OUTPUT:')
         try:
@@ -26,4 +31,10 @@ def dump_diagnostics():
         except subprocess.CalledProcessError as e:
             output = e.output
         log_to_client(output)
+        log_to_client('')
+
+    for title, fn in DIAGNOSTIC_DUSTY_COMMANDS:
+        log_to_client('COMMAND: {}'.format(title))
+        log_to_client('OUTPUT:')
+        log_to_client(fn())
         log_to_client('')

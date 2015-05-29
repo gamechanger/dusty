@@ -2,6 +2,8 @@
 when dustyd first starts up. Any failed checks should throw an exception
 which bubbles up to the daemon and causes it to crash."""
 
+from __future__ import absolute_import
+
 import os
 import logging
 import subprocess
@@ -9,6 +11,7 @@ import warnings
 
 from .config import write_default_config
 from .constants import RUN_DIR, ROOT_LOG_DIR, LOG_SUBDIRS, SYSTEM_DEPENDENCY_VERSIONS, CONFIG_DIR, CONFIG_PATH
+from .warnings import daemon_warnings
 
 class PreflightException(Exception):
     pass
@@ -22,9 +25,11 @@ def _assert_executable_exists(executable_name):
 
 def _maybe_version_warning(executable, installed_version):
     if installed_version != SYSTEM_DEPENDENCY_VERSIONS[executable]:
-        warnings.warn('Your {} version ({}) deviates from the supported version ({}).'.format(executable,
-                                                                                              installed_version,
-                                                                                              SYSTEM_DEPENDENCY_VERSIONS[executable]))
+        message = 'Your {} version ({}) deviates from the supported version ({}).'.format(executable,
+                                                                                          installed_version,
+                                                                                          SYSTEM_DEPENDENCY_VERSIONS[executable])
+        warnings.warn(message)
+        daemon_warnings.warn(message)
 
 def _check_nginx():
     _assert_executable_exists('nginx')

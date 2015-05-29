@@ -8,6 +8,7 @@ from .log import configure_logging, make_socket_logger, close_socket_logger
 from .notifier import notify
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .payload import Payload
+from .warnings import daemon_warnings
 
 def _clean_up_existing_socket(socket_path):
     try:
@@ -15,6 +16,10 @@ def _clean_up_existing_socket(socket_path):
     except OSError:
         if os.path.exists(socket_path):
             raise
+
+def _send_warnings_to_client(connection):
+    if daemon_warnings.has_warnings:
+        connection.sendall("{}\n".format(daemon_warnings.pretty()))
 
 def _listen_on_socket(socket_path):
     _clean_up_existing_socket(socket_path)
@@ -40,6 +45,7 @@ def _listen_on_socket(socket_path):
                     fn, args, kwargs = Payload.deserialize(data)
                     logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
                     try:
+                        _send_warnings_to_client(connection)
                         fn(*args, **kwargs)
                     except Exception as e:
                         logging.exception("Daemon encountered exception while processing command")
