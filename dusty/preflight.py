@@ -24,7 +24,7 @@ def _assert_executable_exists(executable_name):
         raise PreflightException('Executable not found: {}'.format(executable_name))
 
 def _maybe_version_warning(executable, installed_version):
-    if installed_version != SYSTEM_DEPENDENCY_VERSIONS[executable]:
+    if installed_version != constants.SYSTEM_DEPENDENCY_VERSIONS[executable]:
         message = 'Your {} version ({}) deviates from the supported version ({}).'.format(executable,
                                                                                           installed_version,
                                                                                           constants.SYSTEM_DEPENDENCY_VERSIONS[executable])
