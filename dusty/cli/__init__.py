@@ -27,11 +27,12 @@ from docopt import docopt
 
 from ..constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from ..payload import Payload
-from . import bundles, config, dump, disk, logs, repos, restart, script, shell, stop, sync, up
+from . import bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop, sync, up
 
 MODULE_MAP = {
     'bundles': bundles,
     'config': config,
+    'cp': cp,
     'disk': disk,
     'dump': dump,
     'logs': logs,

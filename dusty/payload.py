@@ -6,6 +6,11 @@ class Payload(object):
         self.args = args
         self.kwargs = kwargs
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.fn == other.fn and self.args == other.args and self.kwargs == other.kwargs
+        return False
+
     def serialize(self):
         doc = {'fn': self.fn, 'args': self.args, 'kwargs': sorted(self.kwargs.items())}
         return cPickle.dumps(doc).encode('string_escape')
