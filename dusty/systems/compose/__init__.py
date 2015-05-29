@@ -10,7 +10,7 @@ from ... import constants
 from ...log import log_to_client
 from ...config import get_config_value, assert_config_key
 from ...demote import check_output_demoted, check_and_log_output_and_error_demoted
-from ...compiler.spec_assembler import get_expected_number_of_running_containers
+from ...compiler.spec_assembler import get_expected_number_of_running_containers, get_specs
 
 def _get_docker_client():
     """Ripped off and slightly modified based on docker-py's
@@ -164,11 +164,10 @@ def remove_exited_dusty_containers():
             log_to_client(e.message or str(e))
     return removed_containers
 
-def remove_unreferenced_images():
-    client = _get_docker_client()
-    images = client.images(all=True)
+def _remove_dangling_images(client):
+    dangling_images = client.images(all=True, filters={'dangling': True})
     removed = []
-    for image in images:
+    for image in dangling_images:
         try:
             client.remove_image(image['Id'])
         except Exception as e:
@@ -176,4 +175,22 @@ def remove_unreferenced_images():
         else:
             log_to_client("Removed Image {}".format(image['RepoTags']))
             removed.append(image)
+    return removed
+
+def remove_images():
+    client = _get_docker_client()
+    removed = _remove_dangling_images(client)
+    specs = get_specs()
+    dusty_image_names = [spec['image'] for spec in specs.get('apps', {}).values() + specs.get('services', {}).values() if 'image' in spec]
+    dusty_images = set([name  if ':' in name else "{}:latest".format(name) for name in dusty_image_names])
+    all_images = client.images(all=True)
+    for image in all_images:
+        if image['RepoTags'][0] in dusty_images:
+            try:
+                client.remove_image(image['Id'])
+            except Exception as e:
+                logging.info("Couldn't remove image {}".format(image['RepoTags']))
+            else:
+                log_to_client("Removed Image {}".format(image['RepoTags']))
+                removed.append(image)
     return removed
