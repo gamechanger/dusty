@@ -8,7 +8,7 @@ from ..schemas import app_schema
 def validate_specs_from_path(specs_path):
     logging.info("Validating specs at path {}".format(specs_path))
     specs = get_specs_from_path(specs_path)
-    for app in specs.get('apps', []):
+    for app in specs.get('apps', []).values():
         app_schema.validate(app)
 
 def validate_specs():
