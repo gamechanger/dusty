@@ -65,6 +65,7 @@ def vm_repo_path(name):
 class TestComposeCompiler(DustyTestCase):
     def test_composed_volumes(self, *args):
         expected_volumes = [
+            '/cp/app1:/cp',
             '/Users/gc/app1:/gc/app1',
             '/Users/gc/lib1:/gc/lib1',
             '/Users/gc/lib2:/gc/lib2'
@@ -123,6 +124,7 @@ class TestComposeCompiler(DustyTestCase):
                 'app2'
             ],
             'volumes': [
+                '/cp/app1:/cp',
                 '/Users/gc/app1:/gc/app1',
                 '/Users/gc/lib1:/gc/lib1',
                 '/Users/gc/lib2:/gc/lib2'

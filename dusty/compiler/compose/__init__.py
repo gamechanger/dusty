@@ -94,12 +94,19 @@ def _lib_install_command(lib_spec):
 def _get_compose_volumes(app_name, assembled_specs):
     """ This returns formatted volume specifications for a docker-compose app. We mount the app
     as well as any libs it needs so that local code is used in our container, instead of whatever
-    code was in the docker image """
+    code was in the docker image.
+
+    Additionally, we create a volume for the /cp directory used by Dusty to facilitate
+    easy file transfers using `dusty cp`."""
     app_spec = assembled_specs['apps'][app_name]
     volumes = []
+    volumes.append(_get_cp_volume_mount(app_name))
     volumes.append(_get_app_volume_mount(app_spec))
     volumes += _get_libs_volume_mounts(app_name, assembled_specs)
     return volumes
+
+def _get_cp_volume_mount(app_name):
+    return "{}/{}:{}".format(constants.VM_CP_DIR, app_name, constants.CONTAINER_CP_DIR)
 
 def _get_app_volume_mount(app_spec):
     """ This returns the formatted volume mount spec to mount the local code for an app in the

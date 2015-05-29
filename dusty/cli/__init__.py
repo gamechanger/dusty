@@ -6,6 +6,7 @@ Usage:
 Commands:
   bundles    Manage which sets of applications to run
   config     Get or set Dusty config variables
+  cp         Copy files between local filesystem and containers
   disk       Manage and inspect the boot2docker VM's disk usage
   dump       Print diagnostic information for bug reports
   logs       Tail logs for a Dusty-managed service
