@@ -11,6 +11,7 @@ Commands:
   repos      Manage Git repos used for running Dusty applications
   restart    Restart Dusty-managed containers
   script     Execute predefined scripts inside running containers
+  shell      Open a shell inside a running container
   stop       Stop Dusty-managed containers
   sync       Sync files from the local OS to the boot2docker VM
   up         Set up the Dusty environment and start activated applications
@@ -25,7 +26,7 @@ from docopt import docopt
 
 from ..constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from ..payload import Payload
-from . import bundles, config, dump, logs, repos, restart, script, stop, sync, up
+from . import bundles, config, dump, logs, repos, restart, script, shell, stop, sync, up
 
 MODULE_MAP = {
     'bundles': bundles,
@@ -35,6 +36,7 @@ MODULE_MAP = {
     'repos': repos,
     'restart': restart,
     'script': script,
+    'shell': shell,
     'stop': stop,
     'sync': sync,
     'up': up
