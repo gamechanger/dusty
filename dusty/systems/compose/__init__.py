@@ -47,11 +47,12 @@ def _write_composefile(compose_config):
     with open(_composefile_path(), 'w') as f:
         f.write(yaml.dump(compose_config, default_flow_style=False))
 
-def _compose_up():
+def _compose_up(recreate_containers=True):
     logging.info('Running docker-compose up')
-    check_and_log_output_and_error_demoted(['docker-compose', '-f', _composefile_path(), '-p', 'dusty',
-                                            'up', '-d', '--allow-insecure-ssl'],
-                                           env=_get_docker_env())
+    command = ['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl']
+    if not recreate_containers:
+        command.append('--no-recreate')
+    check_and_log_output_and_error_demoted(command, env=_get_docker_env())
 
 def _compose_stop(services):
     logging.info('Running docker-compose stop')
@@ -108,14 +109,14 @@ def _compose_restart(services):
         for container in dusty_containers:
             _restart_container(client, container)
 
-def update_running_containers_from_spec(compose_config):
+def update_running_containers_from_spec(compose_config, recreate_containers=True):
     """Takes in a Compose spec from the Dusty Compose compiler,
     writes it to the Compose spec folder so Compose can pick it
     up, then does everything needed to make sure boot2docker is
     up and running containers with the updated config."""
     assert_config_key('mac_username')
     _write_composefile(compose_config)
-    _compose_up()
+    _compose_up(recreate_containers=recreate_containers)
 
 def stop_running_services(services=None):
     """Stop running containers owned by Dusty, or a specific
