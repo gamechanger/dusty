@@ -1,5 +1,4 @@
 import os
-import os
 import pwd
 import subprocess
 import logging
