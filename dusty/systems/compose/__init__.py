@@ -52,6 +52,7 @@ def _compose_up(recreate_containers=True):
     command = ['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl']
     if not recreate_containers:
         command.append('--no-recreate')
+    # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
     check_and_log_output_and_error_demoted(command, env=_get_docker_env(), strip_newlines=True)
 
 def _compose_stop(services):
