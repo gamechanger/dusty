@@ -35,7 +35,7 @@ def check_and_log_output_and_error_demoted(shell_args, env=None, strip_newlines=
     total_output = ""
     process = _check_demoted(subprocess.Popen, shell_args, env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for output in iter(process.stdout.readline, ''):
-        if strip_newlines and output.strip('\n') != '':
+        if not strip_newlines or output.strip('\n') != '':
             total_output += output
             log_to_client(output.strip())
     return_code = process.wait()
