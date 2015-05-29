@@ -16,4 +16,4 @@ from ..commands.sync import sync_repos
 
 def main(argv):
     args = docopt(__doc__, argv)
-    return Payload(sync_repos, **args['<repos>'])
+    return Payload(sync_repos, *args['<repos>'])
