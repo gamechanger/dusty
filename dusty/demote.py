@@ -48,7 +48,7 @@ def docker_config_up_log_demoted(shell_args, env=None):
     total_output = ""
     process = _check_demoted(subprocess.Popen, shell_args, env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for output in iter(process.stdout.readline, ''):
-        if ouput.strip('\n') != '':
+        if output.strip('\n') != '':
             total_output += output
             log_to_client(output.strip())
     return_code = process.wait()
