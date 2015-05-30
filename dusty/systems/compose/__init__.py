@@ -207,3 +207,39 @@ def remove_images():
                 log_to_client("Removed Image {}".format(image['RepoTags']))
                 removed.append(image)
     return removed
+
+def move_dir_inside_container(app_or_service_name, source_path, dest_path):
+    client = _get_docker_client()
+    for container in client.containers():
+        if '/dusty_{}_1'.format(app_or_service_name) in container['Names']:
+            break
+    else:
+        raise RuntimeError('No running container found for {}'.format(app_or_service_name))
+
+    # Ensure the target location parent dirs exist, but it is empty
+    parent_dir = os.path.split(dest_path)[0]
+    exec_instance = client.exec_create(container['Id'], 'mkdir -p {}'.format(parent_dir))
+    log_to_client(client.exec_start(exec_instance['Id']))
+    exec_instance = client.exec_create(container['Id'], 'rm -rf {}'.format(dest_path))
+    log_to_client(client.exec_start(exec_instance['Id']))
+
+    # Perform the move
+    exec_instance = client.exec_create(container['Id'], 'mv {}/ {}'.format(source_path, dest_path))
+    log_to_client(client.exec_start(exec_instance['Id']))
+
+def move_file_inside_container(app_or_service_name, source_path, dest_path):
+    client = _get_docker_client()
+    for container in client.containers():
+        if '/dusty_{}_1'.format(app_or_service_name) in container['Names']:
+            break
+    else:
+        raise RuntimeError('No running container found for {}'.format(app_or_service_name))
+
+    # Ensure the target location parent dirs exist
+    parent_dir = os.path.split(dest_path)[0]
+    exec_instance = client.exec_create(container['Id'], 'mkdir -p {}'.format(parent_dir))
+    log_to_client(client.exec_start(exec_instance['Id']))
+
+    # Perform the move
+    exec_instance = client.exec_create(container['Id'], 'mv {} {}'.format(source_path, dest_path))
+    log_to_client(client.exec_start(exec_instance['Id']))

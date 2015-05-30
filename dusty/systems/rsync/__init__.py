@@ -10,16 +10,26 @@ from ...repo_path import local_repo_path, vm_repo_path
 from ...log import log_to_client
 from dusty.compiler.spec_assembler import get_repo_of_app_or_library, get_assembled_specs
 
-def _ensure_remote_dir_exists(remote_dir):
+def _ensure_vm_dir_exists(remote_dir):
     check_call_demoted(['boot2docker', 'ssh', 'sudo mkdir -p {0}; sudo chown -R docker {0}'.format(remote_dir)])
 
-def _sync_local_dir_to_vm(local_dir, remote_dir):
-    _ensure_remote_dir_exists(remote_dir)
+def _rsync_command(local_path, remote_path, is_dir=True):
     ssh_opts = 'ssh -p 2022 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /Users/{}/.ssh/id_boot2docker'.format(get_config_value('mac_username'))
     command = ['rsync', '-e', ssh_opts, '-az', '--exclude', '*/.git', '--force',
-               '{}/'.format(local_dir), 'docker@localhost:{}'.format(remote_dir)]
+               '{}{}'.format(local_path, '/' if is_dir else ''), 'docker@localhost:{}'.format(remote_path)]
+    return command
+
+def sync_local_dir_to_vm(local_dir, remote_dir, demote=False):
+    _ensure_vm_dir_exists(remote_dir)
+    command = _rsync_command(local_dir, remote_dir, is_dir=True)
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
-    check_call(command)
+    check_call(command) if not demote else check_call_demoted(command)
+
+def sync_local_file_to_vm(local_path, remote_path, demote=False):
+    _ensure_vm_dir_exists(os.path.split(remote_path)[0])
+    command = _rsync_command(local_path, remote_path, is_dir=False)
+    logging.debug('Executing rsync command: {}'.format(' '.join(command)))
+    check_call(command) if not demote else check_call_demoted(command)
 
 def sync_repos(repos):
     logging.info('Syncing repos over rsync')
@@ -29,7 +39,7 @@ def sync_repos(repos):
         repo_type = 'overridden' if repo_is_overridden(repo_name) else 'Dusty-managed'
         remote_path = vm_repo_path(repo_name)
         log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo_name, remote_path))
-        _sync_local_dir_to_vm(local_repo_path(repo_name), remote_path)
+        sync_local_dir_to_vm(local_repo_path(repo_name), remote_path)
 
 def sync_repos_by_app_name(app_names):
     repos = set()
