@@ -5,7 +5,8 @@ from subprocess import check_call
 from ... import constants
 from ...config import get_config_value, assert_config_key
 from ...demote import check_call_demoted
-from ...source import local_repo_path, vm_repo_path, repo_is_overridden
+from ...source import repo_is_overridden, get_expanded_repo_name
+from ...repo_path import local_repo_path, vm_repo_path
 from ...log import log_to_client
 from dusty.compiler.spec_assembler import get_repo_of_app_or_library, get_assembled_specs
 
@@ -24,6 +25,7 @@ def sync_repos(repos):
     logging.info('Syncing repos over rsync')
     assert_config_key('mac_username')
     for repo_name in repos:
+        repo_name = get_expanded_repo_name(repo_name)
         repo_type = 'overridden' if repo_is_overridden(repo_name) else 'Dusty-managed'
         remote_path = vm_repo_path(repo_name)
         log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo_name, remote_path))
