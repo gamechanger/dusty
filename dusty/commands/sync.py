@@ -1,4 +1,4 @@
-from ..compiler.spec_assembler import get_all_repos
+from ..source import get_all_repos
 from ..systems.rsync import sync_repos as perform_sync_repos
 
 def sync_repos(*repos):

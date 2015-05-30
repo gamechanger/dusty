@@ -11,6 +11,7 @@ from .config import get_config_value
 from . import constants
 from .notifier import notify
 from .log import log_to_client
+from .compiler.spec_assembler import get_all_repos
 
 def repo_is_overridden(repo_name):
     return repo_name in get_config_value('repo_overrides')
@@ -30,6 +31,27 @@ def _managed_repo_path(repo_name):
 
 def short_repo_name(repo_name):
     return repo_name.split('/')[-1]
+
+def _is_short_name(repo_name):
+    return '/' not in repo_name
+
+def _expand_repo_name(passed_short_name):
+    match = None
+    for repo_name in get_all_repos():
+        short_name = short_repo_name(repo_name)
+        if passed_short_name == short_name and match is None:
+            match = repo_name
+        elif passed_short_name == short_name:
+            raise RuntimeError('Short repo name {} is ambiguous. It matches both {} and {}'.format(passed_short_name, match, repo_name))
+    if match is None:
+        raise RuntimeError("Short repo name {} does not match any full repo names".format(passed_short_name))
+    else:
+        return match
+
+def get_expanded_repo_name(repo_name):
+    if _is_short_name(repo_name):
+        return _expand_repo_name(repo_name)
+    return repo_name
 
 @contextmanager
 def git_error_handling():

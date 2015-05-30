@@ -4,29 +4,9 @@ from prettytable import PrettyTable
 
 from ..config import get_config_value, save_config_value
 from ..compiler.spec_assembler import get_specs, get_specs_repo, get_all_repos, get_assembled_specs
-from ..source import update_local_repo, short_repo_name
+from ..source import update_local_repo, short_repo_name, get_expanded_repo_name
 from ..log import log_to_client
 
-def _is_short_name(repo_name):
-    return '/' not in repo_name
-
-def _expand_repo_name(passed_short_name):
-    match = None
-    for repo_name in get_all_repos():
-        short_name = short_repo_name(repo_name)
-        if passed_short_name == short_name and match is None:
-            match = repo_name
-        elif passed_short_name == short_name:
-            raise RuntimeError('Short repo name {} is ambiguous. It matches both {} and {}'.format(passed_short_name, match, repo_name))
-    if match is None:
-        raise RuntimeError("Short repo name {} does not match any full repo names".format(passed_short_name))
-    else:
-        return match
-
-def _get_expanded_repo_name(repo_name):
-    if _is_short_name(repo_name):
-        return _expand_repo_name(repo_name)
-    return repo_name
 
 def list_repos():
     repos, overrides = get_all_repos(), get_config_value('repo_overrides')
@@ -37,7 +17,7 @@ def list_repos():
     log_to_client(table.get_string(sortby='Full Name'))
 
 def override_repo(repo_name, source_path):
-    repo_name = _get_expanded_repo_name(repo_name)
+    repo_name = get_expanded_repo_name(repo_name)
     repos = get_all_repos()
     if repo_name not in repos:
         raise KeyError('No repo registered named {}'.format(repo_name))
@@ -49,7 +29,7 @@ def override_repo(repo_name, source_path):
     log_to_client('Locally overriding repo {} to use source at {}'.format(repo_name, source_path))
 
 def manage_repo(repo_name):
-    repo_name = _get_expanded_repo_name(repo_name)
+    repo_name = get_expanded_repo_name(repo_name)
     repos = get_all_repos()
     if repo_name not in repos:
         raise KeyError('No repo registered named {}'.format(repo_name))
