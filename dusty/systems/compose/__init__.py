@@ -80,6 +80,11 @@ def _get_dusty_containers(client, services, include_exited=False):
                 for container in client.containers(all=include_exited)
                 if any(name.startswith('/dusty') for name in container.get('Names', []))]
 
+def _get_container_for_app_or_service(client, app_or_service_name):
+    for container in client.containers():
+        if '/dusty_{}_1'.format(app_or_service_name) in container['Names']:
+            return container
+
 def _get_canonical_container_name(container):
     """Return the canonical container name, which should be
     of the form dusty_<service_name>_1. Containers are returned
@@ -208,38 +213,46 @@ def remove_images():
                 removed.append(image)
     return removed
 
-def move_dir_inside_container(app_or_service_name, source_path, dest_path):
+def _create_dir_in_container(client, container, path):
+    exec_instance = client.exec_create(container['Id'], 'mkdir -p {}'.format(path))
+    log_to_client(client.exec_start(exec_instance['Id']))
+
+def _remove_path_in_container(client, container, path):
+    exec_instance = client.exec_create(container['Id'], 'rm -rf {}'.format(path))
+    log_to_client(client.exec_start(exec_instance['Id']))
+
+def _move_in_container(client, container, source_path, dest_path):
+    exec_instance = client.exec_create(container['Id'], 'mv {} {}'.format(source_path, dest_path))
+    log_to_client(client.exec_start(exec_instance['Id']))
+
+def _recursive_copy_in_container(client, container, source_path, dest_path):
+    exec_instance = client.exec_create(container['Id'], 'cp -r {} {}'.format(source_path, dest_path))
+    log_to_client(client.exec_start(exec_instance['Id']))
+
+def copy_path_inside_container(app_or_service_name, source_path, dest_path):
     client = _get_docker_client()
-    for container in client.containers():
-        if '/dusty_{}_1'.format(app_or_service_name) in container['Names']:
-            break
-    else:
+    container = _get_container_for_app_or_service(client, app_or_service_name)
+    if not container:
         raise RuntimeError('No running container found for {}'.format(app_or_service_name))
 
-    # Ensure the target location parent dirs exist, but it is empty
-    parent_dir = os.path.split(dest_path)[0]
-    exec_instance = client.exec_create(container['Id'], 'mkdir -p {}'.format(parent_dir))
-    log_to_client(client.exec_start(exec_instance['Id']))
-    exec_instance = client.exec_create(container['Id'], 'rm -rf {}'.format(dest_path))
-    log_to_client(client.exec_start(exec_instance['Id']))
+    _create_dir_in_container(client, container, os.path.split(dest_path)[0])
+    _recursive_copy_in_container(client, container, source_path, dest_path)
 
-    # Perform the move
-    exec_instance = client.exec_create(container['Id'], 'mv {}/ {}'.format(source_path, dest_path))
-    log_to_client(client.exec_start(exec_instance['Id']))
+def move_dir_inside_container(app_or_service_name, source_path, dest_path):
+    client = _get_docker_client()
+    container = _get_container_for_app_or_service(client, app_or_service_name)
+    if not container:
+        raise RuntimeError('No running container found for {}'.format(app_or_service_name))
+
+    _create_dir_in_container(client, container, os.path.split(dest_path)[0])
+    _remove_path_in_container(client, container, dest_path)
+    _move_in_container(client, container, '{}/'.format(source_path), dest_path)
 
 def move_file_inside_container(app_or_service_name, source_path, dest_path):
     client = _get_docker_client()
-    for container in client.containers():
-        if '/dusty_{}_1'.format(app_or_service_name) in container['Names']:
-            break
-    else:
+    container = _get_container_for_app_or_service(client, app_or_service_name)
+    if not container:
         raise RuntimeError('No running container found for {}'.format(app_or_service_name))
 
-    # Ensure the target location parent dirs exist
-    parent_dir = os.path.split(dest_path)[0]
-    exec_instance = client.exec_create(container['Id'], 'mkdir -p {}'.format(parent_dir))
-    log_to_client(client.exec_start(exec_instance['Id']))
-
-    # Perform the move
-    exec_instance = client.exec_create(container['Id'], 'mv {} {}'.format(source_path, dest_path))
-    log_to_client(client.exec_start(exec_instance['Id']))
+    _create_parent_dir_in_container(client, container, dest_path)
+    _move_in_container(client, container, source_path, dest_path)
