@@ -254,5 +254,5 @@ def move_file_inside_container(app_or_service_name, source_path, dest_path):
     if not container:
         raise RuntimeError('No running container found for {}'.format(app_or_service_name))
 
-    _create_parent_dir_in_container(client, container, dest_path)
+    _create_dir_in_container(client, container, os.path.split(dest_path)[0])
     _move_in_container(client, container, source_path, dest_path)
