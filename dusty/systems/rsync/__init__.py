@@ -1,6 +1,6 @@
 import os
 import logging
-from subprocess import check_call
+from subprocess import check_call, CalledProcessError
 
 from ... import constants
 from ...config import get_config_value, assert_config_key
@@ -23,6 +23,16 @@ def _rsync_command(local_path, remote_path, is_dir=True, from_local=True):
     command += path_args
     return command
 
+def vm_path_is_directory(remote_path):
+    """A weak check of whether a path in the boot2docker VM is a directory.
+    This function returns False on any process error, so False may indicate
+    other failures such as the path not actually existing."""
+    try:
+        check_call_demoted(['boot2docker', 'ssh', 'test -d {}'.format(remote_path)])
+    except CalledProcessError:
+        return False
+    return True
+
 def sync_local_dir_to_vm(local_dir, remote_dir, demote=False):
     _ensure_vm_dir_exists(remote_dir)
     command = _rsync_command(local_dir, remote_dir, is_dir=True)
@@ -35,8 +45,8 @@ def sync_local_file_to_vm(local_path, remote_path, demote=False):
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
     check_call(command) if not demote else check_call_demoted(command)
 
-def sync_path_from_vm(local_path, remote_path, demote=False):
-    command = _rsync_command(local_path, remote_path, is_dir=True, from_local=False)
+def sync_path_from_vm(local_path, remote_path, demote=False, is_dir=True):
+    command = _rsync_command(local_path, remote_path, is_dir=is_dir, from_local=False)
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
     check_call(command) if not demote else check_call_demoted(command)
 

@@ -2,7 +2,7 @@ import os
 import uuid
 
 from .. import constants
-from ..systems.rsync import sync_local_dir_to_vm, sync_local_file_to_vm, sync_path_from_vm
+from ..systems.rsync import sync_local_dir_to_vm, sync_local_file_to_vm, sync_path_from_vm, vm_path_is_directory
 from ..systems.compose import (move_dir_inside_container, move_file_inside_container,
                                copy_path_inside_container)
 
@@ -21,4 +21,6 @@ def copy_from_local(local_path, remote_name, remote_path):
 def copy_to_local(local_path, remote_name, remote_path):
     temp_identifier = str(uuid.uuid1())
     copy_path_inside_container(remote_name, remote_path, os.path.join(constants.CONTAINER_CP_DIR, temp_identifier))
-    sync_path_from_vm(local_path, os.path.join(constants.VM_CP_DIR, remote_name, temp_identifier), demote=True)
+    vm_path = os.path.join(constants.VM_CP_DIR, remote_name, temp_identifier)
+    is_dir = vm_path_is_directory(vm_path)
+    sync_path_from_vm(local_path, vm_path, demote=True, is_dir=is_dir)
