@@ -81,10 +81,12 @@ def _get_dusty_containers(client, services, include_exited=False):
                 for container in client.containers(all=include_exited)
                 if any(name.startswith('/dusty') for name in container.get('Names', []))]
 
-def _get_container_for_app_or_service(client, app_or_service_name):
+def _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=False):
     for container in client.containers():
         if '/{}'.format(get_dusty_container_name(app_or_service_name)) in container['Names']:
             return container
+    if raise_if_not_found:
+        raise RuntimeError('No running container found for {}'.format(app_or_service_name))
 
 def _get_canonical_container_name(container):
     """Return the canonical container name, which should be
@@ -232,18 +234,14 @@ def _recursive_copy_in_container(client, container, source_path, dest_path):
 
 def copy_path_inside_container(app_or_service_name, source_path, dest_path):
     client = _get_docker_client()
-    container = _get_container_for_app_or_service(client, app_or_service_name)
-    if not container:
-        raise RuntimeError('No running container found for {}'.format(app_or_service_name))
+    container = _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=True)
 
     _create_dir_in_container(client, container, parent_dir(dest_path))
     _recursive_copy_in_container(client, container, source_path, dest_path)
 
 def move_dir_inside_container(app_or_service_name, source_path, dest_path):
     client = _get_docker_client()
-    container = _get_container_for_app_or_service(client, app_or_service_name)
-    if not container:
-        raise RuntimeError('No running container found for {}'.format(app_or_service_name))
+    container = _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=True)
 
     _create_dir_in_container(client, container, parent_dir(dest_path))
     _remove_path_in_container(client, container, dest_path)
@@ -251,9 +249,7 @@ def move_dir_inside_container(app_or_service_name, source_path, dest_path):
 
 def move_file_inside_container(app_or_service_name, source_path, dest_path):
     client = _get_docker_client()
-    container = _get_container_for_app_or_service(client, app_or_service_name)
-    if not container:
-        raise RuntimeError('No running container found for {}'.format(app_or_service_name))
+    container = _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=True)
 
     _create_dir_in_container(client, container, parent_dir(dest_path))
     _move_in_container(client, container, source_path, dest_path)
