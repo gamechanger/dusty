@@ -19,8 +19,11 @@ def get_compose_dict(assembled_specs, port_specs):
 def _get_available_app_links(assembled_specs, app_name):
     link_to_apps = []
     potential_links = assembled_specs['apps'][app_name].get('link_to_available_apps', {})
-    for potential_link in potential_links.get('apps', []) + potential_links.get('services', []):
+    for potential_link in potential_links.get('apps', []):
         if potential_link in assembled_specs['apps']:
+            link_to_apps.append(potential_link)
+    for potential_link in potential_links.get('services', []):
+        if potential_link in assembled_specs['services']:
             link_to_apps.append(potential_link)
     return link_to_apps
 
