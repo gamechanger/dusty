@@ -4,7 +4,7 @@ from copy import copy
 from dusty import constants
 from dusty.compiler.compose import (get_compose_dict, _composed_app_dict, _composed_service_dict,
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
-                                    _lib_install_command, _lib_install_commands_for_app, _get_available_app_links)
+                                    _lib_install_command, _lib_install_commands_for_app, _conditional_links)
 from ..test_test_cases import all_test_configs
 from ...utils import DustyTestCase
 
@@ -178,7 +178,7 @@ class TestComposeCompiler(DustyTestCase):
                                     'depends': {}
                                 }
                             }}
-        self.assertEqual(_get_available_app_links(assembled_specs, 'app-a'), [])
+        self.assertEqual(_conditional_links(assembled_specs, 'app-a'), [])
 
     def test_get_available_app_links_no_services_2(self, *args):
         assembled_specs = {'apps': {
@@ -197,7 +197,7 @@ class TestComposeCompiler(DustyTestCase):
                                     'depends': {}
                                 }
                             }}
-        self.assertEqual(_get_available_app_links(assembled_specs, 'app-a'), ['app-c'])
+        self.assertEqual(_conditional_links(assembled_specs, 'app-a'), ['app-c'])
 
     def test_get_available_app_links_only_services_1(self, *args):
         assembled_specs = {'apps': {
@@ -218,7 +218,7 @@ class TestComposeCompiler(DustyTestCase):
                                     'depends': {}
                                 }
                             }}
-        self.assertEqual(_get_available_app_links(assembled_specs, 'app-a'), [])
+        self.assertEqual(_conditional_links(assembled_specs, 'app-a'), [])
 
     def test_get_available_app_links_only_services_2(self, *args):
         assembled_specs = {'apps': {
@@ -239,7 +239,7 @@ class TestComposeCompiler(DustyTestCase):
                                     'depends': {}
                                 }
                             }}
-        self.assertEqual(_get_available_app_links(assembled_specs, 'app-a'), ['ser-b'])
+        self.assertEqual(_conditional_links(assembled_specs, 'app-a'), ['ser-b'])
 
     def test_get_available_app_links_both(self, *args):
         assembled_specs = {'apps': {
@@ -259,4 +259,4 @@ class TestComposeCompiler(DustyTestCase):
                                     'depends': {}
                                 }
                             }}
-        self.assertEqual(_get_available_app_links(assembled_specs, 'app-a'), ['app-b', 'ser-b'])
+        self.assertEqual(_conditional_links(assembled_specs, 'app-a'), ['app-b', 'ser-b'])

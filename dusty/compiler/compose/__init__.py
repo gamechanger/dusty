@@ -16,7 +16,7 @@ def get_compose_dict(assembled_specs, port_specs):
         compose_dict[service_name] = _composed_service_dict(service_name, assembled_specs)
     return compose_dict
 
-def _get_available_app_links(assembled_specs, app_name):
+def _conditional_links(assembled_specs, app_name):
     """ Given the assembled specs and app_name, this function will return all apps and services specified in
     'conditional_links' if they are specified in 'apps' or 'services' in assembled_specs. That means that
     some other part of the system has declared them as necessary, so they should be linked to this app """
@@ -48,7 +48,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
     logging.info("Compose Compiler: compiled command {}".format(compose_dict['command']))
     compose_dict['links'] = app_spec.get('depends', {}).get('services', []) + \
                             app_spec.get('depends', {}).get('apps', []) + \
-                            _get_available_app_links(assembled_specs, app_name)
+                            _conditional_links(assembled_specs, app_name)
     logging.info("Compose Compiler: links {}".format(compose_dict['links']))
     compose_dict['volumes'] = _get_compose_volumes(app_name, assembled_specs)
     logging.info("Compose Compiler: volumes {}".format(compose_dict['volumes']))
