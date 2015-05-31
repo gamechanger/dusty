@@ -40,7 +40,9 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
     compose_dict['command'] = _compile_docker_command(app_name, assembled_specs)
     logging.info("Compose Compiler: compiled command {}".format(compose_dict['command']))
-    compose_dict['links'] = app_spec.get('depends', {}).get('services', []) + app_spec.get('depends', {}).get('apps', []) + _get_available_app_links(assembled_specs, app_name)
+    compose_dict['links'] = app_spec.get('depends', {}).get('services', []) + \
+                            app_spec.get('depends', {}).get('apps', []) + \
+                            _get_available_app_links(assembled_specs, app_name)
     logging.info("Compose Compiler: links {}".format(compose_dict['links']))
     compose_dict['volumes'] = _get_compose_volumes(app_name, assembled_specs)
     logging.info("Compose Compiler: volumes {}".format(compose_dict['volumes']))
