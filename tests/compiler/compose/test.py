@@ -4,7 +4,7 @@ from copy import copy
 from dusty import constants
 from dusty.compiler.compose import (get_compose_dict, _composed_app_dict, _composed_service_dict,
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
-                                    _lib_install_command, _lib_install_commands_for_app)
+                                    _lib_install_command, _lib_install_commands_for_app, _get_available_app_links)
 from ..test_test_cases import all_test_configs
 from ...utils import DustyTestCase
 
@@ -163,3 +163,34 @@ class TestComposeCompiler(DustyTestCase):
                                            call().__nonzero__(),
                                            call(basic_specs['libs']['lib2']),
                                            call().__nonzero__()])
+
+    def test_get_available_app_links_1(self, *args):
+        assembled_specs = {'apps': {
+                                'app-a': {
+                                    'depends': {
+                                        'apps': ['app-b']
+                                    },
+                                    'link_to_available_apps': ['app-c']
+                                },
+                                'app-b': {
+                                    'depends': {}
+                                }
+                            }}
+        self.assertEqual(_get_available_app_links(assembled_specs, 'app-a'), [])
+
+    def test_get_available_app_links_2(self, *args):
+        assembled_specs = {'apps': {
+                                'app-a': {
+                                    'depends': {
+                                        'apps': ['app-b']
+                                    },
+                                    'link_to_available_apps': ['app-c']
+                                },
+                                'app-b': {
+                                    'depends': {}
+                                },
+                                'app-c': {
+                                    'depends': {}
+                                }
+                            }}
+        self.assertEqual(_get_available_app_links(assembled_specs, 'app-a'), ['app-c'])
