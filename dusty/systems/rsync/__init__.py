@@ -33,15 +33,10 @@ def vm_path_is_directory(remote_path):
         return False
     return True
 
-def sync_local_dir_to_vm(local_dir, remote_dir, demote=False):
-    _ensure_vm_dir_exists(remote_dir)
-    command = _rsync_command(local_dir, remote_dir, is_dir=True)
-    logging.debug('Executing rsync command: {}'.format(' '.join(command)))
-    check_call(command) if not demote else check_call_demoted(command)
-
-def sync_local_file_to_vm(local_path, remote_path, demote=False):
-    _ensure_vm_dir_exists(os.path.split(remote_path)[0])
-    command = _rsync_command(local_path, remote_path, is_dir=False)
+def sync_local_path_to_vm(local_path, remote_path, demote=False):
+    is_dir = os.path.isdir(local_path)
+    _ensure_vm_dir_exists(remote_path if is_dir else os.path.split(remote_path)[0])
+    command = _rsync_command(local_path, remote_path, is_dir=is_dir)
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
     check_call(command) if not demote else check_call_demoted(command)
 
@@ -58,7 +53,7 @@ def sync_repos(repos):
         repo_type = 'overridden' if repo_is_overridden(repo_name) else 'Dusty-managed'
         remote_path = vm_repo_path(repo_name)
         log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo_name, remote_path))
-        sync_local_dir_to_vm(local_repo_path(repo_name), remote_path)
+        sync_local_path_to_vm(local_repo_path(repo_name), remote_path)
 
 def sync_repos_by_app_name(app_names):
     repos = set()
