@@ -3,7 +3,7 @@ import logging
 import yaml
 
 from ..spec_assembler import get_assembled_specs
-from ...path import vm_repo_path
+from ...path import vm_repo_path, vm_cp_path
 from ... import constants
 
 def get_compose_dict(assembled_specs, port_specs):
@@ -109,7 +109,7 @@ def _get_compose_volumes(app_name, assembled_specs):
     return volumes
 
 def _get_cp_volume_mount(app_name):
-    return "{}/{}:{}".format(constants.VM_CP_DIR, app_name, constants.CONTAINER_CP_DIR)
+    return "{}:{}".format(vm_cp_path(app_name), constants.CONTAINER_CP_DIR)
 
 def _get_app_volume_mount(app_spec):
     """ This returns the formatted volume mount spec to mount the local code for an app in the

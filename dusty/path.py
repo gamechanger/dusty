@@ -17,3 +17,6 @@ def vm_repo_path(repo_name):
 
 def managed_repo_path(repo_name):
     return os.path.join(constants.REPOS_DIR, repo_name)
+
+def vm_cp_path(repo_name):
+    return os.path.join(constants.VM_CP_DIR, remote_name)
