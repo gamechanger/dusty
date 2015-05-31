@@ -12,6 +12,9 @@ from ...config import get_config_value, assert_config_key
 from ...demote import check_output_demoted, check_and_log_output_and_error_demoted
 from ...compiler.spec_assembler import get_expected_number_of_running_containers, get_specs
 
+def get_dusty_container_name(service_name):
+    return 'dusty_{}_1'.format(service_name)
+
 def _get_docker_client():
     """Ripped off and slightly modified based on docker-py's
     kwargs_from_env utility function."""
@@ -70,7 +73,7 @@ def _get_dusty_containers(client, services, include_exited=False):
     if services:
         return [container
                 for container in client.containers(all=include_exited)
-                if any('/dusty_{}_1'.format(service) in container.get('Names', [])
+                if any(get_dusty_container_name(service) in container.get('Names', [])
                        for service in services)]
     else:
         return [container
