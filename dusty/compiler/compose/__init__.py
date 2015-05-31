@@ -18,10 +18,10 @@ def get_compose_dict(assembled_specs, port_specs):
 
 def _get_available_app_links(assembled_specs, app_name):
     """ Given the assembled specs and app_name, this function will return all apps and services specified in
-    'link_to_available_apps' if they are specified in 'apps' or 'services' in assembled_specs. That means that
+    'conditional_links' if they are specified in 'apps' or 'services' in assembled_specs. That means that
     some other part of the system has declared them as necessary, so they should be linked to this app """
     link_to_apps = []
-    potential_links = assembled_specs['apps'][app_name].get('link_to_available_apps', {})
+    potential_links = assembled_specs['apps'][app_name].get('conditional_links', {})
     for potential_link in potential_links.get('apps', []):
         if potential_link in assembled_specs['apps']:
             link_to_apps.append(potential_link)

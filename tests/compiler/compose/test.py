@@ -170,7 +170,7 @@ class TestComposeCompiler(DustyTestCase):
                                     'depends': {
                                         'apps': ['app-b']
                                     },
-                                    'link_to_available_apps': {
+                                    'conditional_links': {
                                         'apps':['app-c']
                                     }
                                 },
@@ -186,7 +186,7 @@ class TestComposeCompiler(DustyTestCase):
                                     'depends': {
                                         'apps': ['app-b']
                                     },
-                                    'link_to_available_apps':{
+                                    'conditional_links':{
                                         'apps': ['app-c']
                                     }
                                 },
@@ -205,7 +205,7 @@ class TestComposeCompiler(DustyTestCase):
                                     'depends': {
                                         'apps': ['app-b']
                                     },
-                                    'link_to_available_apps': {
+                                    'conditional_links': {
                                         'services': ['ser-b']
                                     }
                                 },
@@ -226,7 +226,7 @@ class TestComposeCompiler(DustyTestCase):
                                     'depends': {
                                         'apps': ['app-b']
                                     },
-                                    'link_to_available_apps': {
+                                    'conditional_links': {
                                         'services': ['ser-b']
                                     }
                                 },
@@ -245,7 +245,7 @@ class TestComposeCompiler(DustyTestCase):
         assembled_specs = {'apps': {
                                 'app-a': {
                                     'depends': {},
-                                    'link_to_available_apps': {
+                                    'conditional_links': {
                                         'services': ['ser-b'],
                                         'apps': ['app-b']
                                     }
