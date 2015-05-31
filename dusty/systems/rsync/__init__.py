@@ -4,7 +4,7 @@ from subprocess import check_call, CalledProcessError
 
 from ... import constants
 from ...config import get_config_value, assert_config_key
-from ...demote import check_call_demoted
+from ...demote import check_call_demoted, check_and_log_output_and_error_demoted
 from ...source import repo_is_overridden, get_expanded_repo_name
 from ...path import local_repo_path, vm_repo_path, parent_dir
 from ...log import log_to_client
@@ -38,12 +38,12 @@ def sync_local_path_to_vm(local_path, remote_path, demote=False):
     _ensure_vm_dir_exists(remote_path if is_dir else parent_dir(remote_path))
     command = _rsync_command(local_path, remote_path, is_dir=is_dir)
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
-    check_call(command) if not demote else check_call_demoted(command)
+    check_call(command) if not demote else check_and_log_output_and_error_demoted(command)
 
 def sync_local_path_from_vm(local_path, remote_path, demote=False, is_dir=True):
     command = _rsync_command(local_path, remote_path, is_dir=is_dir, from_local=False)
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
-    check_call(command) if not demote else check_call_demoted(command)
+    check_call(command) if not demote else check_and_log_output_and_error_demoted(command)
 
 def sync_repos(repos):
     logging.info('Syncing repos over rsync')

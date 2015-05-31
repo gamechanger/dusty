@@ -218,19 +218,19 @@ def remove_images():
 
 def _create_dir_in_container(client, container, path):
     exec_instance = client.exec_create(container['Id'], 'mkdir -p {}'.format(path))
-    log_to_client(client.exec_start(exec_instance['Id']))
+    client.exec_start(exec_instance['Id'])
 
 def _remove_path_in_container(client, container, path):
     exec_instance = client.exec_create(container['Id'], 'rm -rf {}'.format(path))
-    log_to_client(client.exec_start(exec_instance['Id']))
+    client.exec_start(exec_instance['Id'])
 
 def _move_in_container(client, container, source_path, dest_path):
     exec_instance = client.exec_create(container['Id'], 'mv {} {}'.format(source_path, dest_path))
-    log_to_client(client.exec_start(exec_instance['Id']))
+    client.exec_start(exec_instance['Id'])
 
 def _recursive_copy_in_container(client, container, source_path, dest_path):
     exec_instance = client.exec_create(container['Id'], 'cp -r {} {}'.format(source_path, dest_path))
-    log_to_client(client.exec_start(exec_instance['Id']))
+    client.exec_start(exec_instance['Id'])
 
 def copy_path_inside_container(app_or_service_name, source_path, dest_path):
     client = _get_docker_client()
