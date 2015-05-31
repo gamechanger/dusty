@@ -198,3 +198,45 @@ class TestComposeCompiler(DustyTestCase):
                                 }
                             }}
         self.assertEqual(_get_available_app_links(assembled_specs, 'app-a'), ['app-c'])
+
+    def test_get_available_app_links_only_services_1(self, *args):
+        assembled_specs = {'apps': {
+                                'app-a': {
+                                    'depends': {
+                                        'apps': ['app-b']
+                                    },
+                                    'link_to_available_apps': {
+                                        'services': ['ser-b']
+                                    }
+                                },
+                                'app-b': {
+                                    'depends': {}
+                                }
+                            },
+                            'services': {
+                                'ser-a': {
+                                    'depends': {}
+                                }
+                            }}
+        self.assertEqual(_get_available_app_links(assembled_specs, 'app-a'), [])
+
+    def test_get_available_app_links_only_services_2(self, *args):
+        assembled_specs = {'apps': {
+                                'app-a': {
+                                    'depends': {
+                                        'apps': ['app-b']
+                                    },
+                                    'link_to_available_apps': {
+                                        'services': ['ser-b']
+                                    }
+                                },
+                                'app-b': {
+                                    'depends': {}
+                                }
+                            },
+                            'services': {
+                                'ser-b': {
+                                    'depends': {}
+                                }
+                            }}
+        self.assertEqual(_get_available_app_links(assembled_specs, 'app-a'), ['ser-b'])
