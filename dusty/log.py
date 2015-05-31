@@ -16,7 +16,7 @@ class DustySocketHandler(logging.Handler):
 
 
 def configure_logging():
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     logging.captureWarnings(True)
 
 def make_socket_logger(connection_socket):
