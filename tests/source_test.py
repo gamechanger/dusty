@@ -7,7 +7,7 @@ from mock import Mock, patch
 
 from .utils import DustyTestCase
 from dusty.commands.repos import override_repo
-from dusty.source import (repo_is_overridden, local_repo_path, short_repo_name,
+from dusty.source import (repo_is_overridden, short_repo_name,
                           git_error_handling, ensure_local_repo, update_local_repo,
                           _expand_repo_name)
 
@@ -26,14 +26,6 @@ class TestSource(DustyTestCase):
 
     def test_repo_is_overridden_false(self):
         self.assertFalse(repo_is_overridden('github.com/app/a'))
-
-    def test_local_repo_path_no_override(self):
-        self.assertEqual(local_repo_path('github.com/app/a'),
-                         '/etc/dusty/repos/github.com/app/a')
-
-    def test_local_repo_path_with_override(self):
-        override_repo('github.com/app/a', self.temp_dir)
-        self.assertEqual(local_repo_path('github.com/app/a'), self.temp_dir)
 
     def test_short_repo_name(self):
         self.assertEqual(short_repo_name('github.com/app/a'), 'a')
