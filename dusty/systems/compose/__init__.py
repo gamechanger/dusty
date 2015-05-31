@@ -11,6 +11,7 @@ from ...log import log_to_client
 from ...config import get_config_value, assert_config_key
 from ...demote import check_output_demoted, check_and_log_output_and_error_demoted
 from ...compiler.spec_assembler import get_expected_number_of_running_containers, get_specs
+from ...path import parent_dir
 
 def get_dusty_container_name(service_name):
     return 'dusty_{}_1'.format(service_name)
@@ -79,6 +80,13 @@ def _get_dusty_containers(client, services, include_exited=False):
         return [container
                 for container in client.containers(all=include_exited)
                 if any(name.startswith('/dusty') for name in container.get('Names', []))]
+
+def _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=False):
+    for container in client.containers():
+        if '/{}'.format(get_dusty_container_name(app_or_service_name)) in container['Names']:
+            return container
+    if raise_if_not_found:
+        raise RuntimeError('No running container found for {}'.format(app_or_service_name))
 
 def _get_canonical_container_name(container):
     """Return the canonical container name, which should be
@@ -207,3 +215,41 @@ def remove_images():
                 log_to_client("Removed Image {}".format(image['RepoTags']))
                 removed.append(image)
     return removed
+
+def _create_dir_in_container(client, container, path):
+    exec_instance = client.exec_create(container['Id'], 'mkdir -p {}'.format(path))
+    client.exec_start(exec_instance['Id'])
+
+def _remove_path_in_container(client, container, path):
+    exec_instance = client.exec_create(container['Id'], 'rm -rf {}'.format(path))
+    client.exec_start(exec_instance['Id'])
+
+def _move_in_container(client, container, source_path, dest_path):
+    exec_instance = client.exec_create(container['Id'], 'mv {} {}'.format(source_path, dest_path))
+    client.exec_start(exec_instance['Id'])
+
+def _recursive_copy_in_container(client, container, source_path, dest_path):
+    exec_instance = client.exec_create(container['Id'], 'cp -r {} {}'.format(source_path, dest_path))
+    client.exec_start(exec_instance['Id'])
+
+def copy_path_inside_container(app_or_service_name, source_path, dest_path):
+    client = _get_docker_client()
+    container = _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=True)
+
+    _create_dir_in_container(client, container, parent_dir(dest_path))
+    _recursive_copy_in_container(client, container, source_path, dest_path)
+
+def move_dir_inside_container(app_or_service_name, source_path, dest_path):
+    client = _get_docker_client()
+    container = _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=True)
+
+    _create_dir_in_container(client, container, parent_dir(dest_path))
+    _remove_path_in_container(client, container, dest_path)
+    _move_in_container(client, container, '{}/'.format(source_path), dest_path)
+
+def move_file_inside_container(app_or_service_name, source_path, dest_path):
+    client = _get_docker_client()
+    container = _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=True)
+
+    _create_dir_in_container(client, container, parent_dir(dest_path))
+    _move_in_container(client, container, source_path, dest_path)

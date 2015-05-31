@@ -12,7 +12,7 @@ from . import constants
 from .notifier import notify
 from .log import log_to_client
 from .compiler.spec_assembler import get_all_repos
-from .repo_path import local_repo_path, managed_repo_path
+from .path import local_repo_path, managed_repo_path, parent_dir
 
 def repo_is_overridden(repo_name):
     return repo_name in get_config_value('repo_overrides')
@@ -63,7 +63,7 @@ def ensure_local_repo(repo_name):
     logging.info('Initiating clone of local repo {}'.format(repo_name))
     notify('Cloning repository {}'.format(short_repo_name(repo_name)))
 
-    repo_path_parent = os.path.split(repo_path)[0]
+    repo_path_parent = parent_dir(repo_path)
     if not os.path.exists(repo_path_parent):
         os.makedirs(repo_path_parent)
     with git_error_handling():

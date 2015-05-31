@@ -24,6 +24,9 @@ NGINX_MAX_FILE_SIZE = "500M"
 VM_PERSIST_DIR = '/persist'
 VM_REPOS_DIR = os.path.join(VM_PERSIST_DIR, 'repos')
 
+VM_CP_DIR = '/cp'
+CONTAINER_CP_DIR = '/cp'
+
 GIT_USER = 'git'
 
 HOSTS_PATH = '/etc/hosts'

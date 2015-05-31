@@ -18,6 +18,11 @@ def _ensure_persist_dir_is_linked():
     check_and_log_output_and_error_demoted(['boot2docker', 'ssh', mkdir_if_cmd])
     check_and_log_output_and_error_demoted(['boot2docker', 'ssh', mount_if_cmd])
 
+def _ensure_cp_dir_exists():
+    logging.info('Creating {} in VM to support dusty cp'.format(constants.VM_CP_DIR))
+    mkdir_if_cmd = 'if [ ! -d {0} ]; then sudo mkdir {0}; fi'.format(constants.VM_CP_DIR)
+    check_and_log_output_and_error_demoted(['boot2docker', 'ssh', mkdir_if_cmd])
+
 def _ensure_docker_vm_exists():
     """Initialize the boot2docker VM if it does not already exist."""
     logging.info('Initializing boot2docker, this will take a while the first time it runs')
@@ -34,6 +39,7 @@ def initialize_docker_vm():
     _ensure_docker_vm_is_started()
     _ensure_rsync_is_installed()
     _ensure_persist_dir_is_linked()
+    _ensure_cp_dir_exists()
 
 def get_docker_vm_ip():
     """Checks boot2docker's IP, assuming that the VM is started"""

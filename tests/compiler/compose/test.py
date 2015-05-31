@@ -2,7 +2,7 @@ from mock import patch, call
 from copy import copy
 
 from dusty import constants
-from dusty.compiler.compose import (get_compose_dict, _composed_app_dict, _composed_service_dict,
+from dusty.compiler.compose import (get_compose_dict, _composed_app_dict,
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
                                     _lib_install_command, _lib_install_commands_for_app, _conditional_links)
 from ..test_test_cases import all_test_configs
@@ -65,6 +65,7 @@ def vm_repo_path(name):
 class TestComposeCompiler(DustyTestCase):
     def test_composed_volumes(self, *args):
         expected_volumes = [
+            '/cp/app1:/cp',
             '/Users/gc/app1:/gc/app1',
             '/Users/gc/lib1:/gc/lib1',
             '/Users/gc/lib2:/gc/lib2'
@@ -123,6 +124,7 @@ class TestComposeCompiler(DustyTestCase):
                 'app2'
             ],
             'volumes': [
+                '/cp/app1:/cp',
                 '/Users/gc/app1:/gc/app1',
                 '/Users/gc/lib1:/gc/lib1',
                 '/Users/gc/lib2:/gc/lib2'

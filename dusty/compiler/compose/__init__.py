@@ -3,7 +3,7 @@ import logging
 import yaml
 
 from ..spec_assembler import get_assembled_specs
-from ...repo_path import vm_repo_path
+from ...path import vm_repo_path, vm_cp_path
 from ... import constants
 
 def get_compose_dict(assembled_specs, port_specs):
@@ -59,9 +59,12 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
     return compose_dict
 
 def _composed_service_dict(service_name, assembled_specs):
-    """ This function returns a dictionary of the docker_compose specifications for one service -
-    currently this is the same as the spec for that service """
-    return assembled_specs['services'][service_name]
+    """This function returns a dictionary of the docker_compose specifications
+    for one service. Currently, this is just the Dusty service spec with
+    an additional volume mount to support Dusty's cp functionality."""
+    compose_dict = assembled_specs['services'][service_name]
+    compose_dict.setdefault('volumes', []).append(_get_cp_volume_mount(service_name))
+    return compose_dict
 
 def _get_ports_list(app_name, port_specs):
     """ Returns a list of formatted port mappings for an app """
@@ -110,12 +113,19 @@ def _lib_install_command(lib_spec):
 def _get_compose_volumes(app_name, assembled_specs):
     """ This returns formatted volume specifications for a docker-compose app. We mount the app
     as well as any libs it needs so that local code is used in our container, instead of whatever
-    code was in the docker image """
+    code was in the docker image.
+
+    Additionally, we create a volume for the /cp directory used by Dusty to facilitate
+    easy file transfers using `dusty cp`."""
     app_spec = assembled_specs['apps'][app_name]
     volumes = []
+    volumes.append(_get_cp_volume_mount(app_name))
     volumes.append(_get_app_volume_mount(app_spec))
     volumes += _get_libs_volume_mounts(app_name, assembled_specs)
     return volumes
+
+def _get_cp_volume_mount(app_name):
+    return "{}:{}".format(vm_cp_path(app_name), constants.CONTAINER_CP_DIR)
 
 def _get_app_volume_mount(app_spec):
     """ This returns the formatted volume mount spec to mount the local code for an app in the
