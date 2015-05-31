@@ -16,6 +16,14 @@ def get_compose_dict(assembled_specs, port_specs):
         compose_dict[service_name] = _composed_service_dict(service_name, assembled_specs)
     return compose_dict
 
+def _get_available_app_links(assembled_specs, app_name):
+    link_to_apps = []
+    potential_links = assembled_specs['apps'][app_name].get('link_to_available_apps', [])
+    for potential_link in potential_links:
+        if potential_link in assembled_specs['apps']:
+            link_to_apps.append(potential_link)
+    return link_to_apps
+
 def _composed_app_dict(app_name, assembled_specs, port_specs):
     """ This function returns a dictionary of the docker-compose.yml specifications for one app """
     logging.info("Compose Compiler: Compiling dict for app {}".format(app_name))
@@ -32,7 +40,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
     compose_dict['command'] = _compile_docker_command(app_name, assembled_specs)
     logging.info("Compose Compiler: compiled command {}".format(compose_dict['command']))
-    compose_dict['links'] = app_spec.get('depends', {}).get('services', []) + app_spec.get('depends', {}).get('apps', [])
+    compose_dict['links'] = app_spec.get('depends', {}).get('services', []) + app_spec.get('depends', {}).get('apps', []) + _get_available_app_links(assembled_specs, app_name)
     logging.info("Compose Compiler: links {}".format(compose_dict['links']))
     compose_dict['volumes'] = _get_compose_volumes(app_name, assembled_specs)
     logging.info("Compose Compiler: volumes {}".format(compose_dict['volumes']))
