@@ -2,6 +2,9 @@ import os
 from . import constants
 from .config import get_config_value
 
+def parent_dir(path):
+    return os.path.split(path)[0]
+
 def local_repo_path(repo_name):
     """Given a repo_name (github.com/gamechanger/gclib), checks if that repo has an
     override, and returns the appropriate directory"""

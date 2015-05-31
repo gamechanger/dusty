@@ -6,7 +6,7 @@ from ... import constants
 from ...config import get_config_value, assert_config_key
 from ...demote import check_call_demoted
 from ...source import repo_is_overridden, get_expanded_repo_name
-from ...path import local_repo_path, vm_repo_path
+from ...path import local_repo_path, vm_repo_path, parent_dir
 from ...log import log_to_client
 from dusty.compiler.spec_assembler import get_repo_of_app_or_library, get_assembled_specs
 
@@ -35,7 +35,7 @@ def vm_path_is_directory(remote_path):
 
 def sync_local_path_to_vm(local_path, remote_path, demote=False):
     is_dir = os.path.isdir(local_path)
-    _ensure_vm_dir_exists(remote_path if is_dir else os.path.split(remote_path)[0])
+    _ensure_vm_dir_exists(remote_path if is_dir else parent_dir(remote_path))
     command = _rsync_command(local_path, remote_path, is_dir=is_dir)
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
     check_call(command) if not demote else check_call_demoted(command)

@@ -11,6 +11,7 @@ from ...log import log_to_client
 from ...config import get_config_value, assert_config_key
 from ...demote import check_output_demoted, check_and_log_output_and_error_demoted
 from ...compiler.spec_assembler import get_expected_number_of_running_containers, get_specs
+from ...path import parent_dir
 
 def get_dusty_container_name(service_name):
     return 'dusty_{}_1'.format(service_name)
@@ -235,7 +236,7 @@ def copy_path_inside_container(app_or_service_name, source_path, dest_path):
     if not container:
         raise RuntimeError('No running container found for {}'.format(app_or_service_name))
 
-    _create_dir_in_container(client, container, os.path.split(dest_path)[0])
+    _create_dir_in_container(client, container, parent_dir(dest_path))
     _recursive_copy_in_container(client, container, source_path, dest_path)
 
 def move_dir_inside_container(app_or_service_name, source_path, dest_path):
@@ -244,7 +245,7 @@ def move_dir_inside_container(app_or_service_name, source_path, dest_path):
     if not container:
         raise RuntimeError('No running container found for {}'.format(app_or_service_name))
 
-    _create_dir_in_container(client, container, os.path.split(dest_path)[0])
+    _create_dir_in_container(client, container, parent_dir(dest_path))
     _remove_path_in_container(client, container, dest_path)
     _move_in_container(client, container, '{}/'.format(source_path), dest_path)
 
@@ -254,5 +255,5 @@ def move_file_inside_container(app_or_service_name, source_path, dest_path):
     if not container:
         raise RuntimeError('No running container found for {}'.format(app_or_service_name))
 
-    _create_dir_in_container(client, container, os.path.split(dest_path)[0])
+    _create_dir_in_container(client, container, parent_dir(dest_path))
     _move_in_container(client, container, source_path, dest_path)
