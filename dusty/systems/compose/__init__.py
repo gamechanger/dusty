@@ -82,7 +82,7 @@ def _get_dusty_containers(client, services, include_exited=False):
 
 def _get_container_for_app_or_service(client, app_or_service_name):
     for container in client.containers():
-        if '/dusty_{}_1'.format(app_or_service_name) in container['Names']:
+        if '/{}'.format(get_dusty_container_name(app_or_service_name)) in container['Names']:
             return container
 
 def _get_canonical_container_name(container):
