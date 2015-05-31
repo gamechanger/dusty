@@ -73,7 +73,7 @@ def _get_dusty_containers(client, services, include_exited=False):
     if services:
         return [container
                 for container in client.containers(all=include_exited)
-                if any(get_dusty_container_name(service) in container.get('Names', [])
+                if any('/{}'.format(get_dusty_container_name(service)) in container.get('Names', [])
                        for service in services)]
     else:
         return [container
