@@ -3,7 +3,7 @@ import logging
 import yaml
 
 from ..spec_assembler import get_assembled_specs
-from ...repo_path import vm_repo_path
+from ...path import vm_repo_path
 from ... import constants
 
 def get_compose_dict(assembled_specs, port_specs):

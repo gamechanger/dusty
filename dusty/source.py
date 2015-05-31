@@ -12,7 +12,7 @@ from . import constants
 from .notifier import notify
 from .log import log_to_client
 from .compiler.spec_assembler import get_all_repos
-from .repo_path import local_repo_path, managed_repo_path
+from .path import local_repo_path, managed_repo_path
 
 def repo_is_overridden(repo_name):
     return repo_name in get_config_value('repo_overrides')
