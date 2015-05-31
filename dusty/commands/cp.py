@@ -5,7 +5,7 @@ from contextlib import contextmanager
 import shutil
 
 from .. import constants
-from ..systems.rsync import sync_local_path_to_vm, sync_path_from_vm, vm_path_is_directory
+from ..systems.rsync import sync_local_path_to_vm, sync_local_path_from_vm, vm_path_is_directory
 from ..systems.compose import (move_dir_inside_container, move_file_inside_container,
                                copy_path_inside_container)
 
@@ -40,4 +40,4 @@ def copy_to_local(local_path, remote_name, remote_path, demote=True):
     copy_path_inside_container(remote_name, remote_path, os.path.join(constants.CONTAINER_CP_DIR, temp_identifier))
     vm_path = os.path.join(constants.VM_CP_DIR, remote_name, temp_identifier)
     is_dir = vm_path_is_directory(vm_path)
-    sync_path_from_vm(local_path, vm_path, demote=demote, is_dir=is_dir)
+    sync_local_path_from_vm(local_path, vm_path, demote=demote, is_dir=is_dir)

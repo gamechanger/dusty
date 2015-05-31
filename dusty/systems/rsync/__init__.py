@@ -40,7 +40,7 @@ def sync_local_path_to_vm(local_path, remote_path, demote=False):
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
     check_call(command) if not demote else check_call_demoted(command)
 
-def sync_path_from_vm(local_path, remote_path, demote=False, is_dir=True):
+def sync_local_path_from_vm(local_path, remote_path, demote=False, is_dir=True):
     command = _rsync_command(local_path, remote_path, is_dir=is_dir, from_local=False)
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
     check_call(command) if not demote else check_call_demoted(command)
