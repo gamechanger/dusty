@@ -43,9 +43,12 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
     return compose_dict
 
 def _composed_service_dict(service_name, assembled_specs):
-    """ This function returns a dictionary of the docker_compose specifications for one service -
-    currently this is the same as the spec for that service """
-    return assembled_specs['services'][service_name]
+    """This function returns a dictionary of the docker_compose specifications
+    for one service. Currently, this is just the Dusty service spec with
+    an additional volume mount to support Dusty's cp functionality."""
+    compose_dict = assembled_specs['services'][service_name]
+    compose_dict.setdefault('volumes', []).append(_get_cp_volume_mount(service_name))
+    return compose_dict
 
 def _get_ports_list(app_name, port_specs):
     """ Returns a list of formatted port mappings for an app """

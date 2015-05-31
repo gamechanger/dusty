@@ -2,7 +2,7 @@ from mock import patch, call
 from copy import copy
 
 from dusty import constants
-from dusty.compiler.compose import (get_compose_dict, _composed_app_dict, _composed_service_dict,
+from dusty.compiler.compose import (get_compose_dict, _composed_app_dict,
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
                                     _lib_install_command, _lib_install_commands_for_app)
 from ..test_test_cases import all_test_configs
