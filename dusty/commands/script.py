@@ -5,6 +5,7 @@ from prettytable import PrettyTable
 from ..log import log_to_client
 from ..compiler.spec_assembler import get_specs
 from .utils import exec_docker
+from ..systems.compose import get_dusty_container_name
 
 def script_info_for_app(app_name):
     app_specs = get_specs()['apps'].get(app_name)
@@ -27,5 +28,5 @@ def execute_script(app_name, script_name):
     if 'scripts' not in app_specs or script_name not in app_specs['scripts']:
         raise KeyError('No script found named {} in specs for app {}'.format(script_name, app_name))
 
-    container_name = 'dusty_{}_1'.format(app_name)
+    container_name = get_dusty_container_name(app_name)
     exec_docker('exec', '-ti', container_name, 'sh', '-c', app_specs['scripts'][script_name]['command'])
