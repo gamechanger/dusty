@@ -19,6 +19,8 @@ Examples:
     cp website:/tmp/website-file.txt api:/different/location/api-file.txt
 """
 
+import os
+
 from docopt import docopt
 
 from ..payload import Payload
@@ -32,10 +34,22 @@ def _split_path(path):
         return split[0], split[1]
     return None, path
 
+def _resolve_path(path):
+    if path.startswith('/'):
+        return path
+    return os.path.join(os.getcwd(), path)
+
+def _validate_path_pair(name, path):
+    if name and not path.startswith('/'):
+        raise RuntimeError('You must provide an absolute path inside containers')
+
 def main(argv):
     args = docopt(__doc__, argv)
     source_name, source_path = _split_path(args['<source>'])
     dest_name, dest_path = _split_path(args['<destination>'])
+    _validate_path_pair(source_name, source_path)
+    _validate_path_pair(dest_name, dest_path)
+    source_path, dest_path = _resolve_path(source_path), _resolve_path(dest_path)
     if source_name and dest_name:
         return Payload(copy_between_containers, source_name, source_path, dest_name, dest_path)
     elif dest_name:
