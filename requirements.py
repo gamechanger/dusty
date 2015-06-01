@@ -6,6 +6,7 @@ install_requires = [
     'PrettyTable>=0.7.0',
     'GitPython>=1.0.1',
     'docopt==0.6.2',
+    'schemer==0.2.7',
 ]
 
 test_requires = [

@@ -40,4 +40,5 @@ def close_socket_logger():
 
 def configure_client_logging():
     logging.basicConfig(stream=sys.stdout,
-                        level=logging.INFO)
+                        level=logging.INFO,
+                        format='%(levelname)s: %(message)s')

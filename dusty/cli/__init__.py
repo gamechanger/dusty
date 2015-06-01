@@ -29,7 +29,7 @@ from docopt import docopt
 from ..constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from ..log import configure_client_logging
 from ..payload import Payload
-from . import bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop, sync, up
+from . import bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop, sync, up, validate
 
 MODULE_MAP = {
     'bundles': bundles,
@@ -44,7 +44,8 @@ MODULE_MAP = {
     'shell': shell,
     'stop': stop,
     'sync': sync,
-    'up': up
+    'up': up,
+    'validate': validate,
 }
 
 def _run_command(sock, command):
