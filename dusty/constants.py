@@ -5,9 +5,6 @@ SOCKET_ERROR_TERMINATOR = '\0\1'
 
 LOCALHOST = "127.0.0.1"
 
-ROOT_LOG_DIR = '/var/log/dusty'
-LOG_SUBDIRS = ['nginx']
-
 SOCKET_LOGGER_NAME = 'socket_logger'
 
 RUN_DIR = '/var/run/dusty'
