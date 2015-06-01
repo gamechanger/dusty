@@ -27,6 +27,7 @@ import socket
 from docopt import docopt
 
 from ..constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
+from ..log import configure_client_logging
 from ..payload import Payload
 from . import bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop, sync, up
 
@@ -85,6 +86,7 @@ def main():
         print "\n{}".format(__doc__.strip())
         sys.exit(1)
 
+    configure_client_logging()
     result = MODULE_MAP[command].main(command_args)
     if isinstance(result, Payload):
         sock = _connect_to_daemon()
