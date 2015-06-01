@@ -67,20 +67,9 @@ def _ensure_run_dir_exists():
     if not os.path.exists(constants.RUN_DIR):
         os.makedirs(constants.RUN_DIR)
 
-def _ensure_root_log_dir_exists():
-    if not os.path.exists(constants.ROOT_LOG_DIR):
-        os.makedirs(constants.ROOT_LOG_DIR)
-
 def _ensure_config_dir_exists():
     if not os.path.exists(constants.CONFIG_DIR):
         os.makedirs(constants.CONFIG_DIR)
-
-def _ensure_log_subdirs_exist():
-    for subdir in constants.LOG_SUBDIRS:
-        subdir_path = os.path.join(constants.ROOT_LOG_DIR, subdir)
-        if not os.path.exists(subdir_path):
-            logging.info('Creating logging subdir {}'.format(subdir_path))
-            os.mkdir(subdir_path)
 
 def preflight_check():
     logging.info('Starting preflight check')
