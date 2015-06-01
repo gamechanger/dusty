@@ -15,22 +15,20 @@ def list_bundles():
                        u"✓" if bundle in activated_bundles else ""])
     log_to_client(table.get_string(sortby="Name"))
 
-def activate_bundle(bundle_name):
+def activate_bundle(bundle_names):
     specs = get_specs()
-    if bundle_name not in specs['bundles']:
-        raise KeyError('No bundle exists named {}'.format(bundle_name))
-    activated_bundles = set(get_config_value('bundles'))
-    if bundle_name not in activated_bundles:
-        activated_bundles.add(bundle_name)
-        save_config_value('bundles', list(activated_bundles))
-    log_to_client('Activated bundle {}'.format(bundle_name))
+    for bundle_name in bundle_names:
+        if bundle_name not in specs['bundles']:
+            raise KeyError('No bundle exists named {}'.format(bundle_name))
+    activated_bundles = set(get_config_value('bundles')).union(bundle_names)
+    save_config_value('bundles', list(activated_bundles))
+    log_to_client('Activated bundles {}'.format(', '.join(bundle_names)))
 
-def deactivate_bundle(bundle_name):
+def deactivate_bundle(bundle_names):
     specs = get_specs()
-    if bundle_name not in specs['bundles']:
-        raise KeyError('No bundle exists named {}'.format(bundle_name))
-    activated_bundles = set(get_config_value('bundles'))
-    if bundle_name in activated_bundles:
-        activated_bundles.remove(bundle_name)
-        save_config_value('bundles', list(activated_bundles))
-    log_to_client('Deactivated bundle {}'.format(bundle_name))
+    for bundle_name in bundle_names:
+        if bundle_name not in specs['bundles']:
+            raise KeyError('No bundle exists named {}'.format(bundle_name))
+    activated_bundles = set(get_config_value('bundles')).difference(bundle_names)
+    save_config_value('bundles', list(activated_bundles))
+    log_to_client('Deactivated bundles {}'.format(', '.join(bundle_names)))
