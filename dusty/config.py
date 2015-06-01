@@ -39,14 +39,3 @@ def refresh_config_warnings():
         if get_config_value(key) is None:
             daemon_warnings.warn('config',
                                  'Configuration key {} is not set, please set it using `dusty config`.'.format(key))
-
-def assert_config_key(key):
-    """Raises a KeyError if the given key is not currently present
-    in the app config. It also ensures that keys with string values
-    do not contain empty strings. Useful for enforcing that certain
-    keys are present before entering codepaths that depend on them."""
-    value = get_config_value(key)
-    if value is None:
-        raise KeyError('Configuration key {} is required'.format(key))
-    elif isinstance(value, basestring) and value == '':
-        raise KeyError('Configuration key {} cannot be an empty string'.format(key))

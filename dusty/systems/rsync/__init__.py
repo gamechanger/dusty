@@ -3,7 +3,7 @@ import logging
 from subprocess import check_call, CalledProcessError
 
 from ... import constants
-from ...config import get_config_value, assert_config_key
+from ...config import get_config_value
 from ...demote import check_call_demoted, check_and_log_output_and_error_demoted
 from ...source import repo_is_overridden, get_expanded_repo_name
 from ...path import local_repo_path, vm_repo_path, parent_dir
@@ -49,7 +49,6 @@ def sync_local_path_from_vm(local_path, remote_path, demote=False, is_dir=True):
 
 def sync_repos(repos):
     logging.info('Syncing repos over rsync')
-    assert_config_key('mac_username')
     for repo_name in repos:
         repo_name = get_expanded_repo_name(repo_name)
         repo_type = 'overridden' if repo_is_overridden(repo_name) else 'Dusty-managed'

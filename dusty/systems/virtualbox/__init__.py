@@ -3,7 +3,7 @@ import re
 import logging
 
 from ... import constants
-from ...config import get_config_value, assert_config_key
+from ...config import get_config_value
 from ...demote import check_and_log_output_and_error_demoted, check_output_demoted
 from ...log import log_to_client
 
@@ -34,7 +34,6 @@ def _ensure_docker_vm_is_started():
     check_and_log_output_and_error_demoted(['boot2docker', 'start'])
 
 def initialize_docker_vm():
-    assert_config_key('mac_username')
     _ensure_docker_vm_exists()
     _ensure_docker_vm_is_started()
     _ensure_rsync_is_installed()
