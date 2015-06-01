@@ -26,10 +26,12 @@ def _validate_app_references(app, specs):
         assert(all(spec_name in specs.get(spec_type, {}).keys() for spec_name in dependent))
 
 def _validate_bundle_references(bundle, specs):
-    pass
+    for app in bundle['apps']:
+        assert(app in specs['apps'].keys())
 
 def _validate_lib_references(lib, specs):
-    pass
+    for lib in lib.get('depends', {}).get('libs', []):
+        assert(lib in specs['libs'].keys())
 
 def _validate_spec_names(specs):
     for app in specs.get('apps', {}).values():
