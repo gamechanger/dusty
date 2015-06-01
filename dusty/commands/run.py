@@ -1,8 +1,11 @@
+import os
+
 from ..compiler import (compose as compose_compiler, nginx as nginx_compiler,
                         port_spec as port_spec_compiler, spec_assembler)
 from ..systems import compose, hosts, nginx, virtualbox, rsync
 from ..log import log_to_client
 from .repos import update_managed_repos
+from .. import constants
 
 def start_local_env(recreate_containers=True):
     """This command will use the compilers to get compose specs
@@ -13,7 +16,9 @@ def start_local_env(recreate_containers=True):
     virtualbox.initialize_docker_vm()
     docker_ip = virtualbox.get_docker_vm_ip()
 
-    stop_apps_or_services()
+    # Stop will fail if we've never written a Composefile before
+    if os.path.exists(constants.COMPOSEFILE_PATH):
+        stop_apps_or_services()
 
     active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
     update_managed_repos()
