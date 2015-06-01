@@ -6,13 +6,12 @@ from mock import Mock, patch
 import yaml
 
 from dusty import constants
-from dusty.systems.docker.compose import (_write_composefile, _get_docker_env,
-                                   _get_dusty_containers, _get_canonical_container_name,
-                                   _get_exited_dusty_containers, get_dusty_images,
-                                   _get_container_for_app_or_service,
-                                   _exec_in_container)
+from dusty.systems.docker import (_get_docker_env, get_dusty_containers, get_dusty_images, _get_container_for_app_or_service,
+                                  _get_canonical_container_name, _exec_in_container)
+
+from dusty.systems.docker.compose import _write_composefile
 from dusty.compiler.spec_assembler import get_specs
-from ...utils import DustyTestCase
+from ....utils import DustyTestCase
 
 class TestComposeSystem(DustyTestCase):
     def setUp(self):
