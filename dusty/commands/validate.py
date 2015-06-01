@@ -1,6 +1,7 @@
+from copy import copy
 import logging
 
-from schemer import Schema
+from schemer import ValidationException
 
 from ..compiler.spec_assembler import get_specs_path, get_specs_from_path
 from ..schemas import app_schema, bundle_schema, lib_schema
@@ -41,8 +42,19 @@ def _validate_spec_names(specs):
     for lib in specs.get('libs', {}).values():
         _validate_lib_references(lib, specs)
 
+def _cycle_check(spec_type, name, specs, upstream):
+    for dependent in specs[spec_type][name].get('depends', {}).get(spec_type, []):
+        if dependent in upstream:
+            raise ValidationException("Cycle found for {0} {1}.  Upstream {0}: {2}".format(spec_type, name, upstream))
+        else:
+            new_upstream = copy(upstream)
+            new_upstream.add(dependent)
+            _cycle_check(spec_type, dependent, specs, new_upstream)
+
 def _validate_cycle_free(specs):
-    pass
+    for spec_type in ['apps', 'libs']:
+        for name in specs.get(spec_type, {}).keys():
+            _cycle_check(spec_type, name, specs, set([name]))
 
 def validate_specs_from_path(specs_path):
     logging.info("Validating specs at path {}".format(specs_path))
