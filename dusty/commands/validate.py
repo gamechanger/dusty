@@ -4,7 +4,12 @@ import logging
 from schemer import ValidationException
 
 from ..compiler.spec_assembler import get_specs_path, get_specs_from_path
+from ..log import log_to_client
 from ..schemas import app_schema, bundle_schema, lib_schema
+
+def _check_bare_minimum(specs):
+    if not specs.get('bundles') or not specs.get('apps'):
+        log_to_client("WARNING: You'll need at least one bundle referencing one app for Dusty to work")
 
 def _ensure_app_build_or_image(app):
     if 'image' in app and 'build' in app:
@@ -57,11 +62,13 @@ def _validate_cycle_free(specs):
             _cycle_check(spec_type, name, specs, set([name]))
 
 def validate_specs_from_path(specs_path):
-    logging.info("Validating specs at path {}".format(specs_path))
+    log_to_client("Validating specs at path {}".format(specs_path))
     specs = get_specs_from_path(specs_path)
+    _check_bare_minimum(specs)
     _validate_fields_with_schemer(specs)
     _validate_spec_names(specs)
     _validate_cycle_free(specs)
+    log_to_client("Validation Complete!")
 
 def validate_specs():
     validate_specs_from_path(get_specs_path())
