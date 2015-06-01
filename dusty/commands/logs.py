@@ -1,6 +1,6 @@
 import os
 
-from ..systems.compose import get_dusty_containers
+from ..systems.docker import get_dusty_containers
 from .utils import exec_docker
 
 def tail_container_logs(app_or_service_name):

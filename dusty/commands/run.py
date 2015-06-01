@@ -2,7 +2,7 @@ import os
 
 from ..compiler import (compose as compose_compiler, nginx as nginx_compiler,
                         port_spec as port_spec_compiler, spec_assembler)
-from ..systems import compose, hosts, nginx, virtualbox, rsync
+from ..systems import docker, hosts, nginx, virtualbox, rsync
 from ..log import log_to_client
 from .repos import update_managed_repos
 from .. import constants

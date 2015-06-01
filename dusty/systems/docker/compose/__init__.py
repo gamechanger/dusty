@@ -6,7 +6,7 @@ import yaml
 from .... import constants
 from ....log import log_to_client
 from ....demote import check_output_demoted, check_and_log_output_and_error_demoted
-from ...compiler.spec_assembler import get_expected_number_of_running_containers
+from ....compiler.spec_assembler import get_expected_number_of_running_containers
 
 def _write_composefile(compose_config):
     logging.info('Writing new Composefile')

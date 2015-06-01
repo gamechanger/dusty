@@ -1,9 +1,12 @@
+import os
+
 import docker
+import logging
 
 from ...log import log_to_client
 from ...demote import check_output_demoted
-from ..compiler.spec_assembler
-from ..path import parent_dir
+from ...compiler.spec_assembler import get_specs
+from ...path import parent_dir
 
 
 def _exec_in_container(client, container, command, *args):

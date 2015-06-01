@@ -1,5 +1,7 @@
+import logging
+
 from ....log import log_to_client
-from .. import _get_dusty_containers
+from .. import _get_dusty_containers, get_dusty_images, _get_docker_client
 
 def _get_exited_dusty_containers(client):
     all_containers = _get_dusty_containers(client, None, include_exited=True)

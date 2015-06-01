@@ -1,6 +1,6 @@
 from ..compiler.spec_assembler import get_specs
 from .utils import exec_docker
-from ..systems.compose import get_dusty_container_name
+from ..systems.docker import get_dusty_container_name
 
 def execute_shell(app_or_service_name):
     specs = get_specs()

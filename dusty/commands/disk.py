@@ -3,7 +3,7 @@ import logging
 import docker
 
 from ..log import log_to_client
-from ..systems.compose import remove_exited_dusty_containers, remove_images
+from ..systems.docker.cleanup import remove_exited_dusty_containers, remove_images
 from ..systems.virtualbox import get_docker_vm_disk_info
 
 def cleanup_inactive_containers():
