@@ -41,19 +41,16 @@ def _get_docker_env():
         env[k] = v
     return env
 
-def _composefile_path():
-    return os.path.join(constants.COMPOSE_DIR, 'docker-compose.yml')
-
 def _write_composefile(compose_config):
     logging.info('Writing new Composefile')
     if not os.path.exists(constants.COMPOSE_DIR):
         os.makedirs(constants.COMPOSE_DIR)
-    with open(_composefile_path(), 'w') as f:
+    with open(constants.COMPOSEFILE_PATH, 'w') as f:
         f.write(yaml.dump(compose_config, default_flow_style=False))
 
 def _compose_up(recreate_containers=True):
     logging.info('Running docker-compose up')
-    command = ['docker-compose', '-f', _composefile_path(), '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl']
+    command = ['docker-compose', '-f', constants.COMPOSEFILE_PATH, '-p', 'dusty', 'up', '-d', '--allow-insecure-ssl']
     if not recreate_containers:
         command.append('--no-recreate')
     # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
@@ -61,7 +58,7 @@ def _compose_up(recreate_containers=True):
 
 def _compose_stop(services):
     logging.info('Running docker-compose stop')
-    command = ['docker-compose', '-f', _composefile_path(),
+    command = ['docker-compose', '-f', constants.COMPOSEFILE_PATH,
                '-p', 'dusty', 'stop', '-t', '1']
     if services:
         command += services

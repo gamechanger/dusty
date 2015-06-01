@@ -20,7 +20,9 @@ class TestComposeSystem(DustyTestCase):
         self.temp_compose_dir = tempfile.mkdtemp()
         self.temp_compose_path = os.path.join(self.temp_compose_dir, 'docker-compose.yml')
         self.old_compose_dir = constants.COMPOSE_DIR
+        self.old_compose_path = constants.COMPOSEFILE_PATH
         constants.COMPOSE_DIR = self.temp_compose_dir
+        constants.COMPOSEFILE_PATH = self.temp_compose_path
         self.test_spec = {'app-a': {'image': 'app/a'}}
 
         self.containers_return = [{'Names': ['/dusty_app-a_1'], 'Status': 'Exited'},
@@ -33,6 +35,7 @@ class TestComposeSystem(DustyTestCase):
     def tearDown(self):
         super(TestComposeSystem, self).tearDown()
         constants.COMPOSE_DIR = self.old_compose_dir
+        constants.COMPOSEFILE_PATH = self.old_compose_path
         shutil.rmtree(self.temp_compose_dir)
 
     def test_write_composefile(self):
