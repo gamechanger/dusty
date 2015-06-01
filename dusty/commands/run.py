@@ -48,17 +48,20 @@ def stop_apps_or_services(*app_or_service_names):
         log_to_client("Stopping all running containers associated with Dusty")
     compose.stop_running_services(app_or_service_names)
 
-def restart_apps_or_services(*app_or_service_names):
+def restart_apps_or_services(app_or_service_names=None, sync=True):
     """Restart any containers associated with Dusty, or associated with
     the provided app_or_service_names."""
     if app_or_service_names:
         log_to_client("Restarting the following apps or services: {}".format(', '.join(app_or_service_names)))
     else:
         log_to_client("Restarting all active containers associated with Dusty")
-    if len(app_or_service_names) > 0:
-        specs = spec_assembler.get_specs()
-        app_names = [app_name for app_name in app_or_service_names if app_name in specs['apps']]
-        rsync.sync_repos_by_app_name(app_names)
-    else:
-        rsync.sync_repos(spec_assembler.get_all_repos(active_only=True, include_specs_repo=False))
+
+    if sync:
+        if app_or_service_names:
+            specs = spec_assembler.get_specs()
+            app_names = [app_name for app_name in app_or_service_names if app_name in specs['apps']]
+            rsync.sync_repos_by_app_name(app_names)
+        else:
+            rsync.sync_repos(spec_assembler.get_all_repos(active_only=True, include_specs_repo=False))
+
     compose.restart_running_services(app_or_service_names)
