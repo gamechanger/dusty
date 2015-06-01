@@ -2,9 +2,48 @@ from unittest import TestCase
 
 from schemer import ValidationException
 
-from dusty.commands.validate import _ensure_app_build_or_image, _validate_app_references, _validate_cycle_free
+from dusty.commands.validate import (_ensure_app_build_or_image, _validate_app_references, _validate_cycle_free,
+                                    _validate_fields_with_schemer)
 
 class ValidatorTest(TestCase):
+    def test_schemer_called(self):
+        app = {
+            'repo': 'fun-app-repo',
+            'commands': {
+                'always': 'start.sh'
+            },
+            'image': 'app1:1.0.1'
+        }
+        lib = {
+            'repo': "fun-lib-repo"
+        }
+        bundle = {
+            'apps': ['app1']
+        }
+        specs = {
+            'apps': {
+                'app1': app
+            },
+            'bundles': {
+                'bundle1': bundle
+            },
+            'libs': {
+                'lib1': lib
+            },
+        }
+        _validate_fields_with_schemer(specs)
+        app['bad_field'] = "BAD"
+        with self.assertRaises(ValidationException):
+            _validate_fields_with_schemer(specs)
+        del app['bad_field']
+        bundle['bad_field'] = "BAD"
+        with self.assertRaises(ValidationException):
+            _validate_fields_with_schemer(specs)
+        del bundle['bad_field']
+        lib['bad_field'] = "BAD"
+        with self.assertRaises(ValidationException):
+            _validate_fields_with_schemer(specs)
+
     def test_only_build_or_image(self):
         with self.assertRaises(ValidationException):
             _ensure_app_build_or_image({'image': 'gcimage', 'build': 'build.sh'})
