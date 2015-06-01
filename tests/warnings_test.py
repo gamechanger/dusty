@@ -35,3 +35,9 @@ class TestWarnings(DustyTestCase):
         self.assertEqual(len(self.warnings._stored['test']), 1)
         self.warnings.clear_namespace('test')
         self.assertEqual(len(self.warnings._stored['test']), 0)
+
+    def test_clear_namespace_leaves_others_unaffected(self):
+        self.warnings.warn('test', 'Something is wrong, yo')
+        self.assertEqual(len(self.warnings._stored['test']), 1)
+        self.warnings.clear_namespace('some-other-namespace')
+        self.assertEqual(len(self.warnings._stored['test']), 1)
