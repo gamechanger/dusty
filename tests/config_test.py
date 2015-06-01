@@ -26,9 +26,3 @@ class TestConfig(DustyTestCase):
         self.assertItemsEqual(config.get_config_value('bundles'), ['bundle-b'])
         config.save_config_value('new_key', 'bacon')
         self.assertEqual(config.get_config_value('new_key'), 'bacon')
-
-    def test_assert_config_key(self):
-        config.save_config(self.test_config)
-        config.assert_config_key('mac_username')
-        with self.assertRaises(KeyError):
-            config.assert_config_key('nonexistent_key')

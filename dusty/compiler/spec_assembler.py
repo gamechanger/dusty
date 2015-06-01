@@ -3,7 +3,7 @@ import glob
 import yaml
 import logging
 
-from ..config import get_config_value, assert_config_key
+from ..config import get_config_value
 from ..path import local_repo_path
 
 
@@ -104,7 +104,6 @@ def get_assembled_specs():
     return specs
 
 def get_specs_repo():
-    assert_config_key('specs_repo')
     return get_config_value('specs_repo')
 
 def get_specs_path():

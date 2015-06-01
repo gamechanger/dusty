@@ -8,7 +8,7 @@ import docker
 
 from ... import constants
 from ...log import log_to_client
-from ...config import get_config_value, assert_config_key
+from ...config import get_config_value
 from ...demote import check_output_demoted, check_and_log_output_and_error_demoted
 from ...compiler.spec_assembler import get_expected_number_of_running_containers, get_specs
 from ...path import parent_dir
@@ -126,7 +126,6 @@ def update_running_containers_from_spec(compose_config, recreate_containers=True
     writes it to the Compose spec folder so Compose can pick it
     up, then does everything needed to make sure boot2docker is
     up and running containers with the updated config."""
-    assert_config_key('mac_username')
     _write_composefile(compose_config)
     _compose_up(recreate_containers=recreate_containers)
 

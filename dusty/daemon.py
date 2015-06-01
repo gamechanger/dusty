@@ -9,6 +9,7 @@ from .notifier import notify
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .payload import Payload
 from .warnings import daemon_warnings
+from .config import refresh_config_warnings
 
 def _clean_up_existing_socket(socket_path):
     try:
@@ -66,6 +67,7 @@ def main():
     notify('Dusty initializing...')
     configure_logging()
     preflight_check()
+    refresh_config_warnings()
     _listen_on_socket(SOCKET_PATH)
 
 if __name__ == '__main__':
