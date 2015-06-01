@@ -42,7 +42,7 @@ def start_local_env(recreate_containers=True):
     log_to_client("Saving nginx config and ensure nginx is running")
     nginx.update_nginx_from_config(nginx_config)
     log_to_client("Saving docker-compose config and starting all containers")
-    compose.update_running_containers_from_spec(compose_config, recreate_containers=recreate_containers)
+    docker.compose.update_running_containers_from_spec(compose_config, recreate_containers=recreate_containers)
 
     log_to_client("Your local environment is now started")
 
@@ -54,7 +54,7 @@ def stop_apps_or_services(*app_or_service_names):
         log_to_client("Stopping the following apps or services: {}".format(', '.join(app_or_service_names)))
     else:
         log_to_client("Stopping all running containers associated with Dusty")
-    compose.stop_running_services(app_or_service_names)
+    docker.compose.stop_running_services(app_or_service_names)
 
 def restart_apps_or_services(app_or_service_names=None, sync=True):
     """Restart any containers associated with Dusty, or associated with
@@ -72,4 +72,4 @@ def restart_apps_or_services(app_or_service_names=None, sync=True):
         else:
             rsync.sync_repos(spec_assembler.get_all_repos(active_only=True, include_specs_repo=False))
 
-    compose.restart_running_services(app_or_service_names)
+    docker.compose.restart_running_services(app_or_service_names)

@@ -6,7 +6,7 @@ from mock import Mock, patch
 import yaml
 
 from dusty import constants
-from dusty.systems.compose import (_write_composefile, _get_docker_env,
+from dusty.systems.docker.compose import (_write_composefile, _get_docker_env,
                                    _get_dusty_containers, _get_canonical_container_name,
                                    _get_exited_dusty_containers, get_dusty_images,
                                    _get_container_for_app_or_service,
