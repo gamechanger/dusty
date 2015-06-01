@@ -9,7 +9,7 @@ from ..schemas import app_schema, bundle_schema, lib_schema
 
 def _check_bare_minimum(specs):
     if not specs.get('bundles'):
-        raise ValidationException("No Bundles found")
+        raise ValidationException("No Bundles found - exiting")
 
 def _ensure_app_build_or_image(app):
     if 'image' in app and 'build' in app:
