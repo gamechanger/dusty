@@ -5,38 +5,23 @@ import subprocess
 from ... import constants
 from ...config import get_config_value
 
-def _get_nginx_pid():
-    """Returns the current process ID of the master nginx process
-    if it is running, otherwise False. Process IDs are positive
-    integers, so we won't hit the truthiness issue with 0."""
-    try:
-        with open(constants.NGINX_PID_PATH, 'r') as f:
-            pid = int(f.read().strip())
-        os.kill(pid, 0) # Raises if process does not exist with this pid
-        return pid
-    except (IOError, OSError):
-        return False
-
 def _start_nginx():
     """Start a new nginx master process. This should not be called
-    if nginx is already running. In that case, use _reload_nginx_config
-    instead."""
+    if nginx is already running. In that case, use _stop_nginx first"""
     logging.info('Starting nginx')
     subprocess.check_call(['nginx'])
 
 def _reload_nginx_config():
-    """Reload the nginx master process to pick up the new config. We favor
-    subprocess over sending a signal because it lets us know whether
-    our new configuration is loaded successfully or not."""
+    """Relaod the config for the nginx master process."""
     logging.info('Reloading nginx config')
     subprocess.check_call(['nginx', '-s', 'reload'])
 
 def _ensure_nginx_running_with_latest_config():
-    """Start nginx if it is not already running, or tell it to reload
-    its configuration if it is."""
-    if _get_nginx_pid():
+    """Start nginx if it is not already running, or restart the
+    process if it is already running."""
+    try:
         _reload_nginx_config()
-    else:
+    except:
         _start_nginx()
 
 def _write_nginx_config(nginx_config):
