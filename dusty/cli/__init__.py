@@ -15,7 +15,7 @@ Commands:
   script     Execute predefined scripts inside running containers
   shell      Open a shell inside a running container
   stop       Stop Dusty-managed containers
-  sync       Sync files from the local OS to the boot2docker VM
+  sync       Sync repos from the local OS to the boot2docker VM
   up         Set up the Dusty environment and start activated applications
 
 For help on a specific command, provide the '-h' flag to the command, e.g. 'dusty repos -h'
