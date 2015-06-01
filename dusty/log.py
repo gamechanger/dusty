@@ -37,3 +37,7 @@ def close_socket_logger():
     logger = logging.getLogger(SOCKET_LOGGER_NAME)
     logger.removeHandler(handler)
     handler = None
+
+def configure_client_logging():
+    logging.basicConfig(stream=sys.stdout,
+                        level=logging.INFO)
