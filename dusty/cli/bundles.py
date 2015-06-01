@@ -10,13 +10,13 @@ your environment to what you're working on at the moment.
 You don't need to run your entire stack all the time!
 
 Usage:
-  bundles activate <bundle_name>
-  bundles deactivate <bundle_name>
+  bundles activate <bundle_names>...
+  bundles deactivate <bundle_names>...
   bundles list
 
 Commands:
-  activate     Activate a bundle.
-  deactivate   Deactivate a bundle.
+  activate     Activate one or more bundles.
+  deactivate   Deactivate one or more bundles.
   list         List all bundles and whether they are currently active.
 """
 
@@ -30,6 +30,6 @@ def main(argv):
     if args['list']:
         return Payload(list_bundles)
     elif args['activate']:
-        return Payload(activate_bundle, args['<bundle_name>'])
+        return Payload(activate_bundle, args['<bundle_names>'])
     elif args['deactivate']:
-        return Payload(deactivate_bundle, args['<bundle_name>'])
+        return Payload(deactivate_bundle, args['<bundle_names>'])

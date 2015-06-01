@@ -7,8 +7,8 @@ from ..utils import DustyTestCase
 class TestSyncCommand(DustyTestCase):
     def setUp(self):
         super(TestSyncCommand, self).setUp()
-        activate_bundle('bundle-a')
-        activate_bundle('bundle-b')
+        activate_bundle(['bundle-a'])
+        activate_bundle(['bundle-b'])
 
     @patch('dusty.commands.sync.perform_sync_repos')
     def test_sync_repos_no_args(self, fake_sync):

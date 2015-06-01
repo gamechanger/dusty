@@ -53,7 +53,7 @@ class TestReposCommands(DustyTestCase):
         self.assertItemsEqual(get_config_value('repo_overrides'), {get_specs_repo(): self.temp_specs_path,
                                                                    'github.com/app/a': self.temp_specs_path})
 
-    def test_deactivate_bundle(self):
+    def test_override_then_manage_repo(self):
         override_repo('github.com/app/a', self.temp_specs_path)
         self.assertItemsEqual(get_config_value('repo_overrides'), {get_specs_repo(): self.temp_specs_path,
                                                                    'github.com/app/a': self.temp_specs_path})
@@ -69,14 +69,13 @@ class TestReposCommands(DustyTestCase):
 
     @patch('dusty.commands.repos.update_local_repo')
     def test_update_managed_repos(self, fake_update_local_repo):
-        activate_bundle('bundle-a')
+        activate_bundle(['bundle-a'])
         update_managed_repos()
         fake_update_local_repo.assert_called_once_with('github.com/app/a')
 
     @patch('dusty.commands.repos.update_local_repo')
     def test_update_managed_repos_for_both(self, fake_update_local_repo):
-        activate_bundle('bundle-a')
-        activate_bundle('bundle-b')
+        activate_bundle(['bundle-a'])
+        activate_bundle(['bundle-b'])
         update_managed_repos()
         fake_update_local_repo.assert_has_calls([call('github.com/app/a'), call('github.com/app/b')])
-
