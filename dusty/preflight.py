@@ -29,7 +29,7 @@ def _maybe_version_warning(executable, installed_version):
                                                                                           installed_version,
                                                                                           constants.SYSTEM_DEPENDENCY_VERSIONS[executable])
         warnings.warn(message)
-        daemon_warnings.warn(message)
+        daemon_warnings.warn('preflight', message)
 
 def _check_nginx():
     _assert_executable_exists('nginx')
