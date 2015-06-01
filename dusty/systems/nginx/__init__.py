@@ -11,16 +11,18 @@ def _start_nginx():
     logging.info('Starting nginx')
     subprocess.check_call(['nginx'])
 
-def _stop_nginx():
-    """Stop the nginx master process."""
-    logging.info('Stopping nginx')
-    subprocess.call(['nginx', '-s', 'stop'])
+def _reload_nginx_config():
+    """Relaod the config for the nginx master process."""
+    logging.info('Reloading nginx config')
+    subprocess.check_call(['nginx', '-s', 'reload'])
 
 def _ensure_nginx_running_with_latest_config():
     """Start nginx if it is not already running, or restart the
     process if it is already running."""
-    _stop_nginx()
-    _start_nginx()
+    try:
+        _reload_nginx_config()
+    except:
+        _start_nginx()
 
 def _write_nginx_config(nginx_config):
     """Writes the config file from the Dusty Nginx compiler
