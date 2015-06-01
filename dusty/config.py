@@ -17,7 +17,7 @@ def _dump(doc):
 def write_default_config():
     default_config = {'bundles': [],
                       'repo_overrides': {},
-                      'nginx_config_includes_dir': '/usr/local/etc/nginx/servers'}
+                      'nginx_includes_dir': '/usr/local/etc/nginx/servers'}
     save_config(default_config)
 
 def get_config():
