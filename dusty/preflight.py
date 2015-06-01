@@ -81,9 +81,7 @@ def preflight_check():
     _check_docker_compose()
     _assert_hosts_file_is_writable()
     _ensure_run_dir_exists()
-    _ensure_root_log_dir_exists()
     _ensure_config_dir_exists()
-    _ensure_log_subdirs_exist()
     if not os.path.exists(constants.CONFIG_PATH):
         logging.info('Creating default config file at {}'.format(constants.CONFIG_PATH))
         write_default_config()
