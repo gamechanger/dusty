@@ -2,7 +2,7 @@ import textwrap
 
 from prettytable import PrettyTable
 
-from ..config import get_config, save_config_value
+from ..config import get_config, save_config_value, refresh_config_warnings
 from .. import constants
 from ..log import log_to_client
 
@@ -29,6 +29,7 @@ def save_value(key, value):
         raise KeyError('Your key {} must be in the list {}'.format(key, sorted(constants.CONFIG_SETTINGS.keys())))
     if key in config and not isinstance(config[key], basestring):
         raise KeyError('You can only modify string values in your config. {} has type {}'.format(key, type(config[key])))
-    else:
-        save_config_value(key, value)
-        log_to_client('Set {} to {} in your config'.format(key, value))
+
+    save_config_value(key, value)
+    log_to_client('Set {} to {} in your config'.format(key, value))
+    refresh_config_warnings()

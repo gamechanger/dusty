@@ -5,6 +5,7 @@ as the location of the Dusty specifications on disk."""
 import yaml
 
 from . import constants
+from .warnings import daemon_warnings
 
 def _load(filepath):
     with open(filepath, 'r') as f:
@@ -31,6 +32,13 @@ def save_config_value(key, value):
     current_config = get_config()
     current_config[key] = value
     save_config(current_config)
+
+def refresh_config_warnings():
+    daemon_warnings.clear_namespace('config')
+    for key in sorted(constants.WARN_ON_MISSING_CONFIG_KEYS):
+        if get_config_value(key) is None:
+            daemon_warnings.warn('config',
+                                 'Configuration key {} is not set, please set it using `dusty config`.'.format(key))
 
 def assert_config_key(key):
     """Raises a KeyError if the given key is not currently present
