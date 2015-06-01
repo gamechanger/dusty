@@ -51,4 +51,4 @@ CONFIG_SETTINGS = {
     'nginx_includes_dir': 'This is the location that your nginx config will import extra files from.  Dusty\'s nginx config will be stored here'
 }
 
-WARN_ON_MISSING_CONFIG_KEYS = ['mac_username', 'specs_repo']
+WARN_ON_MISSING_CONFIG_KEYS = ['mac_username', 'specs_repo', 'nginx_includes_dir']
