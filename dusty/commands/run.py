@@ -12,6 +12,10 @@ def start_local_env(recreate_containers=True):
     will pass those specs to the systems that need them. Those
     systems will in turn launch the services needed to make the
     local environment go."""
+    assembled_spec = spec_assembler.get_assembled_specs()
+    if not assembled_spec['bundles']:
+        raise RuntimeError('No bundles are activated. Use `dusty bundles` to activate bundles before running `dusty up`.')
+
     log_to_client("Ensuring virtualbox vm is running")
     virtualbox.initialize_docker_vm()
     docker_ip = virtualbox.get_docker_vm_ip()
@@ -23,7 +27,6 @@ def start_local_env(recreate_containers=True):
     active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
     update_managed_repos()
     log_to_client("Compiling together the assembled specs")
-    assembled_spec = spec_assembler.get_assembled_specs()
 
     log_to_client("Compiling the port specs")
     port_spec = port_spec_compiler.get_port_spec_document(assembled_spec, docker_ip)
