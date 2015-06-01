@@ -17,6 +17,7 @@ Commands:
   stop       Stop Dusty-managed containers
   sync       Sync repos from the local OS to the boot2docker VM
   up         Set up the Dusty environment and start activated applications
+  validate   Validates Dusty specs
 
 For help on a specific command, provide the '-h' flag to the command, e.g. 'dusty repos -h'
 """

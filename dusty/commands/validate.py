@@ -8,8 +8,8 @@ from ..log import log_to_client
 from ..schemas import app_schema, bundle_schema, lib_schema
 
 def _check_bare_minimum(specs):
-    if not specs.get('bundles') or not specs.get('apps'):
-        log_to_client("WARNING: You'll need at least one bundle referencing one app for Dusty to work")
+    if not specs.get('bundles'):
+        raise ValidationException("No Bundles found")
 
 def _ensure_app_build_or_image(app):
     if 'image' in app and 'build' in app:
