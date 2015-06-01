@@ -1,11 +1,15 @@
-from schemer import Schema
-from schemer import Array
+from schemer import Schema, Array
 
 
 app_depends_schema = Schema({
     'services': {'type': Array(basestring)},
     'apps': {'type': Array(basestring)},
     'libs': {'type': Array(basestring)}
+    })
+
+conditional_links_schema = Schema({
+    'services': {'type': Array(basestring)},
+    'apps': {'type': Array(basestring)},
     })
 
 host_forwarding_schema = Schema({
@@ -32,6 +36,7 @@ def get_scripts_schema(document):
 app_schema = Schema({
     'repo': {'type': basestring, 'required': True},
     'depends': {'type': app_depends_schema},
+    'conditional_links': {'type': conditional_links_schema},
     'host_forwarding': {'type': Array(host_forwarding_schema)},
     'image': {'type': basestring},
     'build': {'type': basestring},
