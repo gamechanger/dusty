@@ -1,5 +1,6 @@
 from copy import copy
 import logging
+import os
 
 from schemer import ValidationException
 
@@ -8,8 +9,8 @@ from ..log import log_to_client
 from ..schemas import app_schema, bundle_schema, lib_schema
 
 def _check_bare_minimum(specs):
-    if not specs.get('bundles') or not specs.get('apps'):
-        log_to_client("WARNING: You'll need at least one bundle referencing one app for Dusty to work")
+    if not specs.get('bundles'):
+        raise ValidationException("No Bundles found - exiting")
 
 def _ensure_app_build_or_image(app):
     if 'image' in app and 'build' in app:
@@ -62,7 +63,17 @@ def _validate_cycle_free(specs):
             _cycle_check(spec_type, name, specs, set([name]))
 
 def validate_specs_from_path(specs_path):
+    """
+    Validates Dusty specs at the given path. The following checks are performed:
+        -That the given path exists
+        -That there are bundles in the given path
+        -That the fields in the specs match those allowed in our schemas
+        -That references to apps, libs, and services point at defined specs
+        -That there are no cycles in app and lib dependencies
+    """
     log_to_client("Validating specs at path {}".format(specs_path))
+    if not os.path.exists(specs_path):
+        raise RuntimeError("Specs path not found: {}".format(specs_path))
     specs = get_specs_from_path(specs_path)
     _check_bare_minimum(specs)
     _validate_fields_with_schemer(specs)
@@ -71,4 +82,7 @@ def validate_specs_from_path(specs_path):
     log_to_client("Validation Complete!")
 
 def validate_specs():
+    """
+    Validates specs using the path configured in Dusty's configuration
+    """
     validate_specs_from_path(get_specs_path())
