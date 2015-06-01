@@ -124,8 +124,6 @@ def get_repo_of_app_or_library(app_or_library_name):
     raise KeyError('did not find app or service with name {}'.format(app_or_library_name))
 
 def get_specs_from_path(specs_path):
-    if not os.path.exists(specs_path):
-        raise RuntimeError("Specs path not found: {}".format(specs_path))
     specs = {}
     for key in ['bundles', 'apps', 'libs', 'services']:
         specs[key] = {}
