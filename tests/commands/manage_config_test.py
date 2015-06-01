@@ -13,7 +13,10 @@ class TestManageConfigCommands(DustyTestCase):
         super(TestManageConfigCommands, self).setUp()
         self.old_config_path = dusty.constants.CONFIG_PATH
         dusty.constants.CONFIG_SETTINGS = {k: '' for k in ['bundles', 'repo_overrides', 'specs_repo', 'docker_user']}
-        self.expected_config = {'bundles': [], 'repo_overrides': {get_specs_repo(): self.temp_specs_path}, 'specs_repo': 'github.com/org/dusty-specs'}
+        self.expected_config = {'bundles': [],
+                                'repo_overrides': {get_specs_repo(): self.temp_specs_path},
+                                'specs_repo': 'github.com/org/dusty-specs',
+                                'nginx_includes_dir': '/usr/local/etc/nginx/servers'}
 
     def tearDown(self):
         super(TestManageConfigCommands, self).tearDown()
@@ -33,7 +36,8 @@ class TestManageConfigCommands(DustyTestCase):
                               {'bundles': [],
                                'repo_overrides': {get_specs_repo(): self.temp_specs_path},
                                'docker_user': '~/here',
-                               'specs_repo': 'github.com/org/dusty-specs'})
+                               'specs_repo': 'github.com/org/dusty-specs',
+                               'nginx_includes_dir': '/usr/local/etc/nginx/servers'})
 
     def test_save_value_no_changes(self):
         with self.assertRaises(KeyError):

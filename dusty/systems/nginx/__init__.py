@@ -3,6 +3,7 @@ import logging
 import subprocess
 
 from ... import constants
+from ...config import get_config_value
 
 def _get_nginx_pid():
     """Returns the current process ID of the master nginx process
@@ -42,7 +43,7 @@ def _write_nginx_config(nginx_config):
     """Writes the config file from the Dusty Nginx compiler
     to the Nginx includes directory, which should be included
     in the main nginx.conf."""
-    with open(os.path.join(constants.NGINX_CONFIG_INCLUDES_DIR, 'dusty.conf'), 'w') as f:
+    with open(os.path.join(get_config_value('nginx_includes_dir'), 'dusty.conf'), 'w') as f:
         f.write(nginx_config)
 
 def update_nginx_from_config(nginx_config):
