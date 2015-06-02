@@ -7,7 +7,7 @@ import shutil
 from .. import constants
 from ..path import vm_cp_path
 from ..systems.rsync import sync_local_path_to_vm, sync_local_path_from_vm, vm_path_is_directory
-from ..systems.docker import (move_dir_inside_container, move_file_inside_container,
+from ..systems.docker.files import (move_dir_inside_container, move_file_inside_container,
                                copy_path_inside_container)
 
 @contextmanager
