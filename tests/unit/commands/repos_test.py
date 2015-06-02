@@ -12,6 +12,7 @@ from dusty.commands.repos import (list_repos, override_repo, manage_repo,
                                   override_repos_from_directory, update_managed_repos)
 from dusty.compiler.spec_assembler import get_specs_repo
 from ..utils import DustyTestCase
+from dusty import constants
 
 class TestReposCommands(DustyTestCase):
     def setUp(self):
@@ -50,19 +51,19 @@ class TestReposCommands(DustyTestCase):
 
     def test_override_repo(self):
         override_repo('github.com/app/a', self.temp_specs_path)
-        self.assertItemsEqual(get_config_value('repo_overrides'), {get_specs_repo(): self.temp_specs_path,
+        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY), {get_specs_repo(): self.temp_specs_path,
                                                                    'github.com/app/a': self.temp_specs_path})
 
     def test_override_then_manage_repo(self):
         override_repo('github.com/app/a', self.temp_specs_path)
-        self.assertItemsEqual(get_config_value('repo_overrides'), {get_specs_repo(): self.temp_specs_path,
+        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY), {get_specs_repo(): self.temp_specs_path,
                                                                    'github.com/app/a': self.temp_specs_path})
         manage_repo('github.com/app/a')
-        self.assertItemsEqual(get_config_value('repo_overrides'), {get_specs_repo(): self.temp_specs_path})
+        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY), {get_specs_repo(): self.temp_specs_path})
 
     def test_override_repos_from_directory(self):
         override_repos_from_directory(self.temp_repos_path)
-        self.assertItemsEqual(get_config_value('repo_overrides'), {get_specs_repo(): self.temp_specs_path,
+        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY), {get_specs_repo(): self.temp_specs_path,
                                                                    'github.com/app/a': os.path.join(self.temp_repos_path, 'a'),
                                                                    'github.com/app/b': os.path.join(self.temp_repos_path, 'b'),
                                                                    'github.com/lib/a': os.path.join(self.temp_repos_path, 'a')})

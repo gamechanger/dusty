@@ -6,10 +6,11 @@ from ..config import get_config_value, save_config_value
 from ..compiler.spec_assembler import get_specs, get_specs_repo, get_all_repos, get_assembled_specs
 from ..source import update_local_repo, short_repo_name, get_expanded_repo_name
 from ..log import log_to_client
+from .. import constants
 
 
 def list_repos():
-    repos, overrides = get_all_repos(), get_config_value('repo_overrides')
+    repos, overrides = get_all_repos(), get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
     table = PrettyTable(['Full Name', 'Short Name', 'Local Override'])
     for repo in repos:
         table.add_row([repo, short_repo_name(repo),
@@ -23,9 +24,9 @@ def override_repo(repo_name, source_path):
         raise KeyError('No repo registered named {}'.format(repo_name))
     if not os.path.exists(source_path):
         raise OSError('Source path {} does not exist'.format(source_path))
-    config = get_config_value('repo_overrides')
+    config = get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
     config[repo_name] = source_path
-    save_config_value('repo_overrides', config)
+    save_config_value(constants.CONFIG_REPO_OVERRIDES_KEY, config)
     log_to_client('Locally overriding repo {} to use source at {}'.format(repo_name, source_path))
 
 def manage_repo(repo_name):
@@ -33,10 +34,10 @@ def manage_repo(repo_name):
     repos = get_all_repos()
     if repo_name not in repos:
         raise KeyError('No repo registered named {}'.format(repo_name))
-    config = get_config_value('repo_overrides')
+    config = get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
     if repo_name in config:
         del config[repo_name]
-    save_config_value('repo_overrides', config)
+    save_config_value(constants.CONFIG_REPO_OVERRIDES_KEY, config)
     log_to_client('Will manage repo {} with Dusty-managed copy of source'.format(repo_name))
 
 def override_repos_from_directory(source_path):
@@ -51,7 +52,7 @@ def update_managed_repos():
     """For any active, managed repos, update the Dusty-managed
     copy to bring it up to date with the latest master."""
     log_to_client('Pulling latest updates for all active managed repos:')
-    overrides = set(get_config_value('repo_overrides'))
+    overrides = set(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY))
     for repo_name in get_all_repos(active_only=True):
         if repo_name not in overrides:
             log_to_client('Updating managed copy of {}'.format(repo_name))

@@ -5,6 +5,7 @@ import logging
 
 from ..config import get_config_value
 from ..path import local_repo_path
+from .. import constants
 
 
 def _get_dependent(dependent_type, name, specs, root_spec_type):
@@ -22,16 +23,16 @@ def _get_dependent(dependent_type, name, specs, root_spec_type):
     return all_dependents
 
 def _get_active_bundles(specs):
-    return set(get_config_value('bundles'))
+    return set(get_config_value(constants.CONFIG_BUNDLES_KEY))
 
 def _get_referenced_apps(specs):
     """
-    Returns a set of all apps that are required to run any bundle in specs['bundles']
+    Returns a set of all apps that are required to run any bundle in specs[constants.CONFIG_BUNDLES_KEY]
     """
-    activated_bundles = specs['bundles'].keys()
+    activated_bundles = specs[constants.CONFIG_BUNDLES_KEY].keys()
     all_active_apps = set()
     for active_bundle in activated_bundles:
-        bundle_spec = specs['bundles'].get(active_bundle)
+        bundle_spec = specs[constants.CONFIG_BUNDLES_KEY].get(active_bundle)
         for app_name in bundle_spec['apps']:
             all_active_apps.add(app_name)
             all_active_apps |= _get_dependent('apps', app_name, specs, 'apps')
@@ -67,7 +68,7 @@ def _get_referenced_services(specs):
 
 def _filter_active(spec_type, specs):
     get_referenced = {
-        'bundles': _get_active_bundles,
+        constants.CONFIG_BUNDLES_KEY: _get_active_bundles,
         'apps': _get_referenced_apps,
         'libs': _get_referenced_libs,
         'services': _get_referenced_services
@@ -85,7 +86,7 @@ def _get_expanded_active_specs(specs):
     the activated_bundles.  It also expands inside specs.apps.depends.libs all libs that are needed
     indirectly by each app
     """
-    _filter_active('bundles', specs)
+    _filter_active(constants.CONFIG_BUNDLES_KEY, specs)
     _filter_active('apps', specs)
     _expand_libs_in_apps(specs)
     _filter_active('libs', specs)
@@ -104,7 +105,7 @@ def get_assembled_specs():
     return specs
 
 def get_specs_repo():
-    return get_config_value('specs_repo')
+    return get_config_value(constants.CONFIG_SPECS_REPO_KEY)
 
 def get_specs_path():
     return local_repo_path(get_specs_repo())
@@ -125,7 +126,7 @@ def get_repo_of_app_or_library(app_or_library_name):
 
 def get_specs_from_path(specs_path):
     specs = {}
-    for key in ['bundles', 'apps', 'libs', 'services']:
+    for key in [constants.CONFIG_BUNDLES_KEY, 'apps', 'libs', 'services']:
         specs[key] = {}
         key_path = os.path.join(specs_path, key)
         for spec_path in glob.glob('{}/*.yml'.format(key_path)):

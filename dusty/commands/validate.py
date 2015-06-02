@@ -7,9 +7,10 @@ from schemer import ValidationException
 from ..compiler.spec_assembler import get_specs_path, get_specs_from_path
 from ..log import log_to_client
 from ..schemas import app_schema, bundle_schema, lib_schema
+from .. import constants
 
 def _check_bare_minimum(specs):
-    if not specs.get('bundles'):
+    if not specs.get(constants.CONFIG_BUNDLES_KEY):
         raise ValidationException("No Bundles found - exiting")
 
 def _ensure_app_build_or_image(app):
@@ -22,7 +23,7 @@ def _validate_fields_with_schemer(specs):
     for app in specs.get('apps', []).values():
         app_schema.validate(app)
         _ensure_app_build_or_image(app)
-    for bundle in specs.get('bundles', []).values():
+    for bundle in specs.get(constants.CONFIG_BUNDLES_KEY, []).values():
         bundle_schema.validate(bundle)
     for lib in specs.get('libs', []).values():
         lib_schema.validate(lib)
@@ -43,7 +44,7 @@ def _validate_lib_references(lib, specs):
 def _validate_spec_names(specs):
     for app in specs.get('apps', {}).values():
         _validate_app_references(app, specs)
-    for bundle in specs.get('bundles', {}).values():
+    for bundle in specs.get(constants.CONFIG_BUNDLES_KEY, {}).values():
         _validate_bundle_references(bundle, specs)
     for lib in specs.get('libs', {}).values():
         _validate_lib_references(lib, specs)

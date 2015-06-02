@@ -15,7 +15,7 @@ from .compiler.spec_assembler import get_all_repos
 from .path import local_repo_path, managed_repo_path, parent_dir
 
 def repo_is_overridden(repo_name):
-    return repo_name in get_config_value('repo_overrides')
+    return repo_name in get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
 
 
 def short_repo_name(repo_name):
