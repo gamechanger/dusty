@@ -20,37 +20,8 @@ Using these four ideas as well as boot2docker, docker, docker-compose, host-file
 # Getting Started
 Dusty has two parts the daemon (dustyd) and the client (dusty).  The daemon should run in the background or as a service as root.  You should use the client (dusty) to interact with it.
 
-dusty has pretty robuse cli help, to get started using it, type `dusty -h`.  This should display a list of usable commands.
+dusty has pretty robust cli help, to get started using it, type `dusty -h`.  This should display a list of usable commands.
+Before doing anything else make sure you run the command `dusty setup`. This will help you configure dusty.
 
-
-# Important commands
-`dusty up` - This is supposed to be a do-it-all command to launch your local environment.  It will ensure the services that need to be running are running, will create a spec for docker-compose and will launch all needed containers.  If you get into a dirty state, or accidentally killed some containers, `dusty up` will put you back in a good place
-
-`dusty stop` - This command will stop all running containers launched by dusty up
-
-`dusty bundles` - Allows you to see and manage which bundles are activated
-
-`dusty config` - Allows you to access and modify your dusty configuration
-
-`dusty repos` - Allows you to see and manage sourcing for needed repos
-
-`dusty sync` - Allows you to sync code from local repo to its copy on the boot2docker vm
-
-`dusty restart` - Allows you to restart individual docker containers
-
-`dusty logs` - Connect to a tail -f of the logs coming from a container
-
-`dusty shell` - Open a shell in a running dusty container
-
-`dusty script` - Run a predefined script in a running container
-
-`dusty cp` - Copy a file to or from a container
-
-
-
-
-
-
-
-
-# Example Specs Repo
+Once setup has been run, use `dusty bundles activate` to activate bundles for your local environment.
+Finally, run `dusty up` to start your local environment.
