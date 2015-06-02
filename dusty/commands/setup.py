@@ -7,7 +7,7 @@ from ..config import save_config_value
 from ..log import log_to_client
 
 def _get_mac_username():
-    proposed_mac_username = subprocess.check_output(['echo', '$USER'])
+    proposed_mac_username = subprocess.check_output(['id', '-un']).strip()
     if raw_input('Is {} your mac_username. Enter y for yes: '.format(proposed_mac_username)).upper() == 'Y':
         return proposed_mac_username
     else:
