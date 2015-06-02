@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 from ..log import log_to_client
 from ..compiler.spec_assembler import get_specs
 from .utils import exec_docker
-from ..systems.compose import get_dusty_container_name
+from ..systems.docker import get_dusty_container_name
 
 def script_info_for_app(app_name):
     app_specs = get_specs()['apps'].get(app_name)

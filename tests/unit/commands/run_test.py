@@ -33,7 +33,7 @@ class TestRunCommands(DustyTestCase):
             }
         }
 
-    @patch('dusty.commands.run.compose.restart_running_services')
+    @patch('dusty.commands.run.docker.compose.restart_running_services')
     @patch('dusty.commands.run.rsync')
     @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.compiler.spec_assembler.get_assembled_specs')
@@ -43,7 +43,7 @@ class TestRunCommands(DustyTestCase):
         restart_apps_or_services(['app-a', 'app-b'])
         fake_rsync.sync_repos_by_app_name.assert_has_calls([call(['app-a', 'app-b'])])
 
-    @patch('dusty.commands.run.compose.restart_running_services')
+    @patch('dusty.commands.run.docker.compose.restart_running_services')
     @patch('dusty.commands.run.rsync')
     @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.compiler.spec_assembler.get_assembled_specs')
@@ -53,7 +53,7 @@ class TestRunCommands(DustyTestCase):
         restart_apps_or_services(['app-a', 'app-b'], sync=False)
         self.assertFalse(fake_rsync.sync_repos_by_app_name.called)
 
-    @patch('dusty.commands.run.compose.restart_running_services')
+    @patch('dusty.commands.run.docker.compose.restart_running_services')
     @patch('dusty.commands.run.rsync')
     @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.compiler.spec_assembler.get_assembled_specs')
@@ -63,7 +63,7 @@ class TestRunCommands(DustyTestCase):
         restart_apps_or_services(['app-a', 'app-b', 'ser-a'])
         fake_rsync.sync_repos_by_app_name.assert_has_calls([call(['app-a', 'app-b'])])
 
-    @patch('dusty.commands.run.compose.restart_running_services')
+    @patch('dusty.commands.run.docker.compose.restart_running_services')
     @patch('dusty.commands.run.rsync')
     @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.compiler.spec_assembler.get_assembled_specs')
@@ -73,7 +73,7 @@ class TestRunCommands(DustyTestCase):
         restart_apps_or_services(['app-a', 'ser-a'])
         fake_rsync.sync_repos_by_app_name.assert_has_calls([call(['app-a'])])
 
-    @patch('dusty.commands.run.compose.restart_running_services')
+    @patch('dusty.commands.run.docker.compose.restart_running_services')
     @patch('dusty.commands.run.rsync')
     @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.compiler.spec_assembler.get_assembled_specs')
@@ -83,7 +83,7 @@ class TestRunCommands(DustyTestCase):
         restart_apps_or_services()
         fake_rsync.sync_repos.assert_has_calls([call(set(['github.com/app/a', 'github.com/app/b', 'github.com/lib/a', 'github.com/lib/b']))])
 
-    @patch('dusty.commands.run.compose.restart_running_services')
+    @patch('dusty.commands.run.docker.compose.restart_running_services')
     @patch('dusty.commands.run.rsync')
     @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.compiler.spec_assembler.get_assembled_specs')

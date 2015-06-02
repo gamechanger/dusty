@@ -6,11 +6,11 @@ from mock import Mock, patch
 import yaml
 
 from dusty import constants
-from dusty.systems.compose import (_write_composefile, _get_docker_env,
-                                   _get_dusty_containers, _get_canonical_container_name,
-                                   _get_exited_dusty_containers, get_dusty_images,
-                                   _get_container_for_app_or_service,
-                                   _exec_in_container)
+from dusty.systems.docker import (_get_docker_env, _get_dusty_containers, get_dusty_images, _get_container_for_app_or_service,
+                                  _get_canonical_container_name, _exec_in_container)
+
+from dusty.systems.docker.compose import _write_composefile
+from dusty.systems.docker.cleanup import _get_exited_dusty_containers
 from dusty.compiler.spec_assembler import get_specs
 from ...utils import DustyTestCase
 
@@ -44,7 +44,7 @@ class TestComposeSystem(DustyTestCase):
         self.assertItemsEqual(yaml.load(written), self.test_spec)
 
     @patch('dusty.demote.get_config_value')
-    @patch('dusty.systems.compose.check_output_demoted')
+    @patch('dusty.systems.docker.check_output_demoted')
     def test_get_docker_env(self, fake_check_output, fake_config_value):
         fake_config_value.return_value = 'root'
         fake_check_output.return_value = """    export DOCKER_TLS_VERIFY=1
