@@ -23,10 +23,10 @@ def _get_nginx_includes_dir():
         return default_nginx_config_value
     return _get_raw_input('Please input the path where your nginx config pulls extra configs: ')
 
-def setup_dusty_config():
-    mac_username = _get_mac_username()
-    specs_repo = _get_default_specs_repo()
-    nginx_includes_dir = _get_nginx_includes_dir()
+def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
+    mac_username = _get_mac_username() if mac_username is None else mac_username
+    specs_repo = _get_default_specs_repo() if specs_repo is None else specs_repo
+    nginx_includes_dir = _get_nginx_includes_dir() if nginx_includes_dir is None else nginx_includes_dir
     config_dictionary = {'mac_username': mac_username,
                          'specs_repo': specs_repo,
                          'nginx_includes_dir':nginx_includes_dir}
