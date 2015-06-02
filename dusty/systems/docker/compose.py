@@ -3,7 +3,7 @@ import logging
 
 import yaml
 
-from . import _get_canonical_container_name, _get_docker_env, _get_docker_client, _get_dusty_containers
+from . import _get_canonical_container_name, get_docker_env, _get_docker_client, _get_dusty_containers
 from ... import constants
 from ...log import log_to_client
 from ...demote import check_output_demoted, check_and_log_output_and_error_demoted
@@ -22,7 +22,7 @@ def _compose_up(recreate_containers=True):
     if not recreate_containers:
         command.append('--no-recreate')
     # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
-    check_and_log_output_and_error_demoted(command, env=_get_docker_env(), strip_newlines=True)
+    check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True)
 
 def _compose_stop(services):
     logging.info('Running docker-compose stop')
@@ -30,7 +30,7 @@ def _compose_stop(services):
                '-p', 'dusty', 'stop', '-t', '1']
     if services:
         command += services
-    check_and_log_output_and_error_demoted(command, env=_get_docker_env())
+    check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
 def _compose_restart(services):
     """Well, this is annoying. Compose 1.2 shipped with the
