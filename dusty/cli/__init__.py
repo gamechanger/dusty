@@ -32,7 +32,7 @@ from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
 from . import bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop, sync, up, validate, setup
-from dusty import constants
+from .. import constants
 
 MODULE_MAP = {
     constants.CONFIG_BUNDLES_KEY: bundles,
