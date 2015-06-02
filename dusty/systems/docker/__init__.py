@@ -24,7 +24,7 @@ def get_dusty_images():
 def get_dusty_container_name(service_name):
     return 'dusty_{}_1'.format(service_name)
 
-def _get_docker_env():
+def get_docker_env():
     output = check_output_demoted(['boot2docker', 'shellinit'])
     env = {}
     for line in output.splitlines():
@@ -35,7 +35,7 @@ def _get_docker_env():
 def _get_docker_client():
     """Ripped off and slightly modified based on docker-py's
     kwargs_from_env utility function."""
-    env = _get_docker_env()
+    env = get_docker_env()
     host, cert_path, tls_verify = env['DOCKER_HOST'], env['DOCKER_CERT_PATH'], env['DOCKER_TLS_VERIFY']
 
     params = {'base_url': host.replace('tcp://', 'https://')}
