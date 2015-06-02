@@ -1,4 +1,5 @@
 from . import _exec_in_container, _get_docker_client, _get_container_for_app_or_service
+from ...path import parent_dir
 
 def _create_dir_in_container(client, container, path):
     return _exec_in_container(client, container, 'mkdir -p', path)
