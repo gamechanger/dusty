@@ -3,6 +3,7 @@ import logging
 
 import yaml
 
+from .. import _get_canonical_container_name, _get_docker_env, _get_docker_client, _get_dusty_containers
 from .... import constants
 from ....log import log_to_client
 from ....demote import check_output_demoted, check_and_log_output_and_error_demoted
