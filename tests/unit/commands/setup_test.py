@@ -44,9 +44,9 @@ class TestSetupCommands(DustyTestCase):
     @patch('dusty.commands.setup._get_nginx_includes_dir')
     @patch('dusty.commands.setup._get_default_specs_repo')
     @patch('dusty.commands.setup._get_mac_username')
-    def test_setup_dusty_config(self, fake_get_mac, fake_get_defeault_specs, fake_get_nginx):
+    def test_setup_dusty_config(self, fake_get_mac, fake_get_default_specs, fake_get_nginx):
         fake_get_mac.return_value = 'user'
-        fake_get_defeault_specs.return_value = 'github.com/gamechanger/dusty'
+        fake_get_default_specs.return_value = 'github.com/gamechanger/dusty'
         fake_get_nginx.return_value = '/etc/dusty/nginx'
         expected_dict_argument = {'mac_username': 'user',
                                   'specs_repo': 'github.com/gamechanger/dusty',
@@ -54,6 +54,44 @@ class TestSetupCommands(DustyTestCase):
         return_payload = setup_dusty_config()
         self.assertEqual(return_payload.fn, save_dusty_config)
         self.assertEqual(return_payload.args[0], expected_dict_argument)
+
+    @patch('dusty.commands.setup._get_nginx_includes_dir')
+    @patch('dusty.commands.setup._get_default_specs_repo')
+    @patch('dusty.commands.setup._get_mac_username')
+    def test_setup_dusty_config_pass_arguments_1(self, fake_get_mac, fake_get_default_specs, fake_get_nginx):
+        setup_dusty_config(mac_username='1',
+                           specs_repo='2',
+                           nginx_includes_dir='3')
+        fake_get_mac.assert_has_calls([])
+        fake_get_default_specs.assert_has_calls([])
+        fake_get_nginx.assert_has_calls([])
+
+    @patch('dusty.commands.setup._get_nginx_includes_dir')
+    @patch('dusty.commands.setup._get_default_specs_repo')
+    @patch('dusty.commands.setup._get_mac_username')
+    def test_setup_dusty_config_pass_arguments_2(self, fake_get_mac, fake_get_default_specs, fake_get_nginx):
+        setup_dusty_config(mac_username='1')
+        fake_get_mac.assert_has_calls([])
+        fake_get_default_specs.assert_has_calls([call()])
+        fake_get_nginx.assert_has_calls([call()])
+
+    @patch('dusty.commands.setup._get_nginx_includes_dir')
+    @patch('dusty.commands.setup._get_default_specs_repo')
+    @patch('dusty.commands.setup._get_mac_username')
+    def test_setup_dusty_config_pass_arguments_3(self, fake_get_mac, fake_get_default_specs, fake_get_nginx):
+        setup_dusty_config(specs_repo='1')
+        fake_get_mac.assert_has_calls([call()])
+        fake_get_default_specs.assert_has_calls([])
+        fake_get_nginx.assert_has_calls([call()])
+
+    @patch('dusty.commands.setup._get_nginx_includes_dir')
+    @patch('dusty.commands.setup._get_default_specs_repo')
+    @patch('dusty.commands.setup._get_mac_username')
+    def test_setup_dusty_config_pass_arguments_4(self, fake_get_mac, fake_get_default_specs, fake_get_nginx):
+        setup_dusty_config(nginx_includes_dir='1')
+        fake_get_mac.assert_has_calls([call()])
+        fake_get_default_specs.assert_has_calls([call()])
+        fake_get_nginx.assert_has_calls([])
 
     @patch('dusty.commands.setup.save_config_value')
     def test_save_dusty_config(self, fake_save_config_value):
