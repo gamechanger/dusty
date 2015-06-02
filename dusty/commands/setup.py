@@ -15,7 +15,7 @@ def _get_mac_username():
         return _get_raw_input('Enter your actual mac_username: ')
 
 def _get_default_specs_repo():
-    return _get_raw_input('Please input the repo of your specs repo. For example github.com/gamechanger/dusty: ')
+    return _get_raw_input('Please input the name your specs repo. For example github.com/gamechanger/dusty: ')
 
 def _get_nginx_includes_dir():
     default_nginx_config_value = get_config_value('nginx_includes_dir')
