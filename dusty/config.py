@@ -17,7 +17,8 @@ def _dump(doc):
 def write_default_config():
     default_config = {'bundles': [],
                       'repo_overrides': {},
-                      'nginx_includes_dir': '/usr/local/etc/nginx/servers'}
+                      'nginx_includes_dir': '/usr/local/etc/nginx/servers',
+                      'setup_has_run': False}
     save_config(default_config)
 
 def get_config():
@@ -34,10 +35,6 @@ def save_config_value(key, value):
     current_config = get_config()
     current_config[key] = value
     save_config(current_config)
-
-def save_config_dict(dict):
-    for key, value in dict.iteritems():
-        save_config_value(key, value)
 
 def refresh_config_warnings():
     daemon_warnings.clear_namespace('config')

@@ -44,7 +44,8 @@ CONFIG_SETTINGS = {
     'repo_overrides': 'All known repos for which Dusty will use your specified override instead of its own managed copy of the repository. You should override repos which you are actively developing so that Dusty uses your development version inside containers.',
     'mac_username': 'The user on the host OS who will own and be able to access the boot2docker VM. Dusty runs all VirtualBox, boot2docker, Docker, and Docker Compose commands as this user.',
     'specs_repo': 'This repository is used for storing the specs used by Dusty.  It is managed the same way as other repos',
-    'nginx_includes_dir': 'This is the location that your nginx config will import extra files from.  Dusty\'s nginx config will be stored here'
+    'nginx_includes_dir': 'This is the location that your nginx config will import extra files from.  Dusty\'s nginx config will be stored here',
+    'setup_has_run': 'Key indicating if you have run the required command `dusty setup`'
 }
 
 WARN_ON_MISSING_CONFIG_KEYS = ['mac_username', 'specs_repo', 'nginx_includes_dir']
