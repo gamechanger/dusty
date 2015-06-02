@@ -17,7 +17,7 @@ class TestManageConfigCommands(DustyTestCase):
                                 'repo_overrides': {get_specs_repo(): self.temp_specs_path},
                                 'specs_repo': 'github.com/org/dusty-specs',
                                 'nginx_includes_dir': '/usr/local/etc/nginx/servers',
-                                'setup_has_run': False}
+                               'setup_has_run': False}
 
     def tearDown(self):
         super(TestManageConfigCommands, self).tearDown()
@@ -28,12 +28,12 @@ class TestManageConfigCommands(DustyTestCase):
 
     def test_list_config_values(self):
         list_config_values()
-        self.assertItemsEqual(json.loads(self.last_client_output.replace('\'', '\"')), self.expected_config)
+        self.assertItemsEqual(json.loads(self.last_client_output.replace('\'', '\"').replace('False', 'false').replace('True', 'true')), self.expected_config)
 
     def test_save_value_changes_value(self):
         save_value('docker_user', '~/here')
         list_config_values()
-        self.assertItemsEqual(json.loads(self.last_client_output.replace('\'', '\"')),
+        self.assertItemsEqual(json.loads(self.last_client_output.replace('\'', '\"').replace('False', 'false').replace('True', 'true')),
                               {'bundles': [],
                                'repo_overrides': {get_specs_repo(): self.temp_specs_path},
                                'docker_user': '~/here',
