@@ -28,7 +28,7 @@ def _write_nginx_config(nginx_config):
     """Writes the config file from the Dusty Nginx compiler
     to the Nginx includes directory, which should be included
     in the main nginx.conf."""
-    with open(os.path.join(get_config_value('nginx_includes_dir'), 'dusty.conf'), 'w') as f:
+    with open(os.path.join(get_config_value(constants.CONFIG_NGINX_DIR_KEY), 'dusty.conf'), 'w') as f:
         f.write(nginx_config)
 
 def update_nginx_from_config(nginx_config):

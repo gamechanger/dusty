@@ -4,7 +4,7 @@ from ..utils import DustyTestCase
 from dusty.commands.setup import (_get_mac_username, _get_nginx_includes_dir,
                                   setup_dusty_config, save_dusty_config)
 from dusty.payload import Payload
-
+from dusty import constants
 
 class TestSetupCommands(DustyTestCase):
     @patch('dusty.commands.setup.subprocess.check_output')
@@ -48,9 +48,9 @@ class TestSetupCommands(DustyTestCase):
         fake_get_mac.return_value = 'user'
         fake_get_default_specs.return_value = 'github.com/gamechanger/dusty'
         fake_get_nginx.return_value = '/etc/dusty/nginx'
-        expected_dict_argument = {'mac_username': 'user',
-                                  'specs_repo': 'github.com/gamechanger/dusty',
-                                  'nginx_includes_dir': '/etc/dusty/nginx'}
+        expected_dict_argument = {constants.CONFIG_MAC_USERNAME_KEY: 'user',
+                                  constants.CONFIG_SPECS_REPO_KEY: 'github.com/gamechanger/dusty',
+                                  constants.CONFIG_NGINX_DIR_KEY: '/etc/dusty/nginx'}
         return_payload = setup_dusty_config()
         self.assertEqual(return_payload.fn, save_dusty_config)
         self.assertEqual(return_payload.args[0], expected_dict_argument)
@@ -95,13 +95,13 @@ class TestSetupCommands(DustyTestCase):
 
     @patch('dusty.commands.setup.save_config_value')
     def test_save_dusty_config(self, fake_save_config_value):
-        dict_argument = {'mac_username': 'user',
-                         'specs_repo': 'github.com/gamechanger/dusty',
-                         'nginx_includes_dir': '/etc/dusty/nginx'}
+        dict_argument = {constants.CONFIG_MAC_USERNAME_KEY: 'user',
+                         constants.CONFIG_SPECS_REPO_KEY: 'github.com/gamechanger/dusty',
+                         constants.CONFIG_NGINX_DIR_KEY: '/etc/dusty/nginx'}
         save_dusty_config(dict_argument)
-        fake_save_config_value.assert_has_calls([call('mac_username','user'),
-                                                 call('specs_repo', 'github.com/gamechanger/dusty'),
-                                                 call('nginx_includes_dir', '/etc/dusty/nginx'),
-                                                 call('setup_has_run', True)])
+        fake_save_config_value.assert_has_calls([call(constants.CONFIG_MAC_USERNAME_KEY,'user'),
+                                                 call(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/dusty'),
+                                                 call(constants.CONFIG_NGINX_DIR_KEY, '/etc/dusty/nginx'),
+                                                 call(constants.CONFIG_SETUP_KEY, True)])
 
 

@@ -13,7 +13,7 @@ def get_all_test_configs():
 @nottest
 def resources_for_test_config(test_config):
     resources = {}
-    for key in ['bundles', 'apps', 'libs', 'services']:
+    for key in [constants.CONFIG_BUNDLES_KEY, 'apps', 'libs', 'services']:
         key_path = 'test_configs/{}/{}'.format(test_config, key)
         if resource_isdir(__name__, key_path):
             resources[key] = {resource_name: resource_string(__name__, '{}/{}'.format(key_path, resource_name))

@@ -4,6 +4,7 @@ from schemer import ValidationException
 
 from dusty.commands.validate import (_ensure_app_build_or_image, _validate_app_references, _validate_cycle_free,
                                     _validate_fields_with_schemer)
+from dusty import constants
 
 class ValidatorTest(TestCase):
     def test_schemer_called(self):
@@ -24,7 +25,7 @@ class ValidatorTest(TestCase):
             'apps': {
                 'app1': app
             },
-            'bundles': {
+            constants.CONFIG_BUNDLES_KEY: {
                 'bundle1': bundle
             },
             'libs': {

@@ -39,13 +39,20 @@ SYSTEM_DEPENDENCY_VERSIONS = {
     'docker-compose': '1.2.0'
 }
 
+CONFIG_BUNDLES_KEY = 'bundles'
+CONFIG_REPO_OVERRIDES_KEY = 'repo_overrides'
+CONFIG_MAC_USERNAME_KEY = 'mac_username'
+CONFIG_SPECS_REPO_KEY = 'specs_repo'
+CONFIG_NGINX_DIR_KEY = 'nginx_includes_dir'
+CONFIG_SETUP_KEY = 'setup_has_run'
+
 CONFIG_SETTINGS = {
-    'bundles': 'All currently activated bundles. These are the bundles that Dusty will set up for you when you run "dusty up".',
-    'repo_overrides': 'All known repos for which Dusty will use your specified override instead of its own managed copy of the repository. You should override repos which you are actively developing so that Dusty uses your development version inside containers.',
-    'mac_username': 'The user on the host OS who will own and be able to access the boot2docker VM. Dusty runs all VirtualBox, boot2docker, Docker, and Docker Compose commands as this user.',
-    'specs_repo': 'This repository is used for storing the specs used by Dusty.  It is managed the same way as other repos',
-    'nginx_includes_dir': 'This is the location that your nginx config will import extra files from.  Dusty\'s nginx config will be stored here',
-    'setup_has_run': 'Key indicating if you have run the required command `dusty setup`'
+    CONFIG_BUNDLES_KEY: 'All currently activated bundles. These are the bundles that Dusty will set up for you when you run "dusty up".',
+    CONFIG_REPO_OVERRIDES_KEY: 'All known repos for which Dusty will use your specified override instead of its own managed copy of the repository. You should override repos which you are actively developing so that Dusty uses your development version inside containers.',
+    CONFIG_MAC_USERNAME_KEY: 'The user on the host OS who will own and be able to access the boot2docker VM. Dusty runs all VirtualBox, boot2docker, Docker, and Docker Compose commands as this user.',
+    CONFIG_SPECS_REPO_KEY: 'This repository is used for storing the specs used by Dusty.  It is managed the same way as other repos',
+    CONFIG_NGINX_DIR_KEY: 'This is the location that your nginx config will import extra files from.  Dusty\'s nginx config will be stored here',
+    CONFIG_SETUP_KEY: 'Key indicating if you have run the required command `dusty setup`'
 }
 
-WARN_ON_MISSING_CONFIG_KEYS = ['mac_username', 'specs_repo', 'nginx_includes_dir']
+WARN_ON_MISSING_CONFIG_KEYS = [CONFIG_MAC_USERNAME_KEY, CONFIG_SPECS_REPO_KEY, CONFIG_NGINX_DIR_KEY]

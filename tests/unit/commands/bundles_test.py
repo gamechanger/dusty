@@ -8,6 +8,7 @@ from dusty.config import get_config_value
 from dusty.commands.bundles import list_bundles, activate_bundle, deactivate_bundle
 from dusty.compiler.spec_assembler import get_specs_repo
 from ..utils import DustyTestCase
+from dusty import constants
 
 class TestBundlesCommands(DustyTestCase):
     def _assert_listed_bundles(self, result, bundle_active_tuples):
@@ -40,10 +41,10 @@ class TestBundlesCommands(DustyTestCase):
 
     def test_activate_bundle(self):
         activate_bundle(['bundle-a'])
-        self.assertItemsEqual(get_config_value('bundles'), ['bundle-a'])
+        self.assertItemsEqual(get_config_value(constants.CONFIG_BUNDLES_KEY), ['bundle-a'])
 
     def test_deactivate_bundle(self):
         activate_bundle(['bundle-a', 'bundle-b'])
-        self.assertItemsEqual(get_config_value('bundles'), ['bundle-a', 'bundle-b'])
+        self.assertItemsEqual(get_config_value(constants.CONFIG_BUNDLES_KEY), ['bundle-a', 'bundle-b'])
         deactivate_bundle(['bundle-a', 'bundle-b'])
-        self.assertItemsEqual(get_config_value('bundles'), [])
+        self.assertItemsEqual(get_config_value(constants.CONFIG_BUNDLES_KEY), [])

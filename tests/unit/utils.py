@@ -28,7 +28,7 @@ class DustyTestCase(TestCase):
 
         dusty.constants.CONFIG_PATH = self.temp_config_path
         write_default_config()
-        save_config_value('specs_repo', 'github.com/org/dusty-specs')
+        save_config_value(dusty.constants.CONFIG_SPECS_REPO_KEY, 'github.com/org/dusty-specs')
         override_repo(get_specs_repo(), self.temp_specs_path)
         basic_specs_fixture()
 

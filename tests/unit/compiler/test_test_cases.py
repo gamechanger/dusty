@@ -7,6 +7,7 @@ from . import (get_all_test_configs, resources_for_test_config, specs_for_test_c
                assembled_specs_for_test_config, nginx_config_for_test_config, docker_compose_yaml_for_test_config)
 from dusty.compiler import spec_assembler
 from ..utils import DustyTestCase
+from dusty import constants
 
 @nottest
 def all_test_configs(test_func):
@@ -41,7 +42,7 @@ class TestSpecAssemblerTestCases(DustyTestCase):
     @all_test_configs
     def test_assembles_specs(self, test_config, case_specs, assembled_specs, *args):
         self.maxDiff = None
-        bundles = case_specs['bundles'].keys()
+        bundles = case_specs[constants.CONFIG_BUNDLES_KEY].keys()
         @patch('dusty.compiler.spec_assembler._get_active_bundles', return_value=bundles)
         def run_patched_assembler(case_specs, *args):
             spec_assembler._get_expanded_active_specs(case_specs)
@@ -106,7 +107,7 @@ class TestExpectedRunningContainers(DustyTestCase):
                     'sev1': {},
                     'sev2': {}
                  },
-                 'bundles': {
+                 constants.CONFIG_BUNDLES_KEY: {
                     'bun1': {},
                     'bun2': {}
                  }}
@@ -127,7 +128,7 @@ class TestExpectedRunningContainers(DustyTestCase):
                     'sev2': {},
                     'sev3': {}
                  },
-                 'bundles': {
+                 constants.CONFIG_BUNDLES_KEY: {
                     'bun1': {},
                     'bun2': {},
                     'bun1': {},

@@ -15,10 +15,10 @@ def _dump(doc):
     return yaml.dump(doc, default_flow_style=False)
 
 def write_default_config():
-    default_config = {'bundles': [],
-                      'repo_overrides': {},
-                      'nginx_includes_dir': '/usr/local/etc/nginx/servers',
-                      'setup_has_run': False}
+    default_config = {constants.CONFIG_BUNDLES_KEY: [],
+                      constants.CONFIG_REPO_OVERRIDES_KEY: {},
+                      constants.CONFIG_NGINX_DIR_KEY: '/usr/local/etc/nginx/servers',
+                      constants.CONFIG_SETUP_KEY: False}
     save_config(default_config)
 
 def get_config():

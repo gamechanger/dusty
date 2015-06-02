@@ -6,6 +6,7 @@ from copy import copy
 
 from .config import get_config_value
 from .log import log_to_client
+from . import constants
 
 def _demote_to_user(user_name):
     def _demote():
@@ -20,7 +21,7 @@ def _check_demoted(fn, shell_args, env=None, **kwargs):
         passed_env.update(env)
     else:
         passed_env = None
-    output = fn(shell_args, preexec_fn=_demote_to_user(get_config_value('mac_username')), env=passed_env, **kwargs)
+    output = fn(shell_args, preexec_fn=_demote_to_user(get_config_value(constants.CONFIG_MAC_USERNAME_KEY)), env=passed_env, **kwargs)
     return output
 
 def check_call_demoted(shell_args, env=None, redirect_stderr=False):

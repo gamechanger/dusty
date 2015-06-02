@@ -28,14 +28,14 @@ import socket
 
 from docopt import docopt
 
-from ..constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
 from . import bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop, sync, up, validate, setup
+from .. import constants
 
 MODULE_MAP = {
-    'bundles': bundles,
+    constants.CONFIG_BUNDLES_KEY: bundles,
     'config': config,
     'cp': cp,
     'disk': disk,
@@ -59,9 +59,9 @@ def _run_command(sock, command):
         data = sock.recv(65535)
         if data:
             sys.stdout.write(data.decode('utf-8'))
-            if data.endswith(SOCKET_TERMINATOR):
+            if data.endswith(constants.SOCKET_TERMINATOR):
                 break
-            elif data.endswith(SOCKET_ERROR_TERMINATOR):
+            elif data.endswith(constants.SOCKET_ERROR_TERMINATOR):
                 error_response = True
                 break
         else:
@@ -73,7 +73,7 @@ def _connect_to_daemon():
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.settimeout(.2)
     try:
-        sock.connect(SOCKET_PATH)
+        sock.connect(constants.SOCKET_PATH)
     except:
         print 'Couldn\'t connect to dusty\'s socket; make sure the daemon is running, and that it\'s not connected to another client'
         sys.exit(1)
@@ -92,7 +92,7 @@ def main():
         sys.exit(1)
 
     configure_client_logging()
-    if not get_config_value('setup_has_run') and command != 'setup':
+    if not get_config_value(constants.CONFIG_SETUP_KEY) and command != 'setup':
         log_to_client('You must run `dusty setup` before you run any other commands')
         sys.exit(0)
     result = MODULE_MAP[command].main(command_args)
