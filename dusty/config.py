@@ -35,6 +35,10 @@ def save_config_value(key, value):
     current_config[key] = value
     save_config(current_config)
 
+def save_config_dict(dict):
+    for key, value in dict.iteritems():
+        save_config_value(key, value)
+
 def refresh_config_warnings():
     daemon_warnings.clear_namespace('config')
     for key in sorted(constants.WARN_ON_MISSING_CONFIG_KEYS):
