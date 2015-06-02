@@ -16,7 +16,8 @@ class TestManageConfigCommands(DustyTestCase):
         self.expected_config = {'bundles': [],
                                 'repo_overrides': {get_specs_repo(): self.temp_specs_path},
                                 'specs_repo': 'github.com/org/dusty-specs',
-                                'nginx_includes_dir': '/usr/local/etc/nginx/servers'}
+                                'nginx_includes_dir': '/usr/local/etc/nginx/servers',
+                                'setup_has_run': False}
 
     def tearDown(self):
         super(TestManageConfigCommands, self).tearDown()
@@ -37,7 +38,8 @@ class TestManageConfigCommands(DustyTestCase):
                                'repo_overrides': {get_specs_repo(): self.temp_specs_path},
                                'docker_user': '~/here',
                                'specs_repo': 'github.com/org/dusty-specs',
-                               'nginx_includes_dir': '/usr/local/etc/nginx/servers'})
+                               'nginx_includes_dir': '/usr/local/etc/nginx/servers',
+                               'setup_has_run': False})
 
     def test_save_value_no_changes(self):
         with self.assertRaises(KeyError):

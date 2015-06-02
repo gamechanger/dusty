@@ -6,21 +6,24 @@ from .. import constants
 from ..config import save_config_value, get_config_value
 from ..log import log_to_client
 
+def _get_raw_input(string):
+    return raw_input(string).strip()
+
 def _get_mac_username():
     proposed_mac_username = subprocess.check_output(['id', '-un']).strip()
-    if raw_input('Is {} your mac_username. y or no: '.format(proposed_mac_username)).strip().upper() == 'Y':
+    if _get_raw_input('Is {} your mac_username. y or no: '.format(proposed_mac_username)).upper() == 'Y':
         return proposed_mac_username
     else:
-        return raw_input('Enter your actual mac_username: ').strip()
+        return _get_raw_input('Enter your actual mac_username: ')
 
 def _get_default_specs_repo():
-    return raw_input('Please input the repo of your specs repo. For example github.com/gamechanger/dusty: ').strip()
+    return _get_raw_input('Please input the repo of your specs repo. For example github.com/gamechanger/dusty: ')
 
 def _get_nginx_includes_dir():
     default_nginx_config_value = get_config_value('nginx_includes_dir')
-    if raw_input('Does your nginx config look for extra configs in the default location of {}. y or n: '.format(default_nginx_config_value)).strip().upper() == 'Y':
+    if _get_raw_input('Does your nginx config look for extra configs in the default location of {}. y or n: '.format(default_nginx_config_value)).upper() == 'Y':
         return default_nginx_config_value
-    return raw_input('Please input the path where your nginx config pulls extra configs: ').strip()
+    return _get_raw_input('Please input the path where your nginx config pulls extra configs: ')
 
 def setup_dusty_config():
     logging.info('Going to be setting values for these config values: {}'.format(constants.WARN_ON_MISSING_CONFIG_KEYS))
