@@ -1,3 +1,5 @@
+import logging
+
 from ..payload import Payload
 from .. import constants
 from ..config import save_config_value
@@ -6,19 +8,19 @@ from ..log import log_to_client
 
 def _get_mac_username():
     proposed_mac_username = check_output_demoted(['echo', '$USER'])
-    if input('Is {} your mac_username. Enter y for yes'.format(proposed_mac_username)).upper() == 'Y':
+    if raw_input('Is {} your mac_username. Enter y for yes: '.format(proposed_mac_username)).upper() == 'Y':
         return proposed_mac_username
     else:
-        return input('Enter your actual mac_username: ').strip()
+        return raw_input('Enter your actual mac_username: ').strip()
 
 def _get_default_specs_repo():
-    return input('Please input the repo of your specs repo. For example github.com/gamechanger/dusty: ').strip()
+    return raw_input('Please input the repo of your specs repo. For example github.com/gamechanger/dusty: ').strip()
 
 def _get_nginx_includes_dir():
-    return input('Please input the path where your nginx config pulls extra configs.  The default value is: /usr/local/etc/nginx/servers').strip()
+    return raw_input('Please input the path where your nginx config pulls extra configs.  The default value is /usr/local/etc/nginx/servers: ').strip()
 
 def setup_dusty_config():
-    logging.info('Going to be setting values for these config values: {}'. constants.WARN_ON_MISSING_CONFIG_KEYS)
+    logging.info('Going to be setting values for these config values: {}'.format(constants.WARN_ON_MISSING_CONFIG_KEYS))
     mac_username = _get_mac_username()
     specs_repo = _get_default_specs_repo()
     nginx_includes_dir = _get_nginx_includes_dir()
