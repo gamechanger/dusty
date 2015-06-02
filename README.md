@@ -10,6 +10,7 @@ Docker-based development environment manager
 Dusty is a python application for docker based environment management.  It is built in two parts, a client and a daemon.  The daemon is a single threaded python process that should run as root.  The client is a python command line interface that interacts with both the daemon and your docker containers.
 
 Dusty runs using a set of specs. There are four core concepts in these specs:
+
     1. Bundles - high level sets of functionality. These will consist of a list of apps.  Dusty will configure to run a set of bundles.
     2. Apps - Units of code that you own that are runnable.  These can rely on other apps, libs and services
     3. Libs - Units of code that you run but are not runnable.  Can rely on other libs
