@@ -55,4 +55,15 @@ class TestSetupCommands(DustyTestCase):
         self.assertEqual(return_payload.fn, save_dusty_config)
         self.assertEqual(return_payload.args[0], expected_dict_argument)
 
+    @patch('dusty.commands.setup.save_config_value')
+    def test_save_dusty_config(self, fake_save_config_value):
+        dict_argument = {'mac_username': 'user',
+                         'specs_repo': 'github.com/gamechanger/dusty',
+                         'nginx_includes_dir': '/etc/dusty/nginx'}
+        save_dusty_config(dict_argument)
+        fake_save_config_value.assert_has_calls([call('mac_username','user'),
+                                                 call('specs_repo', 'github.com/gamechanger/dusty'),
+                                                 call('nginx_includes_dir', '/etc/dusty/nginx'),
+                                                 call('setup_has_run', True)])
+
 
