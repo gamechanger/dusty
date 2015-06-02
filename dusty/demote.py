@@ -6,6 +6,7 @@ from copy import copy
 
 from .config import get_config_value
 from .log import log_to_client
+from . import constants
 
 def _demote_to_user(user_name):
     def _demote():
