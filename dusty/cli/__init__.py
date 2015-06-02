@@ -25,13 +25,12 @@ For help on a specific command, provide the '-h' flag to the command, e.g. 'dust
 
 import sys
 import socket
-import logging
 
 from docopt import docopt
 
 from ..constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from ..config import get_config_value
-from ..log import configure_client_logging
+from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
 from . import bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop, sync, up, validate, setup
 
@@ -94,7 +93,7 @@ def main():
 
     configure_client_logging()
     if not get_config_value('setup_has_run') and command != 'setup':
-        logging.info('You must run `dusty setup` before you run any other commands')
+        log_to_client('You must run `dusty setup` before you run any other commands')
         sys.exit(0)
     result = MODULE_MAP[command].main(command_args)
     if isinstance(result, Payload):
