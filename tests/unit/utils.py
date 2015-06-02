@@ -44,5 +44,4 @@ class DustyTestCase(TestCase):
 
     @property
     def last_client_output(self):
-        logging.info(self.client_output)
         return self.client_output[-1] if self.client_output else None
