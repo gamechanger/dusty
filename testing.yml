@@ -1,7 +1,7 @@
 image: docker.gamechanger.io/python2.7
 script:
   - cd $REPO
-  - pip install pylint
+  - pip install pylint nose
   - python setup.py nosetests --tests tests/unit
   - |
     pylint --ignored-classes=_socketobject --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --reports=y -E y $REPO/dusty
