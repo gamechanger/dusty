@@ -21,8 +21,8 @@ class Warnings(object):
     def pretty(self):
         result = ''
         for namespace in sorted(self._stored.keys()):
-            result += '\n'.join(['WARNING ({}): {}'.format(namespace, '\n'.join(textwrap.wrap(message, 80)))
-                                 for message in self._stored[namespace]])
+            result += ''.join(['WARNING ({}): {}\n'.format(namespace, '\n'.join(textwrap.wrap(message, 80)))
+                               for message in self._stored[namespace]])
         return result
 
 daemon_warnings = Warnings()

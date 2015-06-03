@@ -28,7 +28,7 @@ class TestWarnings(DustyTestCase):
         message_2 = 'Something is very wrong, and that something takes way more than 80 characters to communicate the fact that it is wrong'
         self.warnings.warn('test', message_1)
         self.warnings.warn('test', message_2)
-        self.assertEqual(self.warnings.pretty(), "WARNING (test): Something is wrong, yo\nWARNING (test): Something is very wrong, and that something takes way more than 80 characters to\ncommunicate the fact that it is wrong")
+        self.assertEqual(self.warnings.pretty(), "WARNING (test): Something is wrong, yo\nWARNING (test): Something is very wrong, and that something takes way more than 80 characters to\ncommunicate the fact that it is wrong\n")
 
     def test_clear_namespace(self):
         self.warnings.warn('test', 'Something is wrong, yo')
