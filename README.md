@@ -4,7 +4,19 @@ Docker-based development environment manager
 
 
 # Installation
-
+Currently the way to install Dusty is to run:
+```
+git clone https://github.com/gamechanger/dusty.git
+cd dusty
+./setup/create_binaries.sh
+cp dist/dusty /usr/local/bin/dusty
+cp dist/dustyd /usr/local/bin/dustyd
+```
+Then, to activate dustyd as a daemon, you can run (from the dusty directory)
+```
+sudo cp setup/org.gc.dustyd.plist /System/Library/LaunchDaemons/.
+sudo launchctl load /System/Library/LaunchDaemons/org.gc.dustyd.plist
+```
 
 # Basics
 Dusty is a python application for docker based environment management.  It is built in two parts, a client and a daemon.  The daemon is a single threaded python process that should run as root.  The client is a python command line interface that interacts with both the daemon and your docker containers.
