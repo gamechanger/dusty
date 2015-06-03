@@ -4,7 +4,7 @@ Docker-based development environment manager
 
 
 # Installation
-Currently the way to install Dusty is to run:
+Currently the recommended way to install dusty is to clone the dusty repository, create dusty binaries using our script, and place them in your `/usr/local/bin` folder. These commands should do that:
 ```
 git clone https://github.com/gamechanger/dusty.git
 cd dusty
