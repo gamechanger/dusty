@@ -13,7 +13,7 @@ Commands:
   repos      Manage Git repos used for running Dusty applications
   restart    Restart Dusty-managed containers
   script     Execute predefined scripts inside running containers
-  setup      Will help you configure dusty after installation
+  setup      Configure Dusty after installation
   shell      Open a shell inside a running container
   stop       Stop Dusty-managed containers
   sync       Sync repos from the local OS to the boot2docker VM
@@ -35,7 +35,7 @@ from . import bundles, config, cp, dump, disk, logs, repos, restart, script, she
 from .. import constants
 
 MODULE_MAP = {
-    constants.CONFIG_BUNDLES_KEY: bundles,
+    'bundles': bundles,
     'config': config,
     'cp': cp,
     'disk': disk,
@@ -94,7 +94,7 @@ def main():
     configure_client_logging()
     if not get_config_value(constants.CONFIG_SETUP_KEY) and command != 'setup':
         log_to_client('You must run `dusty setup` before you run any other commands')
-        sys.exit(0)
+        sys.exit(1)
     result = MODULE_MAP[command].main(command_args)
     if isinstance(result, Payload):
         sock = _connect_to_daemon()

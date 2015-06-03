@@ -1,13 +1,17 @@
-"""Run this command once after installing dusty
-to configure dusty to run properly.
+"""Run this command once after installation to set up
+configuration values tailored to your system.
 
 Usage:
   setup [--mac_username=<mac_username>] [--default_specs_repo=<specs_repo>] [--nginx_includes_dir=<nginx_dir>]
 
 Options:
-  --mac_username=<mac_username>         mac_username daemon will run under
-  --default_specs_repo=<specs_repo>     Repo where your dusty specs are located (eg github.com/gamechanger/dust)
-  --nginx_includes_dir=<nginx_dir>      Path your nginx config looks in to load extra nginx configs
+  --mac_username=<mac_username>         User name of the primary Dusty client user. This user
+                                        will own all Docker-related processes.
+  --default_specs_repo=<specs_repo>     Repo where your Dusty specs are located. Dusty manages this
+                                        repo for you just like other repos.
+  --nginx_includes_dir=<nginx_dir>      Directory in which Dusty will write its nginx config. Your
+                                        nginx master config should source files from this directory
+                                        using an `includes` directive.
 """
 
 from docopt import docopt
