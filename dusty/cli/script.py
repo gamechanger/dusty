@@ -1,7 +1,10 @@
 """Execute scripts defined in an app's spec inside a running app container.
 
 Usage:
-  script <app_name> [<script_name>]
+  script <app_name> [<script_name>] [<args>...]
+
+Options:
+  <args>  Arguments to pass to the script
 
 Examples:
   To get information on all scripts available for an app called `website`:
@@ -21,4 +24,4 @@ def main(argv):
     if not args['<script_name>']:
         return Payload(script_info_for_app, args['<app_name>'])
     else:
-        return execute_script(args['<app_name>'], args['<script_name>'])
+        return execute_script(args['<app_name>'], args['<script_name>'], script_arguments=args['<args>'])

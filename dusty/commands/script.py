@@ -1,5 +1,6 @@
-import textwrap
+# coding=utf-8
 
+import textwrap
 from prettytable import PrettyTable
 
 from ..log import log_to_client
@@ -15,18 +16,27 @@ def script_info_for_app(app_name):
         log_to_client('No scripts registered for app {}'.format(app_name))
         return
 
-    table = PrettyTable(['Script', 'Description'])
+    table = PrettyTable(['Script', 'Description', 'Accepts Arguments'])
     for script_name, script_spec in app_specs['scripts'].iteritems():
         table.add_row([script_name,
-                       '\n'.join(textwrap.wrap(script_spec.get('description', ''), 80))])
+                       '\n'.join(textwrap.wrap(script_spec.get('description', ''), 80)),
+                       u"✓" if script_spec.get('accepts_arguments', False) else ""])
     log_to_client(table.get_string(sortby='Script'))
 
-def execute_script(app_name, script_name):
+def execute_script(app_name, script_name, script_arguments=[]):
     app_specs = get_specs()['apps'].get(app_name)
     if not app_specs:
         raise KeyError('No app found named {} in specs'.format(app_name))
     if 'scripts' not in app_specs or script_name not in app_specs['scripts']:
         raise KeyError('No script found named {} in specs for app {}'.format(script_name, app_name))
+    script_spec = app_specs['scripts'][script_name]
+    if script_arguments == []:
+        script_string = script_spec['command']
+    else:
+        if not script_spec.get('accepts_arguments', False):
+            log_to_client('Script {} does not accept arguments'.format(script_name))
+            return
+        script_string = '{} {}'.format(script_spec['command'], ' '.join(script_arguments))
 
     container_name = get_dusty_container_name(app_name)
-    exec_docker('exec', '-ti', container_name, 'sh', '-c', app_specs['scripts'][script_name]['command'])
+    exec_docker('exec', '-ti', container_name, 'sh', '-c', script_string)
