@@ -1,6 +1,6 @@
 from .utils import DustyTestCase
 
-from dusty.warnings import Warnings
+from dusty.dusty_warnings import Warnings
 
 class TestWarnings(DustyTestCase):
     def setUp(self):

@@ -5,7 +5,7 @@ as the location of the Dusty specifications on disk."""
 import yaml
 
 from . import constants
-from .warnings import daemon_warnings
+from .dusty_warnings import daemon_warnings
 
 def _load(filepath):
     with open(filepath, 'r') as f:

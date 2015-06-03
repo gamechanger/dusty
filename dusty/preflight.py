@@ -11,7 +11,7 @@ import warnings
 
 from .config import write_default_config
 from . import constants
-from .warnings import daemon_warnings
+from .dusty_warnings import daemon_warnings
 
 class PreflightException(Exception):
     pass
