@@ -1,7 +1,21 @@
+"""Dusty daemon. Must be run with root permissions.
+
+The daemon listens for dusty commands and makes appropriate system calls.
+
+Usage:
+  dustyd [--suppress-warnings]
+
+Options:
+  --suppress-warnings  Do not display run time warnings to the client
+
+"""
+
 import os
 import atexit
 import logging
 import socket
+
+from docopt import docopt
 
 from .preflight import preflight_check
 from .log import configure_logging, make_socket_logger, close_socket_logger
@@ -18,11 +32,13 @@ def _clean_up_existing_socket(socket_path):
         if os.path.exists(socket_path):
             raise
 
-def _send_warnings_to_client(connection):
-    if daemon_warnings.has_warnings:
+def _send_warnings_to_client(connection, arguments):
+    if daemon_warnings.has_warnings and not arguments.get('--suppress-warnings'):
         connection.sendall("{}\n".format(daemon_warnings.pretty()))
 
-def _listen_on_socket(socket_path):
+def _listen_on_socket(socket_path, arguments):
+    logging.info('suppress warns: {}'.format(arguments['--suppress-warnings']))
+    logging.info('suppress warns type: {}'.format(type(arguments['--suppress-warnings'])))
     _clean_up_existing_socket(socket_path)
 
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -46,12 +62,12 @@ def _listen_on_socket(socket_path):
                     fn, args, kwargs = Payload.deserialize(data)
                     logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
                     try:
-                        _send_warnings_to_client(connection)
+                        _send_warnings_to_client(connection, arguments)
                         fn(*args, **kwargs)
                     except Exception as e:
                         logging.exception("Daemon encountered exception while processing command")
                         error_msg = e.message if e.message else str(e)
-                        _send_warnings_to_client(connection)
+                        _send_warnings_to_client(connection, arguments)
                         connection.sendall('ERROR: {}\n'.format(error_msg).encode('utf-8'))
                         connection.sendall(SOCKET_ERROR_TERMINATOR)
                     else:
@@ -65,11 +81,12 @@ def _listen_on_socket(socket_path):
             logging.exception('Exception on socket listen')
 
 def main():
+    arguments = docopt(__doc__)
     notify('Dusty initializing...')
     configure_logging()
     preflight_check()
     refresh_config_warnings()
-    _listen_on_socket(SOCKET_PATH)
+    _listen_on_socket(SOCKET_PATH, arguments)
 
 if __name__ == '__main__':
     main()
