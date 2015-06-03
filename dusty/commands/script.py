@@ -29,11 +29,13 @@ def execute_script(app_name, script_name, script_arguments=[]):
         raise KeyError('No app found named {} in specs'.format(app_name))
     if 'scripts' not in app_specs or script_name not in app_specs['scripts']:
         raise KeyError('No script found named {} in specs for app {}'.format(script_name, app_name))
-
+    script_spec = app_specs['scripts'][script_name]
     if script_arguments == []:
-        script_string = app_specs['scripts'][script_name]['command']
+        script_string = script_spec['command']
     else:
-        script_string = '{} {}'.format(app_specs['scripts'][script_name]['command'], ' '.join(script_arguments))
+        if not script_spec.get('accepts_arguments', False):
+            raise RuntimeError('Script {} does not accept arguments'.format(script_name))
+        script_string = '{} {}'.format(script_spec['command'], ' '.join(script_arguments))
 
     container_name = get_dusty_container_name(app_name)
     exec_docker('exec', '-ti', container_name, 'sh', '-c', script_string)
