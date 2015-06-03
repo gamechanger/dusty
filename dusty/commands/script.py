@@ -34,7 +34,8 @@ def execute_script(app_name, script_name, script_arguments=[]):
         script_string = script_spec['command']
     else:
         if not script_spec.get('accepts_arguments', False):
-            raise RuntimeError('Script {} does not accept arguments'.format(script_name))
+            log_to_client('Script {} does not accept arguments'.format(script_name))
+            return
         script_string = '{} {}'.format(script_spec['command'], ' '.join(script_arguments))
 
     container_name = get_dusty_container_name(app_name)
