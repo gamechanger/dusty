@@ -60,7 +60,7 @@ def sync_repos_by_app_name(app_names):
     repos = set()
     assembled_specs = get_assembled_specs()
     for app_name in app_names:
-        for lib_name in assembled_specs['apps'][app_name]['depends']['libs']:
+        for lib_name in assembled_specs['apps'][app_name].get('depends', {}).get('libs', []):
             repos.add(get_repo_of_app_or_library(lib_name))
         repos.add(get_repo_of_app_or_library(app_name))
     sync_repos(repos)
