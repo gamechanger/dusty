@@ -8,7 +8,7 @@ from .log import configure_logging, make_socket_logger, close_socket_logger
 from .notifier import notify
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .payload import Payload
-from .warnings import daemon_warnings
+from .dusty_warnings import daemon_warnings
 from .config import refresh_config_warnings
 
 def _clean_up_existing_socket(socket_path):
