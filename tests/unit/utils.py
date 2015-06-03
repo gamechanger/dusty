@@ -5,6 +5,7 @@ import logging
 
 from unittest import TestCase
 from nose.tools import nottest
+from mock import patch
 
 import dusty.constants
 from dusty.config import write_default_config, save_config_value
