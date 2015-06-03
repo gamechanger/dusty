@@ -12,6 +12,7 @@ import dusty.constants
 from dusty.config import write_default_config, save_config_value
 from dusty.compiler.spec_assembler import get_specs_repo
 from dusty.commands.repos import override_repo
+from dusty.cli import main as client_entrypoint
 from .fixtures import basic_specs_fixture
 
 class TestCaptureHandler(logging.Handler):

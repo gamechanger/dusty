@@ -28,7 +28,7 @@ def basic_specs_fixture():
     _write('lib', 'lib-a', {'repo': 'github.com/lib/a', 'image': 'lib/a'})
     _write('service', 'service-a', {'image': 'service/a'})
 
-def busybox_single_app_fixture(num_bundles=1):
+def busybox_single_app_bundle_fixture(num_bundles=1):
     for bundle in range(num_bundles):
         name = 'busybox-{}'.format(_num_to_alpha(bundle))
         _write('bundle', name, {'description': 'Busybox bundle', 'apps': [name]})

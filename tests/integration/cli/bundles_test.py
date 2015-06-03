@@ -2,13 +2,13 @@
 
 import sys
 
-from ...testcases import DustyIntegrationTestCase
-from ...fixtures import busybox_single_app_fixture
+from ...unit.utils import DustyIntegrationTestCase
+from ...unit.fixtures import busybox_single_app_bundle_fixture
 
 class TestBundlesCLI(DustyIntegrationTestCase):
     def setUp(self):
         super(TestBundlesCLI, self).setUp()
-        busybox_single_app_fixture(num_bundles=2)
+        busybox_single_app_bundle_fixture(num_bundles=2)
 
     def test_bundles_list_returns(self):
         self.run_command('bundles list')
