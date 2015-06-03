@@ -34,3 +34,13 @@ class TestScriptCommands(DustyTestCase):
     def test_execute_script_valid_input(self, fake_exec_docker):
         execute_script('app-a', 'example')
         fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', 'sh', '-c', 'ls /')
+
+    @patch('dusty.commands.script.exec_docker')
+    def test_execute_script_valid_input_one_arg(self, fake_exec_docker):
+        execute_script('app-a', 'example', ['.'])
+        fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', 'sh', '-c', 'ls / .')
+
+    @patch('dusty.commands.script.exec_docker')
+    def test_execute_script_valid_input_three_args(self, fake_exec_docker):
+        execute_script('app-a', 'example', ['.', './', '..'])
+        fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', 'sh', '-c', 'ls / . ./ ..')
