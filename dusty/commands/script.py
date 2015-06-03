@@ -1,5 +1,6 @@
-import textwrap
+# coding=utf-8
 
+import textwrap
 from prettytable import PrettyTable
 
 from ..log import log_to_client
@@ -19,7 +20,7 @@ def script_info_for_app(app_name):
     for script_name, script_spec in app_specs['scripts'].iteritems():
         table.add_row([script_name,
                        '\n'.join(textwrap.wrap(script_spec.get('description', ''), 80)),
-                       u"✓" if script_spec.get('allows_arguments', False) else ""])
+                       u"✓" if script_spec.get('accepts_arguments', False) else ""])
     log_to_client(table.get_string(sortby='Script'))
 
 def execute_script(app_name, script_name, script_arguments=[]):

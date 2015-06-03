@@ -26,7 +26,7 @@ commands_schema = Schema({
 script_schema = Schema({
     'description': {'type': basestring},
     'command': {'type': basestring, 'required': True},
-    'allows_arguments': {'type': bool}
+    'accepts_arguments': {'type': bool}
     })
 
 def get_scripts_schema(document):

@@ -14,6 +14,9 @@ def list_bundles():
         table.add_row([bundle,
                        bundle_spec['description'],
                        u"✓" if bundle in activated_bundles else ""])
+    import logging
+    logging.error(u"✓")
+    logging.error(table.get_string())
     log_to_client(table.get_string(sortby="Name"))
 
 def activate_bundle(bundle_names):
