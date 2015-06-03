@@ -1,0 +1,2 @@
+from dusty.daemon import main
+main()
