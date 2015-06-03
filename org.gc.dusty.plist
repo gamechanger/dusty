@@ -15,7 +15,7 @@
   <array>
     <string>bash</string>
     <string>-c</string>
-    <string>export PATH=$PATH:/usr/local/bin; env; dustyd</string>
+    <string>export PATH=$PATH:/usr/local/bin; dustyd</string>
   </array>
   <key>RunAtLoad</key>
   <true/>
