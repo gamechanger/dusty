@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/local/env bash
 set -e
 venv_name=venv
 rm -rf $venv_name
