@@ -50,7 +50,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
                             app_spec.get('depends', {}).get('apps', []) + \
                             _conditional_links(assembled_specs, app_name)
     logging.info("Compose Compiler: links {}".format(compose_dict['links']))
-    compose_dict['volumes'] = _get_compose_volumes(app_name, assembled_specs)
+    compose_dict['volumes'] = compose_dict.get('volumes', []) + _get_compose_volumes(app_name, assembled_specs)
     logging.info("Compose Compiler: volumes {}".format(compose_dict['volumes']))
     port_list = _get_ports_list(app_name, port_specs)
     if port_list:
