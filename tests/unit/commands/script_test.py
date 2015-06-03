@@ -9,8 +9,8 @@ class TestScriptCommands(DustyTestCase):
             script_info_for_app('some-nonexistent-app')
 
     def test_script_info_for_app_no_scripts(self):
-        script_info_for_app('app-b')
-        self.assertEqual(self.last_client_output, 'No scripts registered for app app-b')
+        script_info_for_app('app-c')
+        self.assertEqual(self.last_client_output, 'No scripts registered for app app-c')
 
     def test_script_info_for_app_valid_input(self):
         script_info_for_app('app-a')
@@ -44,3 +44,8 @@ class TestScriptCommands(DustyTestCase):
     def test_execute_script_valid_input_three_args(self, fake_exec_docker):
         execute_script('app-a', 'example', ['.', './', '..'])
         fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', 'sh', '-c', 'ls / . ./ ..')
+
+    @patch('dusty.commands.script.exec_docker')
+    def test_execute_script_valid_input_not_accept_arguments(self, fake_exec_docker):
+        execute_script('app-b', 'example', ['.', './', '..'])
+        fake_exec_docker.assert_has_calls([])

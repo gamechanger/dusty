@@ -75,7 +75,7 @@ class TestComposeSystem(DustyTestCase):
         self.assertEqual(_get_exited_dusty_containers(self.fake_docker_client), [self.containers_return[0]])
 
     def test_get_dusty_images(self):
-        self.assertEqual(get_dusty_images(), set(['app/a:latest', 'app/b:latest', 'service/a:latest']))
+        self.assertEqual(get_dusty_images(), set(['app/a:latest', 'app/b:latest', 'app/c:latest', 'service/a:latest']))
 
     def test_get_container_for_app_or_service(self):
         result = _get_container_for_app_or_service(self.fake_docker_client, 'app-a')
