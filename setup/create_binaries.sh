@@ -8,4 +8,5 @@ $venv_name/bin/pip install "git+https://github.com/pyinstaller/pyinstaller.git@1
 $venv_name/bin/pip install .
 $venv_name/bin/pyinstaller -F setup/bin/dusty
 $venv_name/bin/pyinstaller -F setup/bin/dustyd
+echo "Binaries can be found in dist/dusty and dist/dustyd"
 rm -rf $venv_name
