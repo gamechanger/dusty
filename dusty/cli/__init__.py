@@ -92,9 +92,10 @@ def main():
         sys.exit(1)
 
     configure_client_logging()
-    if not get_config_value(constants.CONFIG_SETUP_KEY) and command != 'setup':
-        log_to_client('You must run `dusty setup` before you run any other commands')
-        sys.exit(1)
+    if command != 'validate' and command != 'setup':
+      if not get_config_value(constants.CONFIG_SETUP_KEY):
+          log_to_client('You must run `dusty setup` before you run any other commands')
+          sys.exit(1)
     result = MODULE_MAP[command].main(command_args)
     if isinstance(result, Payload):
         sock = _connect_to_daemon()
