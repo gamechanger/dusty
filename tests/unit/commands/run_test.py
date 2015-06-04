@@ -1,7 +1,7 @@
 from mock import patch, call
 
 from dusty.commands.run import restart_apps_or_services
-from ..utils import DustyTestCase
+from ...testcases import DustyTestCase
 
 class TestRunCommands(DustyTestCase):
     def setUp(self):

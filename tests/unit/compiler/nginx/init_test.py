@@ -1,4 +1,4 @@
-from ...utils import DustyTestCase
+from ....testcases import DustyTestCase
 from dusty.compiler.nginx import (get_nginx_configuration_spec, _nginx_listen_string, _nginx_location_spec,
                                   _nginx_proxy_string, _nginx_server_spec, _nginx_server_name_string)
 

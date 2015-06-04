@@ -12,7 +12,7 @@ from dusty.systems.docker import (get_docker_env, _get_dusty_containers, get_dus
 from dusty.systems.docker.compose import _write_composefile
 from dusty.systems.docker.cleanup import _get_exited_dusty_containers
 from dusty.compiler.spec_assembler import get_specs
-from ...utils import DustyTestCase
+from ....testcases import DustyTestCase
 
 class TestComposeSystem(DustyTestCase):
     def setUp(self):

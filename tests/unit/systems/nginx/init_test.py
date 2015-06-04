@@ -6,7 +6,7 @@ from nose.tools import nottest
 
 from dusty import constants
 from dusty.systems.nginx import _ensure_nginx_running_with_latest_config
-from ...utils import DustyTestCase
+from ....testcases import DustyTestCase
 
 class TestNginxSystem(DustyTestCase):
     @patch('subprocess.check_call')

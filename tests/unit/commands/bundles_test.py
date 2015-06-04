@@ -7,7 +7,7 @@ import shutil
 from dusty.config import get_config_value
 from dusty.commands.bundles import list_bundles, activate_bundle, deactivate_bundle
 from dusty.compiler.spec_assembler import get_specs_repo
-from ..utils import DustyTestCase
+from ...testcases import DustyTestCase
 from dusty import constants
 
 class TestBundlesCommands(DustyTestCase):

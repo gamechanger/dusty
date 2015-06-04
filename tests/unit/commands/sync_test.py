@@ -2,7 +2,7 @@ from mock import patch, call
 
 from dusty.commands.sync import sync_repos
 from dusty.commands.bundles import activate_bundle
-from ..utils import DustyTestCase
+from ...testcases import DustyTestCase
 
 class TestSyncCommand(DustyTestCase):
     def setUp(self):

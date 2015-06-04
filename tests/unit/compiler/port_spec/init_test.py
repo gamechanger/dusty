@@ -1,4 +1,4 @@
-from ...utils import DustyTestCase
+from ....testcases import DustyTestCase
 from dusty.compiler.port_spec import (_docker_compose_port_spec, _nginx_port_spec,
                                       _hosts_file_port_spec, get_port_spec_document, LOCALHOST,
                                       ReusedHostFullAddress, ReusedContainerPort)

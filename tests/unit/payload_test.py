@@ -1,6 +1,6 @@
 import cPickle
 
-from .utils import DustyTestCase
+from ..testcases import DustyTestCase
 from dusty.payload import Payload
 
 def _fn(*args, **kwargs):

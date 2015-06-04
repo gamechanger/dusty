@@ -5,7 +5,7 @@ import shutil
 import git
 from mock import Mock, patch
 
-from .utils import DustyTestCase
+from ..testcases import DustyTestCase
 from dusty.commands.repos import override_repo
 from dusty.source import (repo_is_overridden, short_repo_name,
                           git_error_handling, ensure_local_repo, update_local_repo,
