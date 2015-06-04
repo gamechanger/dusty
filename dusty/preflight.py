@@ -9,7 +9,7 @@ import logging
 import subprocess
 import warnings
 
-from .config import write_default_config
+from .config import write_default_config, get_config_value
 from . import constants
 from .warnings import daemon_warnings
 
@@ -71,8 +71,24 @@ def _ensure_config_dir_exists():
     if not os.path.exists(constants.CONFIG_DIR):
         os.makedirs(constants.CONFIG_DIR)
 
+def check_and_load_ssh_auth():
+    mac_username = get_config_value('mac_username')
+    if not mac_username:
+        logging.info("Can't setup ssh authorization; no mac_username specified")
+    else:
+        user_id = subprocess.check_output(['id', '-u', mac_username])
+        load_ssh_auth(user_id)
+
+def load_ssh_auth(user_id):
+    ssh_auth_sock = subprocess.check_output(['launchctl', 'asuser', user_id, 'launchctl', 'getenv', 'SSH_AUTH_SOCK'])
+    if ssh_auth_sock:
+        os.environ['SSH_AUTH_SOCK'] = ssh_auth_sock
+    else:
+        raise RuntimeError("SSH_AUTH_SOCK not determined; git operations may fail")
+
 def preflight_check():
     logging.info('Starting preflight check')
+    _check_and_load_ssh_auth()
     _check_nginx()
     _check_rsync()
     _check_virtualbox()
