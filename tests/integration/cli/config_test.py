@@ -2,7 +2,6 @@ import yaml
 import docopt
 
 from ...testcases import DustyIntegrationTestCase
-from ...fixtures import busybox_single_app_bundle_fixture
 from dusty.config import get_config
 
 class TestConfigCLI(DustyIntegrationTestCase):

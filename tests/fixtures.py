@@ -37,6 +37,9 @@ def basic_specs_fixture():
 
 def busybox_single_app_bundle_fixture(num_bundles=1):
     for bundle in range(num_bundles):
-        name = 'busybox-{}'.format(_num_to_alpha(bundle))
+        name = 'busybox{}'.format(_num_to_alpha(bundle))
         _write('bundle', name, {'description': 'Busybox bundle', 'apps': [name]})
-        _write('app', name, {'repo': 'github.com/fake/repo', 'image': 'busybox'})
+        _write('app', name, {'repo': 'github.com/gamechanger/dusty',
+                             'mount': '/repo',
+                             'image': 'busybox',
+                             'commands': {'always': 'sleep 999999999'}})
