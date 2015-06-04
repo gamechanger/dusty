@@ -1,6 +1,6 @@
 from mock import patch, call
 
-from ...utils import DustyTestCase
+from ....testcases import DustyTestCase
 from dusty.systems.rsync import sync_repos_by_app_name
 
 class TestRysnc(DustyTestCase):

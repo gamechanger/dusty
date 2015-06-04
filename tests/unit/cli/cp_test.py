@@ -2,7 +2,7 @@ import os
 
 from mock import patch
 
-from ..utils import DustyTestCase
+from ...testcases import DustyTestCase
 from dusty.payload import Payload
 from dusty.commands.cp import copy_between_containers, copy_from_local, copy_to_local
 from dusty.cli.cp import _split_path, _resolve_path, _validate_path_pair, main

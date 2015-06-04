@@ -1,6 +1,6 @@
 from mock import patch
 
-from ..utils import DustyTestCase
+from ...testcases import DustyTestCase
 from dusty.commands.script import script_info_for_app, execute_script
 
 class TestScriptCommands(DustyTestCase):

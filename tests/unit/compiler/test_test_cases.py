@@ -6,7 +6,7 @@ from nose.tools import nottest
 from . import (get_all_test_configs, resources_for_test_config, specs_for_test_config,
                assembled_specs_for_test_config, nginx_config_for_test_config, docker_compose_yaml_for_test_config)
 from dusty.compiler import spec_assembler
-from ..utils import DustyTestCase
+from ...testcases import DustyTestCase
 from dusty import constants
 
 @nottest

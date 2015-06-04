@@ -2,8 +2,8 @@
 
 import sys
 
-from ...unit.utils import DustyIntegrationTestCase
-from ...unit.fixtures import busybox_single_app_bundle_fixture
+from ...testcases import DustyIntegrationTestCase
+from ...fixtures import busybox_single_app_bundle_fixture
 
 class TestBundlesCLI(DustyIntegrationTestCase):
     def setUp(self):

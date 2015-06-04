@@ -1,7 +1,7 @@
 import os
 import tempfile
 
-from .utils import DustyTestCase
+from ..testcases import DustyTestCase
 from dusty import constants, config
 
 class TestConfig(DustyTestCase):

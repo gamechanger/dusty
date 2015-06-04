@@ -1,6 +1,6 @@
 from mock import patch, call
 
-from ..utils import DustyTestCase
+from ...testcases import DustyTestCase
 from dusty.commands.setup import (_get_mac_username, _get_nginx_includes_dir,
                                   setup_dusty_config, save_dusty_config)
 from dusty.payload import Payload

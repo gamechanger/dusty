@@ -1,4 +1,4 @@
-from .utils import DustyTestCase
+from ..testcases import DustyTestCase
 
 from dusty.dusty_warnings import Warnings
 

@@ -1,7 +1,7 @@
 import tempfile
 import shutil
 
-from .utils import DustyTestCase
+from ..testcases import DustyTestCase
 from dusty.commands.repos import override_repo
 from dusty.path import parent_dir, local_repo_path
 

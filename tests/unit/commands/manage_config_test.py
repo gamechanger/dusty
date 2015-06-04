@@ -6,7 +6,7 @@ import json
 import dusty.constants
 from dusty.commands.manage_config import list_config_values, save_value, _eligible_config_keys_for_setting
 from dusty.compiler.spec_assembler import get_specs_repo
-from ..utils import DustyTestCase
+from ...testcases import DustyTestCase
 from dusty import constants
 
 class TestManageConfigCommands(DustyTestCase):

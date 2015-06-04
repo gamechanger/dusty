@@ -1,4 +1,4 @@
-from .utils import DustyTestCase
+from ..testcases import DustyTestCase
 from dusty.preflight import _assert_executable_exists, PreflightException
 
 class PreflightTest(DustyTestCase):

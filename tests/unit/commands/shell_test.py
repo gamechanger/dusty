@@ -1,6 +1,6 @@
 from mock import patch
 
-from ..utils import DustyTestCase
+from ...testcases import DustyTestCase
 from dusty.commands.shell import execute_shell
 
 class TestShellCommands(DustyTestCase):

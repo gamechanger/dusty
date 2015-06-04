@@ -5,7 +5,7 @@ import textwrap
 import dusty.constants
 from dusty.systems.hosts import (_remove_current_dusty_config, _dusty_hosts_config,
                                 update_hosts_file_from_port_spec, _read_hosts)
-from ...utils import DustyTestCase
+from ....testcases import DustyTestCase
 
 class TestHostsSystem(DustyTestCase):
     def setUp(self):

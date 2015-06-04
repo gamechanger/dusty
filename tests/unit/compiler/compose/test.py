@@ -6,7 +6,7 @@ from dusty.compiler.compose import (get_compose_dict, _composed_app_dict,
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
                                     _lib_install_command, _lib_install_commands_for_app, _conditional_links)
 from ..test_test_cases import all_test_configs
-from ...utils import DustyTestCase
+from ....testcases import DustyTestCase
 
 basic_specs = {
     'apps': {
