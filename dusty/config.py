@@ -2,6 +2,9 @@
 This file determines the bundles the user currently wants active, as well
 as the location of the Dusty specifications on disk."""
 
+import logging
+import os
+import subprocess
 import yaml
 
 from . import constants
