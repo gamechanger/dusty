@@ -2,7 +2,7 @@ from mock import patch, call
 
 from ...testcases import DustyTestCase
 from dusty.commands.setup import (_get_mac_username, _get_nginx_includes_dir,
-                                  setup_dusty_config, save_dusty_config, save_dusty_config_from_setup)
+                                  setup_dusty_config, save_dusty_config)
 from dusty.payload import Payload
 from dusty import constants
 
@@ -52,7 +52,7 @@ class TestSetupCommands(DustyTestCase):
                                   constants.CONFIG_SPECS_REPO_KEY: 'github.com/gamechanger/dusty',
                                   constants.CONFIG_NGINX_DIR_KEY: '/etc/dusty/nginx'}
         return_payload = setup_dusty_config()
-        self.assertEqual(return_payload.fn, save_dusty_config_from_setup)
+        self.assertEqual(return_payload.fn, save_dusty_config)
         self.assertEqual(return_payload.args[0], expected_dict_argument)
 
     @patch('pwd.getpwnam')
