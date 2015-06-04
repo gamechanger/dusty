@@ -3,6 +3,7 @@ import subprocess
 import textwrap
 
 from ..payload import Payload
+from ..preflight import check_and_load_ssh_auth
 from ..config import save_config_value, get_config_value
 from ..log import log_to_client
 from .. import constants
@@ -62,6 +63,14 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
                          constants.CONFIG_SPECS_REPO_KEY: specs_repo,
                          constants.CONFIG_NGINX_DIR_KEY: nginx_includes_dir}
     return Payload(save_dusty_config, config_dictionary)
+
+def save_dusty_config_from_setup(config):
+    """
+    Saves the config values retrieved from the dusty setup command; since this is the first
+    time that mac_username is set, we need to also load the ssh_auth socket at this point
+    """
+    save_dusty_config(setup)
+    check_and_load_ssh_auth()
 
 def save_dusty_config(config):
     for key, value in config.iteritems():
