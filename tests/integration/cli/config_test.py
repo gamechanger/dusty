@@ -6,10 +6,6 @@ from ...fixtures import busybox_single_app_bundle_fixture
 from dusty.config import get_config
 
 class TestConfigCLI(DustyIntegrationTestCase):
-    def setUp(self):
-        super(TestConfigCLI, self).setUp()
-        busybox_single_app_bundle_fixture(num_bundles=1)
-
     def test_config_list_returns(self):
         self.run_command('config list')
         self.assertInSameLine('Key', 'Description', 'Value')
