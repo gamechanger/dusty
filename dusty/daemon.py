@@ -1,13 +1,10 @@
-"""Dusty daemon. Must be run with root permissions.
-
-The daemon listens for dusty commands and makes appropriate system calls.
+"""Listen for user commands to Dusty
 
 Usage:
   dustyd [--suppress-warnings]
 
 Options:
   --suppress-warnings  Do not display run time warnings to the client
-
 """
 
 import os
@@ -79,12 +76,12 @@ def _listen_on_socket(socket_path, suppress_warnings):
             logging.exception('Exception on socket listen')
 
 def main():
-    suppress_warnings = docopt(__doc__)['--suppress-warnings']
+    args = docopt(__doc__)
     notify('Dusty initializing...')
     configure_logging()
     preflight_check()
     refresh_config_warnings()
-    _listen_on_socket(SOCKET_PATH, suppress_warnings)
+    _listen_on_socket(SOCKET_PATH, args['--suppress-warnings'])
 
 if __name__ == '__main__':
     main()
