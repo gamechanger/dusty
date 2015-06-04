@@ -5,7 +5,6 @@ script:
   - cd $REPO
   - python setup.py install
   - pip install pylint nose
-  - cd $REPO
   - python setup.py nosetests --tests tests/unit
   - |
     pylint --ignored-classes=_socketobject --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --reports=y -E y $REPO/dusty
