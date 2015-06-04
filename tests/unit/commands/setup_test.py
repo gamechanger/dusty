@@ -52,7 +52,7 @@ class TestSetupCommands(DustyTestCase):
                                   constants.CONFIG_SPECS_REPO_KEY: 'github.com/gamechanger/dusty',
                                   constants.CONFIG_NGINX_DIR_KEY: '/etc/dusty/nginx'}
         return_payload = setup_dusty_config()
-        self.assertEqual(return_payload.fn, save_dusty_config)
+        self.assertEqual(return_payload.fn, save_dusty_config_from_setup)
         self.assertEqual(return_payload.args[0], expected_dict_argument)
 
     @patch('pwd.getpwnam')
