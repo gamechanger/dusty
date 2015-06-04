@@ -95,9 +95,8 @@ class DustyIntegrationTestCase(TestCase):
 
     @property
     def stdout(self):
-        """Returns any stdout that has been generated *since* self.stdout_start
-        was set after test setup. This essentially strips the messages from
-        test setup out of the stdout, which is usually what you want."""
+        """Returns any stdout that has been generated *since* the last time
+        clear_stdout was called."""
         return sys.stdout.getvalue()[self.stdout_start:].strip()
 
     @patch('sys.exit')
