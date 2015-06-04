@@ -1,8 +1,6 @@
 import textwrap
 from collections import defaultdict
 
-import warnings
-
 class Warnings(object):
     def __init__(self):
         self._stored = defaultdict(list)
@@ -27,13 +25,4 @@ class Warnings(object):
                                for message in self._stored[namespace]])
         return result
 
-class ClientWarnings(object):
-    def __init__(self):
-        self._suppress_warnings = False
-
-    def warn(self, msg):
-        if not self._suppress_warnings:
-            warnings.warn(msg)
-
 daemon_warnings = Warnings()
-client_warnings = ClientWarnings()
