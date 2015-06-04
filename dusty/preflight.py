@@ -9,7 +9,7 @@ import logging
 import subprocess
 import warnings
 
-from .config import write_default_config
+from .config import write_default_config, check_and_load_ssh_auth
 from . import constants
 from .warnings import daemon_warnings
 
@@ -73,6 +73,7 @@ def _ensure_config_dir_exists():
 
 def preflight_check():
     logging.info('Starting preflight check')
+    check_and_load_ssh_auth()
     _check_nginx()
     _check_rsync()
     _check_virtualbox()

@@ -2,6 +2,9 @@
 This file determines the bundles the user currently wants active, as well
 as the location of the Dusty specifications on disk."""
 
+import logging
+import os
+import subprocess
 import yaml
 
 from . import constants
@@ -35,6 +38,8 @@ def save_config_value(key, value):
     current_config = get_config()
     current_config[key] = value
     save_config(current_config)
+    if key == constants.CONFIG_MAC_USERNAME_KEY:
+        check_and_load_ssh_auth()
 
 def refresh_config_warnings():
     daemon_warnings.clear_namespace('config')
@@ -42,3 +47,25 @@ def refresh_config_warnings():
         if get_config_value(key) is None:
             daemon_warnings.warn('config',
                                  'Configuration key {} is not set, please set it using `dusty config`.'.format(key))
+
+def check_and_load_ssh_auth():
+    """
+    Will check the mac_username config value; if it is present, will load that user's
+    SSH_AUTH_SOCK environment variable to the current environment.  This allows git clones
+    to behave the same for the daemon as they do for the user
+    """
+    mac_username = get_config_value(constants.CONFIG_MAC_USERNAME_KEY)
+    if not mac_username:
+        logging.info("Can't setup ssh authorization; no mac_username specified")
+    else:
+        user_id = subprocess.check_output(['id', '-u', mac_username])
+        _load_ssh_auth(user_id)
+
+def _load_ssh_auth(user_id):
+    ssh_auth_sock = subprocess.check_output(['launchctl', 'asuser', user_id, 'launchctl', 'getenv', 'SSH_AUTH_SOCK']).rstrip()
+    if ssh_auth_sock:
+        logging.info("Setting SSH_AUTH_SOCK to {}".format(ssh_auth_sock))
+        os.environ['SSH_AUTH_SOCK'] = ssh_auth_sock
+    else:
+        raise RuntimeError("SSH_AUTH_SOCK not determined; git operations may fail")
+
