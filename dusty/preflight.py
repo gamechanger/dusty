@@ -72,14 +72,19 @@ def _ensure_config_dir_exists():
         os.makedirs(constants.CONFIG_DIR)
 
 def check_and_load_ssh_auth():
+    """
+    Will check the mac_username config value; if it is present, will load that user's
+    SSH_AUTH_SOCK environment variable to the current environment.  This allows git clones
+    to behave the same for the daemon as they do for the user
+    """
     mac_username = get_config_value('mac_username')
     if not mac_username:
         logging.info("Can't setup ssh authorization; no mac_username specified")
     else:
         user_id = subprocess.check_output(['id', '-u', mac_username])
-        load_ssh_auth(user_id)
+        _load_ssh_auth(user_id)
 
-def load_ssh_auth(user_id):
+def _load_ssh_auth(user_id):
     ssh_auth_sock = subprocess.check_output(['launchctl', 'asuser', user_id, 'launchctl', 'getenv', 'SSH_AUTH_SOCK']).rstrip()
     if ssh_auth_sock:
         logging.info("Setting SSH_AUTH_SOCK to {}".format(ssh_auth_sock))
