@@ -1,7 +1,5 @@
 # coding=utf-8
 
-import sys
-
 from ...testcases import DustyIntegrationTestCase
 from ...fixtures import busybox_single_app_bundle_fixture
 

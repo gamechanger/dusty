@@ -3,12 +3,13 @@ import sys
 import shutil
 import tempfile
 import logging
+import getpass
 
 from unittest import TestCase
 from nose.tools import nottest
 from mock import patch
 
-import dusty.constants
+from dusty import constants
 from dusty.config import write_default_config, save_config_value
 from dusty.compiler.spec_assembler import get_specs_repo
 from dusty.commands.repos import override_repo
@@ -29,25 +30,28 @@ class DustyTestCase(TestCase):
         self.temp_specs_path = tempfile.mkdtemp()
         self.temp_repos_path = tempfile.mkdtemp()
 
-        dusty.constants.CONFIG_PATH = self.temp_config_path
+        constants.CONFIG_PATH = self.temp_config_path
         write_default_config()
-        save_config_value(dusty.constants.CONFIG_SPECS_REPO_KEY, 'github.com/org/dusty-specs')
+        save_config_value(constants.CONFIG_SPECS_REPO_KEY, 'github.com/org/dusty-specs')
         override_repo(get_specs_repo(), self.temp_specs_path)
         basic_specs_fixture()
 
         self.client_output = []
         self.capture_handler = TestCaptureHandler(self.client_output)
-        logging.getLogger(dusty.constants.SOCKET_LOGGER_NAME).addHandler(self.capture_handler)
+        logging.getLogger(constants.SOCKET_LOGGER_NAME).addHandler(self.capture_handler)
 
     def tearDown(self):
         os.remove(self.temp_config_path)
         shutil.rmtree(self.temp_specs_path)
         shutil.rmtree(self.temp_repos_path)
-        logging.getLogger(dusty.constants.SOCKET_LOGGER_NAME).removeHandler(self.capture_handler)
+        logging.getLogger(constants.SOCKET_LOGGER_NAME).removeHandler(self.capture_handler)
 
     @property
     def last_client_output(self):
         return self.client_output[-1] if self.client_output else None
+
+class CommandError(Exception):
+    pass
 
 class DustyIntegrationTestCase(TestCase):
     """This test case intentionally avoids mocking whenever possible
@@ -67,20 +71,43 @@ class DustyIntegrationTestCase(TestCase):
                                "machine unless you know what you're doing!")
         self.overridden_specs_path = tempfile.mkdtemp()
         write_default_config()
-        save_config_value('specs_repo', 'github.com/gamechanger/example-dusty-specs')
+        save_config_value(constants.CONFIG_SETUP_KEY, True)
+        save_config_value(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/example-dusty-specs')
+        # Run this through the daemon itself so it refreshes its view of daemon warnings
+        self.run_command('config set {} {}'.format(constants.CONFIG_MAC_USERNAME_KEY, self.current_user))
         override_repo(get_specs_repo(), self.overridden_specs_path)
+        self.clear_stdout()
 
     def tearDown(self):
         shutil.rmtree(self.overridden_specs_path)
 
+    def clear_stdout(self):
+        self.stdout_start = len(sys.stdout.getvalue())
+
+    @property
+    def current_user(self):
+        return getpass.getuser()
+
+    @property
+    def CommandError(self):
+        """Pure convenience to avoid having to import this explicitly"""
+        return CommandError
+
     @property
     def stdout(self):
-        return sys.stdout.getvalue().strip()
+        """Returns any stdout that has been generated *since* self.stdout_start
+        was set after test setup. This essentially strips the messages from
+        test setup out of the stdout, which is usually what you want."""
+        return sys.stdout.getvalue()[self.stdout_start:].strip()
 
     @patch('sys.exit')
     def run_command(self, args, fake_exit):
         sys.argv = ['dusty'] + args.split(' ')
         client_entrypoint()
+        for call in fake_exit.mock_calls:
+            name, args, kwargs = call
+            if len(args) == 1 and args[0] > 0:
+                raise CommandError('Command {} returned with exit code: {}'.format(' '.join(sys.argv), args[0]))
 
     def _in_same_line(self, *values):
         for line in self.stdout.splitlines():

@@ -58,7 +58,8 @@ def _run_command(sock, command):
     while True:
         data = sock.recv(65535)
         if data:
-            sys.stdout.write(data.decode('utf-8'))
+            stripped = data.decode('utf-8').replace(constants.SOCKET_TERMINATOR, '').replace(constants.SOCKET_ERROR_TERMINATOR, '')
+            sys.stdout.write(stripped)
             if data.endswith(constants.SOCKET_TERMINATOR):
                 break
             elif data.endswith(constants.SOCKET_ERROR_TERMINATOR):
