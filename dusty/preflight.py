@@ -80,8 +80,9 @@ def check_and_load_ssh_auth():
         load_ssh_auth(user_id)
 
 def load_ssh_auth(user_id):
-    ssh_auth_sock = subprocess.check_output(['launchctl', 'asuser', user_id, 'launchctl', 'getenv', 'SSH_AUTH_SOCK'])
+    ssh_auth_sock = subprocess.check_output(['launchctl', 'asuser', user_id, 'launchctl', 'getenv', 'SSH_AUTH_SOCK']).rstrip()
     if ssh_auth_sock:
+        logging.info("Setting SSH_AUTH_SOCK to {}".format(ssh_auth_sock))
         os.environ['SSH_AUTH_SOCK'] = ssh_auth_sock
     else:
         raise RuntimeError("SSH_AUTH_SOCK not determined; git operations may fail")
