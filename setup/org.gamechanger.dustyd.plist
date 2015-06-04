@@ -10,7 +10,7 @@
   <key>KeepAlive</key>
   <true/>
   <key>Label</key>
-  <string>org.gc.dustyd</string>
+  <string>org.gamechanger.dustyd</string>
   <key>ProgramArguments</key>
   <array>
     <string>bash</string>
