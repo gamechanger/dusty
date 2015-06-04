@@ -88,7 +88,7 @@ def load_ssh_auth(user_id):
 
 def preflight_check():
     logging.info('Starting preflight check')
-    _check_and_load_ssh_auth()
+    check_and_load_ssh_auth()
     _check_nginx()
     _check_rsync()
     _check_virtualbox()
