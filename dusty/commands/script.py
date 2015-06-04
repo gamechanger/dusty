@@ -16,11 +16,10 @@ def script_info_for_app(app_name):
         log_to_client('No scripts registered for app {}'.format(app_name))
         return
 
-    table = PrettyTable(['Script', 'Description', 'Accepts Arguments'])
+    table = PrettyTable(['Script', 'Description'])
     for script_name, script_spec in app_specs['scripts'].iteritems():
         table.add_row([script_name,
-                       '\n'.join(textwrap.wrap(script_spec.get('description', ''), 80)),
-                       u"✓" if script_spec.get('accepts_arguments', False) else ""])
+                       '\n'.join(textwrap.wrap(script_spec.get('description', ''), 80))])
     log_to_client(table.get_string(sortby='Script'))
 
 def execute_script(app_name, script_name, script_arguments=[]):
