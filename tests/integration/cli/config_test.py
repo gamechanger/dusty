@@ -7,16 +7,15 @@ from dusty.config import get_config
 
 class TestConfigCLI(DustyIntegrationTestCase):
     def test_config_list_returns(self):
-        self.run_command('config list')
-        self.assertInSameLine('Key', 'Description', 'Value')
-        self.assertInSameLine('bundles', '[]')
-        self.assertInSameLine('mac_username', self.current_user)
-        self.assertInSameLine('setup_has_run', 'True')
+        result = self.run_command('config list')
+        self.assertInSameLine(result, 'Key', 'Description', 'Value')
+        self.assertInSameLine(result, 'bundles', '[]')
+        self.assertInSameLine(result, 'mac_username', self.current_user)
+        self.assertInSameLine(result, 'setup_has_run', 'True')
 
     def test_config_listvalues_returns(self):
-        self.run_command('config listvalues')
-        output = yaml.load(self.stdout)
-        self.assertItemsEqual(output, get_config())
+        result = yaml.load(self.run_command('config listvalues'))
+        self.assertItemsEqual(result, get_config())
 
     def test_config_set_fails_with_no_args(self):
         with self.assertRaises(docopt.DocoptExit):
@@ -28,7 +27,5 @@ class TestConfigCLI(DustyIntegrationTestCase):
 
     def test_config_set_works_with_valid_input(self):
         self.run_command('config set mac_username steve')
-        self.clear_stdout()
-        self.run_command('config listvalues')
-        output = yaml.load(self.stdout)
-        self.assertEqual(output['mac_username'], 'steve')
+        result = yaml.load(self.run_command('config listvalues'))
+        self.assertEqual(result['mac_username'], 'steve')
