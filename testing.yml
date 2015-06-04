@@ -2,13 +2,9 @@ image: docker.gamechanger.io/python2.7
 script:
   - mkdir /gc
   - cd /gc
-  - git clone git@github.com:gamechanger/dusty-specs.git
   - cd $REPO
   - python setup.py install
   - pip install pylint nose
-  - cd /gc/dusty-specs
-  - dusty validate .
-  - cd $REPO
   - python setup.py nosetests --tests tests/unit
   - |
     pylint --ignored-classes=_socketobject --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --reports=y -E y $REPO/dusty
