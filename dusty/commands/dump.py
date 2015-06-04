@@ -3,7 +3,7 @@ import subprocess
 from .. import constants
 from ..log import log_to_client
 from ..demote import check_output_demoted
-from ..dusty_warnings import daemon_warnings
+from ..warnings import daemon_warnings
 
 DIAGNOSTIC_SUBPROCESS_COMMANDS = [
     ['nginx', '-v'],
