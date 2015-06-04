@@ -9,7 +9,7 @@ import logging
 import subprocess
 import warnings
 
-from .config import write_default_config, get_config_value, check_and_load_ssh_auth
+from .config import write_default_config, check_and_load_ssh_auth
 from . import constants
 from .warnings import daemon_warnings
 

@@ -3,7 +3,6 @@ import subprocess
 import textwrap
 
 from ..payload import Payload
-from ..preflight import check_and_load_ssh_auth
 from ..config import save_config_value, get_config_value
 from ..log import log_to_client
 from .. import constants
