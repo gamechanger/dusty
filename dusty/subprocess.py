@@ -1,3 +1,9 @@
+"""Module for running subprocesses.  Providies features such as
+demotion, to execute the process as another user, log streaming
+to the client"""
+
+from __future__ import absolute_import
+
 import os
 import pwd
 import subprocess
