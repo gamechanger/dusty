@@ -15,7 +15,7 @@ def _demote_to_user(user_name):
         os.setuid(pw_record.pw_uid)
     return _demote
 
-def _wrap_subprocess(fn, shell_args, demote=True, env=None, **kwargs):
+def run_subprocess(fn, shell_args, demote=True, env=None, **kwargs):
     if env:
         passed_env = copy(os.environ)
         passed_env.update(env)
@@ -26,17 +26,9 @@ def _wrap_subprocess(fn, shell_args, demote=True, env=None, **kwargs):
     output = fn(shell_args, env=passed_env, **kwargs)
     return output
 
-def check_call(shell_args, demote=True, env=None, redirect_stderr=False):
-    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
-    return _wrap_subprocess(subprocess.check_call, shell_args, demote=demote, env=env, **kwargs)
-
-def check_output(shell_args, demote=True, env=None, redirect_stderr=False):
-    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
-    return _wrap_subprocess(subprocess.check_output, shell_args, demote=demote, env=env, **kwargs)
-
 def check_and_log_output_and_error(shell_args, demote=True, env=None, strip_newlines=False):
     total_output = ""
-    process = _wrap_subprocess(subprocess.Popen, shell_args, demote=demote, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    process = run_subprocess(subprocess.Popen, shell_args, demote=demote, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for output in iter(process.stdout.readline, ''):
         if not strip_newlines or output.strip('\n') != '':
             total_output += output
@@ -47,10 +39,12 @@ def check_and_log_output_and_error(shell_args, demote=True, env=None, strip_newl
     return total_output
 
 def check_call_demoted(shell_args, env=None, redirect_stderr=False):
-    return check_call(shell_args, demote=True, env=env, redirect_stderr=redirect_stderr)
+    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
+    return run_subprocess(subprocess.check_call, shell_args, demote=True, env=env, **kwargs)
 
 def check_output_demoted(shell_args, env=None, redirect_stderr=False):
-    return check_output(shell_args, demote=True, env=env, redirect_stderr=redirect_stderr)
+    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
+    return run_subprocess(subprocess.check_output, shell_args, demote=True, env=env, **kwargs)
 
 def check_and_log_output_and_error_demoted(shell_args, env=None, strip_newlines=False):
     return check_and_log_output_and_error(shell_args, demote=True, env=env, strip_newlines=strip_newlines)
