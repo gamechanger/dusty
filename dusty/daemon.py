@@ -1,10 +1,11 @@
 """Listen for user commands to Dusty
 
 Usage:
-  dustyd [--suppress-warnings]
+  dustyd [--suppress-warnings] [--preflight-only]
 
 Options:
   --suppress-warnings  Do not display run time warnings to the client
+  --preflight-only  Only run the preflight_check, then exit
 """
 
 import os
@@ -80,6 +81,8 @@ def main():
     notify('Dusty initializing...')
     configure_logging()
     preflight_check()
+    if args['--preflight-only']:
+        return
     refresh_config_warnings()
     _listen_on_socket(SOCKET_PATH, args['--suppress-warnings'])
 
