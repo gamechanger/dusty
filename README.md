@@ -10,6 +10,11 @@ version of dusty's binaries, and set up a dustyd daemon plist:
 bash `curl -L https://raw.githubusercontent.com/gamechanger/dusty/master/setup/install.sh`
 ```
 
+This will:
+ * Add `dusty` and `dustyd` binaries inside /usr/local/bin
+ * Put an `org.gamechanger.dustyd.plist` file in `/System/Library/LaunchDaemons`
+ * Load the plist file (after unloading it, in case you're updating dusty)
+
 The daemon will throw errors if any of its required programs aren't already installed:
  * VBoxManage
  * boot2docker
