@@ -90,13 +90,9 @@ def _ensure_config_dir_exists():
 def preflight_check():
     logging.info('Starting preflight check')
     errors = []
-    errors.append(_check_nginx())
-    errors.append(_check_rsync())
-    errors.append(_check_virtualbox())
-    errors.append(_check_boot2docker())
-    errors.append(_check_docker())
-    errors.append(_check_docker_compose())
-    errors.append(_assert_hosts_file_is_writable())
+    for check in [_check_nginx, _check_rsync, _check_virtualbox, _check_boot2docker, _check_docker,
+                  _check_docker_compose, _assert_hosts_file_is_writable]:
+        errors.append(check)
     str_errors = [str(e) for e in errors if e is not None]
     if str_errors:
         raise PreflightException("Preflight Errors: \n\t{}".format('\n\t'.join(str_errors)))
