@@ -11,7 +11,7 @@ from ....testcases import DustyTestCase
 basic_specs = {
     'apps': {
         'app1': {
-            'repo': '/cool/repo/app1',
+            'repo': '/app1',
             'depends': {
                 'libs': ['lib1', 'lib2'],
                 'services': ['service1', 'service2'],
@@ -27,12 +27,12 @@ basic_specs = {
     },
     'libs': {
         'lib1': {
-            'repo': '/cool/repo/lib1',
+            'repo': '/lib1',
             'mount': '/gc/lib1',
             'install': './install.sh'
         },
         'lib2': {
-            'repo': '/cool/repo/lib2',
+            'repo': '/lib2',
             'mount': '/gc/lib2',
             'install': 'python setup.py develop'
         }
@@ -57,12 +57,16 @@ basic_port_specs = {
     }
 }
 
-
-def vm_repo_path(name):
-    return "/Users/gc/{}".format(name.split('/')[-1])
-
-@patch('dusty.compiler.compose.vm_repo_path', side_effect=vm_repo_path)
 class TestComposeCompiler(DustyTestCase):
+    def setUp(self):
+        super(TestComposeCompiler, self).setUp()
+        self.old_vm_repos_dir = constants.VM_REPOS_DIR
+        constants.VM_REPOS_DIR = '/Users/gc'
+
+    def tearDown(self):
+        super(TestComposeCompiler, self).tearDown()
+        constants.VM_REPOS_DIR = self.old_vm_repos_dir
+
     def test_composed_volumes(self, *args):
         expected_volumes = [
             '/cp/app1:/cp',

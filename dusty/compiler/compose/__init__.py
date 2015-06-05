@@ -3,7 +3,8 @@ import logging
 import yaml
 
 from ..spec_assembler import get_assembled_specs
-from ...path import vm_repo_path, vm_cp_path
+from ...path import vm_cp_path
+from ...source import Repo
 from ... import constants
 
 def get_compose_dict(assembled_specs, port_specs):
@@ -130,8 +131,7 @@ def _get_cp_volume_mount(app_name):
 def _get_app_volume_mount(app_spec):
     """ This returns the formatted volume mount spec to mount the local code for an app in the
     container """
-    app_repo_path = vm_repo_path(app_spec['repo'])
-    return "{}:{}".format(app_repo_path, _container_code_path(app_spec))
+    return "{}:{}".format(Repo(app_spec['repo']).vm_path, _container_code_path(app_spec))
 
 def _container_code_path(spec):
     """ Returns the path inside the docker container that a spec (for an app or lib) says it wants
@@ -143,6 +143,5 @@ def _get_libs_volume_mounts(app_name, assembled_specs):
     volumes = []
     for lib_name in assembled_specs['apps'][app_name].get('depends', {}).get('libs', []):
         lib_spec = assembled_specs['libs'][lib_name]
-        lib_repo_path = vm_repo_path(lib_spec['repo'])
-        volumes.append("{}:{}".format(lib_repo_path, _container_code_path(lib_spec)))
+        volumes.append("{}:{}".format(Repo(lib_spec['repo']).vm_path, _container_code_path(lib_spec)))
     return volumes

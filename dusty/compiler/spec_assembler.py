@@ -4,9 +4,8 @@ import yaml
 import logging
 
 from ..config import get_config_value
-from ..path import local_repo_path
 from .. import constants
-
+from ..source import Repo
 
 def _get_dependent(dependent_type, name, specs, root_spec_type):
     """
@@ -105,10 +104,10 @@ def get_assembled_specs():
     return specs
 
 def get_specs_repo():
-    return get_config_value(constants.CONFIG_SPECS_REPO_KEY)
+    return Repo(get_config_value(constants.CONFIG_SPECS_REPO_KEY))
 
 def get_specs_path():
-    return local_repo_path(get_specs_repo())
+    return get_specs_repo().local_path
 
 def get_specs():
     specs_path = get_specs_path()
@@ -143,5 +142,5 @@ def get_all_repos(active_only=False, include_specs_repo=True):
     for type_key in ['apps', 'libs']:
         for spec in specs[type_key].itervalues():
             if 'repo' in spec:
-                repos.add(spec['repo'])
+                repos.add(Repo(spec['repo']))
     return repos

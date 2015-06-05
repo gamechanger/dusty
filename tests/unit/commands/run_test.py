@@ -1,6 +1,7 @@
 from mock import patch, call
 
 from dusty.commands.run import restart_apps_or_services
+from dusty.source import Repo
 from ...testcases import DustyTestCase
 
 class TestRunCommands(DustyTestCase):
@@ -81,7 +82,8 @@ class TestRunCommands(DustyTestCase):
         fake_get_assembled_specs.return_value = self.specs
         fake_get_specs.return_value = self.specs
         restart_apps_or_services()
-        fake_rsync.sync_repos.assert_has_calls([call(set(['github.com/app/a', 'github.com/app/b', 'github.com/lib/a', 'github.com/lib/b']))])
+        fake_rsync.sync_repos.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/app/b'),
+                                                          Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
 
     @patch('dusty.commands.run.docker.compose.restart_running_services')
     @patch('dusty.commands.run.rsync')

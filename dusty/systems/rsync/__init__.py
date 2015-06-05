@@ -5,8 +5,8 @@ from subprocess import check_call, CalledProcessError
 from ... import constants
 from ...config import get_config_value
 from ...demote import check_call_demoted, check_and_log_output_and_error_demoted
-from ...source import repo_is_overridden, get_expanded_repo_name
-from ...path import local_repo_path, vm_repo_path, parent_dir
+from ...source import Repo
+from ...path import parent_dir
 from ...log import log_to_client
 from dusty.compiler.spec_assembler import get_repo_of_app_or_library, get_assembled_specs
 
@@ -49,12 +49,10 @@ def sync_local_path_from_vm(local_path, remote_path, demote=False, is_dir=True):
 
 def sync_repos(repos):
     logging.info('Syncing repos over rsync')
-    for repo_name in repos:
-        repo_name = get_expanded_repo_name(repo_name)
-        repo_type = 'overridden' if repo_is_overridden(repo_name) else 'Dusty-managed'
-        remote_path = vm_repo_path(repo_name)
-        log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo_name, remote_path))
-        sync_local_path_to_vm(local_repo_path(repo_name), remote_path)
+    for repo in repos:
+        repo_type = 'overridden' if repo.is_overridden else 'Dusty-managed'
+        log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo.remote_path, repo.vm_path))
+        sync_local_path_to_vm(repo.local_path, repo.vm_path)
 
 def sync_repos_by_app_name(app_names):
     repos = set()

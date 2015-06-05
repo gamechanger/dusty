@@ -51,32 +51,36 @@ class TestReposCommands(DustyTestCase):
 
     def test_override_repo(self):
         override_repo('github.com/app/a', self.temp_specs_path)
-        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY), {get_specs_repo(): self.temp_specs_path,
-                                                                   'github.com/app/a': self.temp_specs_path})
+        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY),
+                              {get_specs_repo().remote_path: self.temp_specs_path,
+                               'github.com/app/a': self.temp_specs_path})
 
     def test_override_then_manage_repo(self):
         override_repo('github.com/app/a', self.temp_specs_path)
-        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY), {get_specs_repo(): self.temp_specs_path,
-                                                                   'github.com/app/a': self.temp_specs_path})
+        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY),
+                              {get_specs_repo().remote_path: self.temp_specs_path,
+                               'github.com/app/a': self.temp_specs_path})
         manage_repo('github.com/app/a')
-        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY), {get_specs_repo(): self.temp_specs_path})
+        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY),
+                              {get_specs_repo().remote_path: self.temp_specs_path})
 
     def test_override_repos_from_directory(self):
         override_repos_from_directory(self.temp_repos_path)
-        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY), {get_specs_repo(): self.temp_specs_path,
-                                                                   'github.com/app/a': os.path.join(self.temp_repos_path, 'a'),
-                                                                   'github.com/app/b': os.path.join(self.temp_repos_path, 'b'),
-                                                                   'github.com/lib/a': os.path.join(self.temp_repos_path, 'a')})
+        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY),
+                              {get_specs_repo().remote_path: self.temp_specs_path,
+                               'github.com/app/a': os.path.join(self.temp_repos_path, 'a'),
+                               'github.com/app/b': os.path.join(self.temp_repos_path, 'b'),
+                               'github.com/lib/a': os.path.join(self.temp_repos_path, 'a')})
 
-    @patch('dusty.commands.repos.update_local_repo')
+    @patch('dusty.source.Repo.update_local_repo')
     def test_update_managed_repos(self, fake_update_local_repo):
         activate_bundle(['bundle-a'])
         update_managed_repos()
-        fake_update_local_repo.assert_called_once_with('github.com/app/a')
+        fake_update_local_repo.assert_called_once_with()
 
-    @patch('dusty.commands.repos.update_local_repo')
+    @patch('dusty.source.Repo.update_local_repo')
     def test_update_managed_repos_for_both(self, fake_update_local_repo):
         activate_bundle(['bundle-a'])
         activate_bundle(['bundle-b'])
         update_managed_repos()
-        fake_update_local_repo.assert_has_calls([call('github.com/app/a'), call('github.com/app/b')])
+        fake_update_local_repo.assert_has_calls([call(), call()])
