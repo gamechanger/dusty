@@ -3,7 +3,7 @@ import subprocess
 import textwrap
 
 from ..payload import Payload
-from ..config import save_config_value, get_config_value
+from ..config import save_config_value, get_config_value, verify_mac_username
 from ..log import log_to_client
 from .. import constants
 
@@ -20,12 +20,6 @@ def _get_mac_username():
         return proposed_mac_username
     else:
         return _get_raw_input('Enter your actual mac_username: ')
-
-def _verify_mac_username(username):
-    try:
-        pwd.getpwnam(username)
-    except:
-        raise RuntimeError('No user found named {}'.format(username))
 
 def _get_default_specs_repo():
     _pretty_print_key_info(constants.CONFIG_SPECS_REPO_KEY)
@@ -44,7 +38,7 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
         print 'Setting mac_username to {} based on flag'.format(mac_username)
     else:
         mac_username = _get_mac_username()
-    _verify_mac_username(mac_username)
+    verify_mac_username(mac_username)
     print ''
 
     if specs_repo:

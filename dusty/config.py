@@ -4,6 +4,7 @@ as the location of the Dusty specifications on disk."""
 
 import logging
 import os
+import pwd
 import subprocess
 import yaml
 
@@ -38,7 +39,7 @@ def save_config_value(key, value):
     current_config = get_config()
     current_config[key] = value
     if key == constants.CONFIG_MAC_USERNAME_KEY:
-        verify_user(value)
+        verify_mac_username(value)
         save_config(current_config)
         check_and_load_ssh_auth()
     else:
@@ -51,12 +52,12 @@ def refresh_config_warnings():
             daemon_warnings.warn('config',
                                  'Configuration key {} is not set, please set it using `dusty config`.'.format(key))
 
-def verify_user(username):
-    """Will raise an error if the user doesn't exist"""
+def verify_mac_username(username):
+    """Raise an error if the user doesn't exist"""
     try:
-        subprocess.check_output(['id', username])
-    except subprocess.CalledProcessError:
-        raise RuntimeError("Invalid username {} specified".format(username))
+        pwd.getpwnam(username)
+    except:
+        raise RuntimeError('No user found named {}'.format(username))
 
 def check_and_load_ssh_auth():
     """
