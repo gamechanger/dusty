@@ -4,22 +4,17 @@ Docker-based development environment manager
 
 
 # Installation
-Currently the recommended way to install dusty is to clone the dusty repository, create dusty binaries using our script, and place them in your `/usr/local/bin` folder.
-These commands should do that:
+Currently the recommended way to install dusty is to use our installation script, which will install the latest
+version of dusty's binaries, and set up a dustyd daemon plist:
 ```
-git clone https://github.com/gamechanger/dusty.git
-cd dusty
-./setup/create_binaries.sh
-cp dist/dusty /usr/local/bin/dusty
-cp dist/dustyd /usr/local/bin/dustyd
+bash -c "`curl -L https://raw.githubusercontent.com/gamechanger/dusty/master/setup/install.sh`"
 ```
 
-We've also created a plist file that can run the `dustyd` daemon.
-One way to activate the daemon is to run (from the dusty directory):
-```
-sudo cp setup/org.gc.dustyd.plist /System/Library/LaunchDaemons/.
-sudo launchctl load /System/Library/LaunchDaemons/org.gc.dustyd.plist
-```
+This will:
+ * Add `dusty` and `dustyd` binaries inside /usr/local/bin
+ * Put an `org.gamechanger.dustyd.plist` file in `/System/Library/LaunchDaemons`
+ * Load the plist file (after unloading it, in case you're updating dusty)
+
 The daemon will throw errors if any of its required programs aren't already installed:
  * VBoxManage
  * boot2docker
