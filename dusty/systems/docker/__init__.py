@@ -4,7 +4,7 @@ import docker
 import logging
 
 from ...log import log_to_client
-from ...demote import check_output_demoted
+from ...subprocess import check_output_demoted
 from ...compiler.spec_assembler import get_specs
 
 

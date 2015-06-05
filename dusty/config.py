@@ -2,6 +2,8 @@
 This file determines the bundles the user currently wants active, as well
 as the location of the Dusty specifications on disk."""
 
+from __future__ import absolute_import
+
 import logging
 import os
 import pwd

@@ -1,3 +1,9 @@
+"""Module for running subprocesses.  Providies features such as
+demotion, to execute the process as another user, log streaming
+to the client"""
+
+from __future__ import absolute_import
+
 import os
 import pwd
 import subprocess
@@ -15,26 +21,31 @@ def _demote_to_user(user_name):
         os.setuid(pw_record.pw_uid)
     return _demote
 
-def _check_demoted(fn, shell_args, env=None, **kwargs):
+def run_subprocess(fn, shell_args, demote=True, env=None, **kwargs):
     if env:
         passed_env = copy(os.environ)
         passed_env.update(env)
     else:
         passed_env = None
-    output = fn(shell_args, preexec_fn=_demote_to_user(get_config_value(constants.CONFIG_MAC_USERNAME_KEY)), env=passed_env, **kwargs)
+    if demote:
+        kwargs['preexec_fn'] = _demote_to_user(get_config_value(constants.CONFIG_MAC_USERNAME_KEY))
+    output = fn(shell_args, env=passed_env, **kwargs)
     return output
 
 def check_call_demoted(shell_args, env=None, redirect_stderr=False):
     kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
-    return _check_demoted(subprocess.check_call, shell_args, env, **kwargs)
+    return run_subprocess(subprocess.check_call, shell_args, demote=True, env=env, **kwargs)
 
 def check_output_demoted(shell_args, env=None, redirect_stderr=False):
     kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
-    return _check_demoted(subprocess.check_output, shell_args, env, **kwargs)
+    return run_subprocess(subprocess.check_output, shell_args, demote=True, env=env, **kwargs)
 
 def check_and_log_output_and_error_demoted(shell_args, env=None, strip_newlines=False):
+    return check_and_log_output_and_error(shell_args, demote=True, env=env, strip_newlines=strip_newlines)
+
+def check_and_log_output_and_error(shell_args, demote=True, env=None, strip_newlines=False):
     total_output = ""
-    process = _check_demoted(subprocess.Popen, shell_args, env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    process = run_subprocess(subprocess.Popen, shell_args, demote=demote, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for output in iter(process.stdout.readline, ''):
         if not strip_newlines or output.strip('\n') != '':
             total_output += output
