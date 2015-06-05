@@ -37,9 +37,12 @@ def get_config_value(key):
 def save_config_value(key, value):
     current_config = get_config()
     current_config[key] = value
-    save_config(current_config)
     if key == constants.CONFIG_MAC_USERNAME_KEY:
+        verify_user(value)
+        save_config(current_config)
         check_and_load_ssh_auth()
+    else:
+        save_config(current_config)
 
 def refresh_config_warnings():
     daemon_warnings.clear_namespace('config')
@@ -47,6 +50,13 @@ def refresh_config_warnings():
         if get_config_value(key) is None:
             daemon_warnings.warn('config',
                                  'Configuration key {} is not set, please set it using `dusty config`.'.format(key))
+
+def verify_user(username):
+    """Will raise an error if the user doesn't exist"""
+    try:
+        subprocess.check_output(['id', username])
+    except subprocess.CalledProcessError:
+        raise RuntimeError("Invalid username {} specified".format(username))
 
 def check_and_load_ssh_auth():
     """
