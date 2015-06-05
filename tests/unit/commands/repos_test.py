@@ -20,10 +20,10 @@ class TestReposCommands(DustyTestCase):
         os.mkdir(os.path.join(self.temp_repos_path, 'a'))
         os.mkdir(os.path.join(self.temp_repos_path, 'b'))
 
-    def _assert_listed_repos(self, result, repo_override_tuples):
+    def _assert_listed_repos(self, result, repo_override_tuples, offset=0):
         for index, repo_override in enumerate(repo_override_tuples):
             repo, override = repo_override
-            output_row = index + 3
+            output_row = index + 3 + offset
             self.assertIn(repo, result.splitlines()[output_row])
             if override:
                 self.assertIn(override, result.splitlines()[output_row])
@@ -32,14 +32,16 @@ class TestReposCommands(DustyTestCase):
         list_repos()
         self._assert_listed_repos(self.last_client_output,
                                   [['github.com/app/a', False],
-                                   ['github.com/app/b', False]])
+                                   ['github.com/app/b', False]],
+                                  offset=1)
 
     def test_list_repos_with_one_override(self):
         override_repo('github.com/app/a', self.temp_specs_path)
         list_repos()
         self._assert_listed_repos(self.last_client_output,
                                   [['github.com/app/a', self.temp_specs_path],
-                                   ['github.com/app/b', False]])
+                                   ['github.com/app/b', False]],
+                                  offset=1)
 
     def test_list_repos_with_both_overridden(self):
         override_repo('github.com/app/a', self.temp_specs_path)
@@ -47,7 +49,8 @@ class TestReposCommands(DustyTestCase):
         list_repos()
         self._assert_listed_repos(self.last_client_output,
                                   [['github.com/app/a', self.temp_specs_path],
-                                   ['github.com/app/b', self.temp_specs_path]])
+                                   ['github.com/app/b', self.temp_specs_path]],
+                                  offset=1)
 
     def test_override_repo(self):
         override_repo('github.com/app/a', self.temp_specs_path)

@@ -29,7 +29,7 @@ def basic_specs_fixture():
                             'image': 'app/b',
                             'scripts': {'example': {'description': 'A script description',
                                                     'command': 'ls /'}}})
-    _write('app', 'app-c', {'repo': 'github.com/app/c',
+    _write('app', 'app-c', {'repo': '/gc/repos/c',
                             'image': 'app/c'})
     _write('lib', 'lib-a', {'repo': 'github.com/lib/a', 'image': 'lib/a'})
     _write('service', 'service-a', {'image': 'service/a'})
