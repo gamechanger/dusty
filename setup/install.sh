@@ -5,7 +5,9 @@ function bold_echo {
 }
 bold_echo "Downloading dusty files"
 curl -L https://github.com/gamechanger/dusty/releases/download/$release/dusty > /usr/local/bin/dusty
+chmod +x /usr/local/bin/dusty
 curl -L https://github.com/gamechanger/dusty/releases/download/$release/dustyd > /usr/local/bin/dustyd
+chmod +x /usr/local/bin/dustyd
 bold_echo "Authenticating as super user... needed to setup daemon"
 sudo -v
 bold_echo "Resetting dustyd daemon"
