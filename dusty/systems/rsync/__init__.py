@@ -4,7 +4,7 @@ from subprocess import check_call, CalledProcessError
 
 from ... import constants
 from ...config import get_config_value
-from ...demote import check_call_demoted, check_and_log_output_and_error_demoted
+from ...subprocess import check_call_demoted, check_and_log_output_and_error_demoted
 from ...source import Repo
 from ...path import parent_dir
 from ...log import log_to_client

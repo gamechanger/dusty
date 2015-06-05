@@ -43,7 +43,7 @@ class TestComposeSystem(DustyTestCase):
         written = open(self.temp_compose_path, 'r').read()
         self.assertItemsEqual(yaml.load(written), self.test_spec)
 
-    @patch('dusty.demote.get_config_value')
+    @patch('dusty.subprocess.get_config_value')
     @patch('dusty.systems.docker.check_output_demoted')
     def testget_docker_env(self, fake_check_output, fake_config_value):
         fake_config_value.return_value = 'root'

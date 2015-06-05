@@ -4,7 +4,7 @@ import logging
 
 from ... import constants
 from ...config import get_config_value
-from ...demote import check_and_log_output_and_error_demoted, check_output_demoted
+from ...subprocess import check_and_log_output_and_error_demoted, check_output_demoted
 from ...log import log_to_client
 
 def _ensure_rsync_is_installed():
