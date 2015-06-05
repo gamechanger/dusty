@@ -26,6 +26,17 @@ def run_subprocess(fn, shell_args, demote=True, env=None, **kwargs):
     output = fn(shell_args, env=passed_env, **kwargs)
     return output
 
+def check_call_demoted(shell_args, env=None, redirect_stderr=False):
+    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
+    return run_subprocess(subprocess.check_call, shell_args, demote=True, env=env, **kwargs)
+
+def check_output_demoted(shell_args, env=None, redirect_stderr=False):
+    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
+    return run_subprocess(subprocess.check_output, shell_args, demote=True, env=env, **kwargs)
+
+def check_and_log_output_and_error_demoted(shell_args, env=None, strip_newlines=False):
+    return check_and_log_output_and_error(shell_args, demote=True, env=env, strip_newlines=strip_newlines)
+
 def check_and_log_output_and_error(shell_args, demote=True, env=None, strip_newlines=False):
     total_output = ""
     process = run_subprocess(subprocess.Popen, shell_args, demote=demote, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -37,14 +48,3 @@ def check_and_log_output_and_error(shell_args, demote=True, env=None, strip_newl
     if return_code != 0:
         raise subprocess.CalledProcessError(return_code, ' '.join(shell_args))
     return total_output
-
-def check_call_demoted(shell_args, env=None, redirect_stderr=False):
-    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
-    return run_subprocess(subprocess.check_call, shell_args, demote=True, env=env, **kwargs)
-
-def check_output_demoted(shell_args, env=None, redirect_stderr=False):
-    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
-    return run_subprocess(subprocess.check_output, shell_args, demote=True, env=env, **kwargs)
-
-def check_and_log_output_and_error_demoted(shell_args, env=None, strip_newlines=False):
-    return check_and_log_output_and_error(shell_args, demote=True, env=env, strip_newlines=strip_newlines)
