@@ -11,36 +11,7 @@ from .config import get_config_value
 from . import constants
 from .notifier import notify
 from .log import log_to_client
-from .compiler.spec_assembler import get_all_repos
-from .path import local_repo_path, managed_repo_path, parent_dir
-
-def repo_is_overridden(repo_name):
-    return repo_name in get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
-
-
-def short_repo_name(repo_name):
-    return repo_name.split('/')[-1]
-
-def _is_short_name(repo_name):
-    return '/' not in repo_name
-
-def _expand_repo_name(passed_short_name):
-    match = None
-    for repo_name in get_all_repos():
-        short_name = short_repo_name(repo_name)
-        if passed_short_name == short_name and match is None:
-            match = repo_name
-        elif passed_short_name == short_name:
-            raise RuntimeError('Short repo name {} is ambiguous. It matches both {} and {}'.format(passed_short_name, match, repo_name))
-    if match is None:
-        raise RuntimeError("Short repo name {} does not match any full repo names".format(passed_short_name))
-    else:
-        return match
-
-def get_expanded_repo_name(repo_name):
-    if _is_short_name(repo_name):
-        return _expand_repo_name(repo_name)
-    return repo_name
+from .path import parent_dir
 
 @contextmanager
 def git_error_handling():
@@ -52,32 +23,93 @@ def git_error_handling():
                       'ssh-add <SSH key filepath>')
         raise
 
-def ensure_local_repo(repo_name):
-    """Given a repo name (e.g. github.com/gamechanger/gclib), clone the
-    repo into Dusty's local repos directory if it does not already exist."""
-    repo_path = managed_repo_path(repo_name)
-    if os.path.exists(repo_path):
-        logging.debug('Repo {} already exists'.format(repo_name))
-        return
+class Repo(object):
+    def __init__(self, remote_path):
+        # remote path is either of actual remote (github.com/gamechanger/dusty) or
+        # other local repo (/repos/dusty) format
+        self.remote_path = remote_path
 
-    logging.info('Initiating clone of local repo {}'.format(repo_name))
-    notify('Cloning repository {}'.format(short_repo_name(repo_name)))
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.remote_path == other.remote_path
+        return False
 
-    repo_path_parent = parent_dir(repo_path)
-    if not os.path.exists(repo_path_parent):
-        os.makedirs(repo_path_parent)
-    with git_error_handling():
-        repo = git.Repo.clone_from('ssh://{}@{}'.format(constants.GIT_USER, repo_name), repo_path)
+    def __hash__(self):
+        return hash(self.remote_path)
 
-def update_local_repo(repo_name):
-    """Given a repo name (e.g. github.com/gamechanger/gclib), pull the latest
-    commits from master to bring the local copy up to date."""
-    ensure_local_repo(repo_name)
+    @classmethod
+    def resolve(cls, all_known_repos, name):
+        """We require the list of all remote repo paths to be passed in
+        to this because otherwise we would need to import the spec assembler
+        in this module, which would give us circular imports."""
+        match = None
+        for repo in all_known_repos:
+            if repo.remote_path == name: # user passed in a full name
+                return repo
+            if name == repo.short_name:
+                if match is None:
+                    match = repo
+                else:
+                    raise RuntimeError('Short repo name {} is ambiguous. It matches both {} and {}'.format(name,
+                                                                                                           match.remote_path,
+                                                                                                           repo.remote_path))
+        if match is None:
+            raise RuntimeError('Short repo name {} does not match any known repos'.format(name))
+        return match
 
-    logging.info('Updating local repo {}'.format(repo_name))
-    notify('Pulling latest updates for {}'.format(short_repo_name(repo_name)))
+    @property
+    def is_local_repo(self):
+        return self.remote_path.startswith('/')
 
-    repo_path = managed_repo_path(repo_name)
-    repo = git.Repo(repo_path)
-    with git_error_handling():
-        repo.remote().pull('master')
+    @property
+    def short_name(self):
+        return self.remote_path.split('/')[-1]
+
+    @property
+    def managed_path(self):
+        return os.path.join(constants.REPOS_DIR, self.remote_path.lstrip('/'))
+
+    @property
+    def is_overridden(self):
+        return self.remote_path in get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
+
+    @property
+    def override_path(self):
+        repo_overrides = get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
+        return repo_overrides.get(self.remote_path)
+
+    @property
+    def local_path(self):
+        return self.override_path if self.is_overridden else self.managed_path
+
+    @property
+    def vm_path(self):
+        return os.path.join(constants.VM_REPOS_DIR, self.remote_path.lstrip('/'))
+
+    def ensure_local_repo(self):
+        """Given a Dusty repo object, clone the remote into Dusty's local repos
+        directory if it does not already exist."""
+        if os.path.exists(self.managed_path):
+            logging.debug('Repo {} already exists'.format(self.remote_path))
+            return
+
+        logging.info('Initiating clone of local repo {}'.format(self.remote_path))
+        notify('Cloning repository {}'.format(self.short_name))
+
+        repo_path_parent = parent_dir(self.managed_path)
+        if not os.path.exists(repo_path_parent):
+            os.makedirs(repo_path_parent)
+        with git_error_handling():
+            managed_repo = git.Repo.clone_from('ssh://{}@{}'.format(constants.GIT_USER, self.remote_path), self.managed_path)
+
+    def update_local_repo(self):
+        """Given a remote path (e.g. github.com/gamechanger/gclib), pull the latest
+        commits from master to bring the local copy up to date."""
+        self.ensure_local_repo()
+
+        logging.info('Updating local repo {}'.format(self.remote_path))
+        notify('Pulling latest updates for {}'.format(self.short_name))
+
+        managed_repo = git.Repo(self.managed_path)
+        with git_error_handling():
+            managed_repo.remote().pull('master')
