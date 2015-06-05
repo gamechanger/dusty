@@ -8,6 +8,7 @@ from mock import Mock, patch
 from ..testcases import DustyTestCase
 from dusty.commands.repos import override_repo
 from dusty.source import Repo, git_error_handling
+from dusty.compiler.spec_assembler import get_all_repos
 
 class TestSource(DustyTestCase):
     def setUp(self):
@@ -19,6 +20,56 @@ class TestSource(DustyTestCase):
     def tearDown(self):
         super(TestSource, self).tearDown()
         shutil.rmtree(self.temp_dir)
+
+    def test_equality_true(self):
+        self.assertEqual(Repo('github.com/app/a'), Repo('github.com/app/a'))
+
+    def test_equality_false(self):
+        self.assertNotEqual(Repo('github.com/app/a'), Repo('github.com/app/b'))
+
+    def test_resolve_full_name(self):
+        self.assertEqual(Repo.resolve(get_all_repos(), 'github.com/app/a'), Repo('github.com/app/a'))
+
+    def test_resolve_short_name(self):
+        self.assertEqual(Repo.resolve(get_all_repos(), 'b'), Repo('github.com/app/b'))
+
+    def test_resolve_short_name_conflict(self):
+        with self.assertRaises(RuntimeError):
+            Repo.resolve(get_all_repos(), 'a')
+
+    def test_resolve_not_found(self):
+        with self.assertRaises(RuntimeError):
+            Repo.resolve(get_all_repos(), 'definitely-not-a-repo')
+
+    def test_is_local_repo(self):
+        self.assertFalse(Repo('github.com/app/a').is_local_repo)
+        self.assertTrue(Repo('/gc/repos/dusty').is_local_repo)
+
+    def test_short_name_remote(self):
+        self.assertEqual(Repo('github.com/app/a').short_name, 'a')
+
+    def test_short_name_local(self):
+        self.assertEqual(Repo('/gc/repos/dusty').short_name, 'dusty')
+
+    def test_managed_path(self):
+        self.assertEqual(Repo('github.com/app/a').managed_path, '/etc/dusty/repos/github.com/app/a')
+        self.assertEqual(Repo('/gc/repos/dusty').managed_path, '/etc/dusty/repos/gc/repos/dusty')
+
+    def test_override_path(self):
+        override_repo('github.com/app/a', self.temp_dir)
+        self.assertEqual(Repo('github.com/app/a').override_path, self.temp_dir)
+        override_repo('/gc/repos/c', self.temp_dir)
+        self.assertEqual(Repo('/gc/repos/c').override_path, self.temp_dir)
+
+    def test_local_path(self):
+        repo = Repo('github.com/app/a')
+        self.assertEqual(repo.local_path, '/etc/dusty/repos/github.com/app/a')
+        override_repo('github.com/app/a', self.temp_dir)
+        self.assertEqual(repo.local_path, self.temp_dir)
+
+    def test_vm_path(self):
+        self.assertEqual(Repo('github.com/app/a').vm_path, '/persist/repos/github.com/app/a')
+        self.assertEqual(Repo('/gc/repos/c').vm_path, '/persist/repos/gc/repos/c')
 
     def test_repo_is_overridden_true(self):
         override_repo('github.com/app/a', self.temp_dir)
