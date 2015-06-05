@@ -100,7 +100,10 @@ class Repo(object):
         if not os.path.exists(repo_path_parent):
             os.makedirs(repo_path_parent)
         with git_error_handling():
-            managed_repo = git.Repo.clone_from('ssh://{}@{}'.format(constants.GIT_USER, self.remote_path), self.managed_path)
+            if self.is_local_repo:
+                git.Repo.clone_from('file:///{}'.format(self.remote_path), self.managed_path)
+            else:
+                git.Repo.clone_from('ssh://{}@{}'.format(constants.GIT_USER, self.remote_path), self.managed_path)
 
     def update_local_repo(self):
         """Given a remote path (e.g. github.com/gamechanger/gclib), pull the latest
