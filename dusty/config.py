@@ -67,5 +67,4 @@ def _load_ssh_auth(user_id):
         logging.info("Setting SSH_AUTH_SOCK to {}".format(ssh_auth_sock))
         os.environ['SSH_AUTH_SOCK'] = ssh_auth_sock
     else:
-        raise RuntimeError("SSH_AUTH_SOCK not determined; git operations may fail")
-
+        daemon_warnings.warn('ssh', 'SSH_AUTH_SOCK not determined; git operations may fail')
