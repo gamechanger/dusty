@@ -8,16 +8,17 @@ from ... import constants
 from ...log import log_to_client
 from ...subprocess import check_output_demoted, check_and_log_output_and_error_demoted
 from ...compiler.spec_assembler import get_expected_number_of_running_containers
+from ...path import parent_dir
 
 def _write_composefile(compose_config, compose_file_location):
     logging.info('Writing new Composefile')
-    compose_dir_location = '/'.join(compose_file_location.split('/')[0:-1])
+    compose_dir_location = parent_dir(compose_file_location)
     if not os.path.exists(compose_dir_location):
         os.makedirs(compose_dir_location)
     with open(compose_file_location, 'w') as f:
         f.write(yaml.dump(compose_config, default_flow_style=False))
 
-def _compose_up(recreate_containers=True, compose_file_location=None, project_name=None):
+def _compose_up(compose_file_location, project_name, recreate_containers=True):
     logging.info('Running docker-compose up')
     command = ['docker-compose']
     if compose_file_location is not None:
@@ -30,7 +31,7 @@ def _compose_up(recreate_containers=True, compose_file_location=None, project_na
     # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
     check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True)
 
-def _compose_stop(services, compose_file_location=None, project_name=None):
+def _compose_stop(compose_file_location, project_name, services):
     logging.info('Running docker-compose stop')
     command = ['docker-compose']
     if compose_file_location is not None:
@@ -73,7 +74,7 @@ def update_running_containers_from_spec(compose_config, recreate_containers=True
     up, then does everything needed to make sure boot2docker is
     up and running containers with the updated config."""
     _write_composefile(compose_config, constants.COMPOSEFILE_PATH)
-    _compose_up(recreate_containers=recreate_containers, compose_file_location=constants.COMPOSEFILE_PATH, project_name='dusty')
+    _compose_up(constants.COMPOSEFILE_PATH, 'dusty', recreate_containers=recreate_containers)
 
 def stop_running_services(services=None):
     """Stop running containers owned by Dusty, or a specific
@@ -84,7 +85,7 @@ def stop_running_services(services=None):
     apps and services."""
     if services is None:
         services = []
-    _compose_stop(services, compose_file_location=constants.COMPOSEFILE_PATH, project_name='dusty')
+    _compose_stop(constants.COMPOSEFILE_PATH, 'dusty', services)
 
 def restart_running_services(services=None):
     """Restart containers owned by Dusty, or a specific
