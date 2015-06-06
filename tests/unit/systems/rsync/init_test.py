@@ -2,6 +2,7 @@ from mock import patch, call
 
 from ....testcases import DustyTestCase
 from dusty.systems.rsync import sync_repos_by_app_name
+from dusty.source import Repo
 
 class TestRysnc(DustyTestCase):
 
@@ -38,7 +39,7 @@ class TestRysnc(DustyTestCase):
         fake_get_assembled_specs.return_value = specs
         fake_get_specs.return_value = specs
         sync_repos_by_app_name(['app-a', 'app-b'])
-        fake_sync_repos.assert_has_calls([call(set(['github.com/app/a', 'github.com/app/b', 'github.com/lib/a', 'github.com/lib/b']))])
+        fake_sync_repos.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/app/b'), Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
 
 
     @patch('dusty.systems.rsync.sync_repos')
@@ -66,4 +67,4 @@ class TestRysnc(DustyTestCase):
         fake_get_assembled_specs.return_value = specs
         fake_get_specs.return_value = specs
         sync_repos_by_app_name(['app-a'])
-        fake_sync_repos.assert_has_calls([call(set(['github.com/app/a', 'github.com/lib/a', 'github.com/lib/b']))])
+        fake_sync_repos.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
