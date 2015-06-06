@@ -1,7 +1,7 @@
 import logging
 
 from ...log import log_to_client
-from . import _get_dusty_containers, get_dusty_images, _get_docker_client
+from . import _get_dusty_containers, get_dusty_images, get_docker_client
 
 def _get_exited_dusty_containers(client):
     all_containers = _get_dusty_containers(client, None, include_exited=True)
@@ -13,7 +13,7 @@ def _get_exited_dusty_containers(client):
 
 def remove_exited_dusty_containers():
     """Removed all dusty containers with 'Exited' in their status"""
-    client = _get_docker_client()
+    client = get_docker_client()
     exited_containers = _get_exited_dusty_containers(client)
     removed_containers = []
     for container in exited_containers:
@@ -40,7 +40,7 @@ def _remove_dangling_images(client):
 
 def remove_images():
     """Removes all dangling images as well as all images referenced in a dusty spec; forceful removal is not used"""
-    client = _get_docker_client()
+    client = get_docker_client()
     removed = _remove_dangling_images(client)
     dusty_images = get_dusty_images()
     all_images = client.images(all=True)

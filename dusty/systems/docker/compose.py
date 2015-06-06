@@ -3,7 +3,7 @@ import logging
 
 import yaml
 
-from . import _get_canonical_container_name, get_docker_env, _get_docker_client, _get_dusty_containers
+from . import _get_canonical_container_name, get_docker_env, get_docker_client, _get_dusty_containers
 from ... import constants
 from ...log import log_to_client
 from ...subprocess import check_output_demoted, check_and_log_output_and_error_demoted
@@ -58,7 +58,7 @@ def _compose_restart(services):
         client.restart(container['Id'], timeout=1)
 
     logging.info('Restarting service containers from list: {}'.format(services))
-    client = _get_docker_client()
+    client = get_docker_client()
     dusty_containers = _get_dusty_containers(client, services)
     expected_number_of_containers = get_expected_number_of_running_containers() if len(services) == 0 else len(services)
     if len(dusty_containers) != expected_number_of_containers:
