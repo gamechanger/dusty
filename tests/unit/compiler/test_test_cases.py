@@ -8,6 +8,7 @@ from . import (get_all_test_configs, resources_for_test_config, specs_for_test_c
 from dusty.compiler import spec_assembler
 from ...testcases import DustyTestCase
 from dusty import constants
+from dusty.source import Repo
 
 @nottest
 def all_test_configs(test_func):
@@ -139,10 +140,10 @@ class TestExpectedRunningContainers(DustyTestCase):
 
 class TestSpecAssemblerGetRepoTestCases(DustyTestCase):
     def test_get_repo_of_app_or_service_app(self):
-        self.assertEqual(spec_assembler.get_repo_of_app_or_library('app-a'), 'github.com/app/a')
+        self.assertEqual(spec_assembler.get_repo_of_app_or_library('app-a'), Repo('github.com/app/a'))
 
     def test_get_repo_of_app_or_service_lib(self):
-        self.assertEqual(spec_assembler.get_repo_of_app_or_library('lib-a'), 'github.com/lib/a')
+        self.assertEqual(spec_assembler.get_repo_of_app_or_library('lib-a'), Repo('github.com/lib/a'))
 
     def test_get_repo_of_app_or_service_neither(self):
         with self.assertRaises(KeyError):
