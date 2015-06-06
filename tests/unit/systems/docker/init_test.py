@@ -39,7 +39,7 @@ class TestComposeSystem(DustyTestCase):
         shutil.rmtree(self.temp_compose_dir)
 
     def test_write_composefile(self):
-        _write_composefile(self.test_spec)
+        _write_composefile(self.test_spec, constants.COMPOSEFILE_PATH)
         written = open(self.temp_compose_path, 'r').read()
         self.assertItemsEqual(yaml.load(written), self.test_spec)
 
