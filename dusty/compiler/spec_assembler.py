@@ -118,9 +118,9 @@ def get_repo_of_app_or_library(app_or_library_name):
     for that app or library"""
     specs = get_specs()
     if app_or_library_name in specs['apps']:
-        return specs['apps'][app_or_library_name]['repo']
+        return Repo(specs['apps'][app_or_library_name]['repo'])
     elif app_or_library_name in specs['libs']:
-        return specs['libs'][app_or_library_name]['repo']
+        return Repo(specs['libs'][app_or_library_name]['repo'])
     raise KeyError('did not find app or service with name {}'.format(app_or_library_name))
 
 def get_specs_from_path(specs_path):
