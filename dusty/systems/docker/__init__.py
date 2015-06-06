@@ -32,7 +32,7 @@ def get_docker_env():
         env[k] = v
     return env
 
-def _get_docker_client():
+def get_docker_client():
     """Ripped off and slightly modified based on docker-py's
     kwargs_from_env utility function."""
     env = get_docker_env()
@@ -79,5 +79,5 @@ def _get_canonical_container_name(container):
     return sorted(container['Names'], key=lambda name: len(name))[0][1:]
 
 def get_dusty_containers(app_or_service_names):
-    client = _get_docker_client()
+    client = get_docker_client()
     return _get_dusty_containers(client, app_or_service_names)
