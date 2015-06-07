@@ -1,7 +1,7 @@
 from . import get_docker_client
 
 
-def ensure_testing_spec_base_image(testing_spec):
+def _ensure_testing_spec_base_image(testing_spec):
     if 'image' in testing_spec and 'build' in testing_spec:
         raise RuntimeError('Only 1 of `image` and `build` keys are allowed in testing spec')
     elif 'image' in testing_spec:
@@ -9,20 +9,35 @@ def ensure_testing_spec_base_image(testing_spec):
     elif 'build' in testing_spec:
         docker_client = get_docker_client()
         image_tag = 'dusty_testing/image'
-        new_image = docker_client.build(path=testing_spec['build'], tag=image_tag)
-        return image_tagfrom io import BytesIO
+        docker_client.build(path=testing_spec['build'], tag=image_tag)
+        return image_tag
     else:
         raise RuntimeError('One of `image` or `build` is required in testing spec')
 
-def make_installed_requirements_image(base_image_tag, command, image_name):
+def _make_installed_requirements_image(base_image_tag, command, image_name):
     docker_client = get_docker_client()
     container = docker_client.create_container(image=base_image_tag, command=command)
     docker_client.start(container=container['Id'])
-    #this tagging is not working as of yet
-    new_image = docker_client.commit(container=container['Id'], tag=image_name)
+    # new_image = docker_client.commit(container=container['Id'], tag=image_name)
+    # Above command is not tagging the image, even though it seems like it should be sending
+    # all of the arguments.  Below is a workaround
+    new_image = docker_client.commit(container=container['Id'])
+    docker_cleint.tag(image=new_image['Id'], repository=image_name, force=True)
     return new_image['Id']
 
-def make_installed_testing_image(testing_spec, new_image_name):
-    base_image_tag = ensure_testing_spec_base_image(testing_spec)
-    make_installed_requirements_image(base_image_tag, testing_spec['command'], new_image_name)
+def _make_installed_testing_image(testing_spec, new_image_name):
+    base_image_tag = _ensure_testing_spec_base_image(testing_spec)
+    _make_installed_requirements_image(base_image_tag, testing_spec['command'], new_image_name)
     return new_image_id
+
+def ensure_testing_image_exists(testing_spec, image_name, force_recreate=False):
+    docker_client = get_docker_client()
+    images = docker_client.images()
+    image_exists = False
+    for image in images:
+        if any(image_name in tag for tag in image['RepoTags']):
+            image_exists = True
+            break
+    if force_recreate or not image_exists:
+        _make_installed_testing_image(testing_spec, image_name)
+
