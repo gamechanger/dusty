@@ -27,7 +27,7 @@ def _make_installed_requirements_image(base_image_tag, command, image_name, volu
 
 def _make_installed_testing_image(testing_spec, new_image_name, volumes=[]):
     base_image_tag = _ensure_testing_spec_base_image(testing_spec)
-    _make_installed_requirements_image(base_image_tag, testing_spec['command'], new_image_name, volumes=volumes)
+    _make_installed_requirements_image(base_image_tag, testing_spec['once'], new_image_name, volumes=volumes)
     return new_image_name
 
 def ensure_image_exists(testing_spec, image_name, volumes=[], force_recreate=False):
