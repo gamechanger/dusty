@@ -66,4 +66,3 @@ def ensure_image_exists(testing_spec, image_name, volumes=[], force_recreate=Fal
             break
     if force_recreate or not image_exists:
         _make_installed_testing_image(testing_spec, image_name, volumes=volumes)
-
