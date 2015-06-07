@@ -64,7 +64,7 @@ class TestTestingImages(DustyTestCase):
     @patch('dusty.systems.docker.testing_image._ensure_testing_spec_base_image')
     @patch('dusty.systems.docker.testing_image._make_installed_requirements_image')
     def test_make_installed_testing_image(self, fake_make_installed_image, fake_ensure_base_image):
-        testing_spec = {'command': 'npm install'}
+        testing_spec = {'once': 'npm install'}
         new_image_name = 'dusty/image'
         fake_ensure_base_image.return_value = 'dusty_testing/image'
         _make_installed_testing_image(testing_spec, new_image_name, volumes=['os/path:contianer:path'])
@@ -77,7 +77,7 @@ class TestTestingImages(DustyTestCase):
         fake_docker_client = Mock()
         fake_get_docker_client.return_value = fake_docker_client
         fake_docker_client.images.return_value = []
-        testing_spec = {'command': 'npm install'}
+        testing_spec = {'once': 'npm install'}
         new_image_name = 'dusty/image'
         ensure_image_exists(testing_spec, new_image_name)
         fake_make_installed_image.assert_has_calls([call(testing_spec, new_image_name, volumes=[])])
@@ -88,7 +88,7 @@ class TestTestingImages(DustyTestCase):
         fake_docker_client = Mock()
         fake_get_docker_client.return_value = fake_docker_client
         fake_docker_client.images.return_value = []
-        testing_spec = {'command': 'npm install'}
+        testing_spec = {'once': 'npm install'}
         new_image_name = 'dusty/image'
         ensure_image_exists(testing_spec, new_image_name, volumes=['os/path:contianer:path'])
         fake_make_installed_image.assert_has_calls([call(testing_spec, new_image_name, volumes=['os/path:contianer:path'])])
@@ -100,7 +100,7 @@ class TestTestingImages(DustyTestCase):
         fake_get_docker_client.return_value = fake_docker_client
         fake_docker_client.images.return_value = [{'RepoTags': ['dusty', 'dusty/dog']},
                                                   {'RepoTags': ['dusty/images', 'dusty/image']}]
-        testing_spec = {'command': 'npm install'}
+        testing_spec = {'once': 'npm install'}
         new_image_name = 'dusty/image'
         ensure_image_exists(testing_spec, new_image_name)
         fake_make_installed_image.assert_has_calls([])
@@ -112,7 +112,7 @@ class TestTestingImages(DustyTestCase):
         fake_get_docker_client.return_value = fake_docker_client
         fake_docker_client.images.return_value = [{'RepoTags': ['dusty', 'dusty/dog']},
                                                   {'RepoTags': ['dusty/images', 'dusty/image']}]
-        testing_spec = {'command': 'npm install'}
+        testing_spec = {'once': 'npm install'}
         new_image_name = 'dusty/image'
         ensure_image_exists(testing_spec, new_image_name, volumes=['os/path:contianer:path'],force_recreate=True)
         fake_make_installed_image.assert_has_calls([call(testing_spec, new_image_name, volumes=['os/path:contianer:path'])])
