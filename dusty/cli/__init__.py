@@ -17,6 +17,7 @@ Commands:
   shell      Open a shell inside a running container
   stop       Stop Dusty-managed containers
   sync       Sync repos from the local OS to the boot2docker VM
+  test       Run test scripts in isolated environments
   up         Set up the Dusty environment and start activated applications
   validate   Validates that Dusty specs have correct fields and references
 
@@ -31,7 +32,8 @@ from docopt import docopt
 from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
-from . import bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop, sync, up, validate, setup
+from . import (bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop,
+               sync, up, validate, setup, test)
 from .. import constants
 
 MODULE_MAP = {
@@ -48,6 +50,7 @@ MODULE_MAP = {
     'shell': shell,
     'stop': stop,
     'sync': sync,
+    'test': test,
     'up': up,
     'validate': validate,
 }
