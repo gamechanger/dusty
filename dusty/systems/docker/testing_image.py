@@ -23,15 +23,22 @@ def _get_split_volumes(volumes):
                               'container_location': volume_list[1]})
     return split_volumes
 
+def _get_create_container_volumes(split_volumes):
+    return [volume_dict['container_location'] for volume_dict  in split_volumes]
+
+def _get_create_container_binds(split_volumes):
+    binds_dict = {}
+    for volume_dict in split_volumes:
+        binds_dict[volume_dict['host_location']] =  {'bind': volume_dict['container_location'], 'ro': False}
+    return binds_dict
+
+
 def _make_installed_requirements_image(base_image_tag, command, image_name, volumes=[]):
     docker_client = get_docker_client()
-    log_to_client('in make_installed_requirements')
     split_volumes = _get_split_volumes(volumes)
-    create_container_volumes = [volume_dict['container_location'] for volume_dict  in split_volumes]
-    create_container_binds = {volume_dict['host_location']: {'bind': volume_dict['container_location'], 'ro': False} for volume_dict in split_volumes}
+    create_container_volumes = _get_create_container_volumes(split_volumes)
+    create_container_binds = _get_create_container_binds(split_volumes)
 
-    log_to_client(create_container_volumes)
-    log_to_client(create_container_binds)
     container = docker_client.create_container(image=base_image_tag,
                                                command=command,
                                                volumes=create_container_volumes,
