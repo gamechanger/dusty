@@ -43,7 +43,9 @@ def _make_installed_requirements_image(base_image_tag, command, image_name, volu
                                                command=command,
                                                volumes=create_container_volumes,
                                                host_config=docker.utils.create_host_config(binds=create_container_binds))
+    # start does not wait for the command to finish
     docker_client.start(container=container['Id'])
+    docker_client.wait(container=container['Id'])
     # new_image = docker_client.commit(container=container['Id'], tag=image_name)
     # Above command is not tagging the image, even though it seems like it should be sending
     # all of the arguments.  Below is a workaround

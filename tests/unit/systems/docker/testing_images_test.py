@@ -90,6 +90,7 @@ class TestTestingImages(DustyTestCase):
                                                                                     'ro': False}
                                                                     }))])
         mock_docker_client.start.assert_has_calls([call(container='1')])
+        mock_docker_client.wait.assert_has_calls([call(container='1')])
         mock_docker_client.commit.assert_has_calls([call(container='1')])
         mock_docker_client.tag.assert_has_calls([call(image='2', repository=image_name, force=True)])
 
