@@ -148,8 +148,3 @@ class TestTestingImages(DustyTestCase):
         new_image_name = 'dusty/image'
         ensure_image_exists(testing_spec, new_image_name, volumes=['os/path:contianer:path'],force_recreate=True)
         fake_make_installed_image.assert_has_calls([call(testing_spec, new_image_name, volumes=['os/path:contianer:path'])])
-
-
-
-
-
