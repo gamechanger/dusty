@@ -4,7 +4,8 @@ from copy import copy
 from dusty import constants
 from dusty.compiler.compose import (get_compose_dict, _composed_app_dict,
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
-                                    _lib_install_command, _lib_install_commands_for_app, _conditional_links)
+                                    _lib_install_command, _lib_install_commands_for_app, _conditional_links,
+                                    _get_app_volume_mounts, _get_lib_volume_mounts)
 from ..test_test_cases import all_test_configs
 from ....testcases import DustyTestCase
 
@@ -23,13 +24,21 @@ basic_specs = {
             },
             'image': 'awesomeGCimage',
             'mount': '/gc/app1'
+        },
+        'app2': {
+            'repo': '/app2',
+            'depends': {},
+            'mount': '/gc/app2'
         }
     },
     'libs': {
         'lib1': {
             'repo': '/lib1',
             'mount': '/gc/lib1',
-            'install': './install.sh'
+            'install': './install.sh',
+            'depends': {
+                'libs': ['lib2']
+            }
         },
         'lib2': {
             'repo': '/lib2',
@@ -75,6 +84,33 @@ class TestComposeCompiler(DustyTestCase):
             '/Users/gc/lib2:/gc/lib2'
         ]
         returned_volumes = _get_compose_volumes('app1', basic_specs)
+        self.assertEqual(expected_volumes, returned_volumes)
+
+    def test_get_app_volume_mounts_1(self, *args):
+        expected_volumes = [
+            '/Users/gc/app1:/gc/app1',
+            '/Users/gc/lib1:/gc/lib1',
+            '/Users/gc/lib2:/gc/lib2'
+        ]
+        returned_volumes = _get_app_volume_mounts('app1', basic_specs)
+        self.assertEqual(expected_volumes, returned_volumes)
+
+    def test_get_app_volume_mounts_2(self, *args):
+        expected_volumes = ['/Users/gc/app2:/gc/app2']
+        returned_volumes = _get_app_volume_mounts('app2', basic_specs)
+        self.assertEqual(expected_volumes, returned_volumes)
+
+    def test_get_lib_volume_mounts_1(self, *args):
+        expected_volumes = [
+            '/Users/gc/lib1:/gc/lib1',
+            '/Users/gc/lib2:/gc/lib2'
+        ]
+        returned_volumes = _get_lib_volume_mounts('lib1', basic_specs)
+        self.assertEqual(expected_volumes, returned_volumes)
+
+    def test_get_lib_volume_mounts_2(self, *args):
+        expected_volumes = ['/Users/gc/lib2:/gc/lib2']
+        returned_volumes = _get_lib_volume_mounts('lib2', basic_specs)
         self.assertEqual(expected_volumes, returned_volumes)
 
     def test_compile_command_with_once(self, *args):
