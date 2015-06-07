@@ -1,3 +1,4 @@
+import docker
 from . import get_docker_client
 
 
@@ -14,9 +15,27 @@ def _ensure_testing_spec_base_image(testing_spec):
     else:
         raise RuntimeError('One of `image` or `build` is required in testing spec')
 
+def _get_split_volumes(volumes):
+    split_volumes = []
+    for volume in volumes:
+        volume_list = volume.split(':')
+        split_volumes.append({'host_location': volume_list[0],
+                              'container_location': volume_list[1]})
+    return split_volumes
+
 def _make_installed_requirements_image(base_image_tag, command, image_name, volumes=[]):
     docker_client = get_docker_client()
-    container = docker_client.create_container(image=base_image_tag, command=command, volumes=volumes)
+    log_to_client('in make_installed_requirements')
+    split_volumes = _get_split_volumes(volumes)
+    create_container_volumes = [volume_dict['container_location'] for volume_dict  in split_volumes]
+    create_container_binds = {volume_dict['host_location']: {'bind': volume_dict['container_location'], 'ro': False} for volume_dict in split_volumes}
+
+    log_to_client(create_container_volumes)
+    log_to_client(create_container_binds)
+    container = docker_client.create_container(image=base_image_tag,
+                                               command=command,
+                                               volumes=create_container_volumes,
+                                               host_config=docker.utils.create_host_config(binds=create_container_binds))
     docker_client.start(container=container['Id'])
     # new_image = docker_client.commit(container=container['Id'], tag=image_name)
     # Above command is not tagging the image, even though it seems like it should be sending
