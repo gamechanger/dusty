@@ -99,9 +99,9 @@ class TestTestingImages(DustyTestCase):
         testing_spec = {'once': 'npm install'}
         new_image_name = 'dusty/image'
         fake_ensure_base_image.return_value = 'dusty_testing/image'
-        _make_installed_testing_image(testing_spec, new_image_name, volumes=['os/path:contianer:path'])
+        _make_installed_testing_image(testing_spec, new_image_name, volumes=['os/path:container:path'])
         fake_ensure_base_image.assert_has_calls([call(testing_spec)])
-        fake_make_installed_image.assert_has_calls([call('dusty_testing/image', 'npm install', new_image_name, volumes=['os/path:contianer:path'])])
+        fake_make_installed_image.assert_has_calls([call('dusty_testing/image', 'npm install', new_image_name, volumes=['os/path:container:path'])])
 
     @patch('dusty.systems.docker.testing_image.get_docker_client')
     @patch('dusty.systems.docker.testing_image._make_installed_testing_image')
@@ -122,8 +122,8 @@ class TestTestingImages(DustyTestCase):
         fake_docker_client.images.return_value = []
         testing_spec = {'once': 'npm install'}
         new_image_name = 'dusty/image'
-        ensure_image_exists(testing_spec, new_image_name, volumes=['os/path:contianer:path'])
-        fake_make_installed_image.assert_has_calls([call(testing_spec, new_image_name, volumes=['os/path:contianer:path'])])
+        ensure_image_exists(testing_spec, new_image_name, volumes=['os/path:container:path'])
+        fake_make_installed_image.assert_has_calls([call(testing_spec, new_image_name, volumes=['os/path:container:path'])])
 
     @patch('dusty.systems.docker.testing_image.get_docker_client')
     @patch('dusty.systems.docker.testing_image._make_installed_testing_image')
@@ -146,5 +146,5 @@ class TestTestingImages(DustyTestCase):
                                                   {'RepoTags': ['dusty/images', 'dusty/image']}]
         testing_spec = {'once': 'npm install'}
         new_image_name = 'dusty/image'
-        ensure_image_exists(testing_spec, new_image_name, volumes=['os/path:contianer:path'],force_recreate=True)
-        fake_make_installed_image.assert_has_calls([call(testing_spec, new_image_name, volumes=['os/path:contianer:path'])])
+        ensure_image_exists(testing_spec, new_image_name, volumes=['os/path:container:path'],force_recreate=True)
+        fake_make_installed_image.assert_has_calls([call(testing_spec, new_image_name, volumes=['os/path:container:path'])])
