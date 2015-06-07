@@ -1,5 +1,6 @@
 import docker
 from . import get_docker_client
+from ...log import log_to_client
 
 
 def _ensure_testing_spec_base_image(docker_client, testing_spec):
