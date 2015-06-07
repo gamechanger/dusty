@@ -30,7 +30,7 @@ def _make_installed_testing_image(testing_spec, new_image_name):
     _make_installed_requirements_image(base_image_tag, testing_spec['command'], new_image_name)
     return new_image_name
 
-def ensure_testing_image_exists(testing_spec, image_name, force_recreate=False):
+def ensure_image_exists(testing_spec, image_name, force_recreate=False):
     docker_client = get_docker_client()
     images = docker_client.images()
     image_exists = False
