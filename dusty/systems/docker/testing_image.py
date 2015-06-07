@@ -8,7 +8,7 @@ def _ensure_testing_spec_base_image(testing_spec):
         return testing_spec['image']
     elif 'build' in testing_spec:
         docker_client = get_docker_client()
-        image_tag = 'dusty_testing/image'
+        image_tag = 'dusty_testing_base/image'
         docker_client.build(path=testing_spec['build'], tag=image_tag)
         return image_tag
     else:
@@ -23,12 +23,12 @@ def _make_installed_requirements_image(base_image_tag, command, image_name):
     # all of the arguments.  Below is a workaround
     new_image = docker_client.commit(container=container['Id'])
     docker_client.tag(image=new_image['Id'], repository=image_name, force=True)
-    return new_image['Id']
+    return image_name
 
 def _make_installed_testing_image(testing_spec, new_image_name):
     base_image_tag = _ensure_testing_spec_base_image(testing_spec)
     _make_installed_requirements_image(base_image_tag, testing_spec['command'], new_image_name)
-    return new_image_id
+    return new_image_name
 
 def ensure_testing_image_exists(testing_spec, image_name, force_recreate=False):
     docker_client = get_docker_client()
