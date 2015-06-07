@@ -120,13 +120,13 @@ def _get_compose_volumes(app_name, assembled_specs):
     easy file transfers using `dusty cp`."""
     volumes = []
     volumes.append(_get_cp_volume_mount(app_name))
-    volumes += _get_app_volume_mounts(app_name, assembled_specs)
+    volumes += get_app_volume_mounts(app_name, assembled_specs)
     return volumes
 
 def _get_cp_volume_mount(app_name):
     return "{}:{}".format(vm_cp_path(app_name), constants.CONTAINER_CP_DIR)
 
-def _get_app_volume_mounts(app_name, assembled_specs):
+def get_app_volume_mounts(app_name, assembled_specs):
     """ This returns a list of formatted volume specs for an app. These mounts declared in the apps' spec
     and mounts declared in all lib specs the app depends on"""
     app_spec = assembled_specs['apps'][app_name]
@@ -135,7 +135,7 @@ def _get_app_volume_mounts(app_name, assembled_specs):
     volumes += _get_app_libs_volume_mounts(app_name, assembled_specs)
     return volumes
 
-def _get_lib_volume_mounts(base_lib_name, assembled_specs):
+def get_lib_volume_mounts(base_lib_name, assembled_specs):
     """ Returns a list of the formatted volume specs for a lib"""
     volumes = [_get_lib_repo_volume_mount(assembled_specs['libs'][base_lib_name])]
     for lib_name in assembled_specs['libs'][base_lib_name].get('depends', {}).get('libs', []):
