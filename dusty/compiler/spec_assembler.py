@@ -45,6 +45,14 @@ def _expand_libs_in_apps(specs):
         if 'depends' in app_spec and 'libs' in app_spec['depends']:
             app_spec['depends']['libs'] = _get_dependent('libs', app_name, specs, 'apps')
 
+def _expand_libs_in_libs(specs):
+    """
+    Expands specs.libs.depends.libs to include any indirectly required libs
+    """
+    for lib_name, lib_spec in specs['libs'].iteritems():
+        if 'depends' in lib_spec and 'libs' in lib_spec['depends']:
+            lib_spec['depends']['libs'] = _get_dependent('libs', lib_name, specs, 'libs')
+
 def _get_referenced_libs(specs):
     """
     Returns all libs that are referenced in specs.apps.depends.libs
@@ -91,6 +99,10 @@ def _get_expanded_active_specs(specs):
     _filter_active('libs', specs)
     _filter_active('services', specs)
 
+def _get_expanded_libs_specs(specs):
+    _expand_libs_in_apps(specs)
+    _expand_libs_in_libs(specs)
+
 def get_expected_number_of_running_containers():
     """ This will return the number of containers expected to be running based off of
     your current config"""
@@ -101,6 +113,11 @@ def get_assembled_specs():
     logging.info("Spec Assembler: running...")
     specs = get_specs()
     _get_expanded_active_specs(specs)
+    return specs
+
+def get_expanded_libs_specs():
+    specs = get_specs()
+    _get_expanded_libs_specs(specs)
     return specs
 
 def get_specs_repo():

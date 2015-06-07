@@ -148,3 +148,66 @@ class TestSpecAssemblerGetRepoTestCases(DustyTestCase):
     def test_get_repo_of_app_or_service_neither(self):
         with self.assertRaises(KeyError):
             spec_assembler.get_repo_of_app_or_library('lib-b')
+
+class TestGetExpandedLibSpecs(DustyTestCase):
+    def test_get_expanded_lib_specs_1(self):
+        specs =  {
+                'apps': {
+                    'app1': {
+                        'depends': {
+                            'libs': ['lib1', 'lib2'],
+                            'apps': ['app2']
+                        },
+                    },
+                    'app2': {
+                        'depends': {},
+                    }
+                },
+                'libs': {
+                    'lib1': {
+                        'depends': {
+                            'libs': ['lib2']
+                        }
+                    },
+                    'lib2': {
+                        'depends': {
+                            'libs': ['lib3']
+                        }
+                    },
+                    'lib3': {
+                        'depends': {}
+                    }
+                }
+            }
+        expected_expanded_specs = {
+                'apps': {
+                    'app1': {
+                        'depends': {
+                            'libs': set(['lib1', 'lib2', 'lib3']),
+                            'apps': ['app2']
+                        },
+                    },
+                    'app2': {
+                        'depends': {},
+                    }
+                },
+                'libs': {
+                    'lib1': {
+                        'depends': {
+                            'libs': set(['lib2', 'lib3'])
+                        }
+                    },
+                    'lib2': {
+                        'depends': {
+                            'libs': set(['lib3'])
+                        }
+                    },
+                    'lib3': {
+                        'depends': {}
+                    }
+                }
+            }
+        spec_assembler._get_expanded_libs_specs(specs)
+        print expected_expanded_specs
+        print specs
+        self.assertEquals(expected_expanded_specs, specs)
