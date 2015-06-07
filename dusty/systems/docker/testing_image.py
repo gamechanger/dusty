@@ -22,7 +22,7 @@ def _make_installed_requirements_image(base_image_tag, command, image_name):
     # Above command is not tagging the image, even though it seems like it should be sending
     # all of the arguments.  Below is a workaround
     new_image = docker_client.commit(container=container['Id'])
-    docker_cleint.tag(image=new_image['Id'], repository=image_name, force=True)
+    docker_client.tag(image=new_image['Id'], repository=image_name, force=True)
     return new_image['Id']
 
 def _make_installed_testing_image(testing_spec, new_image_name):
