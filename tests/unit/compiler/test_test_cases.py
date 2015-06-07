@@ -208,6 +208,4 @@ class TestGetExpandedLibSpecs(DustyTestCase):
                 }
             }
         spec_assembler._get_expanded_libs_specs(specs)
-        print expected_expanded_specs
-        print specs
         self.assertEquals(expected_expanded_specs, specs)
