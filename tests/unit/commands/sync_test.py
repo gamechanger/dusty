@@ -25,3 +25,8 @@ class TestSyncCommand(DustyTestCase):
     def test_sync_repos_with_multiple_args(self, fake_sync):
         sync_repos('github.com/app/a', 'github.com/app/b')
         fake_sync.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/app/b')]))])
+
+    @patch('dusty.commands.sync.perform_sync_repos')
+    def test_sync_repos_with_multiple_args_short_name(self, fake_sync):
+        sync_repos('a', 'b')
+        fake_sync.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/app/b')]))])
