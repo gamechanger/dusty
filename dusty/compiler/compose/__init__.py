@@ -120,7 +120,7 @@ def _get_compose_volumes(app_name, assembled_specs):
     easy file transfers using `dusty cp`."""
     volumes = []
     volumes.append(_get_cp_volume_mount(app_name))
-    volumes += _get_app_volume_mounts()
+    volumes += _get_app_volume_mounts(app_name, assembled_specs)
     return volumes
 
 def _get_cp_volume_mount(app_name):
@@ -142,8 +142,6 @@ def _get_lib_volume_mounts(base_lib_name, assembled_specs):
         lib_spec = assembled_specs['libs'][lib_name]
         volumes.append(_get_lib_repo_volume_mount(lib_spec))
     return volumes
-
-def _get_lib_volumen
 
 def _get_app_repo_volume_mount(app_spec):
     """ This returns the formatted volume mount spec to mount the local code for an app in the
