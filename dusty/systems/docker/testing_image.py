@@ -1,15 +1,17 @@
 import docker
-from . import get_docker_client
 from ...log import log_to_client
 
 
 def _ensure_testing_spec_base_image(docker_client, testing_spec):
+    log_to_client('Getting the base image for the new image')
     if 'image' in testing_spec and 'build' in testing_spec:
         raise RuntimeError('Only 1 of `image` and `build` keys are allowed in testing spec')
     elif 'image' in testing_spec:
+        log_to_client('Base image is {}'.format(testing_spec['image']))
         return testing_spec['image']
     elif 'build' in testing_spec:
         image_tag = 'dusty_testing_base/image'
+        log_to_client('Need to build the base image based off of the Dockerfile here: {}'.format(testing_spec['build']))
         docker_client.build(path=testing_spec['build'], tag=image_tag)
         return image_tag
     else:
@@ -65,4 +67,6 @@ def ensure_image_exists(docker_client, testing_spec, image_name, volumes=[], for
             image_exists = True
             break
     if force_recreate or not image_exists:
+        log_to_client('Creating a new image named {}, with installed dependencies for the app or lib'.format(image_name))
         _make_installed_testing_image(docker_client, testing_spec, image_name, volumes=volumes)
+        log_to_client('Image is now created')
