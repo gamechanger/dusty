@@ -54,11 +54,18 @@ def sync_repos(repos):
         log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo.remote_path, repo.vm_path))
         sync_local_path_to_vm(repo.local_path, repo.vm_path)
 
-def sync_repos_by_app_name(app_names):
+# For the sync_repos_by_... functions to work, they really need to take already expanded specs
+def _sync_repos_by_type_name(expanded_specs, type_names, dusty_type):
     repos = set()
-    assembled_specs = get_assembled_specs()
-    for app_name in app_names:
-        for lib_name in assembled_specs['apps'][app_name].get('depends', {}).get('libs', []):
+    for type_name in type_names:
+        for lib_name in expanded_specs[dusty_type][type_name].get('depends', {}).get('libs', []):
             repos.add(get_repo_of_app_or_library(lib_name))
-        repos.add(get_repo_of_app_or_library(app_name))
+        repos.add(get_repo_of_app_or_library(type_name))
     sync_repos(repos)
+
+def sync_repos_by_app_name(expanded_specs, app_names):
+    _sync_repos_by_type_name(expanded_specs, app_names, 'apps')
+
+def sync_repos_by_lib_name(expanded_specs, lib_names):
+    _sync_repos_by_type_name(expanded_specs, lib_names, 'libs')
+
