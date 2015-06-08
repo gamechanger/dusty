@@ -1,7 +1,7 @@
 """Allow you to run tests in an isolated container for an app or a lib
 
 Usage:
-  tests create_image <app_or_lib_name> [--recreate]
+  test create_image <app_or_lib_name> [--recreate]
 
 Options:
   --recreate  ensures that the testing image will be recreated
