@@ -10,7 +10,7 @@ Options:
 
 from docopt import docopt
 
-from ..commands.test import test_app_or_lib
+from ..commands.tests import test_app_or_lib
 
 def main(argv):
     args = docopt(__doc__, argv)
