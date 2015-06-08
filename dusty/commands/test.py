@@ -11,11 +11,11 @@ def test_app_or_lib(app_or_lib_name, force_recreate=False):
     if app_or_lib_name in expanded_specs['apps']:
         volumes = get_app_volume_mounts(app_or_lib_name, expanded_specs)
         spec = expanded_specs['apps'][app_or_lib_name]
-        sync_repos_by_app_name([app_or_lib_name])
+        sync_repos_by_app_name(expanded_specs, [app_or_lib_name])
     elif app_or_lib_name in expanded_specs['libs']:
         volumes = get_lib_volume_mounts(app_or_lib_name, expanded_specs)
         spec = expanded_specs['libs'][app_or_lib_name]
-        sync_repos_by_lib_name([app_or_lib_name])
+        sync_repos_by_lib_name(expanded_specs, [app_or_lib_name])
     else:
         raise KeyError('Argument must be app or lib name')
     image_name = "{}_dusty_testing/image".format(app_or_lib_name)

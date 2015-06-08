@@ -54,6 +54,7 @@ def sync_repos(repos):
         log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo.remote_path, repo.vm_path))
         sync_local_path_to_vm(repo.local_path, repo.vm_path)
 
+# For the bottom two functions to work, they really need to take already expanded specs
 def sync_repos_by_app_name(expanded_specs, app_names):
     repos = set()
     for app_name in app_names:
