@@ -1,3 +1,5 @@
+from tempfile import TemporaryFile
+
 from ..compiler.spec_assembler import get_expanded_libs_specs
 from ..compiler.compose import get_app_volume_mounts, get_lib_volume_mounts, get_testing_compose_dict
 from ..systems.docker.testing_image import ensure_image_exists
@@ -25,7 +27,7 @@ def run_app_or_lib_tests(app_or_lib_name, force_recreate=False):
     _run_tests_with_image(app_or_lib_name)
 
 def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_or_lib_volumes, image_name):
-    temporary_compose_config_files = []
+    temporary_compose_config_files = {}
     previous_container_name = None
 
     for service_name in app_or_lib_spec['test']['services']:
@@ -34,6 +36,26 @@ def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_
         if previous_container_name is not None:
             kwargs['net_container_identifier'] = previous_container_name
         service_compse_config = get_testing_compose_dict(service_name, service_spec, **kwargs)
-        #make a compose_file
-        temporary_compose_config_files.append(compose_file)
+
+        compose_file = TemporaryFile()
+        temporary_compose_config_files[service_name] = compose_file
         write_composefile(service_compse_config, compose_file)
+
+        compose_up(compose_file, service_name)
+        previous_container_name = "{0}_{0}_1".format(service_name)
+
+    kwargs = {'testing_image_identifier': image_name,
+              'volumes': app_or_lib_volumes,
+              'command': 'echo "dog"'} # fix this later
+    if previous_container_name is not None:
+        kwargs['net_container_identifier'] = previous_container_name
+
+    compose_file = TemporaryFile()
+    temporary_compose_config_files[app_or_lib_name] = compose_file
+    compose_config = get_testing_compose_dict(app_or_lib_name, app_or_lib_spec['compose'], **kwargs)
+    write_composefile(service_compse_config, compose_file)
+    compose_up(compose_file)
+
+    #need to wait on tests finishing and cleanup shit afterwards
+
+
