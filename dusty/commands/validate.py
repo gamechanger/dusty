@@ -13,16 +13,9 @@ def _check_bare_minimum(specs):
     if not specs.get(constants.CONFIG_BUNDLES_KEY):
         raise ValidationException("No Bundles found - exiting")
 
-def _ensure_app_build_or_image(app):
-    if 'image' in app and 'build' in app:
-        raise ValidationException("Keys `image` and `build` are mutually exclusive")
-    elif 'image' not in app and 'build' not in app:
-        raise ValidationException("Each app must contain either an `image` or a `build` field")
-
 def _validate_fields_with_schemer(specs):
     for app in specs.get('apps', []).values():
         app_schema.validate(app)
-        _ensure_app_build_or_image(app)
     for bundle in specs.get(constants.CONFIG_BUNDLES_KEY, []).values():
         bundle_schema.validate(bundle)
     for lib in specs.get('libs', []).values():
