@@ -1,5 +1,3 @@
-# coding=utf-8
-
 from prettytable import PrettyTable
 
 from ..config import get_config_value, save_config_value
@@ -13,7 +11,7 @@ def list_bundles():
     for bundle, bundle_spec in specs[constants.CONFIG_BUNDLES_KEY].iteritems():
         table.add_row([bundle,
                        bundle_spec['description'],
-                       u"✓" if bundle in activated_bundles else ""])
+                       "X" if bundle in activated_bundles else ""])
     log_to_client(table.get_string(sortby="Name"))
 
 def activate_bundle(bundle_names):
