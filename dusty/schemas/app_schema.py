@@ -39,6 +39,6 @@ app_schema = Schema({
     'build': {'type': basestring, 'default': ''},
     'mount': {'type': basestring, 'default': ''},
     'commands': {'type': commands_schema, 'default': {}},
-    'scripts': {'type': Array(script_schema), 'default': [],
+    'scripts': {'type': Array(script_schema), 'default': []},
     'compose': {'type': dict, 'default': {}}
     })
