@@ -1,5 +1,5 @@
 import logging
-
+import copy
 import yaml
 
 from ..spec_assembler import get_assembled_specs
@@ -16,6 +16,20 @@ def get_compose_dict(assembled_specs, port_specs):
     for service_name in assembled_specs['services']:
         compose_dict[service_name] = _composed_service_dict(service_name, assembled_specs)
     return compose_dict
+
+def get_testing_compose_dict(service_name, base_compose_spec, command=None, volumes=None, testing_image_identifier=None, net_container_identifier=None):
+    app_compose_dict = copy.deepcopy(base_compose_spec)
+    if command is not None:
+        app_compose_dict['command'] = command
+    if volumes is not None:
+        app_compose_dict['volumes'] = volumes
+    if net_container_identifier is not None:
+        app_compose_dict['net'] = "container:{}".format(net_container_identifier)
+    if testing_image_identifier is not None:
+        app_compose_dict['image'] = testing_image_identifier
+    compose_dict = {service_name: app_compose_dict}
+    return compose_dict
+
 
 def _conditional_links(assembled_specs, app_name):
     """ Given the assembled specs and app_name, this function will return all apps and services specified in
