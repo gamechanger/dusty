@@ -10,7 +10,7 @@ from nose.tools import nottest
 from mock import patch
 
 from dusty import constants
-from dusty.config import write_default_config, save_config_value
+from dusty.config import write_default_config, save_config_value, get_config, save_config
 from dusty.compiler.spec_assembler import get_specs_repo
 from dusty.commands.repos import override_repo
 from dusty.cli import main as client_entrypoint
@@ -69,18 +69,19 @@ class DustyIntegrationTestCase(TestCase):
             raise RuntimeError('You must set the env var DUSTY_ALLOW_INTEGRATION_TESTS to run integration tests. '
                                'This may affect your local config, do not run integration tests on your actual '
                                "machine unless you know what you're doing!")
+        self.previous_config = get_config()
         self._clear_stdout()
         self.overridden_specs_path = tempfile.mkdtemp()
         write_default_config()
         save_config_value(constants.CONFIG_SETUP_KEY, True)
         save_config_value(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/example-dusty-specs')
-        # Run this through the daemon itself so it refreshes its view of daemon warnings
-        self.run_command('config set {} {}'.format(constants.CONFIG_MAC_USERNAME_KEY, self.current_user))
-        override_repo(get_specs_repo(), self.overridden_specs_path)
+        save_config_value(constants.CONFIG_MAC_USERNAME_KEY, self.current_user)
+        override_repo(get_specs_repo().remote_path, self.overridden_specs_path)
         self._clear_stdout()
 
     def tearDown(self):
         shutil.rmtree(self.overridden_specs_path)
+        save_config(self.previous_config)
 
     def _clear_stdout(self):
         self.stdout_start = len(sys.stdout.getvalue())
