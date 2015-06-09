@@ -1,7 +1,7 @@
 set -e
 
-# This is set by Jenkins during release
-release=
+# This is set by Jenkins during the release process
+release=0.0.1
 
 function bold_echo {
     echo -e "\033[1m$1\033[0m"
