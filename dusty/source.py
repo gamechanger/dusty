@@ -9,7 +9,6 @@ import git
 
 from .config import get_config_value
 from . import constants
-from .notifier import notify
 from .log import log_to_client
 from .path import parent_dir
 
@@ -94,7 +93,6 @@ class Repo(object):
             return
 
         logging.info('Initiating clone of local repo {}'.format(self.remote_path))
-        notify('Cloning repository {}'.format(self.short_name))
 
         repo_path_parent = parent_dir(self.managed_path)
         if not os.path.exists(repo_path_parent):
@@ -111,7 +109,6 @@ class Repo(object):
         self.ensure_local_repo()
 
         logging.info('Updating local repo {}'.format(self.remote_path))
-        notify('Pulling latest updates for {}'.format(self.short_name))
 
         managed_repo = git.Repo(self.managed_path)
         with git_error_handling():

@@ -17,7 +17,6 @@ from docopt import docopt
 
 from .preflight import preflight_check
 from .log import configure_logging, make_socket_logger, close_socket_logger
-from .notifier import notify
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .payload import Payload
 from .warnings import daemon_warnings
@@ -42,9 +41,6 @@ def _listen_on_socket(socket_path, suppress_warnings):
     os.chmod(socket_path, 0777) # don't delete the 0, it makes Python interpret this as octal
     sock.listen(1)
     logging.info('Listening on socket at {}'.format(socket_path))
-
-    notify('Dusty is listening for commands')
-    atexit.register(notify, 'Dusty daemon has terminated')
 
     while True:
         try:
@@ -78,7 +74,6 @@ def _listen_on_socket(socket_path, suppress_warnings):
 
 def main():
     args = docopt(__doc__)
-    notify('Dusty initializing...')
     configure_logging()
     preflight_check()
     if args['--preflight-only']:

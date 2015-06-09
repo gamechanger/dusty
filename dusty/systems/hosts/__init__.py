@@ -2,7 +2,6 @@ import logging
 import re
 
 from ... import constants
-from ...notifier import notify
 
 DUSTY_CONFIG_REGEX = re.compile('\# BEGIN section for Dusty.*\# END section for Dusty\n', flags=re.DOTALL | re.MULTILINE)
 
