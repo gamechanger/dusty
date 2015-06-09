@@ -35,7 +35,7 @@ class TestDustySchemaClass(TestCase):
         dusty_schema = DustySchema(self.bigger_schema, doc)
         self.assertEquals(dusty_schema['first_name'], 'dusty')
         self.assertEquals(dusty_schema['last_name'], 'johnson')
-        self.assertEquals(dusty_schema['address'], {})
+        self.assertEquals(dusty_schema['address'], {'house_number': 1})
 
     def test_setting_defaults_more_complicated_2(self):
         doc = {'first_name': 'dusty',
