@@ -94,10 +94,10 @@ def preflight_check():
     str_errors = [str(e) for e in errors if e is not None]
     if str_errors:
         raise PreflightException("Preflight Errors: \n\t{}".format('\n\t'.join(str_errors)))
-    check_and_load_ssh_auth()
     _ensure_run_dir_exists()
     _ensure_config_dir_exists()
     if not os.path.exists(constants.CONFIG_PATH):
         logging.info('Creating default config file at {}'.format(constants.CONFIG_PATH))
         write_default_config()
+    check_and_load_ssh_auth()
     logging.info('Completed preflight check successfully')
