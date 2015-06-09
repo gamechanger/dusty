@@ -20,10 +20,17 @@ DIAGNOSTIC_SUBPROCESS_COMMANDS = [
 ]
 
 DIAGNOSTIC_DUSTY_COMMANDS = [
+    ('Dusty Version', lambda: constants.VERSION),
     ('Daemon Warnings', daemon_warnings.pretty)
 ]
 
 def dump_diagnostics():
+    for title, fn in DIAGNOSTIC_DUSTY_COMMANDS:
+        log_to_client('COMMAND: {}'.format(title))
+        log_to_client('OUTPUT:')
+        log_to_client(fn())
+        log_to_client('')
+
     for command in DIAGNOSTIC_SUBPROCESS_COMMANDS:
         log_to_client('COMMAND: {}'.format(' '.join(command)))
         log_to_client('OUTPUT:')
@@ -32,10 +39,4 @@ def dump_diagnostics():
         except subprocess.CalledProcessError as e:
             output = e.output
         log_to_client(output)
-        log_to_client('')
-
-    for title, fn in DIAGNOSTIC_DUSTY_COMMANDS:
-        log_to_client('COMMAND: {}'.format(title))
-        log_to_client('OUTPUT:')
-        log_to_client(fn())
         log_to_client('')
