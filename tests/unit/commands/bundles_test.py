@@ -15,7 +15,7 @@ class TestBundlesCommands(DustyTestCase):
             output_row = index + 3
             self.assertIn(bundle, result.splitlines()[output_row])
             check_fn = self.assertIn if activated else self.assertNotIn
-            check_fn(u"X", result.splitlines()[output_row])
+            check_fn("X", result.splitlines()[output_row])
 
     def test_list_bundles_with_none_activated(self):
         list_bundles()
