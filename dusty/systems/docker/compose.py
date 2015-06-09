@@ -78,7 +78,7 @@ def update_running_containers_from_spec(compose_config, recreate_containers=True
     up, then does everything needed to make sure boot2docker is
     up and running containers with the updated config."""
     write_composefile(compose_config, constants.COMPOSEFILE_PATH)
-    _compose_up(constants.COMPOSEFILE_PATH, 'dusty', recreate_containers=recreate_containers)
+    compose_up(constants.COMPOSEFILE_PATH, 'dusty', recreate_containers=recreate_containers)
 
 def stop_running_services(services=None):
     """Stop running containers owned by Dusty, or a specific
