@@ -1,5 +1,11 @@
 from schemer import Schema, Array
 
+def image_build_isolation_validator():
+    def validator(document):
+        if 'image' in document and 'build' in document:
+            return 'Only one of image and build is allowed in app_schema'
+    return validator
+
 
 app_depends_schema = Schema({
     'services': {'type': Array(basestring), 'default': []},
@@ -41,4 +47,4 @@ app_schema = Schema({
     'commands': {'type': commands_schema, 'default': {}},
     'scripts': {'type': Array(script_schema), 'default': []},
     'compose': {'type': dict, 'default': {}}
-    })
+    }, validates=[image_build_isolation_validator()])
