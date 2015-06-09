@@ -24,6 +24,7 @@ Commands:
 For help on a specific command, provide the '-h' flag to the command, e.g. 'dusty repos -h'
 """
 
+import os
 import sys
 import socket
 
@@ -35,6 +36,11 @@ from ..payload import Payload
 from . import (bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop,
                sync, up, validate, setup, test)
 from .. import constants
+
+# PyInstaller workaround for UTF-8 encoding issues
+# https://github.com/pyinstaller/pyinstaller/issues/1240
+if not os.getenv('PYTHONIOENCODING', None):
+    os.environ['PYTHONIOENCODING'] = 'utf_8'
 
 MODULE_MAP = {
     'bundles': bundles,
