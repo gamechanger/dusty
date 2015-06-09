@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import textwrap
 from prettytable import PrettyTable
 
