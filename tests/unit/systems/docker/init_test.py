@@ -9,7 +9,7 @@ from dusty import constants
 from dusty.systems.docker import (get_docker_env, _get_dusty_containers, get_dusty_images, _get_container_for_app_or_service,
                                   _get_canonical_container_name, _exec_in_container)
 
-from dusty.systems.docker.compose import _write_composefile
+from dusty.systems.docker.compose import write_composefile
 from dusty.systems.docker.cleanup import _get_exited_dusty_containers
 from dusty.compiler.spec_assembler import get_specs
 from ....testcases import DustyTestCase
@@ -37,8 +37,8 @@ class TestComposeSystem(DustyTestCase):
         constants.COMPOSEFILE_PATH = self.old_compose_path
         shutil.rmtree(self.temp_compose_dir)
 
-    def test_write_composefile(self):
-        _write_composefile(self.test_spec, constants.COMPOSEFILE_PATH)
+    def testwrite_composefile(self):
+        write_composefile(self.test_spec, constants.COMPOSEFILE_PATH)
         written = open(self.temp_compose_path, 'r').read()
         self.assertItemsEqual(yaml.load(written), self.test_spec)
 

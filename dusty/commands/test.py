@@ -1,5 +1,5 @@
 from ..compiler.spec_assembler import get_expanded_libs_specs
-from ..compiler.compose import get_app_volume_mounts, get_lib_volume_mounts
+from ..compiler.compose import get_app_volume_mounts, get_lib_volume_mounts, get_testing_compose_dict
 from ..systems.docker.testing_image import ensure_image_exists
 from ..systems.docker import get_docker_client
 from ..systems.rsync import sync_repos_by_app_name, sync_repos_by_lib_name
@@ -21,4 +21,7 @@ def run_app_or_lib_tests(app_or_lib_name, force_recreate=False):
 
     image_name = "{}_dusty_testing/image".format(app_or_lib_name)
     ensure_image_exists(docker_client, spec['test'], image_name, volumes=volumes, force_recreate=force_recreate)
+    _run_tests_with_image(app_or_lib_name)
+
+def _run_tests_with_image(app_or_lib_name, app_or_lib_spec, app_or_lib_volumes, image_name):
 

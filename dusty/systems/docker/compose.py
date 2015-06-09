@@ -10,7 +10,7 @@ from ...subprocess import check_output_demoted, check_and_log_output_and_error_d
 from ...compiler.spec_assembler import get_expected_number_of_running_containers
 from ...path import parent_dir
 
-def _write_composefile(compose_config, compose_file_location):
+def write_composefile(compose_config, compose_file_location):
     logging.info('Writing new Composefile')
     compose_dir_location = parent_dir(compose_file_location)
     if not os.path.exists(compose_dir_location):
@@ -77,7 +77,7 @@ def update_running_containers_from_spec(compose_config, recreate_containers=True
     writes it to the Compose spec folder so Compose can pick it
     up, then does everything needed to make sure boot2docker is
     up and running containers with the updated config."""
-    _write_composefile(compose_config, constants.COMPOSEFILE_PATH)
+    write_composefile(compose_config, constants.COMPOSEFILE_PATH)
     _compose_up(constants.COMPOSEFILE_PATH, 'dusty', recreate_containers=recreate_containers)
 
 def stop_running_services(services=None):
