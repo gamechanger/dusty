@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from schemer import ValidationException
 
-from dusty.commands.validate import (_ensure_app_build_or_image, _validate_app_references, _validate_cycle_free,
+from dusty.commands.validate import (_validate_app_references, _validate_cycle_free,
                                     _validate_fields_with_schemer)
 from dusty import constants
 
@@ -44,10 +44,6 @@ class ValidatorTest(TestCase):
         lib['bad_field'] = "BAD"
         with self.assertRaises(ValidationException):
             _validate_fields_with_schemer(specs)
-
-    def test_only_build_or_image(self):
-        with self.assertRaises(ValidationException):
-            _ensure_app_build_or_image({'image': 'gcimage', 'build': 'build.sh'})
 
     def test_validate_app_with_bad_service(self):
         specs = {'apps': {
