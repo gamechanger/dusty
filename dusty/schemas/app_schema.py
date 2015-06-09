@@ -3,7 +3,9 @@ from schemer import Schema, Array
 def image_build_isolation_validator():
     def validator(document):
         if 'image' in document and 'build' in document:
-            return 'Only one of image and build is allowed in app_schema'
+            return 'Only one of image and build is allowed in app schema'
+        elif 'image' not in document and 'build' not in document:
+            return 'Need to have at least one of `image` or `build` in app schema'
     return validator
 
 
