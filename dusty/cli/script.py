@@ -1,7 +1,7 @@
 """Execute scripts defined in an app's spec inside a running app container.
 
 Usage:
-  script <app_name> [<script_name>] [<args>...]
+  scripts <app_name> [<script_name>] [<args>...]
 
 Options:
   <args>  Arguments to pass to the script

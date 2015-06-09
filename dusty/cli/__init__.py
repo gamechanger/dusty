@@ -12,7 +12,7 @@ Commands:
   logs       Tail logs for a Dusty-managed service
   repos      Manage Git repos used for running Dusty applications
   restart    Restart Dusty-managed containers
-  script     Execute predefined scripts inside running containers
+  scripts    Execute predefined scripts inside running containers
   setup      Configure Dusty after installation
   shell      Open a shell inside a running container
   stop       Stop Dusty-managed containers
@@ -45,7 +45,7 @@ MODULE_MAP = {
     'logs': logs,
     'repos': repos,
     'restart': restart,
-    'script': script,
+    'scripts': script,
     'setup': setup,
     'shell': shell,
     'stop': stop,
