@@ -32,7 +32,7 @@ def basic_specs_fixture():
                                         'name': 'example'}]})
     _write('app', 'app-c', {'repo': '/gc/repos/c',
                             'image': 'app/c'})
-    _write('lib', 'lib-a', {'repo': 'github.com/lib/a', 'image': 'lib/a'})
+    _write('lib', 'lib-a', {'repo': 'github.com/lib/a'})
     _write('service', 'service-a', {'image': 'service/a'})
 
 def busybox_single_app_bundle_fixture(num_bundles=1):

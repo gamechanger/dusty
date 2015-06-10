@@ -148,9 +148,9 @@ def _get_respective_schema(specs_type):
     if specs_type == 'apps':
         return app_schema
     elif specs_type == constants.CONFIG_BUNDLES_KEY:
-        return bundles_schema
+        return bundle_schema
     elif specs_type == 'libs':
-        return libs_schema
+        return lib_schema
 
 def get_specs_from_path(specs_path):
     specs = {}
@@ -162,6 +162,10 @@ def get_specs_from_path(specs_path):
             spec_name = os.path.splitext(os.path.split(spec_path)[-1])[0]
             with open(spec_path, 'r') as f:
                 spec = yaml.load(f.read())
+                import logging
+                logging.error(spec)
+                logging.error(key)
+                logging.error(schema)
                 if schema:
                     spec = DustySchema(schema, spec)
                 specs[key][spec_name] = spec
