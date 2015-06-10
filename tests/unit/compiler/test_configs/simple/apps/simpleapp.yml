@@ -1,4 +1,4 @@
-source: ~/gc/simpleapp
+repo:  github.com/gamechanger/simpleapp
 image: docker.gamechanger.io/simpleapp
 commands:
   always: run-script.sh
