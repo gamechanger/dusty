@@ -37,40 +37,47 @@ def _construct_test_command(spec, suite_name, test_arguments):
     log_to_client('Command to run in test is {}'.format(test_command))
     return test_command
 
-def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_or_lib_volumes, image_name, test_command):
-    log_to_client('image name is {}'.format(image_name))
-    temporary_compose_config_files = {}
-    previous_container_name = None
-
+def _services_compose_up(expanded_specs, app_or_lib_spec):
+    previous_container_names = []
     for service_name in app_or_lib_spec['test']['services']:
         service_spec = expanded_specs['services'][service_name]
         kwargs = {}
-        if previous_container_name is not None:
-            kwargs['net_container_identifier'] = previous_container_name
+        if previous_container_names:
+            kwargs['net_container_identifier'] = previous_container_names[-1]
         service_compse_config = get_testing_compose_dict(service_name, service_spec, **kwargs)
 
         #want to make these temporary files
         compose_file = '/Users/paetling/dusty_testing/service_{}'.format(service_name)
-        temporary_compose_config_files[service_name] = compose_file
         write_composefile(service_compse_config, compose_file)
+        log_to_client('Compose config {}: \n {}'.format(service_name, service_compse_config))
 
         compose_up(compose_file, service_name)
         #compose only has runs with lower case names
-        previous_container_name = "{}_{}_1".format(service_name.lower(), service_name)
+        previous_container_names.append("{}_{}_1".format(service_name.lower(), service_name))
+    return previous_container_names
 
+def _app_or_lib_compose_up(app_or_lib_spec, app_or_lib_name, image_name,
+                           app_or_lib_volumes, test_command, previous_container_name):
     kwargs = {'testing_image_identifier': image_name,
               'volumes': app_or_lib_volumes,
               'command': test_command}
 
     if previous_container_name is not None:
         kwargs['net_container_identifier'] = previous_container_name
-    log_to_client("THE KWARGS FOR GET_TESTING_COMPOSE are {}".format(kwargs))
     compose_file = '/Users/paetling/dusty_testing/service_{}'.format(app_or_lib_name)
-    temporary_compose_config_files[app_or_lib_name] = compose_file
     compose_config = get_testing_compose_dict(app_or_lib_name, app_or_lib_spec['test'].get('compose', {}), **kwargs)
-    log_to_client(compose_config)
     write_composefile(compose_config, compose_file)
     compose_up(compose_file, app_or_lib_name)
+    log_to_client('Compose config {}: \n {}'.format(app_or_lib_name, compose_config))
+
+def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_or_lib_volumes, image_name, test_command):
+    log_to_client('image name is {}'.format(image_name))
+
+
+    previous_container_names = _services_compose_up(expanded_specs, app_or_lib_spec)
+    previous_container_name = previous_container_names[-1] if previous_container_names else None
+    _app_or_lib_compose_up(app_or_lib_spec, app_or_lib_name, image_name, app_or_lib_volumes, test_command, previous_container_name)
+
 
     #need to wait on tests finishing and cleanup shit afterwards
 
