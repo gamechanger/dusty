@@ -16,6 +16,7 @@ from dusty.compiler.spec_assembler import get_specs_repo
 from dusty.commands.repos import override_repo
 from dusty.cli import main as client_entrypoint
 from dusty.systems.docker import _exec_in_container, get_docker_client, _get_container_for_app_or_service
+from dusty.path import parent_dir
 from .fixtures import basic_specs_fixture
 
 class TestCaptureHandler(logging.Handler):
@@ -139,14 +140,27 @@ class DustyIntegrationTestCase(TestCase):
                 return True
         return False
 
+    def exec_in_container(self, service_name, command):
+        client = get_docker_client()
+        container = _get_container_for_app_or_service(client, service_name, raise_if_not_found=True)
+        return _exec_in_container(client, container, *command.split(' '))
+
+    def remove_path_in_container(self, service_name, file_path):
+        self.exec_in_container(service_name, 'rm -rf {}'.format(file_path))
+
+    def write_file_in_container(self, service_name, file_path, contents):
+        self.exec_in_container(service_name, 'mkdir -p {}'.format(parent_dir(file_path)))
+        self.exec_in_container(service_name, 'sh -c "echo -n {} > {}"'.format(contents, file_path))
+
     def assertInSameLine(self, string, *values):
         self.assertTrue(self._in_same_line(string, *values))
 
     def assertNotInSameLine(self, string, *values):
         self.assertFalse(self._in_same_line(string, *values))
 
+    def assertFileContents(self, file_path, contents):
+        with open(file_path, 'r') as f:
+            self.assertEqual(f.read(), contents)
+
     def assertFileContentsInContainer(self, service_name, file_path, contents):
-        client = get_docker_client()
-        container = _get_container_for_app_or_service(client, service_name, raise_if_not_found=True)
-        result = _exec_in_container(client, container, 'cat', file_path)
-        self.assertEqual(result, contents)
+        self.assertEqual(self.exec_in_container(service_name, 'cat {}'.format(file_path)), contents)
