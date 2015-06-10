@@ -157,7 +157,7 @@ class TestComposeCompiler(DustyTestCase):
 
     @patch('dusty.compiler.compose._compile_docker_command', return_value="what command?")
     def test_composed_app(self, *args):
-        expected_app_config = get_app_dusty_schema({
+        expected_app_config = {
             'image': 'awesomeGCimage',
             'command': 'what command?',
             'links': [
@@ -175,7 +175,7 @@ class TestComposeCompiler(DustyTestCase):
                 '8000:1',
                 '8005:90'
             ]
-        })
+        }
         retured_config = _composed_app_dict('app1', basic_specs, basic_port_specs)
         self.assertEqual(expected_app_config, retured_config)
 
