@@ -11,6 +11,7 @@ apps:
         compose:
           environment:
             gcenv: local
+          volumes: []
         depends:
             apps: []
             libs: []

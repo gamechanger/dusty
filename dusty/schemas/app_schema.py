@@ -39,7 +39,7 @@ script_schema = Schema({
 
 dusty_app_compose_schema = Schema({
     'volumes': {'type': Array(basestring), 'default': []}
-    })
+    }, strict=False)
 
 app_schema = Schema({
     'repo': {'type': basestring, 'required': True},
