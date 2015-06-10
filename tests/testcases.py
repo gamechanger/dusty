@@ -8,6 +8,7 @@ import getpass
 from unittest import TestCase
 from nose.tools import nottest
 from mock import patch
+import git
 
 from dusty import constants
 from dusty.config import write_default_config, save_config_value, get_config, save_config
@@ -78,10 +79,16 @@ class DustyIntegrationTestCase(TestCase):
         save_config_value(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/example-dusty-specs')
         save_config_value(constants.CONFIG_MAC_USERNAME_KEY, self.current_user)
         override_repo(get_specs_repo().remote_path, self.overridden_specs_path)
+        self._set_up_fake_local_repo()
         self._clear_stdout()
 
     def tearDown(self):
         shutil.rmtree(self.overridden_specs_path)
+        if os.path.exists(constants.REPOS_DIR):
+            shutil.rmtree(constants.REPOS_DIR)
+        if os.path.exists(constants.COMPOSE_DIR):
+            shutil.rmtree(constants.COMPOSE_DIR)
+        shutil.rmtree('/tmp/fake-repo')
         save_config(self.previous_config)
 
     def _clear_stdout(self):
@@ -118,6 +125,13 @@ class DustyIntegrationTestCase(TestCase):
         result = self.stdout
         self._clear_stdout()
         return result
+
+    def _set_up_fake_local_repo(self):
+        repo = git.Repo.init('/tmp/fake-repo')
+        with open('/tmp/fake-repo/README.md', 'w') as f:
+            f.write('# Fake Repo')
+        repo.index.add(['/tmp/fake-repo/README.md'])
+        repo.index.commit('Initial commit')
 
     def _in_same_line(self, string, *values):
         for line in string.splitlines():
