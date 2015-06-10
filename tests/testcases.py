@@ -14,7 +14,7 @@ from dusty.config import write_default_config, save_config_value, get_config, sa
 from dusty.compiler.spec_assembler import get_specs_repo
 from dusty.commands.repos import override_repo
 from dusty.cli import main as client_entrypoint
-from dusty.systems.docker import _exec_in_container, _get_docker_client, _get_container_for_app_or_service
+from dusty.systems.docker import _exec_in_container, get_docker_client, _get_container_for_app_or_service
 from .fixtures import basic_specs_fixture
 
 class TestCaptureHandler(logging.Handler):
@@ -132,7 +132,7 @@ class DustyIntegrationTestCase(TestCase):
         self.assertFalse(self._in_same_line(string, *values))
 
     def assertFileContentsInContainer(self, service_name, file_path, contents):
-        client = _get_docker_client()
+        client = get_docker_client()
         container = _get_container_for_app_or_service(client, service_name, raise_if_not_found=True)
         result = _exec_in_container(client, container, 'cat', file_path)
         self.assertEqual(result, contents)
