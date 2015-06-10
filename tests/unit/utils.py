@@ -13,7 +13,7 @@ def get_app_dusty_schema(doc):
 
 def get_lib_dusty_schema(doc):
     if 'repo' not in doc:
-        docp['repo'] = ''
+        doc['repo'] = ''
     return DustySchema(lib_schema, doc)
 
 def get_bundle_dusty_schema(doc):

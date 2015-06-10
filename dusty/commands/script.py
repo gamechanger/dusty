@@ -10,7 +10,7 @@ def script_info_for_app(app_name):
     app_specs = get_specs()['apps'].get(app_name)
     if not app_specs:
         raise KeyError('No app found named {} in specs'.format(app_name))
-    if len(app_specs['scripts']) == 0:
+    if not app_specs['scripts']:
         log_to_client('No scripts registered for app {}'.format(app_name))
         return
 

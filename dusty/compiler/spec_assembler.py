@@ -147,14 +147,18 @@ def get_repo_of_app_or_library(app_or_library_name):
 def _get_respective_schema(specs_type):
     if specs_type == 'apps':
         return app_schema
-    elif specs_type == constants.CONFIG_BUNDLES_KEY:
+    elif specs_type == 'bundles':
         return bundle_schema
     elif specs_type == 'libs':
         return lib_schema
+    elif specs_type == 'services':
+        return None
+    else:
+        raise RuntimeError('Specs must be of the type apps, bundles, libs or services')
 
 def get_specs_from_path(specs_path):
     specs = {}
-    for key in [constants.CONFIG_BUNDLES_KEY, 'apps', 'libs', 'services']:
+    for key in ['bundles', 'apps', 'libs', 'services']:
         specs[key] = {}
         schema = _get_respective_schema(key)
         key_path = os.path.join(specs_path, key)
