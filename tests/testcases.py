@@ -145,6 +145,11 @@ class DustyIntegrationTestCase(TestCase):
         container = _get_container_for_app_or_service(client, service_name, include_exited=True)
         return bool(container)
 
+    def _container_running(self, service_name):
+        client = get_docker_client()
+        container = _get_container_for_app_or_service(client, service_name, include_exited=False)
+        return bool(container)
+
     def _image_exists(self, image_to_find):
         client = get_docker_client()
         all_images = client.images(all=True)
@@ -174,6 +179,9 @@ class DustyIntegrationTestCase(TestCase):
 
     def assertFileContentsInContainer(self, service_name, file_path, contents):
         self.assertEqual(self.exec_in_container(service_name, 'cat {}'.format(file_path)), contents)
+
+    def assertContainerRunning(self, service_name):
+        self.assertTrue(self._container_exists(service_name))
 
     def assertContainerExists(self, service_name):
         self.assertTrue(self._container_exists(service_name))
