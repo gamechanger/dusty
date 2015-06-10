@@ -9,3 +9,12 @@ class DustySchema(object):
 
     def __getitem__(self, name):
         return self._document[name]
+
+    def __contains__(self, key):
+        return key in self._document
+
+    def keys(self):
+        return self._document.keys()
+
+    def values(self):
+        return self._document.values()

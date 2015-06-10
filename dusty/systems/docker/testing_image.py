@@ -4,9 +4,7 @@ from ...log import log_to_client
 
 def _ensure_testing_spec_base_image(docker_client, testing_spec):
     log_to_client('Getting the base image for the new image')
-    if 'image' in testing_spec and 'build' in testing_spec:
-        raise RuntimeError('Only 1 of `image` and `build` keys are allowed in testing spec')
-    elif 'image' in testing_spec:
+    if 'image' in testing_spec:
         log_to_client('Base image is {}'.format(testing_spec['image']))
         return testing_spec['image']
     elif 'build' in testing_spec:
@@ -14,8 +12,6 @@ def _ensure_testing_spec_base_image(docker_client, testing_spec):
         log_to_client('Need to build the base image based off of the Dockerfile here: {}'.format(testing_spec['build']))
         docker_client.build(path=testing_spec['build'], tag=image_tag)
         return image_tag
-    else:
-        raise RuntimeError('One of `image` or `build` is required in testing spec')
 
 def _get_split_volumes(volumes):
     split_volumes = []

@@ -43,3 +43,27 @@ class TestDustySchemaClass(TestCase):
         dusty_schema = DustySchema(self.bigger_schema, doc)
         self.assertEquals(dusty_schema['address']['street'], 'dogstoon')
         self.assertEquals(dusty_schema['address']['house_number'], 1)
+
+    def test_in_1(self):
+        doc = {'first_name': 'dusty',
+               'address': {'street': 'dogstoon'}}
+        dusty_schema = DustySchema(self.bigger_schema, doc)
+        self.assertTrue('first_name' in dusty_schema)
+
+    def test_in_2(self):
+        doc = {'first_name': 'dusty',
+               'address': {'street': 'dogstoon'}}
+        dusty_schema = DustySchema(self.bigger_schema, doc)
+        self.assertFalse('first_names' in dusty_schema)
+
+    def test_keys(self):
+        doc = {'street': 'dogstoon',
+               'house_number': 1}
+        dusty_schema = DustySchema(self.base_schema, doc)
+        self.assertEquals(set(['street', 'house_number']), set(dusty_schema.keys()))
+
+    def test_values(self):
+        doc = {'street': 'dogstoon',
+               'house_number': 1}
+        dusty_schema = DustySchema(self.base_schema, doc)
+        self.assertEquals(set(['dogstoon', 1]), set(dusty_schema.values()))

@@ -1,5 +1,5 @@
-source: ~/gc/app2
-image: docker.gamechanger.io/simpleapp
+repo: docker.gamechanger.io/app2
+image: docker.gamechanger.io/app2
 commands:
   always: run-script.sh
 compose:
