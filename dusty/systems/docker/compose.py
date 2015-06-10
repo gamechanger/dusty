@@ -18,30 +18,30 @@ def _write_composefile(compose_config, compose_file_location):
     with open(compose_file_location, 'w') as f:
         f.write(yaml.dump(compose_config, default_flow_style=False))
 
-def _compose_up(compose_file_location, project_name, recreate_containers=True):
-    logging.info('Running docker-compose up')
+def _compose_base_command(command_name, compose_file_location, project_name):
+    logging.info('Running docker-compose {}'.format(command_name))
     command = ['docker-compose']
     if compose_file_location is not None:
         command += ['-f', compose_file_location]
     if project_name is not None:
         command += ['-p', project_name]
     command += ['up', '-d', '--allow-insecure-ssl']
+
+def _compose_up(compose_file_location, project_name, recreate_containers=True):
+    command = _compose_base_command('up'
     if not recreate_containers:
         command.append('--no-recreate')
     # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
-    check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True)
+                                    check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True)
 
 def _compose_stop(compose_file_location, project_name, services):
-    logging.info('Running docker-compose stop')
-    command = ['docker-compose']
-    if compose_file_location is not None:
-        command += ['-f', constants.COMPOSEFILE_PATH]
-    if project_name is not None:
-        command += ['-p', project_name]
-    command += ['stop', '-t', '1']
     if services:
         command += services
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
+
+def _compose_rm(compose_file_location, project_name, services):
+    logging.info('Running docker-compose rm')
+    command = ['docker-compose']
 
 def _compose_restart(services):
     """Well, this is annoying. Compose 1.2 shipped with the
@@ -98,3 +98,5 @@ def restart_running_services(services=None):
         services = []
     _compose_restart(services)
 
+def rm_containers(services=None):
+    """Remove stopped containers owned by Dusty """
