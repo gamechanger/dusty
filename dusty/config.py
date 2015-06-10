@@ -72,7 +72,7 @@ def _mac_version_is_post_yosemite():
     minor_version = int(version.split('.')[1])
     return minor_version >= 10
 
-def _load_ssh_auth_post_yosemite():
+def _load_ssh_auth_post_yosemite(mac_username):
     """Starting with Yosemite, launchd was rearchitected and now only one
     launchd process runs for all users. This allows us to much more easily
     impersonate a user through launchd and extract the environment
@@ -118,6 +118,6 @@ def check_and_load_ssh_auth():
         return
 
     if _mac_version_is_post_yosemite():
-        _load_ssh_auth_post_yosemite()
+        _load_ssh_auth_post_yosemite(mac_username)
     else:
         _load_ssh_auth_pre_yosemite()
