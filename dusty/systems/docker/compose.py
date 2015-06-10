@@ -18,31 +18,31 @@ def _write_composefile(compose_config, compose_file_location):
     with open(compose_file_location, 'w') as f:
         f.write(yaml.dump(compose_config, default_flow_style=False))
 
-def _compose_base_command(command_name, compose_file_location, project_name):
-    logging.info('Running docker-compose {}'.format(command_name))
+def _compose_base_command(core_command, compose_file_location, project_name=None):
+    logging.info('Running docker-compose {}'.format(core_command))
     command = ['docker-compose']
     if compose_file_location is not None:
         command += ['-f', compose_file_location]
     if project_name is not None:
         command += ['-p', project_name]
-    command += [command_name, '-d', '--allow-insecure-ssl']
+    command += core_command
     return command
 
 def _compose_up(compose_file_location, project_name, recreate_containers=True):
-    command = _compose_base_command('up', compose_file_location, project_name)
+    command = _compose_base_command(['up', '-d', '--allow-insecure-ssl'], compose_file_location, project_name)
     if not recreate_containers:
         command.append('--no-recreate')
     # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
     check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True)
 
 def _compose_stop(compose_file_location, project_name, services):
-    command = _compose_base_command('stop', compose_file_location, project_name)
+    command = _compose_base_command(['stop', '-t', '1'], compose_file_location, project_name)
     if services:
         command += services
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
-def _compose_rm(compose_file_location, project_name, services):
-    command = _compose_base_command('rm', compose_file_location, project_name)
+def _compose_rm(compose_file_location, project_name):
+    command = _compose_base_command(['rm', '-f'], compose_file_location, project_name)
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
 def _compose_restart(services):
@@ -100,8 +100,5 @@ def restart_running_services(services=None):
         services = []
     _compose_restart(services)
 
-def rm_containers(services=None):
-    """Remove stopped containers owned by Dusty """
-    if services is None:
-        services = []
-    _compose_rm(constants.COMPOSEFILE_PATH, 'dusty', services)
+def rm_containers():
+    _compose_rm(constants.COMPOSEFILE_PATH, 'dusty')

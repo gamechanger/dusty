@@ -47,7 +47,7 @@ def start_local_env(recreate_containers=True, pull_repos=True):
 
     log_to_client("Your local environment is now started")
 
-def stop_apps_or_services(*app_or_service_names):
+def stop_apps_or_services(app_or_service_names=None, rm_containers=False):
     """Stop any currently running Docker containers associated with
     Dusty, or associated with the provided apps_or_services. Does not remove
     the service's containers."""
@@ -55,8 +55,10 @@ def stop_apps_or_services(*app_or_service_names):
         log_to_client("Stopping the following apps or services: {}".format(', '.join(app_or_service_names)))
     else:
         log_to_client("Stopping all running containers associated with Dusty")
+
     compose.stop_running_services(app_or_service_names)
-    compose.rm_containers(app_or_service_names)
+    if rm_containers:
+        compose.rm_containers()
 
 def restart_apps_or_services(app_or_service_names=None, sync=True):
     """Restart any containers associated with Dusty, or associated with

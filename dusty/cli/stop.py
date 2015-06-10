@@ -6,7 +6,7 @@ Usage:
   stop [--rm-containers] [<services>...]
 
 Options:
-  --rm-containers  Stop running containers
+  --rm-containers  remove containers
 """
 
 from docopt import docopt
@@ -16,5 +16,4 @@ from ..commands.run import stop_apps_or_services
 
 def main(argv):
     args = docopt(__doc__, argv)
-    return Payload(stop_apps_or_services, args['<services>'],
-                   rm_containers=args['--rm-containers'])
+    return Payload(stop_apps_or_services, args['<services>'], rm_containers=args['--rm-containers'])
