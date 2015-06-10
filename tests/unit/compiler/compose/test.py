@@ -8,10 +8,11 @@ from dusty.compiler.compose import (get_compose_dict, _composed_app_dict,
                                     get_app_volume_mounts, get_lib_volume_mounts)
 from ..test_test_cases import all_test_configs
 from ....testcases import DustyTestCase
+from ...utils import get_app_dusty_schema, get_lib_dusty_schema
 
 basic_specs = {
     'apps': {
-        'app1': {
+        'app1': get_app_dusty_schema({
             'repo': '/app1',
             'depends': {
                 'libs': ['lib1', 'lib2'],
@@ -24,27 +25,28 @@ basic_specs = {
             },
             'image': 'awesomeGCimage',
             'mount': '/gc/app1'
-        },
-        'app2': {
+        }),
+        'app2': get_app_dusty_schema({
             'repo': '/app2',
             'depends': {},
-            'mount': '/gc/app2'
-        }
+            'mount': '/gc/app2',
+            'image': ''
+        })
     },
     'libs': {
-        'lib1': {
+        'lib1': get_lib_dusty_schema({
             'repo': '/lib1',
             'mount': '/gc/lib1',
             'install': './install.sh',
             'depends': {
                 'libs': ['lib2']
             }
-        },
-        'lib2': {
+        }),
+        'lib2': get_lib_dusty_schema({
             'repo': '/lib2',
             'mount': '/gc/lib2',
             'install': 'python setup.py develop'
-        }
+        })
     },
     'services':{
         'service1': {
@@ -129,7 +131,7 @@ class TestComposeCompiler(DustyTestCase):
 
     def test_compile_command_without_once(self, *args):
         new_specs = copy(basic_specs)
-        del new_specs['apps']['app1']['commands']['once']
+        new_specs['apps']['app1']['commands']['once'] = ''
         expected_command_list = ["sh -c \"cd /gc/lib1 && ./install.sh",
                                  " cd /gc/lib2 && python setup.py develop",
                                  " cd /gc/app1",
@@ -155,7 +157,7 @@ class TestComposeCompiler(DustyTestCase):
 
     @patch('dusty.compiler.compose._compile_docker_command', return_value="what command?")
     def test_composed_app(self, *args):
-        expected_app_config = {
+        expected_app_config = get_app_dusty_schema({
             'image': 'awesomeGCimage',
             'command': 'what command?',
             'links': [
@@ -173,7 +175,7 @@ class TestComposeCompiler(DustyTestCase):
                 '8000:1',
                 '8005:90'
             ]
-        }
+        })
         retured_config = _composed_app_dict('app1', basic_specs, basic_port_specs)
         self.assertEqual(expected_app_config, retured_config)
 
@@ -208,52 +210,52 @@ class TestComposeCompiler(DustyTestCase):
 
     def test_get_available_app_links_no_services_1(self, *args):
         assembled_specs = {'apps': {
-                                'app-a': {
+                                'app-a': get_app_dusty_schema({
                                     'depends': {
                                         'apps': ['app-b']
                                     },
                                     'conditional_links': {
                                         'apps':['app-c']
                                     }
-                                },
-                                'app-b': {
+                                }),
+                                'app-b': get_app_dusty_schema({
                                     'depends': {}
-                                }
+                                })
                             }}
         self.assertEqual(_conditional_links(assembled_specs, 'app-a'), [])
 
     def test_get_available_app_links_no_services_2(self, *args):
         assembled_specs = {'apps': {
-                                'app-a': {
+                                'app-a': get_app_dusty_schema({
                                     'depends': {
                                         'apps': ['app-b']
                                     },
                                     'conditional_links':{
                                         'apps': ['app-c']
                                     }
-                                },
-                                'app-b': {
+                                }),
+                                'app-b': get_app_dusty_schema({
                                     'depends': {}
-                                },
-                                'app-c': {
+                                }),
+                                'app-c': get_app_dusty_schema({
                                     'depends': {}
-                                }
+                                })
                             }}
         self.assertEqual(_conditional_links(assembled_specs, 'app-a'), ['app-c'])
 
     def test_get_available_app_links_only_services_1(self, *args):
         assembled_specs = {'apps': {
-                                'app-a': {
+                                'app-a': get_app_dusty_schema({
                                     'depends': {
                                         'apps': ['app-b']
                                     },
                                     'conditional_links': {
                                         'services': ['ser-b']
                                     }
-                                },
-                                'app-b': {
+                                }),
+                                'app-b': get_app_dusty_schema({
                                     'depends': {}
-                                }
+                                })
                             },
                             'services': {
                                 'ser-a': {
@@ -264,17 +266,17 @@ class TestComposeCompiler(DustyTestCase):
 
     def test_get_available_app_links_only_services_2(self, *args):
         assembled_specs = {'apps': {
-                                'app-a': {
+                                'app-a': get_app_dusty_schema({
                                     'depends': {
                                         'apps': ['app-b']
                                     },
                                     'conditional_links': {
                                         'services': ['ser-b']
                                     }
-                                },
-                                'app-b': {
+                                }),
+                                'app-b': get_app_dusty_schema({
                                     'depends': {}
-                                }
+                                })
                             },
                             'services': {
                                 'ser-b': {
@@ -285,16 +287,16 @@ class TestComposeCompiler(DustyTestCase):
 
     def test_get_available_app_links_both(self, *args):
         assembled_specs = {'apps': {
-                                'app-a': {
+                                'app-a': get_app_dusty_schema({
                                     'depends': {},
                                     'conditional_links': {
                                         'services': ['ser-b'],
                                         'apps': ['app-b']
                                     }
-                                },
-                                'app-b': {
+                                }),
+                                'app-b': get_app_dusty_schema({
                                     'depends': {}
-                                }
+                                })
                             },
                             'services': {
                                 'ser-b': {
