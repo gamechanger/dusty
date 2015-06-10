@@ -25,23 +25,25 @@ def _compose_base_command(command_name, compose_file_location, project_name):
         command += ['-f', compose_file_location]
     if project_name is not None:
         command += ['-p', project_name]
-    command += ['up', '-d', '--allow-insecure-ssl']
+    command += [command_name, '-d', '--allow-insecure-ssl']
+    return command
 
 def _compose_up(compose_file_location, project_name, recreate_containers=True):
-    command = _compose_base_command('up'
+    command = _compose_base_command('up', compose_file_location, project_name)
     if not recreate_containers:
         command.append('--no-recreate')
     # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
-                                    check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True)
+    check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True)
 
 def _compose_stop(compose_file_location, project_name, services):
+    command = _compose_base_command('stop', compose_file_location, project_name)
     if services:
         command += services
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
 def _compose_rm(compose_file_location, project_name, services):
-    logging.info('Running docker-compose rm')
-    command = ['docker-compose']
+    command = _compose_base_command('rm', compose_file_location, project_name)
+    check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
 def _compose_restart(services):
     """Well, this is annoying. Compose 1.2 shipped with the
@@ -100,3 +102,6 @@ def restart_running_services(services=None):
 
 def rm_containers(services=None):
     """Remove stopped containers owned by Dusty """
+    if services is None:
+        services = []
+    _compose_rm(constants.COMPOSEFILE_PATH, 'dusty', services)
