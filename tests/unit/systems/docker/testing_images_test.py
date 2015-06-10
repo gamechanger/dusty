@@ -8,18 +8,6 @@ from dusty.systems.docker.testing_image import (_ensure_testing_spec_base_image,
 from dusty.systems.docker.testing_image import ensure_image_exists
 
 class TestTestingImages(DustyTestCase):
-    def test_ensure_testing_spec_base_image_wrong_arguments_1(self):
-        mock_docker_client = Mock()
-        testing_spec = {}
-        with self.assertRaises(RuntimeError):
-            _ensure_testing_spec_base_image(mock_docker_client, testing_spec)
-
-    def test_ensure_testing_spec_base_image_wrong_arguments_2(self):
-        mock_docker_client = Mock()
-        testing_spec = {'image': 'dusty/image', 'build': '/path/to/docker_file_folder'}
-        with self.assertRaises(RuntimeError):
-            _ensure_testing_spec_base_image(mock_docker_client, testing_spec)
-
     def test_ensure_testing_spec_base_image_image(self):
         mock_docker_client = Mock()
         testing_spec = {'image': 'dusty/image'}
