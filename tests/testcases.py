@@ -181,7 +181,10 @@ class DustyIntegrationTestCase(TestCase):
         self.assertEqual(self.exec_in_container(service_name, 'cat {}'.format(file_path)), contents)
 
     def assertContainerRunning(self, service_name):
-        self.assertTrue(self._container_exists(service_name))
+        self.assertTrue(self._container_running(service_name))
+
+    def assertContainerIsNotRunning(self, service_name):
+        self.assertFalse(self._container_running(service_name))
 
     def assertContainerExists(self, service_name):
         self.assertTrue(self._container_exists(service_name))
