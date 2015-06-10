@@ -89,7 +89,7 @@ def _load_ssh_auth_pre_yosemite():
     to the correct launchd."""
     for process in psutil.process_iter():
         if process.name() == 'ssh-agent':
-            ssh_auth_sock = subprocess.check_output(['launchctl', 'bsexec', process.pid, 'launchctl', 'getenv', 'SSH_AUTH_SOCK']).rstrip()
+            ssh_auth_sock = subprocess.check_output(['launchctl', 'bsexec', str(process.pid), 'launchctl', 'getenv', 'SSH_AUTH_SOCK']).rstrip()
             if ssh_auth_sock:
                 _set_ssh_auth_sock(ssh_auth_sock)
                 break
