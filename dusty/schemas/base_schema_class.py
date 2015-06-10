@@ -4,8 +4,11 @@ from copy import deepcopy
 class DustySchema(object):
     def __init__(self, schema, document):
         schema.validate(document)
+        import logging
+        logging.error(document)
         self._document = deepcopy(document)
         schema.apply_defaults(self._document)
+        logging.error(self._document)
 
     def __getitem__(self, name):
         return self._document[name]

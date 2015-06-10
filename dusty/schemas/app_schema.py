@@ -44,7 +44,7 @@ app_schema = Schema({
     'conditional_links': {'type': conditional_links_schema, 'default': {}},
     'host_forwarding': {'type': Array(host_forwarding_schema), 'default': []},
     'image': {'type': basestring, 'default': ''},
-    'build': {'type': basestring, 'default': ''},
+    'build': {'type': basestring},
     'mount': {'type': basestring, 'default': ''},
     'commands': {'type': commands_schema, 'default': {}},
     'scripts': {'type': Array(script_schema), 'default': []},

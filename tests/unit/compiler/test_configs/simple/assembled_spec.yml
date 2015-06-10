@@ -4,12 +4,16 @@ bundles:
             - simpleapp
 apps:
     simpleapp:
-        source: ~/gc/simpleapp
         image: docker.gamechanger.io/simpleapp
         commands:
           always: run-script.sh
+          once: ''
         compose:
           environment:
             gcenv: local
+        depends:
+            apps: []
+            libs: []
+            services: []
 libs: {}
 services: {}
