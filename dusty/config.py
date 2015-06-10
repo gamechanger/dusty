@@ -9,6 +9,9 @@ import os
 import pwd
 import subprocess
 import yaml
+import platform
+
+import psutil
 
 from . import constants
 from .warnings import daemon_warnings
@@ -61,6 +64,45 @@ def verify_mac_username(username):
     except:
         raise RuntimeError('No user found named {}'.format(username))
 
+def _running_on_mac():
+    return bool(platform.mac_ver()[0])
+
+def _mac_version_is_post_yosemite():
+    version = platform.mac_ver()[0]
+    minor_version = int(version.split('.')[1])
+    return minor_version >= 10
+
+def _load_ssh_auth_post_yosemite():
+    """Starting with Yosemite, launchd was rearchitected and now only one
+    launchd process runs for all users. This allows us to much more easily
+    impersonate a user through launchd and extract the environment
+    variables from their running processes."""
+    user_id = subprocess.check_output(['id', '-u', mac_username])
+    ssh_auth_sock = subprocess.check_output(['launchctl', 'asuser', user_id, 'launchctl', 'getenv', 'SSH_AUTH_SOCK']).rstrip()
+    _set_ssh_auth_sock(ssh_auth_sock)
+
+def _load_ssh_auth_pre_yosemite():
+    """For OS X versions before Yosemite, many launchd processes run simultaneously under
+    different users and different permission models. The simpler `asuser` trick we use
+    in Yosemite doesn't work, since it gets routed to the wrong launchd. We instead need
+    to find the running ssh-agent process and use its PID to navigate ourselves
+    to the correct launchd."""
+    for process in psutil.process_iter():
+        if process.name() == 'ssh-agent':
+            ssh_auth_sock = subprocess.check_output(['launchctl', 'bsexec', process.pid, 'launchctl', 'getenv', 'SSH_AUTH_SOCK']).rstrip()
+            if ssh_auth_sock:
+                _set_ssh_auth_sock(ssh_auth_sock)
+                break
+    else:
+        daemon_warnings.warn('ssh', 'No running ssh-agent found linked to SSH_AUTH_SOCK')
+
+def _set_ssh_auth_sock(ssh_auth_sock):
+    if ssh_auth_sock:
+        logging.info("Setting SSH_AUTH_SOCK to {}".format(ssh_auth_sock))
+        os.environ['SSH_AUTH_SOCK'] = ssh_auth_sock
+    else:
+        daemon_warnings.warn('ssh', 'SSH_AUTH_SOCK not determined; git operations may fail')
+
 def check_and_load_ssh_auth():
     """
     Will check the mac_username config value; if it is present, will load that user's
@@ -70,14 +112,12 @@ def check_and_load_ssh_auth():
     mac_username = get_config_value(constants.CONFIG_MAC_USERNAME_KEY)
     if not mac_username:
         logging.info("Can't setup ssh authorization; no mac_username specified")
-    else:
-        user_id = subprocess.check_output(['id', '-u', mac_username])
-        _load_ssh_auth(user_id)
+        return
+    if not _running_on_mac(): # give our Linux unit tests a way to not freak out
+        logging.info("Skipping SSH load, we are not running on Mac")
+        return
 
-def _load_ssh_auth(user_id):
-    ssh_auth_sock = subprocess.check_output(['launchctl', 'asuser', user_id, 'launchctl', 'getenv', 'SSH_AUTH_SOCK']).rstrip()
-    if ssh_auth_sock:
-        logging.info("Setting SSH_AUTH_SOCK to {}".format(ssh_auth_sock))
-        os.environ['SSH_AUTH_SOCK'] = ssh_auth_sock
+    if _mac_version_is_post_yosemite():
+        _load_ssh_auth_post_yosemite()
     else:
-        daemon_warnings.warn('ssh', 'SSH_AUTH_SOCK not determined; git operations may fail')
+        _load_ssh_auth_pre_yosemite()
