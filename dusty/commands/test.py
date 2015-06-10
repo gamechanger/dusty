@@ -44,12 +44,12 @@ def _services_compose_up(expanded_specs, app_or_lib_spec):
         kwargs = {}
         if previous_container_names:
             kwargs['net_container_identifier'] = previous_container_names[-1]
-        service_compse_config = get_testing_compose_dict(service_name, service_spec, **kwargs)
+        service_compose_config = get_testing_compose_dict(service_name, service_spec, **kwargs)
 
         #want to make these temporary files
         compose_file = '/Users/paetling/dusty_testing/service_{}'.format(service_name)
-        write_composefile(service_compse_config, compose_file)
-        log_to_client('Compose config {}: \n {}'.format(service_name, service_compse_config))
+        write_composefile(service_compose_config, compose_file)
+        log_to_client('Compose config {}: \n {}'.format(service_name, service_compose_config))
 
         compose_up(compose_file, service_name)
         #compose only has runs with lower case names
