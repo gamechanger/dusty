@@ -1,10 +1,12 @@
 """Allow you to run tests in an isolated container for an app or a lib
 
 Usage:
-  test create_image <app_or_lib_name> [--recreate]
+  test <app_or_lib_name> <suite_name> [<args>...] [--recreate]
 
 Options:
-  --recreate  ensures that the testing image will be recreated
+  <suite_name>  Name of the test suite you would like to run
+  <args>        A list of arguments to be passed to the test script
+  --recreate    Ensures that the testing image will be recreated
 
 """
 
@@ -14,4 +16,4 @@ from ..commands.test import run_app_or_lib_tests
 
 def main(argv):
     args = docopt(__doc__, argv)
-    run_app_or_lib_tests(args['<app_or_lib_name>'], force_recreate=args['--recreate'])
+    run_app_or_lib_tests(args['<app_or_lib_name>'], args['<suite_name>'], args['<args>'], force_recreate=args['--recreate'])

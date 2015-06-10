@@ -6,7 +6,7 @@ from ..systems.docker.compose import write_composefile, compose_up
 from ..systems.rsync import sync_repos_by_app_name, sync_repos_by_lib_name
 from ..log import log_to_client
 
-def run_app_or_lib_tests(app_or_lib_name, force_recreate=False):
+def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
     docker_client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     if app_or_lib_name in expanded_specs['apps']:
@@ -20,11 +20,24 @@ def run_app_or_lib_tests(app_or_lib_name, force_recreate=False):
     else:
         raise RuntimeError('Argument must be defined app or lib name')
 
+    test_command = _construct_test_command(spec, suite_name, test_arguments)
     image_name = "{}_dusty_testing/image".format(app_or_lib_name)
     ensure_image_exists(docker_client, spec['test'], image_name, volumes=volumes, force_recreate=force_recreate)
-    _run_tests_with_image(expanded_specs, app_or_lib_name, spec, volumes, image_name)
+    _run_tests_with_image(expanded_specs, app_or_lib_name, spec, volumes, image_name, test_command)
 
-def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_or_lib_volumes, image_name):
+def _construct_test_command(spec, suite_name, test_arguments):
+    suite_command = None
+    for suite_dict in spec['test']['suites']:
+        if suite_dict['name'] == suite_name:
+            suite_command = suite_dict['command']
+            break
+    if suite_command is None:
+        raise RuntimeError('{} is not a valid suite name'.format(suite_name))
+    test_command = '{} {}'.format(suite_command, ' '.join(test_arguments))
+    log_to_client('Command to run in test is {}'.format(test_command))
+    return test_command
+
+def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_or_lib_volumes, image_name, test_command):
     log_to_client('image name is {}'.format(image_name))
     temporary_compose_config_files = {}
     previous_container_name = None
@@ -47,7 +60,7 @@ def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_
 
     kwargs = {'testing_image_identifier': image_name,
               'volumes': app_or_lib_volumes,
-              'command': 'nosetests'} # fix this later
+              'command': test_command}
 
     if previous_container_name is not None:
         kwargs['net_container_identifier'] = previous_container_name
