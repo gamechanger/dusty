@@ -4,8 +4,8 @@ as the location of the Dusty specifications on disk."""
 
 from __future__ import absolute_import
 
-import logging
 import os
+import logging
 import pwd
 import subprocess
 import yaml
@@ -109,6 +109,10 @@ def check_and_load_ssh_auth():
     SSH_AUTH_SOCK environment variable to the current environment.  This allows git clones
     to behave the same for the daemon as they do for the user
     """
+    if os.getenv('SSH_AUTH_SOCK'):
+        logging.info('SSH_AUTH_SOCK already set')
+        return _set_ssh_auth_sock(os.getenv('SSH_AUTH_SOCK'))
+
     mac_username = get_config_value(constants.CONFIG_MAC_USERNAME_KEY)
     if not mac_username:
         logging.info("Can't setup ssh authorization; no mac_username specified")
