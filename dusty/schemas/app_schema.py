@@ -15,11 +15,6 @@ app_depends_schema = Schema({
     'libs': {'type': Array(basestring), 'default': []}
     })
 
-conditional_links_schema = Schema({
-    'services': {'type': Array(basestring), 'default': []},
-    'apps': {'type': Array(basestring), 'default': []},
-    })
-
 host_forwarding_schema = Schema({
     'host_name': {'type': basestring},
     'host_port': {'type': int},
@@ -44,7 +39,7 @@ dusty_app_compose_schema = Schema({
 app_schema = Schema({
     'repo': {'type': basestring, 'required': True},
     'depends': {'type': app_depends_schema, 'default': {}},
-    'conditional_links': {'type': conditional_links_schema, 'default': {}},
+    'conditional_links': {'type': app_depends_schema, 'default': {}},
     'host_forwarding': {'type': Array(host_forwarding_schema), 'default': []},
     'image': {'type': basestring, 'default': ''},
     'build': {'type': basestring},
