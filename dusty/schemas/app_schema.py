@@ -8,11 +8,15 @@ def image_build_isolation_validator():
             return 'Need to have at least one of `image` or `build` in app schema'
     return validator
 
-
 app_depends_schema = Schema({
-    'services': {'type': Array(basestring), 'default': []},
-    'apps': {'type': Array(basestring), 'default': []},
-    'libs': {'type': Array(basestring), 'default': []}
+    'services': {'type': Array(basestring), 'default': list},
+    'apps': {'type': Array(basestring), 'default': list},
+    'libs': {'type': Array(basestring), 'default': list}
+    })
+
+conditional_links_schema = Schema({
+    'services': {'type': Array(basestring), 'default': list},
+    'apps': {'type': Array(basestring), 'default': list},
     })
 
 host_forwarding_schema = Schema({
@@ -33,18 +37,18 @@ script_schema = Schema({
     })
 
 dusty_app_compose_schema = Schema({
-    'volumes': {'type': Array(basestring), 'default': []}
+    'volumes': {'type': Array(basestring), 'default': list}
     }, strict=False)
 
 app_schema = Schema({
     'repo': {'type': basestring, 'required': True},
-    'depends': {'type': app_depends_schema, 'default': {}},
-    'conditional_links': {'type': app_depends_schema, 'default': {}},
-    'host_forwarding': {'type': Array(host_forwarding_schema), 'default': []},
+    'depends': {'type': app_depends_schema, 'default': dict},
+    'conditional_links': {'type': conditional_links_schema, 'default': dict},
+    'host_forwarding': {'type': Array(host_forwarding_schema), 'default': list},
     'image': {'type': basestring, 'default': ''},
     'build': {'type': basestring},
     'mount': {'type': basestring, 'default': ''},
-    'commands': {'type': commands_schema, 'default': {}},
-    'scripts': {'type': Array(script_schema), 'default': []},
-    'compose': {'type': dusty_app_compose_schema, 'default': {}}
+    'commands': {'type': commands_schema, 'default': dict},
+    'scripts': {'type': Array(script_schema), 'default': list},
+    'compose': {'type': dusty_app_compose_schema, 'default': dict}
     }, validates=[image_build_isolation_validator()])

@@ -15,7 +15,9 @@ def _check_bare_minimum(specs):
 
 def _validate_app_references(app, specs):
     for spec_type in ['apps', 'libs', 'services']:
-        dependent = app['depends'][spec_type] + app['conditional_links'][spec_type]
+        dependent = app['depends'][spec_type]
+        if spec_type in ['apps', 'services']:
+            dependent += app['conditional_links'][spec_type]
         assert(all(spec_name in specs[spec_type].keys() for spec_name in dependent))
 
 def _validate_bundle_references(bundle, specs):
