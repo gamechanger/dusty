@@ -14,8 +14,6 @@ def _check_bare_minimum(specs):
         raise ValidationException("No Bundles found - exiting")
 
 def _validate_app_references(app, specs):
-    import logging
-    logging.error(app._document)
     for spec_type in ['apps', 'libs', 'services']:
         dependent = app['depends'][spec_type] + app['conditional_links'][spec_type]
         assert(all(spec_name in specs[spec_type].keys() for spec_name in dependent))
