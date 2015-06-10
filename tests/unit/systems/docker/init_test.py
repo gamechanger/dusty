@@ -30,7 +30,6 @@ class TestComposeSystem(DustyTestCase):
                                   {'Names': ['/some-random-image']}]
         self.fake_docker_client = Mock()
         self.fake_docker_client.containers.return_value = self.containers_return
-        # self.fake_docker_client.
 
     def tearDown(self):
         super(TestComposeSystem, self).tearDown()
