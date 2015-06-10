@@ -8,31 +8,31 @@ class TestBundlesCLI(DustyIntegrationTestCase):
 
     def test_bundles_list_returns(self):
         result = self.run_command('bundles list')
-        self.assertIn('busybox-a', result)
-        self.assertIn('busybox-b', result)
+        self.assertIn('busyboxa', result)
+        self.assertIn('busyboxb', result)
 
     def test_bundles_activate(self):
-        self.run_command('bundles activate busybox-a')
+        self.run_command('bundles activate busyboxa')
         result = self.run_command('bundles list')
-        self.assertInSameLine(result, 'busybox-a', 'X')
-        self.assertNotInSameLine(result, 'busybox-b', 'X')
+        self.assertInSameLine(result, 'busyboxa', 'X')
+        self.assertNotInSameLine(result, 'busyboxb', 'X')
 
     def test_bundles_activate_multiple(self):
-        self.run_command('bundles activate busybox-a busybox-b')
+        self.run_command('bundles activate busyboxa busyboxb')
         result = self.run_command('bundles list')
-        self.assertInSameLine(result, 'busybox-a', 'X')
-        self.assertInSameLine(result, 'busybox-b', 'X')
+        self.assertInSameLine(result, 'busyboxa', 'X')
+        self.assertInSameLine(result, 'busyboxb', 'X')
 
     def test_bundles_deactivate(self):
-        self.run_command('bundles activate busybox-a')
-        self.run_command('bundles deactivate busybox-a')
+        self.run_command('bundles activate busyboxa')
+        self.run_command('bundles deactivate busyboxa')
         result = self.run_command('bundles list')
-        self.assertNotInSameLine(result, 'busybox-a', 'X')
-        self.assertNotInSameLine(result, 'busybox-b', 'X')
+        self.assertNotInSameLine(result, 'busyboxa', 'X')
+        self.assertNotInSameLine(result, 'busyboxb', 'X')
 
     def test_bundles_deactivate_multiple(self):
-        self.run_command('bundles activate busybox-b')
-        self.run_command('bundles deactivate busybox-a busybox-b')
+        self.run_command('bundles activate busyboxb')
+        self.run_command('bundles deactivate busyboxa busyboxb')
         result = self.run_command('bundles list')
-        self.assertNotInSameLine(result, 'busybox-a', 'X')
-        self.assertNotInSameLine(result, 'busybox-b', 'X')
+        self.assertNotInSameLine(result, 'busyboxa', 'X')
+        self.assertNotInSameLine(result, 'busyboxb', 'X')

@@ -8,12 +8,14 @@ import getpass
 from unittest import TestCase
 from nose.tools import nottest
 from mock import patch
+import git
 
 from dusty import constants
 from dusty.config import write_default_config, save_config_value, get_config, save_config
 from dusty.compiler.spec_assembler import get_specs_repo
 from dusty.commands.repos import override_repo
 from dusty.cli import main as client_entrypoint
+from dusty.systems.docker import _exec_in_container, get_docker_client, _get_container_for_app_or_service
 from .fixtures import basic_specs_fixture
 
 class TestCaptureHandler(logging.Handler):
@@ -77,10 +79,16 @@ class DustyIntegrationTestCase(TestCase):
         save_config_value(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/example-dusty-specs')
         save_config_value(constants.CONFIG_MAC_USERNAME_KEY, self.current_user)
         override_repo(get_specs_repo().remote_path, self.overridden_specs_path)
+        self._set_up_fake_local_repo()
         self._clear_stdout()
 
     def tearDown(self):
         shutil.rmtree(self.overridden_specs_path)
+        if os.path.exists(constants.REPOS_DIR):
+            shutil.rmtree(constants.REPOS_DIR)
+        if os.path.exists(constants.COMPOSE_DIR):
+            shutil.rmtree(constants.COMPOSE_DIR)
+        shutil.rmtree('/tmp/fake-repo')
         save_config(self.previous_config)
 
     def _clear_stdout(self):
@@ -118,6 +126,13 @@ class DustyIntegrationTestCase(TestCase):
         self._clear_stdout()
         return result
 
+    def _set_up_fake_local_repo(self):
+        repo = git.Repo.init('/tmp/fake-repo')
+        with open('/tmp/fake-repo/README.md', 'w') as f:
+            f.write('# Fake Repo')
+        repo.index.add(['/tmp/fake-repo/README.md'])
+        repo.index.commit('Initial commit')
+
     def _in_same_line(self, string, *values):
         for line in string.splitlines():
             if all(value in line for value in values):
@@ -129,3 +144,9 @@ class DustyIntegrationTestCase(TestCase):
 
     def assertNotInSameLine(self, string, *values):
         self.assertFalse(self._in_same_line(string, *values))
+
+    def assertFileContentsInContainer(self, service_name, file_path, contents):
+        client = get_docker_client()
+        container = _get_container_for_app_or_service(client, service_name, raise_if_not_found=True)
+        result = _exec_in_container(client, container, 'cat', file_path)
+        self.assertEqual(result, contents)
