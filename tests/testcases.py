@@ -140,6 +140,16 @@ class DustyIntegrationTestCase(TestCase):
                 return True
         return False
 
+    def _container_exists(self, service_name):
+        client = get_docker_client()
+        container = _get_container_for_app_or_service(client, service_name, include_exited=True)
+        return bool(container)
+
+    def _image_exists(self, image_to_find):
+        client = get_docker_client()
+        all_images = client.images(all=True)
+        return any(image_to_find in image['RepoTags'] for image in all_images)
+
     def exec_in_container(self, service_name, command):
         client = get_docker_client()
         container = _get_container_for_app_or_service(client, service_name, raise_if_not_found=True)
@@ -164,3 +174,15 @@ class DustyIntegrationTestCase(TestCase):
 
     def assertFileContentsInContainer(self, service_name, file_path, contents):
         self.assertEqual(self.exec_in_container(service_name, 'cat {}'.format(file_path)), contents)
+
+    def assertContainerExists(self, service_name):
+        self.assertTrue(self._container_exists(service_name))
+
+    def assertContainerDoesNotExist(self, service_name):
+        self.assertFalse(self._container_exists(service_name))
+
+    def assertImageExists(self, image):
+        self.assertTrue(self._image_exists(image))
+
+    def assertImageDoesNotExist(self, image):
+        self.assertFalse(self._image_exists(image))

@@ -7,7 +7,6 @@ from ...log import log_to_client
 from ...subprocess import check_output_demoted
 from ...compiler.spec_assembler import get_specs
 
-
 def _exec_in_container(client, container, command, *args):
     exec_instance = client.exec_create(container['Id'],
                                        ' '.join([command] + list(args)))
@@ -63,8 +62,8 @@ def _get_dusty_containers(client, services, include_exited=False):
                 for container in client.containers(all=include_exited)
                 if any(name.startswith('/dusty') for name in container.get('Names', []))]
 
-def _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=False):
-    for container in client.containers():
+def _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=False, include_exited=False):
+    for container in client.containers(all=include_exited):
         if '/{}'.format(get_dusty_container_name(app_or_service_name)) in container['Names']:
             return container
     if raise_if_not_found:
