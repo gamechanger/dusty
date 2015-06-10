@@ -77,6 +77,6 @@ def _get_canonical_container_name(container):
     should be sufficient to get us the shortest one."""
     return sorted(container['Names'], key=lambda name: len(name))[0][1:]
 
-def get_dusty_containers(app_or_service_names):
+def get_dusty_containers(app_or_service_names, include_exited=False):
     client = get_docker_client()
-    return _get_dusty_containers(client, app_or_service_names)
+    return _get_dusty_containers(client, app_or_service_names, include_exited=include_exited)
