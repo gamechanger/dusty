@@ -14,16 +14,16 @@ def _check_bare_minimum(specs):
         raise ValidationException("No Bundles found - exiting")
 
 def _validate_fields_with_schemer(specs):
-    for app in specs['apps'].values():
+    for app in specs.get('apps', []).values():
         app_schema.validate(app)
-    for bundle in specs[constants.CONFIG_BUNDLES_KEY].values():
+    for bundle in specs.get(constants.CONFIG_BUNDLES_KEY, []).values():
         bundle_schema.validate(bundle)
-    for lib in specs['libs'].values():
+    for lib in specs.get('libs', []).values():
         lib_schema.validate(lib)
 
 def _validate_app_references(app, specs):
     for spec_type in ['apps', 'libs', 'services']:
-        dependent = app['depends'][spec_type] + app['conditional_links'][spec_type]
+        dependent = app.get('depends', {}).get(spec_type, []) + app.get('conditional_links', {}).get(spec_type, [])
         assert(all(spec_name in specs.get(spec_type, {}).keys() for spec_name in dependent))
 
 def _validate_bundle_references(bundle, specs):
@@ -31,19 +31,19 @@ def _validate_bundle_references(bundle, specs):
         assert(app in specs['apps'].keys())
 
 def _validate_lib_references(lib, specs):
-    for lib in lib['depends']['libs']:
+    for lib in lib.get('depends', {}).get('libs', []):
         assert(lib in specs['libs'].keys())
 
 def _validate_spec_names(specs):
-    for app in specs['apps'].values():
+    for app in specs.get('apps', {}).values():
         _validate_app_references(app, specs)
-    for bundle in specs[constants.CONFIG_BUNDLES_KEY].values():
+    for bundle in specs.get(constants.CONFIG_BUNDLES_KEY, {}).values():
         _validate_bundle_references(bundle, specs)
-    for lib in specs['libs'].values():
+    for lib in specs.get('libs', {}).values():
         _validate_lib_references(lib, specs)
 
 def _cycle_check(spec_type, name, specs, upstream):
-    for dependent in specs[spec_type][name]['depends'][spec_type]:
+    for dependent in specs[spec_type][name].get('depends', {}).get(spec_type, []):
         if dependent in upstream:
             raise ValidationException("Cycle found for {0} {1}.  Upstream {0}: {2}".format(spec_type, name, upstream))
         else:
@@ -53,7 +53,7 @@ def _cycle_check(spec_type, name, specs, upstream):
 
 def _validate_cycle_free(specs):
     for spec_type in ['apps', 'libs']:
-        for name in specs[spec_type].keys():
+        for name in specs.get(spec_type, {}).keys():
             _cycle_check(spec_type, name, specs, set([name]))
 
 def validate_specs_from_path(specs_path):
