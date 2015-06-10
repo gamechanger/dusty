@@ -162,10 +162,6 @@ def get_specs_from_path(specs_path):
             spec_name = os.path.splitext(os.path.split(spec_path)[-1])[0]
             with open(spec_path, 'r') as f:
                 spec = yaml.load(f.read())
-                import logging
-                logging.error(spec)
-                logging.error(key)
-                logging.error(schema)
                 if schema:
                     spec = DustySchema(schema, spec)
                 specs[key][spec_name] = spec
