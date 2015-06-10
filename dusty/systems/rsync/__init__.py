@@ -58,7 +58,7 @@ def sync_repos(repos):
 def _sync_repos_by_type_name(expanded_specs, type_names, dusty_type):
     repos = set()
     for type_name in type_names:
-        for lib_name in expanded_specs[dusty_type][type_name].get('depends', {}).get('libs', []):
+        for lib_name in expanded_specs[dusty_type][type_name]['depends']['libs']:
             repos.add(get_repo_of_app_or_library(lib_name))
         repos.add(get_repo_of_app_or_library(type_name))
     sync_repos(repos)

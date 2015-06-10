@@ -38,7 +38,7 @@ class TestSpecAssemblerTestCases(DustyTestCase):
     def test_expands_libs_in_apps(self, test_config, case_specs, assembled_specs):
         spec_assembler._expand_libs_in_apps(case_specs)
         for app_name, app in case_specs['apps'].iteritems():
-            self.assertEqual(set(app.get('depends', {}).get('libs', [])), set(assembled_specs['apps'][app_name].get('depends', {}).get('libs', [])))
+            self.assertEqual(set(app['depends']['libs'], set(assembled_specs['apps'][app_name]['depends']['libs'])))
 
     @all_test_configs
     def test_assembles_specs(self, test_config, case_specs, assembled_specs, *args):

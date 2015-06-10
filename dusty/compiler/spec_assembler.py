@@ -6,6 +6,10 @@ import logging
 from ..config import get_config_value
 from .. import constants
 from ..source import Repo
+from ..schemas.app_schema import app_schema
+from ..schemas.bundle_schema import bundle_schema
+from ..schemas.lib_schema import lib_schema
+from ..schemas.base_schema_class import DustySchema
 
 def _get_dependent(dependent_type, name, specs, root_spec_type):
     """
@@ -15,7 +19,7 @@ def _get_dependent(dependent_type, name, specs, root_spec_type):
     spec = specs[root_spec_type].get(name)
     if spec is None:
         raise RuntimeError("{} {} was referenced but not found".format(root_spec_type, name))
-    dependents = spec.get('depends', {}).get(dependent_type, [])
+    dependents = spec['depends'][dependent_type]
     all_dependents = set(dependents)
     for dep in dependents:
         all_dependents |= _get_dependent(dependent_type, dep, specs, dependent_type)
@@ -59,7 +63,7 @@ def _get_referenced_libs(specs):
     """
     active_libs = set()
     for app_spec in specs['apps'].values():
-        for lib in app_spec.get('depends', {}).get('libs', []):
+        for lib in app_spec['depends']['libs']:
             active_libs.add(lib)
     return active_libs
 
@@ -69,7 +73,7 @@ def _get_referenced_services(specs):
     """
     active_services = set()
     for app_spec in specs['apps'].values():
-        for service in app_spec.get('depends', {}).get('services', []):
+        for service in app_spec['depends']['services']:
             active_services.add(service)
     return active_services
 
@@ -140,15 +144,27 @@ def get_repo_of_app_or_library(app_or_library_name):
         return Repo(specs['libs'][app_or_library_name]['repo'])
     raise KeyError('did not find app or service with name {}'.format(app_or_library_name))
 
+def _get_respective_schema(specs_type):
+    if specs_type == 'apps':
+        return app_schema
+    elif specs_type == constants.CONFIG_BUNDLES_KEY:
+        return bundles_schema
+    elif specs_type == 'libs':
+        return libs_schema
+
 def get_specs_from_path(specs_path):
     specs = {}
     for key in [constants.CONFIG_BUNDLES_KEY, 'apps', 'libs', 'services']:
         specs[key] = {}
+        schema = _get_respective_schema(key)
         key_path = os.path.join(specs_path, key)
         for spec_path in glob.glob('{}/*.yml'.format(key_path)):
             spec_name = os.path.splitext(os.path.split(spec_path)[-1])[0]
             with open(spec_path, 'r') as f:
-                specs[key][spec_name] = yaml.load(f.read())
+                spec = yaml.load(f.read())
+                if schema:
+                    spec = DustySchema(schema, spec)
+                specs[key][spec_name] = spec
     return specs
 
 def get_all_repos(active_only=False, include_specs_repo=True):

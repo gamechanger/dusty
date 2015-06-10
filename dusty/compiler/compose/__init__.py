@@ -13,7 +13,7 @@ def get_compose_dict(assembled_specs, port_specs):
     compose_dict = {}
     for app_name in assembled_specs['apps'].keys():
         compose_dict[app_name] = _composed_app_dict(app_name, assembled_specs, port_specs)
-    for service_name in assembled_specs.get('services', []):
+    for service_name in assembled_specs['services']:
         compose_dict[service_name] = _composed_service_dict(service_name, assembled_specs)
     return compose_dict
 
@@ -22,11 +22,11 @@ def _conditional_links(assembled_specs, app_name):
     'conditional_links' if they are specified in 'apps' or 'services' in assembled_specs. That means that
     some other part of the system has declared them as necessary, so they should be linked to this app """
     link_to_apps = []
-    potential_links = assembled_specs['apps'][app_name].get('conditional_links', {})
-    for potential_link in potential_links.get('apps', []):
+    potential_links = assembled_specs['apps'][app_name]['conditional_links']
+    for potential_link in potential_links['apps']:
         if potential_link in assembled_specs['apps']:
             link_to_apps.append(potential_link)
-    for potential_link in potential_links.get('services', []):
+    for potential_link in potential_links['services']:
         if potential_link in assembled_specs['services']:
             link_to_apps.append(potential_link)
     return link_to_apps
@@ -35,7 +35,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
     """ This function returns a dictionary of the docker-compose.yml specifications for one app """
     logging.info("Compose Compiler: Compiling dict for app {}".format(app_name))
     app_spec = assembled_specs['apps'][app_name]
-    compose_dict = app_spec.get("compose", {})
+    compose_dict = app_spec["compose"]
     if 'image' in app_spec and 'build' in app_spec:
         raise RuntimeError("image and build are both specified in the spec for {}".format(app_name))
     elif 'image' in app_spec:
@@ -47,11 +47,11 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
     compose_dict['command'] = _compile_docker_command(app_name, assembled_specs)
     logging.info("Compose Compiler: compiled command {}".format(compose_dict['command']))
-    compose_dict['links'] = app_spec.get('depends', {}).get('services', []) + \
-                            app_spec.get('depends', {}).get('apps', []) + \
+    compose_dict['links'] = app_spec['depends']['services'] + \
+                            app_spec['depends']['apps'] + \
                             _conditional_links(assembled_specs, app_name)
     logging.info("Compose Compiler: links {}".format(compose_dict['links']))
-    compose_dict['volumes'] = compose_dict.get('volumes', []) + _get_compose_volumes(app_name, assembled_specs)
+    compose_dict['volumes'] = compose_dict['volumes'] + _get_compose_volumes(app_name, assembled_specs)
     logging.info("Compose Compiler: volumes {}".format(compose_dict['volumes']))
     port_list = _get_ports_list(app_name, port_specs)
     if port_list:
@@ -85,7 +85,7 @@ def _compile_docker_command(app_name, assembled_specs):
     command.append("cd {}".format(_container_code_path(app_spec)))
     command.append("export PATH=$PATH:{}".format(_container_code_path(app_spec)))
     command.append("if [ ! -f {} ]".format(first_run_file))
-    once_command = app_spec['commands'].get("once", "")
+    once_command = app_spec['commands']["once"]
     command.append("then mkdir -p {}; touch {}".format(constants.RUN_DIR, first_run_file))
     if once_command:
         command.append(once_command)
@@ -96,7 +96,7 @@ def _compile_docker_command(app_name, assembled_specs):
 def _lib_install_commands_for_app(app_name, assembled_specs):
     """ This returns a list of all the commands that will install libraries for a
     given app """
-    libs = assembled_specs['apps'][app_name].get('depends', {}).get('libs', [])
+    libs = assembled_specs['apps'][app_name]['depends']['libs']
     commands = []
     for lib in libs:
         lib_spec = assembled_specs['libs'][lib]
@@ -138,7 +138,7 @@ def get_app_volume_mounts(app_name, assembled_specs):
 def get_lib_volume_mounts(base_lib_name, assembled_specs):
     """ Returns a list of the formatted volume specs for a lib"""
     volumes = [_get_lib_repo_volume_mount(assembled_specs['libs'][base_lib_name])]
-    for lib_name in assembled_specs['libs'][base_lib_name].get('depends', {}).get('libs', []):
+    for lib_name in assembled_specs['libs'][base_lib_name]['depends']['libs']:
         lib_spec = assembled_specs['libs'][lib_name]
         volumes.append(_get_lib_repo_volume_mount(lib_spec))
     return volumes
@@ -161,7 +161,7 @@ def _container_code_path(spec):
 def _get_app_libs_volume_mounts(app_name, assembled_specs):
     """ Returns a list of the formatted volume mounts for all libs that an app uses """
     volumes = []
-    for lib_name in assembled_specs['apps'][app_name].get('depends', {}).get('libs', []):
+    for lib_name in assembled_specs['apps'][app_name]['depends']['libs']:
         lib_spec = assembled_specs['libs'][lib_name]
         volumes.append("{}:{}".format(Repo(lib_spec['repo']).vm_path, _container_code_path(lib_spec)))
     return volumes

@@ -10,14 +10,14 @@ def script_info_for_app(app_name):
     app_specs = get_specs()['apps'].get(app_name)
     if not app_specs:
         raise KeyError('No app found named {} in specs'.format(app_name))
-    if not app_specs.get('scripts'):
+    if len(app_specs['scripts']) > 0:
         log_to_client('No scripts registered for app {}'.format(app_name))
         return
 
     table = PrettyTable(['Script', 'Description'])
     for script_spec in app_specs['scripts']:
         table.add_row([script_spec['name'],
-                       '\n'.join(textwrap.wrap(script_spec.get('description', ''), 80))])
+                       '\n'.join(textwrap.wrap(script_spec['description'], 80))])
     log_to_client(table.get_string(sortby='Script'))
 
 def execute_script(app_name, script_name, script_arguments=[]):
@@ -25,7 +25,7 @@ def execute_script(app_name, script_name, script_arguments=[]):
     if not app_specs:
         raise KeyError('No app found named {} in specs'.format(app_name))
     script_spec = None
-    for script_dict in app_specs.get('scripts', []):
+    for script_dict in app_specs['scripts'], []):
         if script_dict['name'] == script_name:
             script_spec = script_dict
     if script_spec is None:
