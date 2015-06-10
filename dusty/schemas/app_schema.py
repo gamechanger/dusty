@@ -40,6 +40,8 @@ dusty_app_compose_schema = Schema({
     'volumes': {'type': Array(basestring), 'default': list}
     }, strict=False)
 
+test_schema = Schema({}, strict=False)
+
 app_schema = Schema({
     'repo': {'type': basestring, 'required': True},
     'depends': {'type': app_depends_schema, 'default': dict},
@@ -50,5 +52,6 @@ app_schema = Schema({
     'mount': {'type': basestring, 'default': ''},
     'commands': {'type': commands_schema, 'default': dict},
     'scripts': {'type': Array(script_schema), 'default': list},
-    'compose': {'type': dusty_app_compose_schema, 'default': dict}
+    'compose': {'type': dusty_app_compose_schema, 'default': dict},
+    'test': {'type': test_schema, 'default': dict}
     }, validates=[image_build_isolation_validator()])
