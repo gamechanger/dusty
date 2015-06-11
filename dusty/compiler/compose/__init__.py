@@ -107,7 +107,7 @@ def _lib_install_commands_for_app(app_name, assembled_specs):
 
 def _lib_install_command(lib_spec):
     """ This returns a single commmand that will install a library in a docker container """
-    if 'install' not in lib_spec:
+    if not lib_spec['install']:
         return ''
     return "cd {} && {}".format(lib_spec['mount'], lib_spec['install'])
 
@@ -165,4 +165,3 @@ def _get_app_libs_volume_mounts(app_name, assembled_specs):
         lib_spec = assembled_specs['libs'][lib_name]
         volumes.append("{}:{}".format(Repo(lib_spec['repo']).vm_path, _container_code_path(lib_spec)))
     return volumes
-
