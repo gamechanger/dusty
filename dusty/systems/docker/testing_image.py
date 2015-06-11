@@ -1,7 +1,6 @@
 import docker
 from ...log import log_to_client
 
-
 def _ensure_testing_spec_base_image(docker_client, testing_spec):
     log_to_client('Getting the base image for the new image')
     if 'image' in testing_spec:
@@ -29,7 +28,6 @@ def _get_create_container_binds(split_volumes):
     for volume_dict in split_volumes:
         binds_dict[volume_dict['host_location']] =  {'bind': volume_dict['container_location'], 'ro': False}
     return binds_dict
-
 
 def _make_installed_requirements_image(docker_client, base_image_tag, command, image_name, volumes=[]):
     split_volumes = _get_split_volumes(volumes)

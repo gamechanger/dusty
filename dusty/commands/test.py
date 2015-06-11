@@ -43,7 +43,10 @@ def _construct_test_command(spec, suite_name, test_arguments):
 def _test_composefile_path(service_name):
     return os.path.expanduser('~/.dusty-testing/test_{}.yml'.format(service_name))
 
-def _services_compose_up(expanded_specs, app_or_lib_spec):
+def _compose_project_name(service_name):
+    return 'test{}'.format(service_name.lower())
+
+def _services_compose_up(expanded_specs, app_or_lib_name, app_or_lib_spec):
     previous_container_names = []
     for service_name in app_or_lib_spec['test']['services']:
         service_spec = expanded_specs['services'][service_name]
@@ -57,9 +60,9 @@ def _services_compose_up(expanded_specs, app_or_lib_spec):
         write_composefile(service_compose_config, composefile_path)
         log_to_client('Compose config {}: \n {}'.format(service_name, service_compose_config))
 
-        compose_up(composefile_path, service_name)
+        compose_up(composefile_path, _compose_project_name(app_or_lib_name))
         #compose only has runs with lower case names
-        previous_container_names.append("{}_{}_1".format(service_name.lower(), service_name))
+        previous_container_names.append("{}_{}_1".format(_compose_project_name(app_or_lib_name), service_name))
     return previous_container_names
 
 def _app_or_lib_compose_up(app_or_lib_spec, app_or_lib_name, image_name,
@@ -73,13 +76,13 @@ def _app_or_lib_compose_up(app_or_lib_spec, app_or_lib_name, image_name,
     composefile_path = _test_composefile_path(app_or_lib_name)
     compose_config = get_testing_compose_dict(app_or_lib_name, app_or_lib_spec['test'].get('compose', {}), **kwargs)
     write_composefile(compose_config, composefile_path)
-    compose_up(composefile_path, app_or_lib_name)
+    compose_up(composefile_path, _compose_project_name(app_or_lib_name))
     log_to_client('Compose config {}: \n {}'.format(app_or_lib_name, compose_config))
 
 def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_or_lib_volumes, image_name, test_command):
     log_to_client('image name is {}'.format(image_name))
 
-    previous_container_names = _services_compose_up(expanded_specs, app_or_lib_spec)
+    previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, app_or_lib_spec)
     previous_container_name = previous_container_names[-1] if previous_container_names else None
     _app_or_lib_compose_up(app_or_lib_spec, app_or_lib_name, image_name,
                            app_or_lib_volumes, test_command, previous_container_name)
