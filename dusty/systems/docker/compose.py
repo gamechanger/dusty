@@ -18,7 +18,7 @@ def _write_composefile(compose_config, compose_file_location):
     with open(compose_file_location, 'w') as f:
         f.write(yaml.dump(compose_config, default_flow_style=False))
 
-def _compose_base_command(core_command, compose_file_location, project_name=None):
+def _compose_base_command(core_command, compose_file_location, project_name):
     logging.info('Running docker-compose {}'.format(core_command))
     command = ['docker-compose']
     if compose_file_location is not None:
@@ -41,8 +41,10 @@ def _compose_stop(compose_file_location, project_name, services):
         command += services
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
-def _compose_rm(compose_file_location, project_name):
+def _compose_rm(compose_file_location, project_name, services):
     command = _compose_base_command(['rm', '-f'], compose_file_location, project_name)
+    if services:
+        command += services
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
 def _compose_restart(services):
@@ -100,5 +102,5 @@ def restart_running_services(services=None):
         services = []
     _compose_restart(services)
 
-def rm_containers():
-    _compose_rm(constants.COMPOSEFILE_PATH, 'dusty')
+def rm_containers(app_or_service_names):
+    _compose_rm(constants.COMPOSEFILE_PATH, 'dusty', app_or_service_names)

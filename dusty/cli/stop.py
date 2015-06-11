@@ -1,12 +1,12 @@
 """Stop containers associated with Dusty apps and services.
 
-This does not remove the containers unless run with --rm-containers
+This does not remove the containers unless run with --rm
 
 Usage:
-  stop [--rm-containers] [<services>...]
+  stop [--rm] [<services>...]
 
 Options:
-  --rm-containers  remove containers
+  --rm  remove containers
 """
 
 from docopt import docopt
@@ -16,4 +16,4 @@ from ..commands.run import stop_apps_or_services
 
 def main(argv):
     args = docopt(__doc__, argv)
-    return Payload(stop_apps_or_services, args['<services>'], rm_containers=args['--rm-containers'])
+    return Payload(stop_apps_or_services, args['<services>'], rm_containers=args['--rm'])

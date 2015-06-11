@@ -58,7 +58,7 @@ def stop_apps_or_services(app_or_service_names=None, rm_containers=False):
 
     compose.stop_running_services(app_or_service_names)
     if rm_containers:
-        compose.rm_containers()
+        compose.rm_containers(app_or_service_names)
 
 def restart_apps_or_services(app_or_service_names=None, sync=True):
     """Restart any containers associated with Dusty, or associated with
