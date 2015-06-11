@@ -190,10 +190,10 @@ class TestComposeCompiler(DustyTestCase):
         self.assertEqual(expected_command, actual_command)
 
     def test_lib_install_command_with_no_install_spec(self, *args):
-        lib_spec = {
+        lib_spec = get_lib_dusty_schema({
             'repo': 'some repo',
             'mount': '/mount/point'
-        }
+        })
         expected_command = ""
         actual_command = _lib_install_command(lib_spec)
         self.assertEqual(expected_command, actual_command)
