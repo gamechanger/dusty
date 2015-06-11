@@ -140,9 +140,9 @@ class DustyIntegrationTestCase(TestCase):
                 return True
         return False
 
-    def _container_exists(self, service_name):
+    def _container_exists_in_set(self, service_name, include_exited):
         client = get_docker_client()
-        container = _get_container_for_app_or_service(client, service_name, include_exited=True)
+        container = _get_container_for_app_or_service(client, service_name, include_exited=include_exited)
         return bool(container)
 
     def _image_exists(self, image_to_find):
@@ -175,11 +175,17 @@ class DustyIntegrationTestCase(TestCase):
     def assertFileContentsInContainer(self, service_name, file_path, contents):
         self.assertEqual(self.exec_in_container(service_name, 'cat {}'.format(file_path)), contents)
 
+    def assertContainerRunning(self, service_name):
+        self.assertTrue(self._container_exists_in_set(service_name, False))
+
+    def assertContainerIsNotRunning(self, service_name):
+        self.assertFalse(self._container_exists_in_set(service_name, False))
+
     def assertContainerExists(self, service_name):
-        self.assertTrue(self._container_exists(service_name))
+        self.assertTrue(self._container_exists_in_set(service_name, True))
 
     def assertContainerDoesNotExist(self, service_name):
-        self.assertFalse(self._container_exists(service_name))
+        self.assertFalse(self._container_exists_in_set(service_name, True))
 
     def assertImageExists(self, image):
         self.assertTrue(self._image_exists(image))
