@@ -25,7 +25,7 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
 
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     image_name = "{}_dusty_testing/image".format(app_or_lib_name)
-    ensure_image_exists(docker_client, spec['test'], image_name, volumes=volumes, force_recreate=force_recreate)
+    ensure_image_exists(docker_client, app_or_lib_name, expanded_specs, image_name, volumes=volumes, force_recreate=force_recreate)
     _run_tests_with_image(expanded_specs, app_or_lib_name, spec, volumes, image_name, test_command)
 
 def _construct_test_command(spec, suite_name, test_arguments):

@@ -30,7 +30,6 @@ def get_testing_compose_dict(service_name, base_compose_spec, command=None, volu
     compose_dict = {service_name: app_compose_dict}
     return compose_dict
 
-
 def _conditional_links(assembled_specs, app_name):
     """ Given the assembled specs and app_name, this function will return all apps and services specified in
     'conditional_links' if they are specified in 'apps' or 'services' in assembled_specs. That means that
