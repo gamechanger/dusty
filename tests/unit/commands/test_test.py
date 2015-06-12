@@ -51,7 +51,8 @@ class TestTestsCommands(DustyTestCase):
         fake_repos_by_lib.assert_has_calls([call(self.specs, ['lib-a'])])
         fake_repos_by_app.assert_has_calls([])
         fake_ensure_image.assert_has_calls([call('docker-client',
-                                                 {'suites': [{'name': 'nose', 'command': 'nosetests lib-a'}]},
+                                                 'lib-a',
+                                                 self.specs,
                                                  'lib-a_dusty_testing/image',
                                                  volumes=['/host/route:/container/route'],
                                                  force_recreate=False)])
@@ -70,7 +71,8 @@ class TestTestsCommands(DustyTestCase):
         fake_repos_by_lib.assert_has_calls([])
         fake_repos_by_app.assert_has_calls([call(self.specs, ['app-a'])])
         fake_ensure_image.assert_has_calls([call('docker-client',
-                                                 {'suites': [{'name': 'nose', 'command': 'nosetests app-a'}]},
+                                                 'app-a',
+                                                 self.specs,
                                                  'app-a_dusty_testing/image',
                                                  volumes=[],
                                                  force_recreate=True)])
