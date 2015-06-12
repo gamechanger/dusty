@@ -87,16 +87,16 @@ class TestTestsCommands(DustyTestCase):
 
     def test_construct_test_command_app_no_arguments(self, *args):
         return_command = test._construct_test_command(self.specs['apps']['app-a'], 'nose', [])
-        self.assertEquals('nosetests app-a', return_command.strip())
+        self.assertEquals('sh -c "nosetests app-a"', return_command.strip())
 
     def test_construct_test_command_app_arguments(self, *args):
         return_command = test._construct_test_command(self.specs['apps']['app-a'], 'nose', ['1', '2', '3'])
-        self.assertEquals('nosetests app-a 1 2 3', return_command.strip())
+        self.assertEquals('sh -c "nosetests app-a 1 2 3"', return_command.strip())
 
     def test_construct_test_command_lib_no_arguments(self, *args):
         return_command = test._construct_test_command(self.specs['libs']['lib-a'], 'nose', [])
-        self.assertEquals('nosetests lib-a', return_command.strip())
+        self.assertEquals('sh -c "nosetests lib-a"', return_command.strip())
 
     def test_construct_test_command_lib_arguments(self, *args):
         return_command = test._construct_test_command(self.specs['libs']['lib-a'], 'nose', ['1', '2', '3'])
-        self.assertEquals('nosetests lib-a 1 2 3', return_command.strip())
+        self.assertEquals('sh -c "nosetests lib-a 1 2 3"', return_command.strip())

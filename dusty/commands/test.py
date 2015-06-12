@@ -1,4 +1,5 @@
 import os
+import sys
 
 from .. import constants
 from ..compiler.spec_assembler import get_expanded_libs_specs
@@ -36,7 +37,8 @@ def _construct_test_command(spec, suite_name, test_arguments):
             break
     if suite_command is None:
         raise RuntimeError('{} is not a valid suite name'.format(suite_name))
-    test_command = '{} {}'.format(suite_command, ' '.join(test_arguments))
+    sub_command = "{} {}".format(suite_command, ' '.join(test_arguments))
+    test_command = 'sh -c "{}"'.format(sub_command.strip())
     log_to_client('Command to run in test is {}'.format(test_command))
     return test_command
 
@@ -77,7 +79,6 @@ def _app_or_lib_compose_up(app_or_lib_spec, app_or_lib_name, image_name,
     compose_config = get_testing_compose_dict(app_or_lib_name, app_or_lib_spec['test'].get('compose', {}), **kwargs)
     write_composefile(compose_config, composefile_path)
     compose_up(composefile_path, _compose_project_name(app_or_lib_name))
-    log_to_client('Compose config {}: \n {}'.format(app_or_lib_name, compose_config))
 
 def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_or_lib_volumes, image_name, test_command):
     log_to_client('image name is {}'.format(image_name))
@@ -86,3 +87,11 @@ def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_
     previous_container_name = previous_container_names[-1] if previous_container_names else None
     _app_or_lib_compose_up(app_or_lib_spec, app_or_lib_name, image_name,
                            app_or_lib_volumes, test_command, previous_container_name)
+    test_container_name = '{}_{}_1'.format(_compose_project_name(app_or_lib_name), app_or_lib_name)
+
+    client = get_docker_client()
+    for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
+        log_to_client(line)
+    exit_code = client.wait(test_container_name)
+    if exit_code != 0:
+        sys.exit(exit_code)
