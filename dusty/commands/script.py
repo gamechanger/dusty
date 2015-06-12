@@ -3,7 +3,7 @@ from prettytable import PrettyTable
 
 from ..log import log_to_client
 from ..compiler.spec_assembler import get_specs
-from .utils import exec_docker
+from . import utils
 from ..systems.docker import get_dusty_container_name
 
 def script_info_for_app(app_name):
@@ -37,4 +37,4 @@ def execute_script(app_name, script_name, script_arguments=[]):
         script_string = '{} {}'.format(script_spec['command'], ' '.join(script_arguments))
 
     container_name = get_dusty_container_name(app_name)
-    exec_docker('exec', '-ti', container_name, 'sh', '-c', script_string)
+    utils.exec_docker('exec', '-ti', container_name, 'sh', '-c', script_string)

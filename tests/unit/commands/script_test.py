@@ -30,22 +30,22 @@ class TestScriptCommands(DustyTestCase):
         with self.assertRaises(KeyError):
             execute_script('app-a', 'wrong name')
 
-    @patch('dusty.commands.script.exec_docker')
+    @patch('dusty.commands.utils.exec_docker')
     def test_execute_script_valid_input(self, fake_exec_docker):
         execute_script('app-a', 'example')
         fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', 'sh', '-c', 'ls /')
 
-    @patch('dusty.commands.script.exec_docker')
+    @patch('dusty.commands.utils.exec_docker')
     def test_execute_script_valid_input_one_arg(self, fake_exec_docker):
         execute_script('app-a', 'example', ['.'])
         fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', 'sh', '-c', 'ls / .')
 
-    @patch('dusty.commands.script.exec_docker')
+    @patch('dusty.commands.utils.exec_docker')
     def test_execute_script_valid_input_three_args(self, fake_exec_docker):
         execute_script('app-a', 'example', ['.', './', '..'])
         fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', 'sh', '-c', 'ls / . ./ ..')
 
-    @patch('dusty.commands.script.exec_docker')
+    @patch('dusty.commands.utils.exec_docker')
     def test_execute_script_valid_input_not_accept_arguments(self, fake_exec_docker):
         execute_script('app-b', 'example', ['.', './', '..'])
         fake_exec_docker.assert_has_calls([])
