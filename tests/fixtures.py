@@ -2,6 +2,8 @@ import os
 import yaml
 
 from dusty.compiler.spec_assembler import get_specs_path
+from dusty.schemas.base_schema_class import DustySchema
+from dusty.schemas.app_schema import app_schema
 
 def _num_to_alpha(num):
     if num >= 26:
@@ -16,6 +18,12 @@ def _write(spec_type, name, spec_doc):
         pass
     with open(os.path.join(spec_type_path, '{}.yml'.format(name)), 'w') as f:
         f.write(yaml.dump(spec_doc, default_flow_style=False))
+
+def premade_app():
+    return DustySchema(app_schema, {'repo': '/tmp/fake-repo',
+                                    'mount': '/repo',
+                                    'image': 'busybox',
+                                    'commands': {'always': 'sleep 999999999'}})
 
 def basic_specs_fixture():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['app-a']})
