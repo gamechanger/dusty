@@ -37,7 +37,8 @@ def _construct_test_command(spec, suite_name, test_arguments):
             break
     if suite_command is None:
         raise RuntimeError('{} is not a valid suite name'.format(suite_name))
-    test_command = 'sh -c "{} {}"'.format(suite_command, ' '.join(test_arguments))
+    sub_command = "{} {}".format(suite_command, ' '.join(test_arguments))
+    test_command = 'sh -c "{}"'.format(sub_command.strip())
     log_to_client('Command to run in test is {}'.format(test_command))
     return test_command
 
