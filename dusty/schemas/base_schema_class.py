@@ -10,6 +10,12 @@ class DustySchema(object):
     def __getitem__(self, name):
         return self._document[name]
 
+    def __setitem__(self, key, value):
+        self._document[key] = value
+
+    def __delitem__(self, key):
+        del self._document[key]
+
     def __contains__(self, key):
         return key in self._document
 

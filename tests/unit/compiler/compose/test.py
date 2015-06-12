@@ -6,6 +6,7 @@ from dusty.compiler.compose import (get_compose_dict, _composed_app_dict,
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
                                     _lib_install_command, _lib_install_commands_for_app, _conditional_links,
                                     get_app_volume_mounts, get_lib_volume_mounts)
+from dusty.compiler import compose
 from ..test_test_cases import all_test_configs
 from ....testcases import DustyTestCase
 from ...utils import get_app_dusty_schema, get_lib_dusty_schema
@@ -304,3 +305,54 @@ class TestComposeCompiler(DustyTestCase):
                                 }
                             }}
         self.assertEqual(_conditional_links(assembled_specs, 'app-a'), ['app-b', 'ser-b'])
+
+
+class TestComposeTestCompiler(DustyTestCase):
+    def test_get_testing_compose_dict_base(self):
+        base_compose_spec = {'key1': 'val1'}
+        service_name = 'compose_service'
+        expected_document = {service_name: base_compose_spec}
+        self.assertEquals(expected_document, compose.get_testing_compose_dict(service_name, base_compose_spec))
+
+    def test_get_testing_compose_dict_1_val_1(self):
+        base_compose_spec = {'key1': 'val1'}
+        service_name = 'compose_service'
+        expected_document = {service_name: {'key1': 'val1',
+                                            'volumes': '/host/location:/container/location'}}
+        self.assertEquals(expected_document, compose.get_testing_compose_dict(service_name, base_compose_spec, volumes='/host/location:/container/location'))
+
+    def test_get_testing_compose_dict_1_val_2(self):
+        base_compose_spec = {'key1': 'val1'}
+        service_name = 'compose_service'
+        expected_document = {service_name: {'key1': 'val1',
+                                            'command': 'pip install'}}
+        self.assertEquals(expected_document, compose.get_testing_compose_dict(service_name, base_compose_spec, command='pip install'))
+
+    def test_get_testing_compose_dict_1_val_3(self):
+        base_compose_spec = {'key1': 'val1'}
+        service_name = 'compose_service'
+        expected_document = {service_name: {'key1': 'val1',
+                                            'image': 'testing/image'}}
+        self.assertEquals(expected_document, compose.get_testing_compose_dict(service_name, base_compose_spec, testing_image_identifier='testing/image'))
+
+    def test_get_testing_compose_dict_1_val_4(self):
+        base_compose_spec = {'key1': 'val1'}
+        service_name = 'compose_service'
+        expected_document = {service_name: {'key1': 'val1',
+                                            'net': 'container:big_container'}}
+        self.assertEquals(expected_document, compose.get_testing_compose_dict(service_name, base_compose_spec, net_container_identifier='big_container'))
+
+    def test_get_testing_compose_dict_all_values(self):
+        base_compose_spec = {'key1': 'val1'}
+        service_name = 'compose_service'
+        expected_document = {service_name: {'key1': 'val1',
+                                            'command': 'pip install',
+                                            'volumes': '/host/location:/container/location',
+                                            'image': 'testing/image',
+                                            'net': 'container:big_container'}}
+        self.assertEquals(expected_document, compose.get_testing_compose_dict(service_name,
+                                                                              base_compose_spec,
+                                                                              command='pip install',
+                                                                              volumes='/host/location:/container/location',
+                                                                              testing_image_identifier='testing/image',
+                                                                              net_container_identifier='big_container'))
