@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import docker
 
-from ...compiler.compose import _lib_install_commands_for_app
+from ...compiler.compose import _lib_install_commands_for_app, _container_code_path
 from ...log import log_to_client
 
 def _ensure_testing_spec_base_image(docker_client, testing_spec):
@@ -25,7 +25,7 @@ def _get_split_volumes(volumes):
     return split_volumes
 
 def _get_create_container_volumes(split_volumes):
-    return [volume_dict['container_location'] for volume_dict  in split_volumes]
+    return [volume_dict['container_location'] for volume_dict in split_volumes]
 
 def _get_create_container_binds(split_volumes):
     binds_dict = {}
@@ -52,15 +52,19 @@ def _make_installed_requirements_image(docker_client, base_image_tag, command, i
     docker_client.tag(image=new_image['Id'], repository=image_name, force=True)
     return image_name
 
-def _testing_spec(app_or_lib_name, expanded_specs):
+def _spec_for_service(app_or_lib_name, expanded_specs):
     if app_or_lib_name in expanded_specs['apps']:
-        return expanded_specs['apps'][app_or_lib_name]['test']
-    return expanded_specs['libs'][app_or_lib_name]['test']
+        return expanded_specs['apps'][app_or_lib_name]
+    return expanded_specs['libs'][app_or_lib_name]
+
+def _testing_spec(app_or_lib_name, expanded_specs):
+    return _spec_for_service(app_or_lib_name, expanded_specs)['test']
 
 def _get_test_image_setup_command(app_or_lib_name, expanded_specs):
     testing_spec = _testing_spec(app_or_lib_name, expanded_specs)
     commands = _lib_install_commands_for_app(app_or_lib_name, expanded_specs)
-    commands += testing_spec['once']
+    commands += ['cd {}'.format(_container_code_path(_spec_for_service(app_or_lib_name, expanded_specs)))]
+    commands += [testing_spec['once']]
     return "sh -c \"{}\"".format('; '.join(commands))
 
 def _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs, new_image_name, volumes=[]):
