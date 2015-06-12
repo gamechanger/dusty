@@ -35,7 +35,7 @@ def basic_specs_fixture():
     _write('lib', 'lib-a', {'repo': 'github.com/lib/a'})
     _write('service', 'service-a', {'image': 'service/a'})
 
-def busybox_single_app_bundle_fixture(num_bundles=1, command='sleep 9999999999'):
+def busybox_single_app_bundle_fixture(num_bundles=1, command='sleep 999999999'):
     """Fixture for use in integration tests. The local repo at
     /tmp/fake-repo should be set up before using this fixture."""
     for bundle in range(num_bundles):
