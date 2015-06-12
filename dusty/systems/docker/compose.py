@@ -28,7 +28,7 @@ def _compose_base_command(core_command, compose_file_location, project_name):
     command += core_command
     return command
 
-def _compose_up(compose_file_location, project_name, recreate_containers=True):
+def compose_up(compose_file_location, project_name, recreate_containers=True):
     command = _compose_base_command(['up', '-d', '--allow-insecure-ssl'], compose_file_location, project_name)
     if not recreate_containers:
         command.append('--no-recreate')
