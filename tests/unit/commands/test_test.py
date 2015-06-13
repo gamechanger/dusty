@@ -7,11 +7,11 @@ from dusty.commands import test
 
 @patch('dusty.commands.test.get_docker_client')
 @patch('dusty.commands.test.get_expanded_libs_specs')
-@patch('dusty.commands.test.ensure_image_exists')
+@patch('dusty.commands.test.ensure_test_image')
 @patch('dusty.commands.test.sync_repos_by_app_name')
 @patch('dusty.commands.test.sync_repos_by_lib_name')
-@patch('dusty.commands.test.get_app_volume_mounts')
-@patch('dusty.commands.test.get_lib_volume_mounts')
+@patch('dusty.compiler.compose.get_app_volume_mounts')
+@patch('dusty.compiler.compose.get_lib_volume_mounts')
 class TestTestsCommands(DustyTestCase):
     def setUp(self):
         super(TestTestsCommands, self).setUp()
@@ -24,17 +24,17 @@ class TestTestsCommands(DustyTestCase):
 
     def test_run_app_or_lib_tests_lib_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
         fake_expanded_libs.return_value = self.specs
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(KeyError):
             test.run_app_or_lib_tests('lib-c', '', [])
 
     def test_run_app_or_lib_tests_app_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
         fake_expanded_libs.reurn_value = self.specs
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(KeyError):
             test.run_app_or_lib_tests('app-c', '', [])
 
     def test_run_app_or_lib_tests_suite_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
         fake_expanded_libs.reurn_value = self.specs
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(KeyError):
             test.run_app_or_lib_tests('app-a', 'nosetests', [])
 
     @patch('dusty.commands.test._run_tests_with_image')
@@ -53,8 +53,6 @@ class TestTestsCommands(DustyTestCase):
         fake_ensure_image.assert_has_calls([call('docker-client',
                                                  'lib-a',
                                                  self.specs,
-                                                 'lib-a_dusty_testing/image',
-                                                 volumes=['/host/route:/container/route'],
                                                  force_recreate=False)])
 
     @patch('dusty.commands.test._run_tests_with_image')
@@ -73,8 +71,6 @@ class TestTestsCommands(DustyTestCase):
         fake_ensure_image.assert_has_calls([call('docker-client',
                                                  'app-a',
                                                  self.specs,
-                                                 'app-a_dusty_testing/image',
-                                                 volumes=[],
                                                  force_recreate=True)])
 
     def test_construct_test_command_invalid_name_app(self, *args):

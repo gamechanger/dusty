@@ -1,12 +1,16 @@
 from mock import Mock, patch, call
 import docker
 
+from nose.tools import nottest
+
 from ....fixtures import premade_app
 from ....testcases import DustyTestCase
 from dusty.systems.docker.testing_image import (_ensure_testing_spec_base_image, _make_installed_requirements_image,
                                                 _make_installed_testing_image, _get_split_volumes, _get_create_container_volumes,
                                                 _get_create_container_binds)
-from dusty.systems.docker.testing_image import ensure_image_exists
+from dusty.systems.docker.testing_image import ensure_test_image
+
+nottest(ensure_test_image) # silly Nose, this isn't a test function
 
 class TestTestingImages(DustyTestCase):
     def setUp(self):
@@ -56,7 +60,7 @@ class TestTestingImages(DustyTestCase):
         image_tag = 'dusty/image'
         command = 'npm install'
         image_name = 'gcweb_testing_image'
-        _make_installed_requirements_image(mock_docker_client, image_tag, command, image_name)
+        _make_installed_requirements_image(mock_docker_client, image_tag, command, image_name, [])
         mock_docker_client.create_container.assert_has_calls([call(image=image_tag,
                                                                    command=command,
                                                                    volumes=[],
@@ -72,7 +76,7 @@ class TestTestingImages(DustyTestCase):
         image_tag = 'dusty/image'
         command = 'npm install'
         image_name = 'gcweb_testing_image'
-        _make_installed_requirements_image(mock_docker_client, image_tag, command, image_name, volumes=['os/path:container/path'])
+        _make_installed_requirements_image(mock_docker_client, image_tag, command, image_name, ['os/path:container/path'])
         mock_docker_client.create_container.assert_has_calls([call(image=image_tag,
                                                                    command=command,
                                                                    volumes=['container/path'],
@@ -89,48 +93,43 @@ class TestTestingImages(DustyTestCase):
     @patch('dusty.systems.docker.testing_image._make_installed_requirements_image')
     def test_make_installed_testing_image(self, fake_make_installed_image, fake_ensure_base_image):
         mock_docker_client = Mock()
-        new_image_name = 'dusty/image'
+        new_image_name = 'dusty/test_fake-app'
         fake_ensure_base_image.return_value = 'dusty_testing/image'
-        _make_installed_testing_image(mock_docker_client, 'fake-app', self.specs,
-                                      new_image_name, volumes=['os/path:container:path'])
+        _make_installed_testing_image(mock_docker_client, 'fake-app', self.specs)
         fake_ensure_base_image.assert_has_calls([call(mock_docker_client, self.specs['apps']['fake-app']['test'])])
         fake_make_installed_image.assert_has_calls([call(mock_docker_client, 'dusty_testing/image',
-                                                         'sh -c "cd /repo; npm install"', new_image_name, volumes=['os/path:container:path'])])
+                                                         'sh -c "cd /repo; npm install"', new_image_name, ['/persist/repos/tmp/fake-repo:/repo'])])
 
     @patch('dusty.systems.docker.testing_image._make_installed_testing_image')
-    def test_ensure_image_exists_no_force_1(self, fake_make_installed_image):
+    def test_ensure_test_image_no_force_1(self, fake_make_installed_image):
+        fake_docker_client = Mock()
+        fake_docker_client.images.return_value = []
+        new_image_name = 'dusty/test_fake-app'
+        ensure_test_image(fake_docker_client, 'fake-app', self.specs, new_image_name)
+        fake_make_installed_image.assert_has_calls([call(fake_docker_client, 'fake-app', self.specs)])
+
+    @patch('dusty.systems.docker.testing_image._make_installed_testing_image')
+    def test_ensure_test_image_no_force_2(self, fake_make_installed_image):
         fake_docker_client = Mock()
         fake_docker_client.images.return_value = []
         new_image_name = 'dusty/image'
-        ensure_image_exists(fake_docker_client, 'fake-app', self.specs, new_image_name)
-        fake_make_installed_image.assert_has_calls([call(fake_docker_client, 'fake-app', self.specs,
-                                                         new_image_name, volumes=[])])
+        ensure_test_image(fake_docker_client, 'fake-app', self.specs, new_image_name)
+        fake_make_installed_image.assert_has_calls([call(fake_docker_client, 'fake-app', self.specs)])
 
     @patch('dusty.systems.docker.testing_image._make_installed_testing_image')
-    def test_ensure_image_exists_no_force_2(self, fake_make_installed_image):
-        fake_docker_client = Mock()
-        fake_docker_client.images.return_value = []
-        new_image_name = 'dusty/image'
-        ensure_image_exists(fake_docker_client, 'fake-app', self.specs, new_image_name, volumes=['os/path:container:path'])
-        fake_make_installed_image.assert_has_calls([call(fake_docker_client, 'fake-app', self.specs,
-                                                         new_image_name, volumes=['os/path:container:path'])])
-
-    @patch('dusty.systems.docker.testing_image._make_installed_testing_image')
-    def test_ensure_image_exists_no_force_3(self, fake_make_installed_image):
+    def test_ensure_test_image_no_force_3(self, fake_make_installed_image):
         fake_docker_client = Mock()
         fake_docker_client.images.return_value = [{'RepoTags': ['dusty', 'dusty/dog']},
                                                   {'RepoTags': ['dusty/images', 'dusty/image']}]
         new_image_name = 'dusty/image'
-        ensure_image_exists(fake_docker_client, 'fake-app', self.specs, new_image_name)
+        ensure_test_image(fake_docker_client, 'fake-app', self.specs, new_image_name)
         fake_make_installed_image.assert_has_calls([])
 
     @patch('dusty.systems.docker.testing_image._make_installed_testing_image')
-    def test_ensure_image_exists_force(self, fake_make_installed_image):
+    def test_ensure_test_image_force(self, fake_make_installed_image):
         fake_docker_client = Mock()
         fake_docker_client.images.return_value = [{'RepoTags': ['dusty', 'dusty/dog']},
                                                   {'RepoTags': ['dusty/images', 'dusty/image']}]
         new_image_name = 'dusty/image'
-        ensure_image_exists(fake_docker_client, 'fake-app', self.specs, new_image_name,
-                            volumes=['os/path:container:path'], force_recreate=True)
-        fake_make_installed_image.assert_has_calls([call(fake_docker_client, 'fake-app', self.specs, new_image_name,
-                                                         volumes=['os/path:container:path'])])
+        ensure_test_image(fake_docker_client, 'fake-app', self.specs, force_recreate=True)
+        fake_make_installed_image.assert_has_calls([call(fake_docker_client, 'fake-app', self.specs)])
