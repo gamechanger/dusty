@@ -139,6 +139,13 @@ def _get_compose_volumes(app_name, assembled_specs):
 def _get_cp_volume_mount(app_name):
     return "{}:{}".format(vm_cp_path(app_name), constants.CONTAINER_CP_DIR)
 
+def get_volume_mounts(app_or_lib_name, assembled_specs):
+    if app_or_lib_name in assembled_specs['apps']:
+        return get_app_volume_mounts(app_or_lib_name, assembled_specs)
+    elif app_or_lib_name in assembled_specs['libs']:
+        return get_lib_volume_mounts(app_or_lib_name, assembled_specs)
+    raise KeyError('{} is not an app or lib'.format(app_or_lib_name))
+
 def get_app_volume_mounts(app_name, assembled_specs):
     """ This returns a list of formatted volume specs for an app. These mounts declared in the apps' spec
     and mounts declared in all lib specs the app depends on"""

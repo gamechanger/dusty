@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import docker
 
-from ...compiler.compose import _lib_install_commands_for_app, _container_code_path
+from ...compiler.compose import _lib_install_commands_for_app, _container_code_path, get_volume_mounts
 from ...log import log_to_client
 
 def _ensure_testing_spec_base_image(docker_client, testing_spec):
@@ -74,7 +74,8 @@ def _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs
     _make_installed_requirements_image(docker_client, base_image_tag, image_setup_command, new_image_name, volumes=volumes)
     return new_image_name
 
-def ensure_image_exists(docker_client, app_or_lib_name, expanded_specs, image_name, volumes=[], force_recreate=False):
+def ensure_image_exists(docker_client, app_or_lib_name, expanded_specs, image_name, force_recreate=False):
+    volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
     images = docker_client.images()
     image_exists = False
     for image in images:
