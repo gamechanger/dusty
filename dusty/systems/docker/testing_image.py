@@ -33,8 +33,7 @@ def _get_create_container_binds(split_volumes):
         binds_dict[volume_dict['host_location']] =  {'bind': volume_dict['container_location'], 'ro': False}
     return binds_dict
 
-def _make_installed_requirements_image(docker_client, base_image_tag, command, image_name):
-    volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
+def _make_installed_requirements_image(docker_client, base_image_tag, command, image_name, volumes):
     split_volumes = _get_split_volumes(volumes)
     create_container_volumes = _get_create_container_volumes(split_volumes)
     create_container_binds = _get_create_container_binds(split_volumes)
@@ -71,9 +70,10 @@ def _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs
     testing_spec = _testing_spec(app_or_lib_name, expanded_specs)
     base_image_tag = _ensure_testing_spec_base_image(docker_client, testing_spec)
     image_setup_command = _get_test_image_setup_command(app_or_lib_name, expanded_specs)
-    _make_installed_requirements_image(docker_client, base_image_tag, image_setup_command, image_name)
+    volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
+    _make_installed_requirements_image(docker_client, base_image_tag, image_setup_command, image_name, volumes)
 
-def ensure_image_exists(docker_client, app_or_lib_name, expanded_specs, force_recreate=False):
+def ensure_test_image(docker_client, app_or_lib_name, expanded_specs, force_recreate=False):
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
     images = docker_client.images()
     image_name = test_image_name(app_or_lib_name)

@@ -4,7 +4,7 @@ import sys
 from .. import constants
 from ..compiler.spec_assembler import get_expanded_libs_specs
 from ..compiler.compose import get_volume_mounts, get_testing_compose_dict
-from ..systems.docker.testing_image import ensure_image_exists, test_image_name
+from ..systems.docker.testing_image import ensure_test_image, test_image_name
 from ..systems.docker import get_docker_client
 from ..systems.docker.compose import write_composefile, compose_up
 from ..systems.rsync import sync_repos_by_app_name, sync_repos_by_lib_name
@@ -25,7 +25,7 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
 
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     image_name = test_image_name(app_or_lib_name)
-    ensure_image_exists(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
+    ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
     _run_tests_with_image(client, expanded_specs, app_or_lib_name, spec, volumes, image_name, test_command)
 
 def _construct_test_command(spec, suite_name, test_arguments):
