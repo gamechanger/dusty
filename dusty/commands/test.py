@@ -59,13 +59,11 @@ def _services_compose_up(expanded_specs, app_or_lib_name, testing_spec):
             kwargs['net_container_identifier'] = previous_container_names[-1]
         service_compose_config = get_testing_compose_dict(service_name, service_spec, **kwargs)
 
-        #want to make these temporary files
         composefile_path = _test_composefile_path(service_name)
         write_composefile(service_compose_config, composefile_path)
         log_to_client('Compose config {}: \n {}'.format(service_name, service_compose_config))
 
         compose_up(composefile_path, _compose_project_name(app_or_lib_name))
-        #compose only has runs with lower case names
         previous_container_names.append("{}_{}_1".format(_compose_project_name(app_or_lib_name), service_name))
     return previous_container_names
 
@@ -81,6 +79,7 @@ def _app_or_lib_compose_up(testing_spec, app_or_lib_name, app_or_lib_volumes, te
     compose_config = get_testing_compose_dict(app_or_lib_name, testing_spec.get('compose', {}), **kwargs)
     write_composefile(compose_config, composefile_path)
     compose_up(composefile_path, _compose_project_name(app_or_lib_name))
+    return '{}_{}_1'.format(_compose_project_name(app_or_lib_name), app_or_lib_name)
 
 def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command):
     testing_spec = _spec_for_service(app_or_lib_name, expanded_specs)['test']
@@ -88,8 +87,8 @@ def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command)
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
     previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, testing_spec)
     previous_container_name = previous_container_names[-1] if previous_container_names else None
-    _app_or_lib_compose_up(testing_spec, app_or_lib_name, volumes, test_command, previous_container_name)
-    test_container_name = '{}_{}_1'.format(_compose_project_name(app_or_lib_name), app_or_lib_name)
+    test_container_name = _app_or_lib_compose_up(testing_spec, app_or_lib_name,
+                                                 volumes, test_command, previous_container_name)
 
     for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
         log_to_client(line.strip())
