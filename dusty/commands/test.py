@@ -4,14 +4,14 @@ import sys
 from .. import constants
 from ..compiler.spec_assembler import get_expanded_libs_specs
 from ..compiler.compose import get_volume_mounts, get_testing_compose_dict
-from ..systems.docker.testing_image import ensure_image_exists
+from ..systems.docker.testing_image import ensure_image_exists, test_image_name
 from ..systems.docker import get_docker_client
 from ..systems.docker.compose import write_composefile, compose_up
 from ..systems.rsync import sync_repos_by_app_name, sync_repos_by_lib_name
 from ..log import log_to_client
 
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
-    docker_client = get_docker_client()
+    client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
     if app_or_lib_name in expanded_specs['apps']:
@@ -24,9 +24,9 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
         raise RuntimeError('Argument must be defined app or lib name')
 
     test_command = _construct_test_command(spec, suite_name, test_arguments)
-    image_name = "{}_dusty_testing/image".format(app_or_lib_name)
-    ensure_image_exists(docker_client, app_or_lib_name, expanded_specs, image_name, force_recreate=force_recreate)
-    _run_tests_with_image(expanded_specs, app_or_lib_name, spec, volumes, image_name, test_command)
+    image_name = test_image_name(app_or_lib_name)
+    ensure_image_exists(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
+    _run_tests_with_image(client, expanded_specs, app_or_lib_name, spec, volumes, image_name, test_command)
 
 def _construct_test_command(spec, suite_name, test_arguments):
     suite_command = None
@@ -79,7 +79,7 @@ def _app_or_lib_compose_up(app_or_lib_spec, app_or_lib_name, image_name,
     write_composefile(compose_config, composefile_path)
     compose_up(composefile_path, _compose_project_name(app_or_lib_name))
 
-def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_or_lib_volumes, image_name, test_command):
+def _run_tests_with_image(client, expanded_specs, app_or_lib_name, app_or_lib_spec, app_or_lib_volumes, image_name, test_command):
     log_to_client('image name is {}'.format(image_name))
 
     previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, app_or_lib_spec)
@@ -88,7 +88,6 @@ def _run_tests_with_image(expanded_specs, app_or_lib_name, app_or_lib_spec, app_
                            app_or_lib_volumes, test_command, previous_container_name)
     test_container_name = '{}_{}_1'.format(_compose_project_name(app_or_lib_name), app_or_lib_name)
 
-    client = get_docker_client()
     for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
         log_to_client(line)
     exit_code = client.wait(test_container_name)

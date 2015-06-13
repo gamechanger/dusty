@@ -60,6 +60,9 @@ def _spec_for_service(app_or_lib_name, expanded_specs):
 def _testing_spec(app_or_lib_name, expanded_specs):
     return _spec_for_service(app_or_lib_name, expanded_specs)['test']
 
+def test_image_name(app_or_lib_name):
+    return "dusty/test_{}".format(app_or_lib_name)
+
 def _get_test_image_setup_command(app_or_lib_name, expanded_specs):
     testing_spec = _testing_spec(app_or_lib_name, expanded_specs)
     commands = _lib_install_commands_for_app(app_or_lib_name, expanded_specs)
@@ -67,16 +70,17 @@ def _get_test_image_setup_command(app_or_lib_name, expanded_specs):
     commands += [testing_spec['once']]
     return "sh -c \"{}\"".format('; '.join(commands))
 
-def _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs, new_image_name, volumes=[]):
+def _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs, volumes=[]):
+    image_name = test_image_name(app_or_lib_name)
     testing_spec = _testing_spec(app_or_lib_name, expanded_specs)
     base_image_tag = _ensure_testing_spec_base_image(docker_client, testing_spec)
     image_setup_command = _get_test_image_setup_command(app_or_lib_name, expanded_specs)
-    _make_installed_requirements_image(docker_client, base_image_tag, image_setup_command, new_image_name, volumes=volumes)
-    return new_image_name
+    _make_installed_requirements_image(docker_client, base_image_tag, image_setup_command, image_name, volumes=volumes)
 
-def ensure_image_exists(docker_client, app_or_lib_name, expanded_specs, image_name, force_recreate=False):
+def ensure_image_exists(client, app_or_lib_name, expanded_specs, force_recreate=False):
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
-    images = docker_client.images()
+    images = client.images()
+    image_name = test_image_name(app_or_lib_name)
     image_exists = False
     for image in images:
         if any(image_name in tag for tag in image['RepoTags']):
@@ -84,5 +88,5 @@ def ensure_image_exists(docker_client, app_or_lib_name, expanded_specs, image_na
             break
     if force_recreate or not image_exists:
         log_to_client('Creating a new image named {}, with installed dependencies for the app or lib'.format(image_name))
-        _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs, image_name, volumes=volumes)
+        _make_installed_testing_image(client, app_or_lib_name, expanded_specs, volumes=volumes)
         log_to_client('Image is now created')
