@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import docker
 
-from ...compiler.compose import _lib_install_commands_for_app, _container_code_path, get_volume_mounts
+from ...compiler.compose import lib_install_commands_for_app_or_lib, container_code_path, get_volume_mounts
 from ...log import log_to_client
 
 def _ensure_testing_spec_base_image(docker_client, testing_spec):
@@ -70,8 +70,8 @@ def test_image_name(app_or_lib_name):
 
 def _get_test_image_setup_command(app_or_lib_name, expanded_specs):
     testing_spec = _testing_spec(app_or_lib_name, expanded_specs)
-    commands = _lib_install_commands_for_app(app_or_lib_name, expanded_specs)
-    commands += ['cd {}'.format(_container_code_path(_spec_for_service(app_or_lib_name, expanded_specs)))]
+    commands = lib_install_commands_for_app_or_lib(app_or_lib_name, expanded_specs)
+    commands += ['cd {}'.format(container_code_path(_spec_for_service(app_or_lib_name, expanded_specs)))]
     commands += [testing_spec['once']]
     return "sh -c \"{}\"".format('; '.join(commands))
 

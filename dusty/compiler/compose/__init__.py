@@ -95,8 +95,8 @@ def _compile_docker_command(app_name, assembled_specs):
     first_run_file = constants.FIRST_RUN_FILE_PATH
     command = []
     command += _lib_install_commands_for_app(app_name, assembled_specs)
-    command.append("cd {}".format(_container_code_path(app_spec)))
-    command.append("export PATH=$PATH:{}".format(_container_code_path(app_spec)))
+    command.append("cd {}".format(container_code_path(app_spec)))
+    command.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
     command.append("if [ ! -f {} ]".format(first_run_file))
     once_command = app_spec['commands']["once"]
     command.append("then mkdir -p {}; touch {}".format(constants.RUN_DIR, first_run_file))
@@ -106,10 +106,7 @@ def _compile_docker_command(app_name, assembled_specs):
     command.append(app_spec['commands']['always'])
     return "sh -c \"{}\"".format('; '.join(command))
 
-def _lib_install_commands_for_app(app_name, assembled_specs):
-    """ This returns a list of all the commands that will install libraries for a
-    given app """
-    libs = assembled_specs['apps'][app_name]['depends']['libs']
+def __lib_install_commands_for_libs(assembled_specs, libs):
     commands = []
     for lib in libs:
         lib_spec = assembled_specs['libs'][lib]
@@ -117,6 +114,23 @@ def _lib_install_commands_for_app(app_name, assembled_specs):
         if install_command:
             commands.append(install_command)
     return commands
+
+def _lib_install_commands_for_app(app_name, assembled_specs):
+    """ This returns a list of all the commands that will install libraries for a
+    given app """
+    libs = assembled_specs['apps'][app_name]['depends']['libs']
+    return __lib_install_commands_for_libs(assembled_specs, libs)
+
+def _lib_install_commands_for_lib(app_name, assembled_specs):
+    """ This returns a list of all the commands that will install libraries for a
+    given lib """
+    libs = assembled_specs['libs'][app_name]['depends']['libs']
+    return __lib_install_commands_for_libs(assembled_specs, libs)
+
+def lib_install_commands_for_app_or_lib(app_or_lib_name, assembled_specs):
+    if app_or_lib_name in assembled_specs['apps']:
+        return _lib_install_commands_for_app(app_or_lib_name, assembled_specs)
+    return _lib_install_commands_for_lib(app_or_lib_name, assembled_specs)
 
 def _lib_install_command(lib_spec):
     """ This returns a single commmand that will install a library in a docker container """
@@ -166,14 +180,14 @@ def get_lib_volume_mounts(base_lib_name, assembled_specs):
 def _get_app_repo_volume_mount(app_spec):
     """ This returns the formatted volume mount spec to mount the local code for an app in the
     container """
-    return "{}:{}".format(Repo(app_spec['repo']).vm_path, _container_code_path(app_spec))
+    return "{}:{}".format(Repo(app_spec['repo']).vm_path, container_code_path(app_spec))
 
 def _get_lib_repo_volume_mount(lib_spec):
     """ This returns the formatted volume mount spec to mount the local code for a lib in the
     container """
-    return "{}:{}".format(Repo(lib_spec['repo']).vm_path, _container_code_path(lib_spec))
+    return "{}:{}".format(Repo(lib_spec['repo']).vm_path, container_code_path(lib_spec))
 
-def _container_code_path(spec):
+def container_code_path(spec):
     """ Returns the path inside the docker container that a spec (for an app or lib) says it wants
     to live at """
     return spec['mount']
@@ -183,5 +197,5 @@ def _get_app_libs_volume_mounts(app_name, assembled_specs):
     volumes = []
     for lib_name in assembled_specs['apps'][app_name]['depends']['libs']:
         lib_spec = assembled_specs['libs'][lib_name]
-        volumes.append("{}:{}".format(Repo(lib_spec['repo']).vm_path, _container_code_path(lib_spec)))
+        volumes.append("{}:{}".format(Repo(lib_spec['repo']).vm_path, container_code_path(lib_spec)))
     return volumes
