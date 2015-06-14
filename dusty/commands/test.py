@@ -16,7 +16,7 @@ def test_info_for_app_or_lib(app_or_lib_name):
     expanded_specs = get_expanded_libs_specs()
     spec = _spec_for_service(app_or_lib_name, expanded_specs)
     if not spec['test']['suites']:
-        log_to_client('No test suite registered for {}'.format(app_name))
+        log_to_client('No test suite registered for {}'.format(app_or_lib_name))
         return
 
     table = PrettyTable(['Test Suite', 'Description'])
