@@ -14,4 +14,4 @@ test_schema = Schema({
     'once': {'type': basestring},
     'compose': {'type': dict, 'default': dict},
     'suites': {'type': Array(test_suite_schema), 'default': list},
-    }, strict=False)
+    })

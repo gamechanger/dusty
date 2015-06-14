@@ -28,7 +28,6 @@ def test_info_for_app_or_lib(app_or_lib_name):
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
-    volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
     if app_or_lib_name in expanded_specs['apps']:
         sync_repos_by_app_name(expanded_specs, [app_or_lib_name])
     elif app_or_lib_name in expanded_specs['libs']:
