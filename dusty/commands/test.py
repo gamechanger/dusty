@@ -19,10 +19,11 @@ def test_info_for_app_or_lib(app_or_lib_name):
         log_to_client('No test suite registered for {}'.format(app_or_lib_name))
         return
 
-    table = PrettyTable(['Test Suite', 'Description'])
+    table = PrettyTable(['Test Suite', 'Description', 'Default Args'])
     for suite_spec in spec['test']['suites']:
         table.add_row([suite_spec['name'],
-                       '\n'.join(textwrap.wrap(suite_spec['description'], 80))])
+                       '\n'.join(textwrap.wrap(suite_spec['description'], 80)),
+                       suite_spec['default_args']])
     log_to_client(table.get_string(sortby='Test Suite'))
 
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
