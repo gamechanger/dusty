@@ -58,6 +58,7 @@ class TestTestingImages(DustyTestCase):
         mock_docker_client.create_container.return_value = {'Id': '1'}
         mock_docker_client.commit.return_value = {'Id': '2'}
         image_tag = 'dusty/image'
+        mock_docker_client.images.return_value = [{'RepoTags': [image_tag]}]
         command = 'npm install'
         image_name = 'gcweb_testing_image'
         _make_installed_requirements_image(mock_docker_client, image_tag, command, image_name, [])
@@ -74,6 +75,7 @@ class TestTestingImages(DustyTestCase):
         mock_docker_client.create_container.return_value = {'Id': '1'}
         mock_docker_client.commit.return_value = {'Id': '2'}
         image_tag = 'dusty/image'
+        mock_docker_client.images.return_value = [{'RepoTags': [image_tag]}]
         command = 'npm install'
         image_name = 'gcweb_testing_image'
         _make_installed_requirements_image(mock_docker_client, image_tag, command, image_name, ['os/path:container/path'])

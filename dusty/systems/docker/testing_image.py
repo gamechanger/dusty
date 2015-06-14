@@ -33,11 +33,21 @@ def _get_create_container_binds(split_volumes):
         binds_dict[volume_dict['host_location']] =  {'bind': volume_dict['container_location'], 'ro': False}
     return binds_dict
 
+def _ensure_image_exists(docker_client, image_name):
+    for image in docker_client.images():
+        if any(image_name in tag for tag in image['RepoTags']):
+            break
+    else:
+        split = image_name.split(':')
+        repo, tag = split[0], 'latest' if len(split) == 1 else split[1]
+        docker_client.pull(repo, tag, insecure_registry=True)
+
 def _make_installed_requirements_image(docker_client, base_image_tag, command, image_name, volumes):
     split_volumes = _get_split_volumes(volumes)
     create_container_volumes = _get_create_container_volumes(split_volumes)
     create_container_binds = _get_create_container_binds(split_volumes)
 
+    _ensure_image_exists(docker_client, base_image_tag)
     container = docker_client.create_container(image=base_image_tag,
                                                command=command,
                                                volumes=create_container_volumes,
