@@ -1,4 +1,7 @@
 from schemer import Schema, Array
+
+from .test_schema import test_schema
+
 def image_build_isolation_validator():
     def validator(document):
         if 'image' in document and 'build' in document:
@@ -37,21 +40,6 @@ script_schema = Schema({
 
 dusty_app_compose_schema = Schema({
     'volumes': {'type': Array(basestring), 'default': list}
-    }, strict=False)
-
-test_suite_schema = Schema({
-    'name': {'type': basestring, 'required': True},
-    'command': {'type': basestring, 'required': True},
-    'default_args': {'type': basestring, 'required': False, 'default': ''}
-})
-
-test_schema = Schema({
-    'image': {'type': basestring, 'default': ''},
-    'build': {'type': basestring},
-    'services': {'type': Array(basestring), 'default': list},
-    'once': {'type': basestring},
-    'compose': {'type': dusty_app_compose_schema, 'default': dict},
-    'suites': {'type': Array(test_suite_schema), 'default': list},
     }, strict=False)
 
 app_schema = Schema({

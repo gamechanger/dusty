@@ -3,7 +3,6 @@ from dusty.schemas.app_schema import app_schema
 from dusty.schemas.lib_schema import lib_schema
 from dusty.schemas.bundle_schema import bundle_schema
 
-
 def get_app_dusty_schema(doc):
     if 'image' not in doc and 'build' not in doc:
         doc['image'] = ''

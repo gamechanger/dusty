@@ -1,10 +1,10 @@
 from schemer import Schema, Array
 
+from .test_schema import test_schema
+
 depends_schema = Schema({
     'libs': {'type': Array(basestring), 'default': list}
     })
-
-test_schema = Schema({}, strict=False)
 
 lib_schema = Schema({
     'repo': {'type': basestring, 'required': True},

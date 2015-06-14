@@ -28,13 +28,13 @@ class TestTestsCommands(DustyTestCase):
             test.run_app_or_lib_tests('lib-c', '', [])
 
     def test_run_app_or_lib_tests_app_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
-        fake_expanded_libs.reurn_value = self.specs
+        fake_expanded_libs.return_value = self.specs
         with self.assertRaises(KeyError):
             test.run_app_or_lib_tests('app-c', '', [])
 
     def test_run_app_or_lib_tests_suite_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
-        fake_expanded_libs.reurn_value = self.specs
-        with self.assertRaises(KeyError):
+        fake_expanded_libs.return_value = self.specs
+        with self.assertRaises(RuntimeError):
             test.run_app_or_lib_tests('app-a', 'nosetests', [])
 
     @patch('dusty.commands.test._run_tests_with_image')
