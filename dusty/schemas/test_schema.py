@@ -3,7 +3,8 @@ from schemer import Schema, Array
 test_suite_schema = Schema({
     'name': {'type': basestring, 'required': True},
     'command': {'type': basestring, 'required': True},
-    'default_args': {'type': basestring, 'default': ''}
+    'default_args': {'type': basestring, 'default': ''},
+    'description': {'type': basestring, 'default': ''}
 })
 
 test_schema = Schema({

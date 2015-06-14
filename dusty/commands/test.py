@@ -1,5 +1,7 @@
 import os
 import sys
+import textwrap
+from prettytable import PrettyTable
 
 from .. import constants
 from ..compiler.spec_assembler import get_expanded_libs_specs
@@ -9,6 +11,19 @@ from ..systems.docker import get_docker_client
 from ..systems.docker.compose import write_composefile, compose_up
 from ..systems.rsync import sync_repos_by_app_name, sync_repos_by_lib_name
 from ..log import log_to_client
+
+def test_info_for_app_or_lib(app_or_lib_name):
+    expanded_specs = get_expanded_libs_specs()
+    spec = _spec_for_service(app_or_lib_name, expanded_specs)
+    if not spec['test']['suites']:
+        log_to_client('No test suite registered for {}'.format(app_name))
+        return
+
+    table = PrettyTable(['Test Suite', 'Description'])
+    for suite_spec in spec['test']['suites']:
+        table.add_row([suite_spec['name'],
+                       '\n'.join(textwrap.wrap(suite_spec['description'], 80))])
+    log_to_client(table.get_string(sortby='Test Suite'))
 
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
     client = get_docker_client()
