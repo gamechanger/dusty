@@ -1,7 +1,7 @@
 """Allow you to run tests in an isolated container for an app or a lib
 
 Usage:
-  test <app_or_lib_name> <suite_name> [<args>...] [--recreate]
+  test <app_or_lib_name> [<suite_name>] [<args>...] [--recreate]
 
 Options:
   <suite_name>  Name of the test suite you would like to run
@@ -12,8 +12,12 @@ Options:
 
 from docopt import docopt
 
-from ..commands.test import run_app_or_lib_tests
+from ..payload import Payload
+from ..commands.test import run_app_or_lib_tests, test_info_for_app_or_lib
 
 def main(argv):
     args = docopt(__doc__, argv)
-    run_app_or_lib_tests(args['<app_or_lib_name>'], args['<suite_name>'], args['<args>'], force_recreate=args['--recreate'])
+    if not args['<suite_name>']:
+        return Payload(test_info_for_app_or_lib, args['<app_or_lib_name>'])
+    else:
+        run_app_or_lib_tests(args['<app_or_lib_name>'], args['<suite_name>'], args['<args>'], force_recreate=args['--recreate'])
