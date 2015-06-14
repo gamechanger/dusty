@@ -16,20 +16,18 @@ class TestTestsCommands(DustyTestCase):
     def setUp(self):
         super(TestTestsCommands, self).setUp()
         self.specs = {'apps': {
-                        'app-a': get_app_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': 'nosetests app-a'}]}}),
-                        'app-b': get_app_dusty_schema({'test': {'fake_app_b': True}})},
+                        'app-a': get_app_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': 'nosetests app-a'}]}})},
                       'libs': {
-                        'lib-a': get_lib_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': 'nosetests lib-a'}]}}),
-                        'lib-b': get_lib_dusty_schema({'test': {'fake_app_b': True}})}}
+                        'lib-a': get_lib_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': 'nosetests lib-a'}]}})}}
 
     def test_run_app_or_lib_tests_lib_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
         fake_expanded_libs.return_value = self.specs
-        with self.assertRaises(KeyError):
+        with self.assertRaises(RuntimeError):
             test.run_app_or_lib_tests('lib-c', '', [])
 
     def test_run_app_or_lib_tests_app_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
         fake_expanded_libs.return_value = self.specs
-        with self.assertRaises(KeyError):
+        with self.assertRaises(RuntimeError):
             test.run_app_or_lib_tests('app-c', '', [])
 
     def test_run_app_or_lib_tests_suite_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
