@@ -49,7 +49,7 @@ test_schema = Schema({
     'image': {'type': basestring, 'default': ''},
     'build': {'type': basestring},
     'services': {'type': Array(basestring), 'default': list},
-    'once': {'type': basestring, 'required': True},
+    'once': {'type': basestring},
     'compose': {'type': dusty_app_compose_schema, 'default': dict},
     'suites': {'type': Array(test_suite_schema), 'default': list},
     }, strict=False)
