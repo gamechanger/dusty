@@ -1,7 +1,7 @@
 """Listen for user commands to Dusty
 
 Usage:
-  dustyd [--suppress-warnings] [--preflight-only]
+  dusty -d [--suppress-warnings] [--preflight-only]
 
 Options:
   --suppress-warnings  Do not display run time warnings to the client

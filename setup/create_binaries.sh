@@ -6,6 +6,5 @@ virtualenv $venv_name
 $venv_name/bin/pip install "git+https://github.com/pyinstaller/pyinstaller.git@12e40471c77f588ea5be352f7219c873ddaae056#egg=pyinstaller"
 $venv_name/bin/pip install .
 $venv_name/bin/pyinstaller -F setup/bin/dusty
-$venv_name/bin/pyinstaller -F setup/bin/dustyd
-echo "Binaries can now be found at dist/dusty and dist/dustyd"
+echo "Binaries can now be found at dist/dusty"
 rm -rf $venv_name

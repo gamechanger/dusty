@@ -66,7 +66,7 @@ class DustyIntegrationTestCase(TestCase):
     variable DUSTY_ALLOW_INTEGRATION_TESTS is set.
 
     Note that this also assumes it is running against an actual
-    Dustyd process on the local host."""
+    Dusty daemon process on the local host."""
     def setUp(self):
         if not os.getenv('DUSTY_ALLOW_INTEGRATION_TESTS'):
             raise RuntimeError('You must set the env var DUSTY_ALLOW_INTEGRATION_TESTS to run integration tests. '

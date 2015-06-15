@@ -21,6 +21,9 @@ Commands:
   up         Set up the Dusty environment and start activated applications
   validate   Validates that Dusty specs have correct fields and references
 
+Options:
+  -d    Run the Dusty daemon
+
 For help on a specific command, provide the '-h' flag to the command, e.g. 'dusty repos -h'
 """
 
@@ -29,6 +32,7 @@ import socket
 
 from docopt import docopt
 
+from ..daemon import main as run_daemon
 from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
@@ -85,6 +89,11 @@ def _connect_to_daemon():
     return sock
 
 def main():
+    # Dispatch to daemon's docopt immediately so
+    # we can process daemon-specific options
+    if '-d' in sys.argv:
+        return run_daemon()
+
     args = docopt(__doc__, options_first=True)
     command, command_args = args['<command>'], args['<args>']
     if command is None:
