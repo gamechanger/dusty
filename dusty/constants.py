@@ -1,6 +1,6 @@
 import os
 
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 
 SOCKET_TERMINATOR = '\0\0'
 SOCKET_ERROR_TERMINATOR = '\0\1'
