@@ -122,7 +122,6 @@ def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command)
             client.stop(service_container, timeout=1)
         except Exception:
             log_to_client('Exception stopping service container {}'.format(service_container))
-            pass
 
     log_to_client('TESTS {}'.format('FAILED' if exit_code != 0 else 'PASSED'))
     sys.exit(exit_code)
