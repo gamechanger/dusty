@@ -5,7 +5,7 @@ from prettytable import PrettyTable
 
 from .. import constants
 from ..compiler.spec_assembler import get_expanded_libs_specs
-from ..compiler.compose import get_volume_mounts, get_testing_compose_dict
+from ..compiler.compose import get_volume_mounts, get_testing_compose_dict, container_code_path
 from ..systems.docker.testing_image import ensure_test_image, test_image_name
 from ..systems.docker import get_docker_client
 from ..systems.docker.compose import write_composefile, compose_up
@@ -60,8 +60,9 @@ def _construct_test_command(spec, suite_name, test_arguments):
         raise RuntimeError('{} is not a valid suite name'.format(suite_name))
     if not test_arguments:
         test_arguments = suite_default_args.split(' ')
+    cd_command = 'cd {}'.format(container_code_path(spec))
     sub_command = "{} {}".format(suite_command, ' '.join(test_arguments))
-    test_command = 'sh -c "{}"'.format(sub_command.strip())
+    test_command = 'sh -c "{}; {}"'.format(cd_command, sub_command.strip())
     log_to_client('Command to run in test is {}'.format(test_command))
     return test_command
 
