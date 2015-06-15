@@ -23,7 +23,7 @@ def _demote_to_user(user_name):
     return _demote
 
 def _set_demoted_home_dir(user_name):
-    home_dir = '/var/root' if user_name == 'root' else '/Users/{}'.format(user_name)
+    home_dir = os.path.expanduser('~{}'.format(user_name))
     os.environ['HOME'] = home_dir
 
 def run_subprocess(fn, shell_args, demote=True, env=None, **kwargs):
