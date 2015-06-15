@@ -3,9 +3,10 @@ import subprocess
 import textwrap
 
 from ..payload import Payload
-from ..config import save_config_value, get_config_value, verify_mac_username
+from ..config import save_config_value, get_config_value, verify_mac_username, refresh_config_warnings
 from ..log import log_to_client
 from .. import constants
+from .repos import update_managed_repos
 
 def _pretty_print_key_info(config_key):
     print '{}: {}\n'.format(config_key, '\n'.join(textwrap.wrap(constants.CONFIG_SETTINGS[config_key], 80)))
@@ -61,4 +62,6 @@ def save_dusty_config(config):
     for key, value in config.iteritems():
         save_config_value(key, value)
     save_config_value(constants.CONFIG_SETUP_KEY, True)
+    refresh_config_warnings()
+    update_managed_repos()
     log_to_client('Initial setup completed. You should now be able to use Dusty!')
