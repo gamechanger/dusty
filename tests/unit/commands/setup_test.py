@@ -2,7 +2,7 @@ from mock import patch, call
 
 from ...testcases import DustyTestCase
 from dusty.commands.setup import (_get_mac_username, _get_nginx_includes_dir,
-                                  setup_dusty_config, save_dusty_config)
+                                  setup_dusty_config, complete_setup)
 from dusty.payload import Payload
 from dusty import constants
 
@@ -52,7 +52,7 @@ class TestSetupCommands(DustyTestCase):
                                   constants.CONFIG_SPECS_REPO_KEY: 'github.com/gamechanger/dusty',
                                   constants.CONFIG_NGINX_DIR_KEY: '/etc/dusty/nginx'}
         return_payload = setup_dusty_config()
-        self.assertEqual(return_payload.fn, save_dusty_config)
+        self.assertEqual(return_payload.fn, complete_setup)
         self.assertEqual(return_payload.args[0], expected_dict_argument)
 
     @patch('pwd.getpwnam')
@@ -98,11 +98,11 @@ class TestSetupCommands(DustyTestCase):
         fake_get_nginx.assert_has_calls([])
 
     @patch('dusty.commands.setup.save_config_value')
-    def test_save_dusty_config(self, fake_save_config_value):
+    def test_complete_setup(self, fake_save_config_value):
         dict_argument = {constants.CONFIG_MAC_USERNAME_KEY: 'user',
                          constants.CONFIG_SPECS_REPO_KEY: 'github.com/gamechanger/dusty',
                          constants.CONFIG_NGINX_DIR_KEY: '/etc/dusty/nginx'}
-        save_dusty_config(dict_argument)
+        complete_setup(dict_argument)
         fake_save_config_value.assert_has_calls([call(constants.CONFIG_MAC_USERNAME_KEY,'user'),
                                                  call(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/dusty'),
                                                  call(constants.CONFIG_NGINX_DIR_KEY, '/etc/dusty/nginx'),

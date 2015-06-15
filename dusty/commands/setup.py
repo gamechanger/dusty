@@ -56,9 +56,9 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
     config_dictionary = {constants.CONFIG_MAC_USERNAME_KEY: mac_username,
                          constants.CONFIG_SPECS_REPO_KEY: specs_repo,
                          constants.CONFIG_NGINX_DIR_KEY: nginx_includes_dir}
-    return Payload(save_dusty_config, config_dictionary)
+    return Payload(complete_setup, config_dictionary)
 
-def save_dusty_config(config):
+def complete_setup(config):
     for key, value in config.iteritems():
         save_config_value(key, value)
     save_config_value(constants.CONFIG_SETUP_KEY, True)
