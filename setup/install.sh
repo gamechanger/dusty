@@ -18,10 +18,6 @@ bold_echo "Resetting dustyd daemon"
 sudo curl -L -o /System/Library/LaunchDaemons/org.gamechanger.dustyd.plist https://raw.githubusercontent.com/gamechanger/dusty/$release/setup/org.gamechanger.dustyd.plist
 sudo launchctl unload /System/Library/LaunchDaemons/org.gamechanger.dustyd.plist
 bold_echo "Testing dustyd's preflight..."
-sudo dustyd --preflight-only
-if [ $? != 0 ]; then
-    bold_echo "Preflight failed; not loading daemon"
-    exit 1
-fi
+sudo dustyd --preflight-only || (bold_echo "Preflight failed; not loading daemon"; exit 1)
 bold_echo "Loading dustyd daemon"
 sudo launchctl load /System/Library/LaunchDaemons/org.gamechanger.dustyd.plist
