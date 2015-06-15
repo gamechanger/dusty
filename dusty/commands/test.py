@@ -10,6 +10,7 @@ from ..systems.docker.testing_image import ensure_test_image, test_image_name
 from ..systems.docker import get_docker_client
 from ..systems.docker.compose import write_composefile, compose_up
 from ..systems.rsync import sync_repos_by_app_name, sync_repos_by_lib_name
+from ..systems.virtualbox import initialize_docker_vm
 from ..log import log_to_client
 
 def test_info_for_app_or_lib(app_or_lib_name):
@@ -27,6 +28,8 @@ def test_info_for_app_or_lib(app_or_lib_name):
     log_to_client(table.get_string(sortby='Test Suite'))
 
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
+    log_to_client("Ensuring virtualbox vm is running")
+    initialize_docker_vm()
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     if app_or_lib_name in expanded_specs['apps']:

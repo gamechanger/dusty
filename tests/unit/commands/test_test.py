@@ -4,7 +4,7 @@ from ...testcases import DustyTestCase
 from ..utils import get_app_dusty_schema, get_lib_dusty_schema
 from dusty.commands import test
 
-
+@patch('dusty.commands.test.initialize_docker_vm')
 @patch('dusty.commands.test.get_docker_client')
 @patch('dusty.commands.test.get_expanded_libs_specs')
 @patch('dusty.commands.test.ensure_test_image')
@@ -20,17 +20,17 @@ class TestTestsCommands(DustyTestCase):
                       'libs': {
                         'lib-a': get_lib_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': 'nosetests lib-a'}]}})}}
 
-    def test_run_app_or_lib_tests_lib_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
+    def test_run_app_or_lib_tests_lib_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
         with self.assertRaises(RuntimeError):
             test.run_app_or_lib_tests('lib-c', '', [])
 
-    def test_run_app_or_lib_tests_app_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
+    def test_run_app_or_lib_tests_app_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
         with self.assertRaises(RuntimeError):
             test.run_app_or_lib_tests('app-c', '', [])
 
-    def test_run_app_or_lib_tests_suite_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client):
+    def test_run_app_or_lib_tests_suite_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_lib, fake_repos_by_app, fake_ensure_image, fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
         with self.assertRaises(RuntimeError):
             test.run_app_or_lib_tests('app-a', 'nosetests', [])
@@ -38,7 +38,7 @@ class TestTestsCommands(DustyTestCase):
     @patch('dusty.commands.test._run_tests_with_image')
     def test_run_app_or_lib_tests_lib_found(self, fake_run_tests, fake_lib_get_volumes, fake_app_get_volumes,
                                             fake_repos_by_lib, fake_repos_by_app, fake_ensure_image,
-                                            fake_expanded_libs, fake_get_docker_client):
+                                            fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
         fake_lib_get_volumes.return_value = ['/host/route:/container/route']
         fake_app_get_volumes.return_value = []
@@ -56,7 +56,7 @@ class TestTestsCommands(DustyTestCase):
     @patch('dusty.commands.test._run_tests_with_image')
     def test_run_app_or_lib_tests_app_found(self, fake_run_tests, fake_lib_get_volumes, fake_app_get_volumes,
                                             fake_repos_by_lib, fake_repos_by_app, fake_ensure_image,
-                                            fake_expanded_libs, fake_get_docker_client):
+                                            fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
         fake_lib_get_volumes.return_value = ['/host/route:/container/route']
         fake_app_get_volumes.return_value = []
