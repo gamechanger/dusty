@@ -33,7 +33,7 @@ def copy_between_containers(source_name, source_path, dest_name, dest_path):
          between containers because it is assumed the non-privileged
          user has full access to all Dusty containers.
       2. The temp dir created by mkdtemp is owned by the owner of the
-         Dustyd process, so if we demoted our moves to/from that location
+         Dusty daemon process, so if we demoted our moves to/from that location
          they would encounter permission errors."""
     temp_path = os.path.join(tempfile.mkdtemp(), str(uuid.uuid1()))
     with _cleanup_path(temp_path):

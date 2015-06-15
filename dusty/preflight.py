@@ -1,5 +1,5 @@
 """This module contains checks for system dependencies that are run
-when dustyd first starts up. Any failed checks should throw an exception
+when Dusty daemon first starts up. Any failed checks should throw an exception
 which bubbles up to the daemon and causes it to crash."""
 
 from __future__ import absolute_import
