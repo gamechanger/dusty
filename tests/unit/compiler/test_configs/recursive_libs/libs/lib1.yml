@@ -1,4 +1,5 @@
 repo:  github.com/gamechanger/lib1
+mount: /lib1
 depends:
     libs:
         - lib2

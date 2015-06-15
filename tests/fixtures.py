@@ -30,17 +30,21 @@ def basic_specs_fixture():
     _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['app-b']})
     _write('app', 'app-a', {'repo': 'github.com/app/a',
                             'image': 'app/a',
+                            'mount': '/app/a',
                             'scripts': [{'description': 'A script description',
                                         'command': 'ls /',
                                         'name': 'example'}]})
     _write('app', 'app-b', {'repo': 'github.com/app/b',
                             'image': 'app/b',
+                            'mount': '/app/b',
                             'scripts': [{'description': 'A script description',
                                         'command': 'ls /',
                                         'name': 'example'}]})
     _write('app', 'app-c', {'repo': '/gc/repos/c',
-                            'image': 'app/c'})
-    _write('lib', 'lib-a', {'repo': 'github.com/lib/a'})
+                            'image': 'app/c',
+                            'mount': '/app/c',})
+    _write('lib', 'lib-a', {'repo': 'github.com/lib/a',
+                            'mount': '/lib/a',})
     _write('service', 'service-a', {'image': 'service/a'})
 
 def busybox_single_app_bundle_fixture(num_bundles=1, command='sleep 999999999'):
@@ -52,4 +56,5 @@ def busybox_single_app_bundle_fixture(num_bundles=1, command='sleep 999999999'):
         _write('app', name, {'repo': '/tmp/fake-repo',
                              'mount': '/repo',
                              'image': 'busybox',
+                             'mount': '/busybox',
                              'commands': {'always': command}})
