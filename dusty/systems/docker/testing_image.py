@@ -49,7 +49,10 @@ def _make_installed_requirements_image(docker_client, base_image_tag, command, i
     create_container_binds = _get_create_container_binds(split_volumes)
 
     _ensure_image_exists(docker_client, base_image_tag)
-    docker_client.remove_image(image=image_name)
+    try:
+        docker_client.remove_image(image=image_name)
+    except:
+        log_to_client('was not able to remove image {}'.format(image_name))
     container = docker_client.create_container(image=base_image_tag,
                                                command=command,
                                                volumes=create_container_volumes,
