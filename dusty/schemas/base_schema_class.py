@@ -3,9 +3,6 @@ from copy import deepcopy
 # This is build on top of Schemer's functionality
 class DustySchema(object):
     def __init__(self, schema, document):
-        import logging
-        logging.error(schema)
-        logging.error(document)
         schema.validate(document)
         self._document = deepcopy(document)
         schema.apply_defaults(self._document)
