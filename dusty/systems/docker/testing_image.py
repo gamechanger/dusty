@@ -13,6 +13,7 @@ def _ensure_testing_spec_base_image(docker_client, testing_spec):
     elif 'build' in testing_spec:
         image_tag = 'dusty_testing_base/image'
         log_to_client('Need to build the base image based off of the Dockerfile here: {}'.format(testing_spec['build']))
+        docker_client.remove_image(image=image_tag)
         docker_client.build(path=testing_spec['build'], tag=image_tag)
         return image_tag
 
@@ -48,6 +49,7 @@ def _make_installed_requirements_image(docker_client, base_image_tag, command, i
     create_container_binds = _get_create_container_binds(split_volumes)
 
     _ensure_image_exists(docker_client, base_image_tag)
+    docker_client.remove_image(image=image_name)
     container = docker_client.create_container(image=base_image_tag,
                                                command=command,
                                                volumes=create_container_volumes,
