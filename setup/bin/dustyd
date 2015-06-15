@@ -1,3 +1,0 @@
-from dusty.cli import main as unused # for pyinstaller's sake
-from dusty.daemon import main
-main()
