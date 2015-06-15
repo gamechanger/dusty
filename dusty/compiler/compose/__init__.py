@@ -106,7 +106,7 @@ def _compile_docker_command(app_name, assembled_specs):
     command.append(app_spec['commands']['always'])
     return "sh -c \"{}\"".format('; '.join(command))
 
-def __lib_install_commands_for_libs(assembled_specs, libs):
+def _lib_install_commands_for_libs(assembled_specs, libs):
     commands = []
     for lib in libs:
         lib_spec = assembled_specs['libs'][lib]
@@ -119,13 +119,13 @@ def _lib_install_commands_for_app(app_name, assembled_specs):
     """ This returns a list of all the commands that will install libraries for a
     given app """
     libs = assembled_specs['apps'][app_name]['depends']['libs']
-    return __lib_install_commands_for_libs(assembled_specs, libs)
+    return _lib_install_commands_for_libs(assembled_specs, libs)
 
 def _lib_install_commands_for_lib(app_name, assembled_specs):
     """ This returns a list of all the commands that will install libraries for a
     given lib """
     libs = assembled_specs['libs'][app_name]['depends']['libs']
-    return __lib_install_commands_for_libs(assembled_specs, libs)
+    return _lib_install_commands_for_libs(assembled_specs, libs)
 
 def lib_install_commands_for_app_or_lib(app_or_lib_name, assembled_specs):
     if app_or_lib_name in assembled_specs['apps']:
