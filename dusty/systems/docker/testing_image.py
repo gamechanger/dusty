@@ -72,7 +72,7 @@ def _get_test_image_setup_command(app_or_lib_name, expanded_specs):
     testing_spec = _testing_spec(app_or_lib_name, expanded_specs)
     commands = lib_install_commands_for_app_or_lib(app_or_lib_name, expanded_specs)
     commands += ['cd {}'.format(container_code_path(_spec_for_service(app_or_lib_name, expanded_specs)))]
-    commands += [testing_spec['once']]
+    commands += [testing_spec['once'].replace('"', '\\"')]
     return "sh -c \"{}\"".format('; '.join(commands))
 
 def _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs):
