@@ -8,9 +8,13 @@ def get_app_dusty_schema(doc):
         doc['image'] = ''
     if 'repo' not in doc:
         doc['repo'] = ''
+    if 'mount' not in doc:
+        doc['mount'] = ''
     return DustySchema(app_schema, doc)
 
 def get_lib_dusty_schema(doc):
+    if 'mount' not in doc:
+        doc['mount'] = ''
     if 'repo' not in doc:
         doc['repo'] = ''
     return DustySchema(lib_schema, doc)

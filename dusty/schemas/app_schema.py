@@ -49,7 +49,7 @@ app_schema = Schema({
     'host_forwarding': {'type': Array(host_forwarding_schema), 'default': list},
     'image': {'type': basestring, 'default': ''},
     'build': {'type': basestring},
-    'mount': {'type': basestring, 'default': ''},
+    'mount': {'type': basestring, 'default': '', 'required': True},
     'commands': {'type': commands_schema, 'default': dict},
     'scripts': {'type': Array(script_schema), 'default': list},
     'compose': {'type': dusty_app_compose_schema, 'default': dict},
