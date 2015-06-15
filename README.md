@@ -4,10 +4,9 @@ Docker-based development environment manager
 
 
 # Installation
-Currently the recommended way to install dusty is to use our installation script, which will install the latest
-version of dusty's binaries, and set up a dusty daemon plist:
+Currently the recommended way to install dusty is to use our installation script, which will install dusty's binary, and set up a dusty daemon plist:
 ```
-bash -c "`curl -L https://raw.githubusercontent.com/gamechanger/dusty/master/setup/install.sh`"
+bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.1.0/install.sh`"
 ```
 
 This will:
