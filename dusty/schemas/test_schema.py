@@ -8,7 +8,7 @@ test_suite_schema = Schema({
 })
 
 test_schema = Schema({
-    'image': {'type': basestring, 'default': ''},
+    'image': {'type': basestring},
     'build': {'type': basestring},
     'services': {'type': Array(basestring), 'default': list},
     'once': {'type': basestring},
