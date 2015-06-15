@@ -17,9 +17,14 @@ from . import constants
 def _demote_to_user(user_name):
     def _demote():
         pw_record = pwd.getpwnam(user_name)
+        _set_demoted_home_dir(user_name)
         os.setgid(pw_record.pw_gid)
         os.setuid(pw_record.pw_uid)
     return _demote
+
+def _set_demoted_home_dir(user_name):
+    home_dir = os.path.expanduser('~{}'.format(user_name))
+    os.environ['HOME'] = home_dir
 
 def run_subprocess(fn, shell_args, demote=True, env=None, **kwargs):
     if env:
