@@ -34,6 +34,9 @@ class BaseMutable(collections.MutableMapping):
     def values(self):
         return self._document.values()
 
+    def plain_dict(self):
+        return self._document
+
 
 def _get_respective_schema(specs_type):
     if specs_type == 'apps':
