@@ -33,12 +33,7 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
-    if spec.spec_type == 'apps':
-        sync_repos_by_app_name(expanded_specs, [app_or_lib_name])
-    elif spec.spec_type == 'libs':
-        sync_repos_by_lib_name(expanded_specs, [app_or_lib_name])
-    else:
-        raise RuntimeError('Argument must be defined app or lib name')
+    sync_repos_by_specs([spec])
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
     _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command)

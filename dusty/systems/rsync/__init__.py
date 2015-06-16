@@ -64,6 +64,14 @@ def _sync_repos_by_type_name(expanded_specs, type_names, dusty_type):
         repos.add(get_repo_of_app_or_library(type_name))
     sync_repos(repos)
 
+def sync_repos_by_specs(specs_list):
+    repos = set()
+    for spec in specs:
+        for lib_name in spec['depends']['libs']:
+            repos.add(get_repo_of_app_or_library(lib_name))
+        repos.add(get_repo_of_app_or_library(spec.name))
+    sync_repos(repos)
+
 def sync_repos_by_app_name(expanded_specs, app_names):
     _sync_repos_by_type_name(expanded_specs, app_names, 'apps')
 

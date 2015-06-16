@@ -89,3 +89,6 @@ class DustySpecs(BaseMutable):
 
     def get_apps_and_libs(self):
         return [app for app in self._document['apps'].values()] + [lib for lib in self._document['libs'].values()]
+
+    def get_apps_and_services(self):
+        return [app for app in self._document['apps'].values()] + [serv for serv in self._document['services'].values()]
