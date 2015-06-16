@@ -15,6 +15,7 @@ from dusty.config import write_default_config, save_config_value, get_config, sa
 from dusty.compiler.spec_assembler import get_specs_repo
 from dusty.commands.repos import override_repo
 from dusty.cli import main as client_entrypoint
+from dusty.schemas.base_schema_class import get_specs_from_path, DustySpecs
 from dusty.systems.docker import _exec_in_container, get_docker_client, _get_container_for_app_or_service
 from dusty.path import parent_dir
 from .fixtures import basic_specs_fixture
@@ -48,6 +49,12 @@ class DustyTestCase(TestCase):
         shutil.rmtree(self.temp_specs_path)
         shutil.rmtree(self.temp_repos_path)
         logging.getLogger(constants.SOCKET_LOGGER_NAME).removeHandler(self.capture_handler)
+
+    @nottest
+    @patch('dusty.schemas.base_schema_class.get_specs_from_path')
+    def make_test_specs(self, specs_dict, fake_specs_from_path):
+        fake_specs_from_path.return_value = specs_dict
+        return DustySpecs('')
 
     @property
     def last_client_output(self):

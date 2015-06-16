@@ -1,72 +1,80 @@
-from unittest import TestCase
 from schemer import ValidationException
 
-from ..utils import get_app_dusty_schema, get_lib_dusty_schema
+from ...testcases import DustyTestCase
+from ..utils import apply_required_keys
 from dusty.commands.validate import (_validate_app_references, _validate_cycle_free)
 from dusty import constants
 
-class ValidatorTest(TestCase):
+class ValidatorTest(DustyTestCase):
     def test_validate_app_with_bad_service(self):
         specs = {'apps': {
-                'app1': get_app_dusty_schema({
+                'app1': {
                     'depends': {
                         'services': [
                             'service1',
                             'service2'
                         ]
                     }
-                })
+                }
             },
             'services': {
                 'service1': {}
             }
         }
+        apply_required_keys(specs)
+        specs = self.make_test_specs(specs)
         with self.assertRaises(AssertionError):
             _validate_app_references(specs['apps']['app1'], specs)
 
     def test_validate_app_with_bad_app(self):
         specs = {'apps': {
-                'app1': get_app_dusty_schema({
+                'app1': {
                     'depends': {
                         'apps': [
                             'app3',
                         ]
                     }
-                }),
-                'app2': get_app_dusty_schema({})
+                },
+                'app2': {}
             }
         }
+        apply_required_keys(specs)
+        specs = self.make_test_specs(specs)
         with self.assertRaises(AssertionError):
             _validate_app_references(specs['apps']['app1'], specs)
 
     def test_validate_app_with_bad_lib(self):
         specs = {'apps': {
-                'app1': get_app_dusty_schema({
+                'app1': {
                     'depends': {
                         'libs': [
                             'lib2',
                         ]
                     }
-                })
+                },
             },
             'libs': {
-                'lib1': get_lib_dusty_schema({})
+                'lib1': {}
             }
         }
+        apply_required_keys(specs)
+        specs = self.make_test_specs(specs)
         with self.assertRaises(AssertionError):
             _validate_app_references(specs['apps']['app1'], specs)
 
     def test_app_cycle_detection(self):
         specs = {'apps': {
-                'app1': get_app_dusty_schema({
+                'app1': {
                     'depends': {
                         'apps': [
                             'app1',
                         ]
                     }
-                })
+                }
             }
         }
+        apply_required_keys(specs)
+        specs = self.make_test_specs(specs)
         with self.assertRaises(ValidationException):
             _validate_cycle_free(specs)
 
@@ -74,28 +82,30 @@ class ValidatorTest(TestCase):
         specs = {
         'apps': {},
         'libs': {
-                'lib1': get_lib_dusty_schema({
+                'lib1': {
                     'depends': {
                         'libs': [
                             'lib2',
                         ]
                     }
-                }),
-                'lib2': get_lib_dusty_schema({
+                },
+                'lib2': {
                     'depends': {
                         'libs': [
                             'lib3',
                         ]
                     }
-                }),
-                'lib3': get_lib_dusty_schema({
+                },
+                'lib3': {
                     'depends': {
                         'libs': [
                             'lib1',
                         ]
                     }
-                })
+                }
             }
         }
+        apply_required_keys(specs)
+        specs = self.make_test_specs(specs)
         with self.assertRaises(ValidationException):
             _validate_cycle_free(specs)

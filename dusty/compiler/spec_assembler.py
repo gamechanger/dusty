@@ -1,6 +1,3 @@
-import os
-import glob
-import yaml
 import logging
 
 from ..config import get_config_value
@@ -9,7 +6,7 @@ from ..source import Repo
 from ..schemas.app_schema import app_schema
 from ..schemas.bundle_schema import bundle_schema
 from ..schemas.lib_schema import lib_schema
-from ..schemas.base_schema_class import DustySchema
+from ..schemas.base_schema_class import DustySchema, DustySpecs
 
 def _get_dependent(dependent_type, name, specs, root_spec_type):
     """
@@ -138,46 +135,16 @@ def get_repo_of_app_or_library(app_or_library_name):
     """ This function takes an app or library name and will return the corresponding repo
     for that app or library"""
     specs = get_specs()
-    if app_or_library_name in specs['apps']:
-        return Repo(specs['apps'][app_or_library_name]['repo'])
-    elif app_or_library_name in specs['libs']:
-        return Repo(specs['libs'][app_or_library_name]['repo'])
-    raise KeyError('did not find app or service with name {}'.format(app_or_library_name))
-
-def _get_respective_schema(specs_type):
-    if specs_type == 'apps':
-        return app_schema
-    elif specs_type == 'bundles':
-        return bundle_schema
-    elif specs_type == 'libs':
-        return lib_schema
-    elif specs_type == 'services':
-        return None
-    else:
-        raise RuntimeError('Specs must be of the type apps, bundles, libs or services')
+    return Repo(specs.get_app_or_lib(app_or_library_name)['repo'])
 
 def get_specs_from_path(specs_path):
-    specs = {}
-    for key in ['bundles', 'apps', 'libs', 'services']:
-        specs[key] = {}
-        schema = _get_respective_schema(key)
-        key_path = os.path.join(specs_path, key)
-        for spec_path in glob.glob('{}/*.yml'.format(key_path)):
-            spec_name = os.path.splitext(os.path.split(spec_path)[-1])[0]
-            with open(spec_path, 'r') as f:
-                spec = yaml.load(f.read())
-                if schema:
-                    spec = DustySchema(schema, spec)
-                specs[key][spec_name] = spec
-    return specs
+    return DustySpecs(specs_path)
 
 def get_all_repos(active_only=False, include_specs_repo=True):
     repos = set()
     if include_specs_repo:
         repos.add(get_specs_repo())
     specs = get_assembled_specs() if active_only else get_specs()
-    for type_key in ['apps', 'libs']:
-        for spec in specs[type_key].itervalues():
-            if 'repo' in spec:
-                repos.add(Repo(spec['repo']))
+    for spec in specs.get_apps_and_libs():
+        repos.add(Repo(spec['repo']))
     return repos

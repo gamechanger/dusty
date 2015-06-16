@@ -13,8 +13,8 @@ def get_compose_dict(assembled_specs, port_specs):
     compose_dict = {}
     for app_name in assembled_specs['apps'].keys():
         compose_dict[app_name] = _composed_app_dict(app_name, assembled_specs, port_specs)
-    for service_name in assembled_specs['services']:
-        compose_dict[service_name] = _composed_service_dict(service_name, assembled_specs)
+    for service_spec in assembled_specs['services'].values():
+        compose_dict[service_spec.name] = _composed_service_dict(service_spec)
     return compose_dict
 
 def get_testing_compose_dict(service_name, base_compose_spec, command=None, volumes=None, testing_image_identifier=None, net_container_identifier=None):
@@ -72,12 +72,12 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
     logging.info("Compose Compiler: ports {}".format(port_list))
     return compose_dict
 
-def _composed_service_dict(service_name, assembled_specs):
+def _composed_service_dict(service_spec):
     """This function returns a dictionary of the docker_compose specifications
     for one service. Currently, this is just the Dusty service spec with
     an additional volume mount to support Dusty's cp functionality."""
-    compose_dict = assembled_specs['services'][service_name]
-    compose_dict.setdefault('volumes', []).append(_get_cp_volume_mount(service_name))
+    compose_dict = service_spec.plain_dict()
+    compose_dict.setdefault('volumes', []).append(_get_cp_volume_mount(service_spec.name))
     return compose_dict
 
 def _get_ports_list(app_name, port_specs):

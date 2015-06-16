@@ -1,6 +1,8 @@
 from unittest import TestCase
 from schemer import Schema, Array, ValidationException
-from dusty.schemas.base_schema_class import DustySchema
+from dusty.schemas.base_schema_class import DustySchema, DustySpecs
+
+from ...testcases import DustyTestCase
 
 
 class TestDustySchemaClass(TestCase):
@@ -67,3 +69,17 @@ class TestDustySchemaClass(TestCase):
                'house_number': 1}
         dusty_schema = DustySchema(self.base_schema, doc)
         self.assertEquals(set(['dogstoon', 1]), set(dusty_schema.values()))
+
+class TestDustySpecsClass(DustyTestCase):
+    def test_finds_app(self):
+        specs = DustySpecs(self.temp_specs_path)
+        self.assertEquals(specs.get_app_or_lib('app-a'), specs['apps']['app-a'])
+
+    def test_finds_lib(self):
+        specs = DustySpecs(self.temp_specs_path)
+        self.assertEquals(specs.get_app_or_lib('lib-a'), specs['libs']['lib-a'])
+
+    def test_raises_without_app_or_lib(self):
+        specs = DustySpecs(self.temp_specs_path)
+        with self.assertRaises(KeyError):
+            specs.get_app_or_lib('non-existant-thingy')
