@@ -77,7 +77,7 @@ def _composed_service_dict(service_spec):
     for one service. Currently, this is just the Dusty service spec with
     an additional volume mount to support Dusty's cp functionality."""
     compose_dict = service_spec.plain_dict()
-    compose_dict.setdefault('volumes', []).append(_get_cp_volume_mount(service_name))
+    compose_dict.setdefault('volumes', []).append(_get_cp_volume_mount(service_spec.name))
     return compose_dict
 
 def _get_ports_list(app_name, port_specs):
