@@ -9,7 +9,7 @@ from ..source import Repo
 from ..schemas.app_schema import app_schema
 from ..schemas.bundle_schema import bundle_schema
 from ..schemas.lib_schema import lib_schema
-from ..schemas.base_schema_class import DustySchema
+from ..schemas.base_schema_class import DustySchema, DustySpecs
 
 def _get_dependent(dependent_type, name, specs, root_spec_type):
     """
@@ -138,11 +138,7 @@ def get_repo_of_app_or_library(app_or_library_name):
     """ This function takes an app or library name and will return the corresponding repo
     for that app or library"""
     specs = get_specs()
-    if app_or_library_name in specs['apps']:
-        return Repo(specs['apps'][app_or_library_name]['repo'])
-    elif app_or_library_name in specs['libs']:
-        return Repo(specs['libs'][app_or_library_name]['repo'])
-    raise KeyError('did not find app or service with name {}'.format(app_or_library_name))
+    return Repo(specs.get_app_or_lib['repo'])
 
 def _get_respective_schema(specs_type):
     if specs_type == 'apps':
@@ -169,7 +165,7 @@ def get_specs_from_path(specs_path):
                 if schema:
                     spec = DustySchema(schema, spec)
                 specs[key][spec_name] = spec
-    return specs
+    return DustySpecs(specs)
 
 def get_all_repos(active_only=False, include_specs_repo=True):
     repos = set()
