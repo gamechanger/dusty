@@ -40,10 +40,10 @@ def _setup_nginx_config(nginx_conf_location):
     include_path = '{}/servers'.format(nginx_conf_location)
     if not isdir(include_path):
         mkdir(include_path)
-    _append_to_file('{}/nginx.conf'.format(nginx_conf_location), 'include servers/*;')
+    _append_to_file('{}/nginx.conf'.format(nginx_conf_location), '\ninclude servers/*;\n')
     return include_path
 
-def _get_nginx_includes_dir():
+def _get_and_configure_nginx_includes_dir():
     for nginx_conf_location in constants.NGINX_CONFIG_FILE_LOCATIONS:
         file_location = '{}/nginx.conf'.format(nginx_conf_location)
         if isfile(file_location):
@@ -76,7 +76,7 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
     if nginx_includes_dir:
         print 'Setting nginx_includes_dir to {} based on flag'.format(nginx_includes_dir)
     else:
-        nginx_includes_dir = _get_nginx_includes_dir()
+        nginx_includes_dir = _get_and_configure_nginx_includes_dir()
 
     config_dictionary = {constants.CONFIG_MAC_USERNAME_KEY: mac_username,
                          constants.CONFIG_SPECS_REPO_KEY: specs_repo,
