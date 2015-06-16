@@ -2,7 +2,7 @@ from mock import patch, call
 
 from ...testcases import DustyTestCase
 from dusty.commands.setup import (_get_mac_username, _get_nginx_includes_dir,
-                                  setup_dusty_config, complete_setup)
+                                  setup_dusty_config, complete_setup, _setup_nginx_config)
 from dusty.payload import Payload
 from dusty import constants
 
@@ -33,57 +33,129 @@ class TestSetupCommands(DustyTestCase):
 
     @patch('dusty.commands.setup.isfile')
     @patch('dusty.commands.setup._get_contents_of_file')
-    def test_get_nginx_includes_dir_conf_yes(self, fake_get_contents, fake_isfile):
+    def test_get_nginx_includes_dir_conf_yes_servers(self, fake_get_contents, fake_isfile):
         fake_isfile.side_effect = self.factory_file_side_effect('/usr/local/nginx/conf/nginx.conf')
-        fake_get_contents.return_value = 'include servers/*;'
+        fake_get_contents.return_value = ['include servers/*;']
         result = _get_nginx_includes_dir()
         self.assertEqual(result, '/usr/local/nginx/conf/servers')
 
     @patch('dusty.commands.setup.isfile')
     @patch('dusty.commands.setup._get_contents_of_file')
-    def test_get_nginx_includes_dir_etc_yes(self, fake_get_contents, fake_isfile):
+    def test_get_nginx_includes_dir_etc_yes_servers(self, fake_get_contents, fake_isfile):
         fake_isfile.side_effect = self.factory_file_side_effect('/etc/nginx/nginx.conf')
-        fake_get_contents.return_value = 'include servers/*;'
+        fake_get_contents.return_value = ['include servers/*;']
         result = _get_nginx_includes_dir()
         self.assertEqual(result, '/etc/nginx/servers')
 
     @patch('dusty.commands.setup.isfile')
     @patch('dusty.commands.setup._get_contents_of_file')
-    def test_get_nginx_includes_dir_usr_yes(self, fake_get_contents, fake_isfile):
+    def test_get_nginx_includes_dir_usr_yes_servers(self, fake_get_contents, fake_isfile):
         fake_isfile.side_effect = self.factory_file_side_effect('/usr/local/etc/nginx/nginx.conf')
-        fake_get_contents.return_value = 'include servers/*;'
+        fake_get_contents.return_value = ['include servers/*;']
         result = _get_nginx_includes_dir()
         self.assertEqual(result, '/usr/local/etc/nginx/servers')
 
-    @patch('dusty.commands.setup._get_raw_input')
     @patch('dusty.commands.setup.isfile')
     @patch('dusty.commands.setup._get_contents_of_file')
-    def test_get_nginx_includes_dir_usr_no(self, fake_get_contents, fake_isfile, fake_get_raw_input):
-        fake_isfile.side_effect = self.factory_file_side_effect('/usr/local/etc/nginx/nginx.conf')
-        fake_get_contents.return_value = 'servers/*;'
-        fake_get_raw_input.return_value = '/usr/nginx/servers'
-        result = _get_nginx_includes_dir()
-        self.assertEqual(result, '/usr/nginx/servers')
-
-    @patch('dusty.commands.setup._get_raw_input')
-    @patch('dusty.commands.setup.isfile')
-    @patch('dusty.commands.setup._get_contents_of_file')
-    def test_get_nginx_includes_dir_etc_no(self, fake_get_contents, fake_isfile, fake_get_raw_input):
-        fake_isfile.side_effect = self.factory_file_side_effect('/etc/nginx/nginx.conf')
-        fake_get_contents.return_value = 'servers/*;'
-        fake_get_raw_input.return_value = '/usr/nginx/servers'
-        result = _get_nginx_includes_dir()
-        self.assertEqual(result, '/usr/nginx/servers')
-
-    @patch('dusty.commands.setup._get_raw_input')
-    @patch('dusty.commands.setup.isfile')
-    @patch('dusty.commands.setup._get_contents_of_file')
-    def test_get_nginx_includes_dir_conf_no(self, fake_get_contents, fake_isfile, fake_get_raw_input):
+    def test_get_nginx_includes_dir_conf_yes_other(self, fake_get_contents, fake_isfile):
         fake_isfile.side_effect = self.factory_file_side_effect('/usr/local/nginx/conf/nginx.conf')
-        fake_get_contents.return_value = 'servers/*;'
-        fake_get_raw_input.return_value = '/usr/nginx/servers'
+        fake_get_contents.return_value = ['include real/servers/are/here/*;']
         result = _get_nginx_includes_dir()
-        self.assertEqual(result, '/usr/nginx/servers')
+        self.assertEqual(result, '/usr/local/nginx/conf/real/servers/are/here')
+
+    @patch('dusty.commands.setup.isfile')
+    @patch('dusty.commands.setup._get_contents_of_file')
+    def test_get_nginx_includes_dir_etc_yes_other(self, fake_get_contents, fake_isfile):
+        fake_isfile.side_effect = self.factory_file_side_effect('/etc/nginx/nginx.conf')
+        fake_get_contents.return_value = ['include server/*;']
+        result = _get_nginx_includes_dir()
+        self.assertEqual(result, '/etc/nginx/server')
+
+    @patch('dusty.commands.setup.isfile')
+    @patch('dusty.commands.setup._get_contents_of_file')
+    def test_get_nginx_includes_dir_usr_yes_other(self, fake_get_contents, fake_isfile):
+        fake_isfile.side_effect = self.factory_file_side_effect('/usr/local/etc/nginx/nginx.conf')
+        fake_get_contents.return_value = ['include two_level/servers/*;']
+        result = _get_nginx_includes_dir()
+        self.assertEqual(result, '/usr/local/etc/nginx/two_level/servers')
+
+    @patch('dusty.commands.setup._setup_nginx_config')
+    @patch('dusty.commands.setup._get_raw_input')
+    @patch('dusty.commands.setup.isfile')
+    @patch('dusty.commands.setup._get_contents_of_file')
+    def test_get_nginx_includes_dir_usr_no_add(self, fake_get_contents, fake_isfile, fake_get_raw_input, fake_setup_nginx):
+        fake_isfile.side_effect = self.factory_file_side_effect('/usr/local/etc/nginx/nginx.conf')
+        fake_get_contents.return_value = ['servers/*;']
+        fake_get_raw_input.return_value = 'y'
+        result = _get_nginx_includes_dir()
+        self.assertEqual(result, fake_setup_nginx.return_value)
+        fake_setup_nginx.assert_has_calls([call('/usr/local/etc/nginx')])
+
+    @patch('dusty.commands.setup._setup_nginx_config')
+    @patch('dusty.commands.setup._get_raw_input')
+    @patch('dusty.commands.setup.isfile')
+    @patch('dusty.commands.setup._get_contents_of_file')
+    def test_get_nginx_includes_dir_etc_no_add(self, fake_get_contents, fake_isfile, fake_get_raw_input, fake_setup_nginx):
+        fake_isfile.side_effect = self.factory_file_side_effect('/etc/nginx/nginx.conf')
+        fake_get_contents.return_value = ['servers/*;']
+        fake_get_raw_input.return_value = 'y'
+        result = _get_nginx_includes_dir()
+        self.assertEqual(result, fake_setup_nginx.return_value)
+        fake_setup_nginx.assert_has_calls([call('/etc/nginx')])
+
+    @patch('dusty.commands.setup._setup_nginx_config')
+    @patch('dusty.commands.setup._get_raw_input')
+    @patch('dusty.commands.setup.isfile')
+    @patch('dusty.commands.setup._get_contents_of_file')
+    def test_get_nginx_includes_dir_conf_no_add(self, fake_get_contents, fake_isfile, fake_get_raw_input, fake_setup_nginx):
+        fake_isfile.side_effect = self.factory_file_side_effect('/usr/local/nginx/conf/nginx.conf')
+        fake_get_contents.return_value = ['servers/*;']
+        fake_get_raw_input.return_value = 'y'
+        result = _get_nginx_includes_dir()
+        self.assertEqual(result, fake_setup_nginx.return_value)
+        fake_setup_nginx.assert_has_calls([call('/usr/local/nginx/conf')])
+
+    @patch('dusty.commands.setup._setup_nginx_config')
+    @patch('dusty.commands.setup._get_raw_input')
+    @patch('dusty.commands.setup.isfile')
+    @patch('dusty.commands.setup._get_contents_of_file')
+    def test_get_nginx_includes_dir_usr_no(self, fake_get_contents, fake_isfile, fake_get_raw_input, fake_setup_nginx):
+        fake_isfile.side_effect = self.factory_file_side_effect('/usr/local/etc/nginx/nginx.conf')
+        fake_get_contents.return_value = ['servers/*;']
+        fake_get_raw_input.return_value = ''
+        result = _get_nginx_includes_dir()
+        self.assertEqual(result, '')
+
+    @patch('dusty.commands.setup._setup_nginx_config')
+    @patch('dusty.commands.setup._get_raw_input')
+    @patch('dusty.commands.setup.isfile')
+    @patch('dusty.commands.setup._get_contents_of_file')
+    def test_get_nginx_includes_dir_etc_no(self, fake_get_contents, fake_isfile, fake_get_raw_input, fake_setup_nginx):
+        fake_isfile.side_effect = self.factory_file_side_effect('/etc/nginx/nginx.conf')
+        fake_get_contents.return_value = ['servers/*;']
+        fake_get_raw_input.return_value = 'n'
+        result = _get_nginx_includes_dir()
+        self.assertEqual(result, '')
+
+    @patch('dusty.commands.setup._setup_nginx_config')
+    @patch('dusty.commands.setup._get_raw_input')
+    @patch('dusty.commands.setup.isfile')
+    @patch('dusty.commands.setup._get_contents_of_file')
+    def test_get_nginx_includes_dir_conf_no(self, fake_get_contents, fake_isfile, fake_get_raw_input, fake_setup_nginx):
+        fake_isfile.side_effect = self.factory_file_side_effect('/usr/local/nginx/conf/nginx.conf')
+        fake_get_contents.return_value = ['servers/*;']
+        fake_get_raw_input.return_value = 'n'
+        result = _get_nginx_includes_dir()
+        self.assertEqual(result, '')
+
+    @patch('dusty.commands.setup._setup_nginx_config')
+    @patch('dusty.commands.setup._get_raw_input')
+    @patch('dusty.commands.setup.isfile')
+    def test_get_nginx_includes_dir_none(self, fake_isfile, fake_get_raw_input, fake_setup_nginx):
+        fake_isfile.side_effect = self.factory_file_side_effect('')
+        fake_get_raw_input.return_value = '/usr/local/nginx/conf/servers'
+        result = _get_nginx_includes_dir()
+        self.assertEqual(result, '/usr/local/nginx/conf/servers')
 
     @patch('pwd.getpwnam')
     @patch('dusty.commands.setup._get_nginx_includes_dir')
@@ -99,6 +171,24 @@ class TestSetupCommands(DustyTestCase):
         return_payload = setup_dusty_config()
         self.assertEqual(return_payload.fn, complete_setup)
         self.assertEqual(return_payload.args[0], expected_dict_argument)
+
+    @patch('dusty.commands.setup.isdir')
+    @patch('dusty.commands.setup.mkdir')
+    @patch('dusty.commands.setup._append_to_file')
+    def test_setup_nginx_config_no_dir(self, fake_append, fake_mkdir, fake_isdir):
+        fake_isdir.return_value = False
+        _setup_nginx_config('/usr/local/etc/nginx')
+        fake_mkdir.assert_has_calls([call('/usr/local/etc/nginx/servers')])
+        fake_append.assert_has_calls([call('/usr/local/etc/nginx/nginx.conf', 'include servers/*;')])
+
+    @patch('dusty.commands.setup.isdir')
+    @patch('dusty.commands.setup.mkdir')
+    @patch('dusty.commands.setup._append_to_file')
+    def test_setup_nginx_config_no_dir(self, fake_append, fake_mkdir, fake_isdir):
+        fake_isdir.return_value = True
+        _setup_nginx_config('/usr/local/etc/nginx')
+        fake_mkdir.assert_has_calls([])
+        fake_append.assert_has_calls([call('/usr/local/etc/nginx/nginx.conf', 'include servers/*;')])
 
     @patch('pwd.getpwnam')
     @patch('dusty.commands.setup._get_nginx_includes_dir')
