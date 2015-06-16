@@ -1,7 +1,8 @@
 import pwd
 import subprocess
 import textwrap
-from os.path import isfile
+from os.path import isfile, isdir
+from os import mkdir
 
 from ..payload import Payload
 from ..config import save_config_value, get_config_value, verify_mac_username, refresh_config_warnings
@@ -29,22 +30,37 @@ def _get_default_specs_repo():
 
 def _get_contents_of_file(file_location):
     with open(file_location) as f:
-        return f.read()
+        return f.readlines()
+
+def _append_to_file(file_location, new_line):
+    with open(file_location, 'a') as f:
+        f.write(new_line)
+
+def _setup_nginx_config(nginx_conf_location):
+    include_path = '{}/servers'.format(nginx_conf_location)
+    if not isdir(include_path):
+        mkdir(include_path)
+    _append_to_file('{}/nginx.conf'.format(nginx_conf_location), 'include servers/*;')
+    return include_path
+
 
 def _get_nginx_includes_dir():
-    nginx_includes_dir = None
+    import logging
     for nginx_conf_location in constants.NGINX_CONFIG_FILE_LOCATIONS:
         file_location = '{}/nginx.conf'.format(nginx_conf_location)
+        logging.error(file_location)
         if isfile(file_location):
             contents = _get_contents_of_file(file_location)
-            if 'include servers/*;' in contents:
-                nginx_includes_dir = '{}/servers'.format(nginx_conf_location)
-                break
-
-    if nginx_includes_dir is None:
-        return _get_raw_input('You have non standard nginx config setup. Could not find an nginx.conf file that includes a directory. Please input the full path of the directory your nginx config includes. ')
-    else:
-        return nginx_includes_dir
+            for line in contents:
+                logging.error(line)
+                if line.startswith('include'):
+                    include_folder = line.replace('include ', '').replace('/*;\n', '').strip()
+                    return '{}/{}'.format(nginx_conf_location, include_folder)
+            if _get_raw_input('You have non standard nginx config setup. Can we add "include servers/*;" to end of your nginx config file ({})? If you select no, your nginx forwarding will not work. (y/n) '.format(file_location)).upper() == 'Y':
+                return _setup_nginx_config(nginx_conf_location)
+            else:
+                return ''
+    return _get_raw_input('You have non standard nginx config setup. Could not find an nginx.conf file. Please input the full path of the directory your nginx config includes. ')
 
 def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
     print "We just need to verify a few settings before we get started.\n"
