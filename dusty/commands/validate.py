@@ -36,19 +36,19 @@ def _validate_spec_names(specs):
     for lib in specs['libs'].values():
         _validate_lib_references(lib, specs)
 
-def _cycle_check(spec_type, name, specs, upstream):
-    for dependent in specs[spec_type][name]['depends'][spec_type]:
+def _cycle_check(spec, specs, upstream):
+    for dependent in spec['depends'][spec.spec_type]:
         if dependent in upstream:
-            raise ValidationException("Cycle found for {0} {1}.  Upstream {0}: {2}".format(spec_type, name, upstream))
+            raise ValidationException("Cycle found for {0} {1}.  Upstream {0}: {2}".format(spec.spec_type, spec.name, upstream))
         else:
             new_upstream = copy(upstream)
             new_upstream.add(dependent)
-            _cycle_check(spec_type, dependent, specs, new_upstream)
+            _cycle_check(specs[spec.spec_type][dependent], specs, new_upstream)
 
 def _validate_cycle_free(specs):
     for spec_type in ['apps', 'libs']:
-        for name in specs[spec_type].keys():
-            _cycle_check(spec_type, name, specs, set([name]))
+        for spec in specs[spec_type].values():
+            _cycle_check(spec, specs, set([spec.name]))
 
 def validate_specs_from_path(specs_path):
     """
