@@ -47,7 +47,7 @@ class TestTestsCommands(DustyTestCase):
 
         test.run_app_or_lib_tests('lib-a', 'nose', [])
 
-        fake_repos_by_lib.assert_has_calls([call(self.specs, ['lib-a'])])
+        fake_repos_by_specs.assert_has_calls([call([self.specs['libs']['lib-a']])])
         fake_repos_by_app.assert_has_calls([])
         fake_ensure_image.assert_has_calls([call('docker-client',
                                                  'lib-a',
