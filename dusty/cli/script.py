@@ -8,10 +8,10 @@ Options:
 
 Examples:
   To get information on all scripts available for an app called `website`:
-    dusty script website
+    dusty scripts website
 
   To run the `rebuild` script defined inside the `website` app spec:
-    dusty script website rebuild
+    dusty scripts website rebuild
 """
 
 from docopt import docopt
