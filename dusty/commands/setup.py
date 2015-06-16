@@ -1,6 +1,7 @@
 import pwd
 import subprocess
 import textwrap
+from os.path import isfile
 
 from ..payload import Payload
 from ..config import save_config_value, get_config_value, verify_mac_username, refresh_config_warnings
@@ -27,11 +28,20 @@ def _get_default_specs_repo():
     return _get_raw_input('Input the full name of your specs repo, e.g. github.com/gamechanger/example-dusty-specs: ')
 
 def _get_nginx_includes_dir():
-    _pretty_print_key_info(constants.CONFIG_NGINX_DIR_KEY)
-    default_nginx_config_value = get_config_value(constants.CONFIG_NGINX_DIR_KEY)
-    if _get_raw_input('Does your nginx config look for extra configs in the default location of {}? (y/n): '.format(default_nginx_config_value)).upper() == 'Y':
-        return default_nginx_config_value
-    return _get_raw_input('Input the path where your nginx config pulls extra configs: ')
+    nginx_include_dir = None
+    for nginx_conf_location in constants.NGINX_CONFIG_FILE_LOCATIONS:
+        file_location = '{}/nginx.conf'.format(nginx_conf_location)
+        if isfile(file_location):
+            with open(file_location) as f:
+                contents = f.read()
+                if 'include servers/*;' in contents:
+                    nginx_include_dir = '{}/servers'
+                    break
+
+    if nginx_includes_dir is None:
+        return _get_raw_input('You have non standard nginx config setup. Could not find an nginx.conf file that includes a directory. Please input the full path of the directory your nginx config includes. ')
+    else:
+        return nginx_include_dir
 
 def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
     print "We just need to verify a few settings before we get started.\n"
