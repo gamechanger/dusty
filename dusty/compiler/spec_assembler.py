@@ -153,19 +153,7 @@ def _get_respective_schema(specs_type):
         raise RuntimeError('Specs must be of the type apps, bundles, libs or services')
 
 def get_specs_from_path(specs_path):
-    specs = {}
-    for key in ['bundles', 'apps', 'libs', 'services']:
-        specs[key] = {}
-        schema = _get_respective_schema(key)
-        key_path = os.path.join(specs_path, key)
-        for spec_path in glob.glob('{}/*.yml'.format(key_path)):
-            spec_name = os.path.splitext(os.path.split(spec_path)[-1])[0]
-            with open(spec_path, 'r') as f:
-                spec = yaml.load(f.read())
-                if schema:
-                    spec = DustySchema(schema, spec)
-                specs[key][spec_name] = spec
-    return DustySpecs(specs)
+    return DustySpecs(specs_path)
 
 def get_all_repos(active_only=False, include_specs_repo=True):
     repos = set()
