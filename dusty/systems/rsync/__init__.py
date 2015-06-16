@@ -65,6 +65,7 @@ def _sync_repos_by_type_name(expanded_specs, type_names, dusty_type):
     sync_repos(repos)
 
 def sync_repos_by_specs(specs_list):
+    print "HERE"
     repos = set()
     for spec in specs_list:
         for lib_name in spec['depends']['libs']:

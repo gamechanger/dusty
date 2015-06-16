@@ -9,7 +9,7 @@ from ..compiler.compose import get_volume_mounts, get_testing_compose_dict, cont
 from ..systems.docker.testing_image import ensure_test_image, test_image_name
 from ..systems.docker import get_docker_client
 from ..systems.docker.compose import write_composefile, compose_up
-from ..systems.rsync import sync_repos_by_app_name, sync_repos_by_lib_name
+from ..systems.rsync import sync_repos_by_specs
 from ..systems.virtualbox import initialize_docker_vm
 from ..log import log_to_client
 

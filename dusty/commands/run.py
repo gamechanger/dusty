@@ -69,9 +69,12 @@ def restart_apps_or_services(app_or_service_names=None, sync=True):
         log_to_client("Restarting all active containers associated with Dusty")
 
     if sync:
+        print "IN SYNC", app_or_service_names
         if app_or_service_names:
             specs = spec_assembler.get_assembled_specs()
+            print specs
             specs_list = [specs['apps'][app_name] for app_name in app_or_service_names if app_name in specs['apps']]
+            print specs_list
             rsync.sync_repos_by_specs(specs_list)
         else:
             rsync.sync_repos(spec_assembler.get_all_repos(active_only=True, include_specs_repo=False))
