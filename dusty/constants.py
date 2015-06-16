@@ -41,7 +41,7 @@ SYSTEM_DEPENDENCY_VERSIONS = {
     'docker-compose': '1.2.0'
 }
 
-NGINX_CONFIG_FILE_LOCATIONS = ['/usr/local/nginx/conf', '/etc/nginx', '/usr/loca/etc/nginx']
+NGINX_CONFIG_FILE_LOCATIONS = ['/usr/local/nginx/conf', '/etc/nginx', '/usr/local/etc/nginx']
 
 CONFIG_BUNDLES_KEY = 'bundles'
 CONFIG_REPO_OVERRIDES_KEY = 'repo_overrides'
