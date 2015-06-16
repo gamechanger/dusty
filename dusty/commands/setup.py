@@ -52,11 +52,11 @@ def _get_nginx_includes_dir():
                 if line.startswith('include'):
                     include_folder = line.replace('include ', '').replace('/*;', '').replace('\n', '').strip()
                     return '{}/{}'.format(nginx_conf_location, include_folder)
-            if _get_raw_input('You have non standard nginx config setup. Can we add "include servers/*;" to the end of your nginx config file ({})? If you select no, your nginx forwarding will not work. (y/n) '.format(file_location)).upper() == 'Y':
+            if _get_raw_input('\n'.join(textwrap.wrap('You have non standard nginx config setup. Can we add "include servers/*;" to the end of your nginx config file ({})? If you select no, your nginx forwarding will not work. (y/n) '.format(file_location), 80))).upper() == 'Y':
                 return _setup_nginx_config(nginx_conf_location)
             else:
                 return ''
-    return _get_raw_input('You have non standard nginx config setup. Could not find an nginx.conf file. Please input the full path of the directory your nginx config includes. ')
+    return _get_raw_input('\n'.join(textwrap.wrap('You have non standard nginx config setup. Could not find an nginx.conf file. Please input the full path of the directory your nginx config includes. ', 80)))
 
 def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
     print "We just need to verify a few settings before we get started.\n"
