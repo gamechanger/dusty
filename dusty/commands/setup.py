@@ -44,18 +44,15 @@ def _setup_nginx_config(nginx_conf_location):
     return include_path
 
 def _get_nginx_includes_dir():
-    import logging
     for nginx_conf_location in constants.NGINX_CONFIG_FILE_LOCATIONS:
         file_location = '{}/nginx.conf'.format(nginx_conf_location)
-        logging.error(file_location)
         if isfile(file_location):
             contents = _get_contents_of_file(file_location)
             for line in contents:
-                logging.error(line)
                 if line.startswith('include'):
                     include_folder = line.replace('include ', '').replace('/*;', '').replace('\n', '').strip()
                     return '{}/{}'.format(nginx_conf_location, include_folder)
-            if _get_raw_input('You have non standard nginx config setup. Can we add "include servers/*;" to end of your nginx config file ({})? If you select no, your nginx forwarding will not work. (y/n) '.format(file_location)).upper() == 'Y':
+            if _get_raw_input('You have non standard nginx config setup. Can we add "include servers/*;" to the end of your nginx config file ({})? If you select no, your nginx forwarding will not work. (y/n) '.format(file_location)).upper() == 'Y':
                 return _setup_nginx_config(nginx_conf_location)
             else:
                 return ''
