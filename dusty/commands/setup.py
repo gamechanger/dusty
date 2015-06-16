@@ -27,19 +27,19 @@ def _get_default_specs_repo():
     _pretty_print_key_info(constants.CONFIG_SPECS_REPO_KEY)
     return _get_raw_input('Input the full name of your specs repo, e.g. github.com/gamechanger/example-dusty-specs: ')
 
+def _get_contents_of_file(file_location):
+    with open(file_location) as f:
+        return f.read()
+
 def _get_nginx_includes_dir():
     nginx_includes_dir = None
-    import logging
     for nginx_conf_location in constants.NGINX_CONFIG_FILE_LOCATIONS:
         file_location = '{}/nginx.conf'.format(nginx_conf_location)
-        logging.error(file_location)
         if isfile(file_location):
-            with open(file_location) as f:
-                contents = f.read()
-                logging.error(contents)
-                if 'include servers/*;' in contents:
-                    nginx_includes_dir = '{}/servers'.format(nginx_conf_location)
-                    break
+            contents = _get_contents_of_file(file_location)
+            if 'include servers/*;' in contents:
+                nginx_includes_dir = '{}/servers'.format(nginx_conf_location)
+                break
 
     if nginx_includes_dir is None:
         return _get_raw_input('You have non standard nginx config setup. Could not find an nginx.conf file that includes a directory. Please input the full path of the directory your nginx config includes. ')
