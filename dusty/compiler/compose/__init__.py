@@ -14,7 +14,7 @@ def get_compose_dict(assembled_specs, port_specs):
     for app_name in assembled_specs['apps'].keys():
         compose_dict[app_name] = _composed_app_dict(app_name, assembled_specs, port_specs)
     for service_spec in assembled_specs['services'].values():
-        compose_dict[service_name] = _composed_service_dict(service_spec)
+        compose_dict[service_spec.name] = _composed_service_dict(service_spec)
     return compose_dict
 
 def get_testing_compose_dict(service_name, base_compose_spec, command=None, volumes=None, testing_image_identifier=None, net_container_identifier=None):
