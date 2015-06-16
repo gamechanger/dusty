@@ -146,6 +146,5 @@ def get_all_repos(active_only=False, include_specs_repo=True):
         repos.add(get_specs_repo())
     specs = get_assembled_specs() if active_only else get_specs()
     for spec in specs.get_apps_and_libs():
-        if 'repo' in spec:
-            repos.add(Repo(spec['repo']))
+        repos.add(Repo(spec['repo']))
     return repos

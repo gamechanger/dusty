@@ -79,7 +79,6 @@ class DustySpecs(BaseMutable):
         document = get_specs_from_path(specs_path)
         super(DustySpecs, self).__init__(document)
 
-
     def get_app_or_lib(self, app_or_lib_name):
         if app_or_lib_name in self._document['apps']:
             return self._document['apps'][app_or_lib_name]

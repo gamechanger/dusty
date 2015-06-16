@@ -93,7 +93,6 @@ def _app_or_lib_compose_up(testing_spec, app_or_lib_name, app_or_lib_volumes, te
     return '{}_{}_1'.format(_compose_project_name(app_or_lib_name), app_or_lib_name)
 
 def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command):
-
     testing_spec = expanded_specs.get_app_or_lib(app_or_lib_name)['test']
 
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
