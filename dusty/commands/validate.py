@@ -37,7 +37,11 @@ def _validate_spec_names(specs):
         _validate_lib_references(lib, specs)
 
 def _cycle_check(spec, specs, upstream):
+    print spec
+    print spec.spec_type
+    print spec['depends']
     for dependent in spec['depends'][spec.spec_type]:
+        print dependent
         if dependent in upstream:
             raise ValidationException("Cycle found for {0} {1}.  Upstream {0}: {2}".format(spec.spec_type, spec.name, upstream))
         else:

@@ -7,7 +7,7 @@ from ...testcases import DustyTestCase
 class TestRunCommands(DustyTestCase):
     def setUp(self):
         super(TestRunCommands, self).setUp()
-        self.specs = {
+        self.specs = self.make_test_specs({
             'apps': {
                 'app-a': {
                     'repo': 'github.com/app/a',
@@ -32,7 +32,7 @@ class TestRunCommands(DustyTestCase):
                     'depends': {},
                     'repo': 'github.com/lib/b'}
             }
-        }
+        })
 
     @patch('dusty.commands.run.docker.compose.restart_running_services')
     @patch('dusty.commands.run.rsync')

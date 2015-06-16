@@ -50,7 +50,7 @@ def _get_respective_schema(specs_type):
 
 # This is build on top of Schemer's functionality
 class DustySchema(BaseMutable):
-    def __init__(self, schema, document, name, spec_type):
+    def __init__(self, schema, document, name=None, spec_type=None):
         if schema is not None:
             schema.validate(document)
         self.name = name
@@ -60,32 +60,32 @@ class DustySchema(BaseMutable):
         if schema is not None:
             schema.apply_defaults(self._document)
 
+def get_specs_from_path(specs_path):
+    specs = {}
+    for key in ['bundles', 'apps', 'libs', 'services']:
+        specs[key] = {}
+        schema = _get_respective_schema(key)
+        key_path = os.path.join(specs_path, key)
+        for spec_path in glob.glob('{}/*.yml'.format(key_path)):
+            spec_name = os.path.splitext(os.path.split(spec_path)[-1])[0]
+            with open(spec_path, 'r') as f:
+                spec = yaml.load(f.read())
+                spec = DustySchema(schema, spec, spec_name, key)
+                specs[key][spec_name] = spec
+    return specs
 
 class DustySpecs(BaseMutable):
     def __init__(self, specs_path):
-        document = self.get_specs_from_path(specs_path)
+        document = get_specs_from_path(specs_path)
         super(DustySpecs, self).__init__(document)
 
-    def get_specs_from_path(self, specs_path):
-        specs = {}
-        for key in ['bundles', 'apps', 'libs', 'services']:
-            specs[key] = {}
-            schema = _get_respective_schema(key)
-            key_path = os.path.join(specs_path, key)
-            for spec_path in glob.glob('{}/*.yml'.format(key_path)):
-                spec_name = os.path.splitext(os.path.split(spec_path)[-1])[0]
-                with open(spec_path, 'r') as f:
-                    spec = yaml.load(f.read())
-                    spec = DustySchema(schema, spec, spec_name, key)
-                    specs[key][spec_name] = spec
-        return specs
 
     def get_app_or_lib(self, app_or_lib_name):
         if app_or_lib_name in self._document['apps']:
             return self._document['apps'][app_or_lib_name]
         elif app_or_lib_name in self._document['libs']:
             return self._document['libs'][app_or_lib_name]
-        raise KeyError('did not find app or service with name {}'.format(app_or_library_name))
+        raise KeyError('did not find app or service with name {}'.format(app_or_lib_name))
 
     def get_apps_and_libs(self):
         return [app for app in self._document['apps'].values()] + [lib for lib in self._document['libs'].values()]
