@@ -1,7 +1,8 @@
 from mock import patch, call
 
 from ....testcases import DustyTestCase
-from dusty.systems.rsync import sync_repos_by_app_name, sync_repos_by_lib_name
+from ...utils import apply_required_keys
+from dusty.systems.rsync import sync_repos_by_specs
 from dusty.source import Repo
 
 
@@ -21,8 +22,8 @@ class TestRysnc(DustyTestCase):
                 },
                 'app-b': {
                     'depends': {
-                        'apps': {},
-                        'libs': {}
+                        'apps': [],
+                        'libs': []
                     },
                     'repo': 'github.com/app/b'}
             },
@@ -36,8 +37,9 @@ class TestRysnc(DustyTestCase):
                     'repo': 'github.com/lib/b'}
             }
         }
+        apply_required_keys(specs)
         fake_get_specs.return_value = self.make_test_specs(specs)
-        sync_repos_by_app_name(specs, ['app-a', 'app-b'])
+        sync_repos_by_specs([specs['apps'][name] for name in ['app-a', 'app-b']])
         fake_sync_repos.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/app/b'), Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
 
 
@@ -62,8 +64,9 @@ class TestRysnc(DustyTestCase):
                     'repo': 'github.com/lib/b'}
             }
         }
+        apply_required_keys(specs)
         fake_get_specs.return_value = self.make_test_specs(specs)
-        sync_repos_by_app_name(specs, ['app-a'])
+        sync_repos_by_specs([specs['apps'][name] for name in ['app-a']])
         fake_sync_repos.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
 
     @patch('dusty.systems.rsync.sync_repos')
@@ -92,8 +95,9 @@ class TestRysnc(DustyTestCase):
                     'repo': 'github.com/lib/c'}
             }
         }
+        apply_required_keys(specs)
         fake_get_specs.return_value = self.make_test_specs(specs)
-        sync_repos_by_lib_name(specs, ['lib-a'])
+        sync_repos_by_specs([specs['libs'][name] for name in ['lib-a']])
         fake_sync_repos.assert_has_calls([call(set([Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
 
 
@@ -121,6 +125,7 @@ class TestRysnc(DustyTestCase):
                 }
             }
         }
+        apply_required_keys(specs)
         fake_get_specs.return_value = self.make_test_specs(specs)
-        sync_repos_by_lib_name(specs, ['lib-a', 'lib-b'])
+        sync_repos_by_specs([specs['libs'][name] for name in ['lib-a', 'lib-b']])
         fake_sync_repos.assert_has_calls([call(set([Repo('github.com/lib/a'), Repo('github.com/lib/b'), Repo('github.com/lib/c'), Repo('github.com/lib/d')]))])
