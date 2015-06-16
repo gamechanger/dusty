@@ -1,6 +1,3 @@
-import os
-import glob
-import yaml
 import logging
 
 from ..config import get_config_value
@@ -139,18 +136,6 @@ def get_repo_of_app_or_library(app_or_library_name):
     for that app or library"""
     specs = get_specs()
     return Repo(specs.get_app_or_lib['repo'])
-
-def _get_respective_schema(specs_type):
-    if specs_type == 'apps':
-        return app_schema
-    elif specs_type == 'bundles':
-        return bundle_schema
-    elif specs_type == 'libs':
-        return lib_schema
-    elif specs_type == 'services':
-        return None
-    else:
-        raise RuntimeError('Specs must be of the type apps, bundles, libs or services')
 
 def get_specs_from_path(specs_path):
     return DustySpecs(specs_path)

@@ -1,6 +1,10 @@
-from copy import deepcopy
 import collections
+from copy import deepcopy
+import glob
+import os
+import yaml
 
+from . import app_schema, lib_schema, bundle_schema
 
 class BaseMutable(collections.MutableMapping):
     def __init__(self, document):
@@ -31,28 +35,38 @@ class BaseMutable(collections.MutableMapping):
         return self._document.values()
 
 
+def _get_respective_schema(specs_type):
+    if specs_type == 'apps':
+        return app_schema
+    elif specs_type == 'bundles':
+        return bundle_schema
+    elif specs_type == 'libs':
+        return lib_schema
+    elif specs_type == 'services':
+        return None
+    else:
+        raise RuntimeError('Specs must be of the type apps, bundles, libs or services')
+
+
 # This is build on top of Schemer's functionality
 class DustySchema(BaseMutable):
-    def __init__(self, schema, document):
-        schema.validate(document)
-        self._document = deepcopy(document)
-        super(DustySchema, self).__init__(deepcopy(document))
-        schema.apply_defaults(self._document)
-
-class BaseSpec(BaseMutable):
-    def __init__(self, name, spec_type, document):
+    def __init__(self, schema, document, name, spec_type):
+        if schema is not None:
+            schema.validate(document)
         self.name = name
         self.spec_type = spec_type
-        super(BaseSpec, self).__init__(document)
+        self._document = deepcopy(document)
+        super(DustySchema, self).__init__(deepcopy(document))
+        if schema is not None:
+            schema.apply_defaults(self._document)
 
 
 class DustySpecs(BaseMutable):
     def __init__(self, specs_path):
-        document = get_specs_from_path()
+        document = self.get_specs_from_path(specs_path)
         super(DustySpecs, self).__init__(document)
-        for spec_type in ['apps', 'bundles', 'libs', '']
 
-    def get_specs_from_path(specs_path):
+    def get_specs_from_path(self, specs_path):
         specs = {}
         for key in ['bundles', 'apps', 'libs', 'services']:
             specs[key] = {}
@@ -62,10 +76,8 @@ class DustySpecs(BaseMutable):
                 spec_name = os.path.splitext(os.path.split(spec_path)[-1])[0]
                 with open(spec_path, 'r') as f:
                     spec = yaml.load(f.read())
-                    if schema:
-                        spec = DustySchema(schema, spec)
+                    spec = DustySchema(schema, spec, spec_name, key)
                     specs[key][spec_name] = spec
-            specs[key][spec_name] = BaseSpec(spec_name, key, specs[key][spec_name])
         return specs
 
     def get_app_or_lib(self, app_or_lib_name):
