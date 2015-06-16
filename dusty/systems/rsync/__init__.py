@@ -54,7 +54,6 @@ def sync_repos(repos):
         repo_type = 'overridden' if repo.is_overridden else 'Dusty-managed'
         log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo.remote_path, repo.vm_path))
         sync_local_path_to_vm(repo.local_path, repo.vm_path)
-    )
 
 def sync_repos_by_specs(specs_list):
     """
