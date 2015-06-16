@@ -17,7 +17,6 @@ def _ensure_testing_spec_base_image(docker_client, testing_spec):
             docker_client.remove_image(image=image_tag)
         except:
             log_to_client('was not able to remove image {}'.format(image_tag))
-        _remove_image_if_exists(docker_client, image_tag)
         docker_client.build(path=testing_spec['build'], tag=image_tag)
         return image_tag
 
