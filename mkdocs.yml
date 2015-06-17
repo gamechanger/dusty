@@ -7,3 +7,4 @@ pages:
   - Home: index.md
   - Changelog: changelog.md
   - Contributing: contributing.md
+  - Architecture: architecture.md
