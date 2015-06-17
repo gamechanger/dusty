@@ -46,7 +46,7 @@ def update_managed_repos():
     log_to_client('Pulling latest updates for all active managed repos:')
     overrides = set(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY))
     specs_repo = get_specs_repo()
-    log_to_client('Updating managed copy of specs-repo intially')
+    log_to_client('Updating managed copy of specs-repo before loading specs')
     specs_repo.update_local_repo()
     for repo in get_all_repos(active_only=True, include_specs_repo=False):
         if not repo.is_overridden:
