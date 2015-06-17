@@ -5,6 +5,6 @@ repo_name: GitHub
 site_author: GameChanger
 pages:
   - Home: index.md
+  - Architecture: architecture.md
   - Changelog: changelog.md
   - Contributing: contributing.md
-  - Architecture: architecture.md
