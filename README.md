@@ -50,4 +50,4 @@ Finally, run `dusty up` to start your local environment.
 
 Our docs are hosted on Read the Docs.  To make a change, edit the markdown files in the `docs/` folder, and when the changes are merged to master, Read the Docs will build them automatically.
 
-To test changes locally, first `pip install mkdocs`.  You can then run `mkdocs build` from dusty's directory, and build html files will be located in the `site/` folder.
+To test changes locally, first `pip install mkdocs`.  You can then run `mkdocs build` from dusty's directory, and built html files will be placed in the `site/` folder.
