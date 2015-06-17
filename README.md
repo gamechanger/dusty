@@ -45,3 +45,9 @@ Before doing anything else make sure you run the command `dusty setup`. This wil
 
 Once setup has been run, use `dusty bundles activate` to activate bundles for your local environment.
 Finally, run `dusty up` to start your local environment.
+
+# Contributing to the Docs
+
+Our docs are hosted on Read the Docs.  To make a change, edit the markdown files in the `docs/` folder, and when the changes are merged to master, Read the Docs will build them automatically.
+
+To test changes locally, first `pip install mkdocs`.  You can then run `mkdocs build` from dusty's directory, and build html files will be located in the `site/` folder.
