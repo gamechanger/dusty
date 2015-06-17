@@ -47,6 +47,9 @@ coverage.xml
 *.mo
 *.pot
 
+# Mkdocs build
+site/
+
 # Django stuff:
 *.log
 
