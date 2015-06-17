@@ -155,7 +155,7 @@ class TestSetupCommands(DustyTestCase):
         fake_isfile.side_effect = self.factory_file_side_effect('')
         fake_get_raw_input.return_value = '/usr/local/nginx/conf/servers'
         result = _get_and_configure_nginx_includes_dir()
-        self.assertEqual(result, '/usr/local/nginx/conf/servers')
+        self.assertEqual(result, '')
 
     @patch('pwd.getpwnam')
     @patch('dusty.commands.setup._get_and_configure_nginx_includes_dir')

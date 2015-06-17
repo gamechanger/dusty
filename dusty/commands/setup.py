@@ -56,7 +56,8 @@ def _get_and_configure_nginx_includes_dir():
                 return _setup_nginx_config(nginx_conf_location)
             else:
                 return ''
-    return _get_raw_input('\n'.join(textwrap.wrap('You have non standard nginx config setup. Could not find an nginx.conf file. Please input the full path of the directory your nginx config includes. ', 80)))
+    _get_raw_input('\n'.join(textwrap.wrap('You have a custom nginx config setup. Could not find an nginx.conf file. Please read our docs to see what is needed for the nginx config.  Once you have figured it out, please use `dusty config` command to adjust your `nginx_includes_dir`', 80)))
+    return ''
 
 def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
     print "We just need to verify a few settings before we get started.\n"
