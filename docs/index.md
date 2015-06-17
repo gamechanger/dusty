@@ -1,6 +1,7 @@
-# Dusty!!!!
+# Dusty 
 
-For full documentation visit [mkdocs.org](http://mkdocs.org).
+#### A local development environment manager for your mac
 
-## Dusty Commands:
-* Some command
+Code at [https://github.com/gamechanger/dusty]
+
+## Documentation Coming Soon!
