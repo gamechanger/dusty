@@ -25,6 +25,8 @@ you to talk to these apps, by routing your local requests to intermediate ports 
 boot2docker VM. These map to any port on your app's Docker container that your app would
 like to use.
 
+![Dusty Diagram](dusty_diagram.png)
+
 ### Hosts File
 
 Your hosts file (`/etc/hosts`) is modified by Dusty so that you can use Dusty-specified
