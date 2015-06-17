@@ -1,6 +1,8 @@
 import pwd
 import subprocess
 import textwrap
+from os.path import isfile, isdir
+from os import mkdir
 
 from ..payload import Payload
 from ..config import save_config_value, get_config_value, verify_mac_username, refresh_config_warnings
@@ -26,12 +28,36 @@ def _get_default_specs_repo():
     _pretty_print_key_info(constants.CONFIG_SPECS_REPO_KEY)
     return _get_raw_input('Input the full name of your specs repo, e.g. github.com/gamechanger/example-dusty-specs: ')
 
-def _get_nginx_includes_dir():
-    _pretty_print_key_info(constants.CONFIG_NGINX_DIR_KEY)
-    default_nginx_config_value = get_config_value(constants.CONFIG_NGINX_DIR_KEY)
-    if _get_raw_input('Does your nginx config look for extra configs in the default location of {}? (y/n): '.format(default_nginx_config_value)).upper() == 'Y':
-        return default_nginx_config_value
-    return _get_raw_input('Input the path where your nginx config pulls extra configs: ')
+def _get_contents_of_file(file_location):
+    with open(file_location) as f:
+        return f.readlines()
+
+def _append_to_file(file_location, new_line):
+    with open(file_location, 'a') as f:
+        f.write(new_line)
+
+def _setup_nginx_config(nginx_conf_location):
+    include_path = '{}/servers'.format(nginx_conf_location)
+    if not isdir(include_path):
+        mkdir(include_path)
+    _append_to_file('{}/nginx.conf'.format(nginx_conf_location), '\ninclude servers/*;\n')
+    return include_path
+
+def _get_and_configure_nginx_includes_dir():
+    for nginx_conf_location in constants.NGINX_CONFIG_FILE_LOCATIONS:
+        file_location = '{}/nginx.conf'.format(nginx_conf_location)
+        if isfile(file_location):
+            contents = _get_contents_of_file(file_location)
+            for line in contents:
+                if line.startswith('include'):
+                    include_folder = line.replace('include ', '').replace('/*;', '').replace('\n', '').strip()
+                    return '{}/{}'.format(nginx_conf_location, include_folder)
+            if _get_raw_input('\n'.join(textwrap.wrap('You have non standard nginx config setup. Can we add "include servers/*;" to the end of your nginx config file ({})? If you select no, your nginx forwarding will not work. (y/n) '.format(file_location), 80))).upper() == 'Y':
+                return _setup_nginx_config(nginx_conf_location)
+            else:
+                return ''
+    _get_raw_input('\n'.join(textwrap.wrap('You have a custom nginx config setup. Could not find an nginx.conf file. Please read our docs to see what is needed for the nginx config.  Once you have figured it out, please use `dusty config` command to adjust your `nginx_includes_dir`', 80)))
+    return ''
 
 def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
     print "We just need to verify a few settings before we get started.\n"
@@ -51,7 +77,7 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
     if nginx_includes_dir:
         print 'Setting nginx_includes_dir to {} based on flag'.format(nginx_includes_dir)
     else:
-        nginx_includes_dir = _get_nginx_includes_dir()
+        nginx_includes_dir = _get_and_configure_nginx_includes_dir()
 
     config_dictionary = {constants.CONFIG_MAC_USERNAME_KEY: mac_username,
                          constants.CONFIG_SPECS_REPO_KEY: specs_repo,
