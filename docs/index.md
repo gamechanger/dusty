@@ -1,3 +1,6 @@
-# Dusty
+# Dusty!!!!
 
-### Dusty shell documentation - more to come!
+For full documentation visit [mkdocs.org](http://mkdocs.org).
+
+## Dusty Commands:
+* Some command
