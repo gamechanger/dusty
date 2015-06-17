@@ -4,7 +4,7 @@ import textwrap
 from prettytable import PrettyTable
 
 from .. import constants
-from ..compiler.spec_assembler import get_expanded_libs_specs
+from ..compiler.spec_assembler import get_expanded_libs_specs, get_all_repos_for_app_or_library
 from ..compiler.compose import get_volume_mounts, get_testing_compose_dict, container_code_path
 from ..systems.docker.testing_image import ensure_test_image, test_image_name
 from ..systems.docker import get_docker_client
@@ -28,12 +28,18 @@ def test_info_for_app_or_lib(app_or_lib_name):
                        suite_spec['default_args']])
     log_to_client(table.get_string(sortby='Test Suite'))
 
-def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
+def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False, pull_repos=True):
     log_to_client("Ensuring virtualbox vm is running")
     initialize_docker_vm()
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
+    if pull_repos:
+        for repo in get_all_repos_for_app_or_library(app_or_lib_name):
+            import logging
+            logging.error(repo.remote_path)
+            repo.update_local_repo()
+    sync_repos_by_specs([spec])
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     make_test_command_files(expanded_specs)
     sync_repos_by_specs([spec])

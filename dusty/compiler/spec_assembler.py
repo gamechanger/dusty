@@ -149,3 +149,16 @@ def get_all_repos(active_only=False, include_specs_repo=True):
         if spec['repo']:
             repos.add(Repo(spec['repo']))
     return repos
+
+def _get_dependent_repos_for_app_or_library(app_or_library_name):
+    specs = get_specs()
+    spec = specs.get_app_or_lib(app_or_library_name)
+    repos = set()
+    for dependent_name in spec['depends'].get('apps') + spec['depends']['libs']:
+        repos.add(Repo(specs.get_app_or_lib(dependent_name)['repo']))
+    return repos
+
+def get_all_repos_for_app_or_library(app_or_library_name):
+    repos = _get_dependent_repos_for_app_or_library(app_or_library_name)
+    repos.add(get_repo_of_app_or_library(app_or_library_name))
+    return repos

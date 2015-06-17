@@ -2,12 +2,13 @@
 If args are passed, default arguments are dropped
 
 Usage:
-  test <app_or_lib_name> [<suite_name>] [<args>...] [--recreate]
+  test <app_or_lib_name> [<suite_name>] [<args>...] [--recreate] [--no-pull]
 
 Options:
   <suite_name>  Name of the test suite you would like to run
   <args>        A list of arguments to be passed to the test script
   --recreate    Ensures that the testing image will be recreated
+  --no-pull     Do not pull dusty managed repos from remotes.
 
 Examples:
   To call test suite frontend with default arguments:
@@ -27,6 +28,11 @@ def main(argv):
     if not args['<suite_name>']:
         return Payload(test_info_for_app_or_lib, args['<app_or_lib_name>'])
     else:
-        payload = Payload(run_app_or_lib_tests, args['<app_or_lib_name>'], args['<suite_name>'], args['<args>'], force_recreate=args['--recreate'])
+        payload = Payload(run_app_or_lib_tests,
+                          args['<app_or_lib_name>'],
+                          args['<suite_name>'],
+                          args['<args>'],
+                          force_recreate=args['--recreate'],
+                          pull_repos=not args['--no-pull'])
         payload.run_on_daemon = False
         return payload
