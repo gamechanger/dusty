@@ -1,1 +1,9 @@
 site_name: Dusty
+theme: readthedocs
+repo_url: https://github.com/gamechanger/dusty
+repo_name: GitHub
+site_author: GameChanger
+pages:
+  - Home: index.md
+  - Changelog: changelog.md
+  - Contributing: contributing.md
