@@ -9,21 +9,13 @@ def _has_active_container(spec_type, service_name):
         return False
     return get_dusty_containers([service_name]) != []
 
-def _get_singular_spec_type(plural_spec_type):
-    if plural_spec_type == 'libs':
-        return 'lib'
-    elif plural_spec_type == 'apps':
-        return 'app'
-    elif plural_spec_type == 'services':
-        return 'service'
-
 def get_dusty_status():
     assembled_specs = get_assembled_specs()
     table = PrettyTable(["Name", "Type", "Has Active Container"])
     import logging
     logging.error(assembled_specs._document)
     for spec in assembled_specs.get_apps_libs_and_services():
-        spec_type = _get_singular_spec_type(spec.spec_type)
+        spec_type = spec.spec_type.rstrip('s')
         service_name = spec.name
         has_activate_container = _has_active_container(spec_type, service_name)
         table.add_row([service_name, spec_type, 'X' if has_activate_container else ''])
