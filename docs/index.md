@@ -2,6 +2,6 @@
 
 #### A local development environment manager for your mac
 
-Code at [https://github.com/gamechanger/dusty]
+Code and Readme on [github] (https://github.com/gamechanger/dusty)
 
 ## Documentation Coming Soon!
