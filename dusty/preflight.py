@@ -12,6 +12,8 @@ import warnings
 from .config import write_default_config, check_and_load_ssh_auth
 from . import constants
 from .warnings import daemon_warnings
+from .subprocess import check_and_log_output_and_error
+from . import constants
 
 class PreflightException(Exception):
     pass
@@ -87,6 +89,15 @@ def _ensure_config_dir_exists():
     if not os.path.exists(constants.CONFIG_DIR):
         os.makedirs(constants.CONFIG_DIR)
 
+def _ensure_github_known_host():
+    known_hosts_path = os.path.expanduser('~root/.ssh/known_hosts')
+    with open(known_hosts_path, 'w+') as f:
+        contents = f.read()
+        if 'github.com' not in contents:
+            logging.info('Adding github ssh key to roots ssh known_hosts file')
+            command = ['sh', '-c', 'ssh-keyscan -t rsa github.com >> {}'.format(known_hosts_path)]
+            check_and_log_output_and_error(command, demote=False)
+
 def preflight_check():
     logging.info('Starting preflight check')
     errors = [check() for check in [_check_nginx, _check_rsync, _check_virtualbox, _check_boot2docker,
@@ -96,6 +107,7 @@ def preflight_check():
         raise PreflightException("Preflight Errors: \n\t{}".format('\n\t'.join(str_errors)))
     _ensure_run_dir_exists()
     _ensure_config_dir_exists()
+    _ensure_github_known_host()
     if not os.path.exists(constants.CONFIG_PATH):
         logging.info('Creating default config file at {}'.format(constants.CONFIG_PATH))
         write_default_config()
