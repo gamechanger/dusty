@@ -85,6 +85,6 @@ linked containers, and more.  By using Docker Compose linked containers, Dusty a
 talk to other apps and services simply by using the names of those apps and services as
 hostnames.
 
-Docker Compose can set many other Docker options as well; for example, Dusty uses it to
+Docker Compose can set many other Docker options as well. For example, Dusty uses it to
 forward the internally determined VM ports to any in-container port that an app or service
 specifies in its Dusty specs.
