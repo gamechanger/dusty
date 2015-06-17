@@ -80,6 +80,8 @@ def get_specs_from_path(specs_path):
 class DustySpecs(BaseMutable):
     def __init__(self, specs_path):
         document = get_specs_from_path(specs_path)
+        import logging
+        logging.error(document)
         super(DustySpecs, self).__init__(document)
 
     def get_app_or_lib(self, app_or_lib_name):
@@ -94,3 +96,8 @@ class DustySpecs(BaseMutable):
 
     def get_apps_and_services(self):
         return [app for app in self._document['apps'].values()] + [serv for serv in self._document['services'].values()]
+
+    def get_apps_libs_and_services(self):
+        return [app for app in self._document['apps'].values()] + \
+               [lib for lib in self._document['libs'].values()] + \
+               [serv for serv in self._document['services'].values()]
