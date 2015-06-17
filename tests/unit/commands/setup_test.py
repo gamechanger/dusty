@@ -232,8 +232,9 @@ class TestSetupCommands(DustyTestCase):
         fake_get_default_specs.assert_has_calls([call()])
         fake_get_nginx.assert_has_calls([])
 
+    @patch('dusty.commands.setup.update_managed_repos')
     @patch('dusty.commands.setup.save_config_value')
-    def test_complete_setup(self, fake_save_config_value):
+    def test_complete_setup(self, fake_save_config_value, *args):
         dict_argument = {constants.CONFIG_MAC_USERNAME_KEY: 'user',
                          constants.CONFIG_SPECS_REPO_KEY: 'github.com/gamechanger/dusty',
                          constants.CONFIG_NGINX_DIR_KEY: '/etc/dusty/nginx'}
