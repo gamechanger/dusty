@@ -24,11 +24,10 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     # Stop will fail if we've never written a Composefile before
     if os.path.exists(constants.COMPOSEFILE_PATH):
         stop_apps_or_services()
-
     log_to_client("Compiling together the assembled specs")
-    active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
     if pull_repos:
         update_managed_repos()
+    active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
     log_to_client("Compiling the port specs")
     port_spec = port_spec_compiler.get_port_spec_document(assembled_spec, docker_ip)
     log_to_client("Compiling the nginx config")
