@@ -15,6 +15,7 @@ Commands:
   scripts    Execute predefined scripts inside running containers
   setup      Configure Dusty after installation
   shell      Open a shell inside a running container
+  status     Show info on activated apps, services and libs
   stop       Stop Dusty-managed containers
   sync       Sync repos from the local OS to the boot2docker VM
   test       Run test scripts in isolated environments
@@ -37,7 +38,7 @@ from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
 from . import (bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop,
-               sync, up, validate, setup, test)
+               sync, up, validate, setup, test, status)
 from .. import constants
 
 MODULE_MAP = {
@@ -52,6 +53,7 @@ MODULE_MAP = {
     'scripts': script,
     'setup': setup,
     'shell': shell,
+    'status': status,
     'stop': stop,
     'sync': sync,
     'test': test,
