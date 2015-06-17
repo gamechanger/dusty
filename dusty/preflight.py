@@ -91,7 +91,7 @@ def _ensure_config_dir_exists():
 
 def _ensure_github_known_host():
     known_hosts_path = os.path.expanduser('~root/.ssh/known_hosts')
-    with open(known_hosts_path) as f:
+    with open(known_hosts_path, 'w+') as f:
         contents = f.read()
         if 'github.com' not in contents:
             logging.info('Adding github ssh key to roots ssh known_hosts file')
