@@ -5,6 +5,7 @@ Docker-based development environment manager
 [![Dusty Documentation](https://readthedocs.org/projects/dusty/badge/)](http://dusty.readthedocs.org/en/latest/)
 [![Github Downloads](https://img.shields.io/github/downloads/gamechanger/dusty/latest/total.svg)]()
 [![Github Release](https://img.shields.io/github/release/gamechanger/dusty.svg)]()
+[![Github License](https://img.shields.io/github/license/gamechanger/dusty.svg)]()
 
 
 # Installation
