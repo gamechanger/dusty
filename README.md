@@ -1,7 +1,7 @@
 # dusty
 Docker-based development environment manager
 
-
+[![Join the Dusty chat](https://dusty-slackin.herokuapp.com/badge.svg)](https://dusty-slackin.herokuapp.com/)
 
 # Installation
 Currently the recommended way to install dusty is to use our installation script, which will install dusty's binary, and set up a dusty daemon plist:
