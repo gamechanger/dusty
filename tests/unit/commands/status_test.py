@@ -46,12 +46,12 @@ class TestStatusCommands(DustyTestCase):
                                        'services': {'ser1': {}, 'ser2': {}, 'ser3': {}}}
         get_dusty_status()
         call_args_list = fake_table.add_row.call_args_list
-        self.assertTrue(call(['app1', 'apps', 'X']) in call_args_list)
-        self.assertTrue(call(['app2', 'apps', 'X']) in call_args_list)
-        self.assertTrue(call(['lib1', 'libs', '']) in call_args_list)
-        self.assertTrue(call(['ser1', 'services', 'X']) in call_args_list)
-        self.assertTrue(call(['ser2', 'services', 'X']) in call_args_list)
-        self.assertTrue(call(['ser3', 'services', 'X']) in call_args_list)
+        self.assertTrue(call(['app1', 'app', 'X']) in call_args_list)
+        self.assertTrue(call(['app2', 'app', 'X']) in call_args_list)
+        self.assertTrue(call(['lib1', 'lib', '']) in call_args_list)
+        self.assertTrue(call(['ser1', 'service', 'X']) in call_args_list)
+        self.assertTrue(call(['ser2', 'service', 'X']) in call_args_list)
+        self.assertTrue(call(['ser3', 'service', 'X']) in call_args_list)
         self.assertEquals(len(call_args_list), 6)
 
     @patch('dusty.commands.status.PrettyTable')
@@ -66,10 +66,10 @@ class TestStatusCommands(DustyTestCase):
                                        'services': {'ser1': {}, 'ser2': {}, 'ser3': {}}}
         get_dusty_status()
         call_args_list = fake_table.add_row.call_args_list
-        self.assertTrue(call(['app1', 'apps', '']) in call_args_list)
-        self.assertTrue(call(['app2', 'apps', '']) in call_args_list)
-        self.assertTrue(call(['lib1', 'libs', '']) in call_args_list)
-        self.assertTrue(call(['ser1', 'services', '']) in call_args_list)
-        self.assertTrue(call(['ser2', 'services', '']) in call_args_list)
-        self.assertTrue(call(['ser3', 'services', '']) in call_args_list)
+        self.assertTrue(call(['app1', 'app', '']) in call_args_list)
+        self.assertTrue(call(['app2', 'app', '']) in call_args_list)
+        self.assertTrue(call(['lib1', 'lib', '']) in call_args_list)
+        self.assertTrue(call(['ser1', 'service', '']) in call_args_list)
+        self.assertTrue(call(['ser2', 'service', '']) in call_args_list)
+        self.assertTrue(call(['ser3', 'service', '']) in call_args_list)
         self.assertEquals(len(call_args_list), 6)
