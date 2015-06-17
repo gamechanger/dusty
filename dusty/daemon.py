@@ -20,7 +20,9 @@ from .log import configure_logging, make_socket_logger, close_socket_logger
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .payload import Payload
 from .warnings import daemon_warnings
-from .config import refresh_config_warnings
+from .config import refresh_config_warnings, get_config_value
+from .subprocess import check_and_log_output_and_error
+from . import constants
 
 def _clean_up_existing_socket(socket_path):
     try:
@@ -72,12 +74,22 @@ def _listen_on_socket(socket_path, suppress_warnings):
         except:
             logging.exception('Exception on socket listen')
 
+def ensure_github_known_host():
+    known_hosts_path = os.path.expanduser('~{}/.ssh/known_hosts'.format(get_config_value(constants.CONFIG_MAC_USERNAME_KEY)))
+    with open(known_hosts_path) as f:
+        contents = f.read()
+        if 'github.com' not in contents:
+            logging.info('Adding github ssh key to ssh known_hosts file')
+            command = ['sh', '-c', 'ssh-keyscan -t rsa github.com >> {}'.format(known_hosts_path)]
+            check_and_log_output_and_error(command)
+
 def main():
     args = docopt(__doc__)
     configure_logging()
     preflight_check()
     if args['--preflight-only']:
         return
+    ensure_github_known_host()
     refresh_config_warnings()
     _listen_on_socket(SOCKET_PATH, args['--suppress-warnings'])
 
