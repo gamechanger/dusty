@@ -38,7 +38,7 @@ basic_specs = {
         'lib1': get_lib_dusty_schema({
             'repo': '/lib1',
             'mount': '/gc/lib1',
-            'install': './install.sh',
+            'install': ['./install.sh'],
             'depends': {
                 'libs': ['lib2']
             }
@@ -46,7 +46,7 @@ basic_specs = {
         'lib2': get_lib_dusty_schema({
             'repo': '/lib2',
             'mount': '/gc/lib2',
-            'install': 'python setup.py develop'
+            'install': ['python setup.py develop']
         })
     },
     'services':{
@@ -117,8 +117,10 @@ class TestComposeCompiler(DustyTestCase):
         self.assertEqual(expected_volumes, returned_volumes)
 
     def test_compile_command_with_once(self, *args):
-        expected_command_list = ["sh -c \"cd /gc/lib1 && ./install.sh",
-                                 " cd /gc/lib2 && python setup.py develop",
+        expected_command_list = ["sh -c \"cd /gc/lib1",
+                                 " ./install.sh",
+                                 " cd /gc/lib2",
+                                 " python setup.py develop",
                                  " cd /gc/app1",
                                  " export PATH=$PATH:/gc/app1",
                                  " if [ ! -f /var/run/dusty/docker_first_time_started ]",
@@ -133,8 +135,10 @@ class TestComposeCompiler(DustyTestCase):
     def test_compile_command_without_once(self, *args):
         new_specs = copy(basic_specs)
         new_specs['apps']['app1']['commands']['once'] = ['']
-        expected_command_list = ["sh -c \"cd /gc/lib1 && ./install.sh",
-                                 " cd /gc/lib2 && python setup.py develop",
+        expected_command_list = ["sh -c \"cd /gc/lib1",
+                                 " ./install.sh",
+                                 " cd /gc/lib2",
+                                 " python setup.py develop",
                                  " cd /gc/app1",
                                  " export PATH=$PATH:/gc/app1",
                                  " if [ ! -f /var/run/dusty/docker_first_time_started ]",
@@ -184,9 +188,9 @@ class TestComposeCompiler(DustyTestCase):
         lib_spec = {
             'repo': 'some repo',
             'mount': '/mount/point',
-            'install': 'python install.py some args'
+            'install': ['python install.py some args']
         }
-        expected_command = "cd /mount/point && python install.py some args"
+        expected_command = "cd /mount/point; python install.py some args"
         actual_command = _lib_install_command(lib_spec)
         self.assertEqual(expected_command, actual_command)
 
@@ -195,7 +199,7 @@ class TestComposeCompiler(DustyTestCase):
             'repo': 'some repo',
             'mount': '/mount/point'
         })
-        expected_command = ""
+        expected_command = "cd /mount/point; "
         actual_command = _lib_install_command(lib_spec)
         self.assertEqual(expected_command, actual_command)
 
