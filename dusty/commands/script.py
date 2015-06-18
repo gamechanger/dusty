@@ -31,10 +31,11 @@ def execute_script(app_name, script_name, script_arguments=[]):
     if script_spec is None:
         raise KeyError('No script found named {} in specs for app {}'.format(script_name, app_name))
 
+    base_script_command = '; '.join(script_spec['command'])
     if script_arguments == []:
-        script_string = script_spec['command']
+        script_string = base_script_command
     else:
-        script_string = '{} {}'.format(script_spec['command'], ' '.join(script_arguments))
+        script_string = '{} {}'.format(base_script_command, ' '.join(script_arguments))
 
     container_name = get_dusty_container_name(app_name)
     utils.exec_docker('exec', '-ti', container_name, 'sh', '-c', script_string)

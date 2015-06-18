@@ -9,7 +9,7 @@ depends_schema = Schema({
 lib_schema = Schema({
     'repo': {'type': basestring, 'required': True},
     'mount': {'type': basestring, 'default': '', 'required': True},
-    'install': {'type': basestring, 'default': ''},
+    'install': {'type': Array(basestring), 'default': list},
     'depends': {'type': depends_schema, 'default': dict},
     'test': {'type': test_schema, 'default': dict}
     })

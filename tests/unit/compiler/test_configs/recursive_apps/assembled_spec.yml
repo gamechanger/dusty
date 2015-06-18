@@ -6,8 +6,9 @@ apps:
     simpleapp:
         image: docker.gamechanger.io/simpleapp
         commands:
-          always: run-script.sh
-          once: ''
+          always:
+            - run-script.sh
+          once: []
         compose:
           environment:
             gcenv: local
@@ -20,8 +21,9 @@ apps:
     app2:
         image: docker.gamechanger.io/app2
         commands:
-          always: run-script.sh
-          once: ''
+          always:
+            - run-script.sh
+          once: []
         compose:
           environment:
             gcenv: local

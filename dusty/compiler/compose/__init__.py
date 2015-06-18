@@ -98,12 +98,12 @@ def _compile_docker_command(app_name, assembled_specs):
     command.append("cd {}".format(container_code_path(app_spec)))
     command.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
     command.append("if [ ! -f {} ]".format(first_run_file))
-    once_command = app_spec['commands']["once"]
+    once_command = '; '.join(app_spec['commands']["once"])
     command.append("then mkdir -p {}; touch {}".format(constants.RUN_DIR, first_run_file))
     if once_command:
         command.append(once_command)
     command.append("fi")
-    command.append(app_spec['commands']['always'])
+    command.append('; '.join(app_spec['commands']['always']))
     return "sh -c \"{}\"".format('; '.join(command))
 
 def _lib_install_commands_for_libs(assembled_specs, libs):
@@ -136,7 +136,7 @@ def _lib_install_command(lib_spec):
     """ This returns a single commmand that will install a library in a docker container """
     if not lib_spec['install']:
         return ''
-    return "cd {} && {}".format(lib_spec['mount'], lib_spec['install'])
+    return "cd {}; {}".format(lib_spec['mount'], '; '.join(lib_spec['install']))
 
 def _get_compose_volumes(app_name, assembled_specs):
     """ This returns formatted volume specifications for a docker-compose app. We mount the app
