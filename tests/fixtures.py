@@ -34,13 +34,13 @@ def basic_specs_fixture():
                             'image': 'app/a',
                             'mount': '/app/a',
                             'scripts': [{'description': 'A script description',
-                                        'command': 'ls /',
+                                        'command': ['ls /'],
                                         'name': 'example'}]})
     _write('app', 'app-b', {'repo': 'github.com/app/b',
                             'image': 'app/b',
                             'mount': '/app/b',
                             'scripts': [{'description': 'A script description',
-                                        'command': 'ls /',
+                                        'command': ['ls /'],
                                         'name': 'example'}]})
     _write('app', 'app-c', {'repo': '/gc/repos/c',
                             'image': 'app/c',

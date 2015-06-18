@@ -35,7 +35,7 @@ commands_schema = Schema({
 script_schema = Schema({
     'name': {'type': basestring, 'required': True},
     'description': {'type': basestring},
-    'command': {'type': basestring, 'required': True}
+    'command': {'type': Array(basestring), 'required': True}
     })
 
 dusty_app_compose_schema = Schema({
