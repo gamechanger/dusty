@@ -4,7 +4,8 @@ import textwrap
 from prettytable import PrettyTable
 
 from .. import constants
-from ..compiler.spec_assembler import get_expanded_libs_specs, get_all_repos_for_app_or_library
+from ..compiler.spec_assembler import (get_expanded_libs_specs, get_all_repos_for_app_or_library,
+                                       get_specs_repo)
 from ..compiler.compose import get_volume_mounts, get_testing_compose_dict, container_code_path
 from ..systems.docker.testing_image import ensure_test_image, test_image_name
 from ..systems.docker import get_docker_client
@@ -28,6 +29,17 @@ def test_info_for_app_or_lib(app_or_lib_name):
                        suite_spec['default_args']])
     log_to_client(table.get_string(sortby='Test Suite'))
 
+def _update_test_repos(app_or_lib_name):
+    specs_repo = get_specs_repo()
+    if not specs_repo.is_overridden:
+        log_to_client('Updating managed copy of specs-repo before loading specs')
+        specs_repo.update_local_repo()
+    for repo in get_all_repos_for_app_or_library(app_or_lib_name):
+        import logging
+        logging.error(repo.managed_path)
+        if not repo.is_overridden:
+            repo.update_local_repo()
+
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False, pull_repos=True):
     log_to_client("Ensuring virtualbox vm is running")
     initialize_docker_vm()
@@ -35,10 +47,7 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
     if pull_repos:
-        for repo in get_all_repos_for_app_or_library(app_or_lib_name):
-            import logging
-            logging.error(repo.remote_path)
-            repo.update_local_repo()
+        _update_test_repos(app_or_lib_name)
     sync_repos_by_specs([spec])
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     make_test_command_files(expanded_specs)
