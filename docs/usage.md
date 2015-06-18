@@ -18,10 +18,6 @@ Runs the Dusty daemon.  This action must be performed as root.
 If you use Dusty's install script, a plist will be setup to run
 this daemon automatically for you.
 
-#### -v
-
-Prints the version of both the Dusty client and daemon
-
 ## Commands
 
 To get more usage information, including arguments and options,
