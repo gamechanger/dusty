@@ -3,7 +3,7 @@
 ## 0.1.2
 
 ## 0.1.1 (June 18, 2015)
-  * BREAKING CHANGE: We have changed the types of some of the values in app, lib and test schema.  All commands to run in the container are now lists instead of single strings.
+  * BREAKING CHANGE: We have changed the types of some of the values in app, lib, and test schema.  All commands to run in the container are now lists instead of single strings.
 
   * NEW: `dusty status` CLI command has been added.  This outputs a list of activated apps, libs, and services. It also informs if a container is associated with each.
 
