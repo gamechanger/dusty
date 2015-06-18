@@ -39,7 +39,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.bind(socket_path)
     os.chmod(socket_path, 0777) # don't delete the 0, it makes Python interpret this as octal
-    sock.listen(1)
+    sock.listen(5)
     logging.info('Listening on socket at {}'.format(socket_path))
 
     while True:
@@ -71,6 +71,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
             break
         except:
             logging.exception('Exception on socket listen')
+    _clean_up_existing_socket(socket_path)
 
 def main():
     args = docopt(__doc__)
