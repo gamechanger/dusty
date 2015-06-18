@@ -329,13 +329,14 @@ Options:
 Launches active bundles, and all apps and services that they depend on.  This command is
 optimized to successfully launch your system from any state, and not for speed.  The steps
 that `dusty up` takes are:
-* Ensure your boot2docker VM is up
-* Pull your Dusty-managed repos
-* Assemble your specs, based on active bundles, into configuration for your hosts file, nginx,
+
+ * Ensure your boot2docker VM is up
+ * Pull your Dusty-managed repos
+ * Assemble your specs, based on active bundles, into configuration for your hosts file, nginx,
 and Docker Compose
-* Stops running Dusty containers
-* Sync repos from your mac to boot2docker
-* Re-create and launch your docker containers
+ * Stops running Dusty containers
+ * Sync repos from your mac to boot2docker
+ * Re-create and launch your docker containers
 
 #### validate
 ```
@@ -345,8 +346,9 @@ Usage:
   validate [<specs-path>]
 ```
 Validates your Dusty specs.  This will:
-* Check that your specs contain required fields
-* Check that apps, libs, and services referenced inside your specs are all defined in your specs
-* Check that your dependency graph (of apps and libs) is cycle-free
+
+ * Check that your specs contain required fields
+ * Check that apps, libs, and services referenced inside your specs are all defined in your specs
+ * Check that your dependency graph (of apps and libs) is cycle-free
 You can optionally specify a directory to look for specs in; the default is to use whatever
 directory is set to your Dusty specs repository, whether managed or overriden.
