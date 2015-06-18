@@ -199,7 +199,7 @@ class TestComposeCompiler(DustyTestCase):
             'repo': 'some repo',
             'mount': '/mount/point'
         })
-        expected_command = "cd /mount/point; "
+        expected_command = ""
         actual_command = _lib_install_command(lib_spec)
         self.assertEqual(expected_command, actual_command)
 
