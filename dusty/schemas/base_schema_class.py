@@ -80,8 +80,6 @@ def get_specs_from_path(specs_path):
 class DustySpecs(BaseMutable):
     def __init__(self, specs_path):
         document = get_specs_from_path(specs_path)
-        import logging
-        logging.error(document)
         super(DustySpecs, self).__init__(document)
 
     def get_app_or_lib(self, app_or_lib_name):
