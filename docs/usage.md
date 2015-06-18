@@ -15,14 +15,14 @@ Prints the version of both the Dusty client and daemon
 ## Commands
 
 To get more usage information, including arguments and options,
- about any of these commands, use `dusty <command> -h`
+about any of these commands, use `dusty <command> -h`.
 
 #### bundles
 * `list`
 * `activate`
 * `deactivate`
-Used to list, activate, and deactivate bundles in your specs repo.  Active3
-bundles will be launched when you run `dusty up`
+Used to list, activate, and deactivate bundles in your specs repo.  Active
+bundles will be launched when you run `dusty up`.
 
 #### config
 * `list`
@@ -53,7 +53,9 @@ using a `docker exec mv` command.
 Used to manage the disk usage of Dusty's docker images and containers.  These can end
 up taking up a lot of space on boot2docker's virtual disk, which is 20G max (dynamically
 allocated by Virtualbox).
-`cleanup_containers` will remove containers created by Dusty with status "Exited"
+
+`cleanup_containers` will remove containers created by Dusty with status "Exited".
+
 `cleanup_images` removes all images specified in your specs repo as well as dangling
 images.  It does not do so forcefully; this means that if a container is still using
 one of these images, the image will not be removed.
@@ -79,7 +81,7 @@ repository for your Dusty specs.
 
 #### restart
 Restarts active containers associated with Dusty.  The following actions are performed:
-* Sync repositories on your mac to containers (using rsyinc)
+* Sync repositories on your mac to boot2docker (using rsyinc)
 * Use the `docker restart` command for each active container
 * Since containers are not recreated, specified `once` commands will not be run
 
@@ -96,7 +98,8 @@ for are:
 * nginx_includes_dir
 You can set these values with options passed to `dusty setup`; the prompt will be
 suppressed for values that you set.  For example:
-`dusty setup --default_specs_repo=github.com/gamechanger/dusty-specs`
+`dusty setup --default_specs_repo=github.com/gamechanger/dusty-specs` will prompt you
+for `mac_username` and `nginx_includes_dir`, but will automatically set `dusty_specs_repo`.
 
 #### shell
 Drops you into a bash shell of the container of the app or service specified.  This is
@@ -137,7 +140,7 @@ and Docker Compose
 #### validate
 Validates your Dusty specs.  This will:
 * Check that your specs contain required fields
-* Check that apps, libs, and services referenced inside your specs are all defined in your specs.
+* Check that apps, libs, and services referenced inside your specs are all defined in your specs
 * Check that your dependency graph (of apps and libs) is cycle-free
 You can optionally specify a directory to look for specs in; the default is to use whatever
-directory is set to your Dusty specs repository; this can be managed or overriden.
+directory is set to your Dusty specs repository, whether managed or overriden.
