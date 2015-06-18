@@ -68,7 +68,7 @@ def _services_compose_up(expanded_specs, app_or_lib_name, testing_spec):
         kwargs = {}
         if previous_container_names:
             kwargs['net_container_identifier'] = previous_container_names[-1]
-        service_compose_config = get_testing_compose_dict(service_name, service_spec, **kwargs)
+        service_compose_config = get_testing_compose_dict(service_name, service_spec.plain_dict(), **kwargs)
 
         composefile_path = _test_composefile_path(service_name)
         write_composefile(service_compose_config, composefile_path)
