@@ -28,8 +28,8 @@ host_forwarding_schema = Schema({
     })
 
 commands_schema = Schema({
-    'always': {'type': basestring, 'required': True, 'default': ''},
-    'once': {'type': basestring, 'default': ''}
+    'always': {'type': Array(basestring), 'required': True, 'default': list},
+    'once': {'type': Array(basestring), 'default': list}
     })
 
 script_schema = Schema({

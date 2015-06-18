@@ -21,8 +21,8 @@ basic_specs = {
                 'apps': ['app2']
             },
             'commands': {
-                'once': "one_time.sh",
-                'always': "always.sh"
+                'once': ["one_time.sh"],
+                'always': ["always.sh"]
             },
             'image': 'awesomeGCimage',
             'mount': '/gc/app1'
@@ -132,7 +132,7 @@ class TestComposeCompiler(DustyTestCase):
 
     def test_compile_command_without_once(self, *args):
         new_specs = copy(basic_specs)
-        new_specs['apps']['app1']['commands']['once'] = ''
+        new_specs['apps']['app1']['commands']['once'] = ['']
         expected_command_list = ["sh -c \"cd /gc/lib1 && ./install.sh",
                                  " cd /gc/lib2 && python setup.py develop",
                                  " cd /gc/app1",

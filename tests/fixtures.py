@@ -24,7 +24,7 @@ def premade_app():
     return DustySchema(app_schema, {'repo': '/tmp/fake-repo',
                                     'mount': '/repo',
                                     'image': 'busybox',
-                                    'commands': {'always': 'sleep 999999999'}},
+                                    'commands': {'always': ['sleep 999999999']}},
                        'fake_app', 'apps')
 
 def basic_specs_fixture():
@@ -49,7 +49,7 @@ def basic_specs_fixture():
                             'mount': '/lib/a',})
     _write('service', 'service-a', {'image': 'service/a'})
 
-def busybox_single_app_bundle_fixture(num_bundles=1, command='sleep 999999999'):
+def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']):
     """Fixture for use in integration tests. The local repo at
     /tmp/fake-repo should be set up before using this fixture."""
     for bundle in range(num_bundles):
