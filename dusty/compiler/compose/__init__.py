@@ -134,6 +134,8 @@ def lib_install_commands_for_app_or_lib(app_or_lib_name, assembled_specs):
 
 def _lib_install_command(lib_spec):
     """ This returns a single commmand that will install a library in a docker container """
+    if not lib_spec['install']:
+        return ''
     return "cd {}; {}".format(lib_spec['mount'], '; '.join(lib_spec['install']))
 
 def _get_compose_volumes(app_name, assembled_specs):
