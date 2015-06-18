@@ -15,10 +15,10 @@ class TestTestsCommands(DustyTestCase):
     def setUp(self):
         super(TestTestsCommands, self).setUp()
         self.specs = self.make_test_specs({'apps': {
-                        'app-a': get_app_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': 'nosetests app-a'}]},
+                        'app-a': get_app_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': ['nosetests app-a']}]},
                                                        'mount': '/app-a'})},
                       'libs': {
-                        'lib-a': get_lib_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': 'nosetests lib-a'}]},
+                        'lib-a': get_lib_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': ['nosetests lib-a']}]},
                                                        'mount': '/lib-a'})}})
 
     def test_run_app_or_lib_tests_lib_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image, fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):

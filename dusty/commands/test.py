@@ -42,7 +42,7 @@ def _construct_test_command(spec, suite_name, test_arguments):
     suite_command = None
     for suite_dict in spec['test']['suites']:
         if suite_dict['name'] == suite_name:
-            suite_command = suite_dict['command']
+            suite_command = '; '.join(suite_dict['command'])
             suite_default_args = suite_dict['default_args']
             break
     if suite_command is None:

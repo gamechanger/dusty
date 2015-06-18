@@ -76,11 +76,17 @@ def _testing_spec(app_or_lib_name, expanded_specs):
 def test_image_name(app_or_lib_name):
     return "dusty/test_{}".format(app_or_lib_name)
 
+def _get_testing_spec_command(testing_spec):
+    command = ""
+    for line in testing_spec['once']:
+        command += "{};".format(line.replace('"', '\\"'))
+    return command
+
 def _get_test_image_setup_command(app_or_lib_name, expanded_specs):
     testing_spec = _testing_spec(app_or_lib_name, expanded_specs)
     commands = lib_install_commands_for_app_or_lib(app_or_lib_name, expanded_specs)
     commands += ['cd {}'.format(container_code_path(_spec_for_service(app_or_lib_name, expanded_specs)))]
-    commands += [testing_spec['once'].replace('"', '\\"')]
+    commands += [_get_testing_spec_command(testing_spec)]
     return "sh -c \"{}\"".format('; '.join(commands))
 
 def _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs):
