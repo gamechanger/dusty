@@ -6,5 +6,6 @@ site_author: GameChanger
 pages:
   - Home: index.md
   - Architecture: architecture.md
+  - Usage: usage.md
   - Changelog: changelog.md
   - Contributing: contributing.md
