@@ -10,6 +10,16 @@ def image_build_isolation_validator():
             return 'Need to have at least one of `image` or `build` in app schema'
     return validator
 
+def repo_mount_validator():
+    """If either repo or mount are provided, they must both be provided."""
+    def validator(document):
+        if 'repo' in document and 'mount' in document:
+            return
+        elif 'repo' not in document and 'mount' not in document:
+            return
+        return 'If either `repo` or `mount` are provided, they must both be provided.'
+    return validator
+
 app_depends_schema = Schema({
     'services': {'type': Array(basestring), 'default': list},
     'apps': {'type': Array(basestring), 'default': list},
@@ -43,15 +53,18 @@ dusty_app_compose_schema = Schema({
     }, strict=False)
 
 app_schema = Schema({
-    'repo': {'type': basestring, 'required': True},
+    'repo': {'type': basestring, 'default': str},
     'depends': {'type': app_depends_schema, 'default': dict},
     'conditional_links': {'type': conditional_links_schema, 'default': dict},
     'host_forwarding': {'type': Array(host_forwarding_schema), 'default': list},
     'image': {'type': basestring},
     'build': {'type': basestring},
-    'mount': {'type': basestring, 'default': '', 'required': True},
+    'mount': {'type': basestring, 'default': str},
     'commands': {'type': commands_schema, 'default': dict},
     'scripts': {'type': Array(script_schema), 'default': list},
     'compose': {'type': dusty_app_compose_schema, 'default': dict},
     'test': {'type': test_schema, 'default': dict}
-    }, validates=[image_build_isolation_validator()])
+    }, validates=[
+        image_build_isolation_validator(),
+        repo_mount_validator(),
+    ])
