@@ -26,7 +26,7 @@ def _get_mac_username():
 
 def _get_default_specs_repo():
     _pretty_print_key_info(constants.CONFIG_SPECS_REPO_KEY)
-    return _get_raw_input('Input the full name of your specs repo, e.g. github.com/gamechanger/example-dusty-specs: ')
+    return _get_raw_input('Input the full name of your specs repo, e.g. github.com/gamechanger/dusty-example-specs: ')
 
 def _get_contents_of_file(file_location):
     with open(file_location) as f:

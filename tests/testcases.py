@@ -84,7 +84,7 @@ class DustyIntegrationTestCase(TestCase):
         self.overridden_specs_path = tempfile.mkdtemp()
         write_default_config()
         save_config_value(constants.CONFIG_SETUP_KEY, True)
-        save_config_value(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/example-dusty-specs')
+        save_config_value(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/dusty-example-specs')
         save_config_value(constants.CONFIG_MAC_USERNAME_KEY, self.current_user)
         override_repo(get_specs_repo().remote_path, self.overridden_specs_path)
         self._set_up_fake_local_repo()
