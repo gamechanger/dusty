@@ -32,6 +32,7 @@ import logging
 import os
 import sys
 import socket
+import threading
 
 from docopt import docopt
 
@@ -65,9 +66,12 @@ MODULE_MAP = {
 
 def _run_command(sock, command):
     error_response = False
+    timer = threading.Timer(2, _notify_on_hang)
+    timer.start()
     sock.sendall(command)
     while True:
         data = sock.recv(65535)
+        timer.cancel()
         if data:
             stripped = data.decode('utf-8').replace(constants.SOCKET_TERMINATOR, '').replace(constants.SOCKET_ERROR_TERMINATOR, '')
             sys.stdout.write(stripped)
@@ -80,6 +84,9 @@ def _run_command(sock, command):
             break
 
     return error_response
+
+def _notify_on_hang():
+    print 'The Dusty daemon will run your command once it\'s finished running previous commands'
 
 def _connect_to_daemon():
     if not os.path.exists(constants.SOCKET_PATH):
@@ -121,7 +128,6 @@ def main():
         sock = _connect_to_daemon()
         if sock is None:
             sys.exit(1)
-        print 'The Dusty daemon will run your command once it\'s finished running previous commands'
         try:
             errored = _run_command(sock, result.serialize())
         except KeyboardInterrupt:

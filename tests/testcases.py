@@ -136,12 +136,6 @@ class DustyIntegrationTestCase(TestCase):
         self._clear_stdout()
         return result
 
-    def run_command_stripped(self, args):
-        """Runs a command, stripping out a user-facing logging statement"""
-        output = self.run_command(args)
-        return '\n'.join(output.split('\n')[1:])
-
-
     def _set_up_fake_local_repo(self):
         repo = git.Repo.init('/tmp/fake-repo')
         with open('/tmp/fake-repo/README.md', 'w') as f:
