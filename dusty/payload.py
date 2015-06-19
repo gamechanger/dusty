@@ -13,7 +13,7 @@ class Payload(object):
         return False
 
     def run(self):
-        self.fn(self.args, self.kwargs)
+        self.fn(*self.args, **self.kwargs)
 
     def serialize(self):
         doc = {'fn': self.fn, 'args': self.args, 'kwargs': sorted(self.kwargs.items())}
