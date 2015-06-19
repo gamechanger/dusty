@@ -1,4 +1,5 @@
 import os
+from subprocess import CalledProcessError
 
 from ..compiler import (compose as compose_compiler, nginx as nginx_compiler,
                         port_spec as port_spec_compiler, spec_assembler)
@@ -56,7 +57,11 @@ def stop_apps_or_services(app_or_service_names=None, rm_containers=False):
     else:
         log_to_client("Stopping all running containers associated with Dusty")
 
-    compose.stop_running_services(app_or_service_names)
+    try:
+        compose.stop_running_services(app_or_service_names)
+    except CalledProcessError as e:
+        log_to_client("WARNING: docker-compose stop failed")
+        log_to_client(str(e))
     if rm_containers:
         compose.rm_containers(app_or_service_names)
 
