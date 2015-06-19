@@ -1,4 +1,5 @@
 import os
+from subprocess import CalledProcessError
 
 from ..compiler import (compose as compose_compiler, nginx as nginx_compiler,
                         port_spec as port_spec_compiler, spec_assembler)
@@ -23,7 +24,11 @@ def start_local_env(recreate_containers=True, pull_repos=True):
 
     # Stop will fail if we've never written a Composefile before
     if os.path.exists(constants.COMPOSEFILE_PATH):
-        stop_apps_or_services()
+        try:
+            stop_apps_or_services()
+        except CalledProcessError as e:
+            log_to_client("WARNING: docker-compose stop failed")
+            log_to_client(str(e))
     log_to_client("Compiling together the assembled specs")
     if pull_repos:
         update_managed_repos()
