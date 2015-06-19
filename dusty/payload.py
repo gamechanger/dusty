@@ -1,9 +1,9 @@
 import cPickle
 
 class Payload(object):
-    def __init__(self, fn, run_on_daemon=True, *args, **kwargs):
+    def __init__(self, fn, *args, **kwargs):
         self.fn = fn
-        self.run_on_daemon = run_on_daemon
+        self.run_on_daemon = True
         self.args = args
         self.kwargs = kwargs
 
