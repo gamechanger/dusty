@@ -34,7 +34,7 @@ def execute_script(app_name, script_name, script_arguments=[]):
     if not found_spec:
         raise KeyError('No script found named {} in specs for app {}'.format(script_name, app_name))
 
-    script_string = 'sh {}/{} {}'.format(container_code_path(app_specs), dusty_command_file_name(app_specs.name, script_name=script_name), script_arguments)
+    command_file = '{}/{}'.format(container_code_path(app_specs), dusty_command_file_name(app_specs.name, script_name=script_name))
 
     container_name = get_dusty_container_name(app_name)
-    utils.exec_docker('exec', '-ti', container_name, 'sh', '-c', script_string)
+    utils.exec_docker('exec', '-ti', container_name, 'sh', command_file, *script_arguments)

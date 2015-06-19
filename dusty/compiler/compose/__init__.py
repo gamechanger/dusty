@@ -10,58 +10,6 @@ from ... import constants
 from ...command_file import dusty_command_file_name
 from .common import container_code_path, get_volume_mounts, get_app_volume_mounts, get_lib_volume_mounts
 
-
-def _compile_docker_command(app_name, assembled_specs):
-    """ This is used to compile the command that will be run when the docker container starts
-    up. This command has to install any libs that the app uses, run the `always` command, and
-    run the `once` command if the container is being launched for the first time """
-    app_spec = assembled_specs['apps'][app_name]
-    first_run_file = constants.FIRST_RUN_FILE_PATH
-    command = []
-    command += _lib_install_commands_for_app(app_name, assembled_specs)
-    command.append("cd {}".format(container_code_path(app_spec)))
-    command.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
-    command.append("if [ ! -f {} ]".format(first_run_file))
-    once_command = '; '.join(app_spec['commands']["once"])
-    command.append("then mkdir -p {}; touch {}".format(constants.RUN_DIR, first_run_file))
-    if once_command:
-        command.append(once_command)
-    command.append("fi")
-    command.append('; '.join(app_spec['commands']['always']))
-    return "sh -c \"{}\"".format('; '.join(command))
-
-def _lib_install_commands_for_libs(assembled_specs, libs):
-    commands = []
-    for lib in libs:
-        lib_spec = assembled_specs['libs'][lib]
-        install_command = _lib_install_command(lib_spec)
-        if install_command:
-            commands.append(install_command)
-    return commands
-
-def _lib_install_commands_for_app(app_name, assembled_specs):
-    """ This returns a list of all the commands that will install libraries for a
-    given app """
-    libs = assembled_specs['apps'][app_name]['depends']['libs']
-    return _lib_install_commands_for_libs(assembled_specs, libs)
-
-def _lib_install_commands_for_lib(app_name, assembled_specs):
-    """ This returns a list of all the commands that will install libraries for a
-    given lib """
-    libs = assembled_specs['libs'][app_name]['depends']['libs']
-    return _lib_install_commands_for_libs(assembled_specs, libs)
-
-def lib_install_commands_for_app_or_lib(app_or_lib_name, assembled_specs):
-    if app_or_lib_name in assembled_specs['apps']:
-        return _lib_install_commands_for_app(app_or_lib_name, assembled_specs)
-    return _lib_install_commands_for_lib(app_or_lib_name, assembled_specs)
-
-def _lib_install_command(lib_spec):
-    """ This returns a single commmand that will install a library in a docker container """
-    if not lib_spec['install']:
-        return ''
-    return "cd {}; {}".format(lib_spec['mount'], '; '.join(lib_spec['install']))
-
 def get_compose_dict(assembled_specs, port_specs):
     """ This function returns a dictionary representation of a docker-compose.yml file, based on assembled_specs from
     the spec_assembler, and port_specs from the port_spec compiler """

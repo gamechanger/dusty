@@ -48,7 +48,7 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     log_to_client("Syncing local repos to the VM")
     rsync.sync_repos(active_repos)
     log_to_client("Removing the command files locally")
-    remove_command_files(assembled_spec)
+    remove_up_command_files(assembled_spec)
     log_to_client("Saving nginx config and ensure nginx is running")
     nginx.update_nginx_from_config(nginx_config)
     log_to_client("Saving docker-compose config and starting all containers")

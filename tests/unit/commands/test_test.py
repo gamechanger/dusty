@@ -16,10 +16,12 @@ class TestTestsCommands(DustyTestCase):
         super(TestTestsCommands, self).setUp()
         self.specs = self.make_test_specs({'apps': {
                         'app-a': get_app_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': ['nosetests app-a']}]},
-                                                       'mount': '/app-a'})},
+                                                       'mount': '/app-a'},
+                                                      name='app-a')},
                       'libs': {
                         'lib-a': get_lib_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': ['nosetests lib-a']}]},
-                                                       'mount': '/lib-a'})}})
+                                                       'mount': '/lib-a'},
+                                                      name='lib-a')}})
 
     def test_run_app_or_lib_tests_lib_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image, fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
@@ -85,16 +87,16 @@ class TestTestsCommands(DustyTestCase):
 
     def test_construct_test_command_app_no_arguments(self, *args):
         return_command = test._construct_test_command(self.specs['apps']['app-a'], 'nose', [])
-        self.assertEquals('sh -c "cd /app-a; nosetests app-a"', return_command.strip())
+        self.assertEquals('sh /app-a/dusty_command_file_app-a_test_nose.sh', return_command.strip())
 
     def test_construct_test_command_app_arguments(self, *args):
         return_command = test._construct_test_command(self.specs['apps']['app-a'], 'nose', ['1', '2', '3'])
-        self.assertEquals('sh -c "cd /app-a; nosetests app-a 1 2 3"', return_command.strip())
+        self.assertEquals('sh /app-a/dusty_command_file_app-a_test_nose.sh 1 2 3', return_command.strip())
 
     def test_construct_test_command_lib_no_arguments(self, *args):
         return_command = test._construct_test_command(self.specs['libs']['lib-a'], 'nose', [])
-        self.assertEquals('sh -c "cd /lib-a; nosetests lib-a"', return_command.strip())
+        self.assertEquals('sh /lib-a/dusty_command_file_lib-a_test_nose.sh', return_command.strip())
 
     def test_construct_test_command_lib_arguments(self, *args):
         return_command = test._construct_test_command(self.specs['libs']['lib-a'], 'nose', ['1', '2', '3'])
-        self.assertEquals('sh -c "cd /lib-a; nosetests lib-a 1 2 3"', return_command.strip())
+        self.assertEquals('sh /lib-a/dusty_command_file_lib-a_test_nose.sh 1 2 3', return_command.strip())
