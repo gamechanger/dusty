@@ -102,6 +102,21 @@ def _connect_to_daemon():
     sock.settimeout(None)
     return sock
 
+def _run_payload(payload):
+    if payload.run_on_daemon:
+        sock = _connect_to_daemon()
+        if sock is None:
+            return 1
+        print 'The Dusty daemon will run your command once it\'s finished running previous commands'
+        try:
+            errored = _run_command(sock, result.serialize())
+        except KeyboardInterrupt:
+            print "Dusty Client stopping on KeyboardInterrupt..."
+            print "-----Dusty Daemon is still processing your last command!-----"
+        return errored
+    else:
+        payload.run()
+
 def main():
     # Dispatch to daemon's docopt immediately so
     # we can process daemon-specific options
@@ -125,12 +140,10 @@ def main():
           sys.exit(1)
     result = MODULE_MAP[command].main(command_args)
     if isinstance(result, Payload):
-        sock = _connect_to_daemon()
-        if sock is None:
-            sys.exit(1)
-        try:
-            errored = _run_command(sock, result.serialize())
-        except KeyboardInterrupt:
-            print "Dusty Client stopping on KeyboardInterrupt..."
-            print "-----Dusty Daemon is still processing your last command!-----"
+        errored = _run_payload(result)
         sys.exit(1 if errored else 0)
+    elif isinstance(result, list):
+        for payload in result:
+            errored = _run_payload(payload)
+            if errored:
+                sys.exit(1)

@@ -1,8 +1,9 @@
 import cPickle
 
 class Payload(object):
-    def __init__(self, fn, *args, **kwargs):
+    def __init__(self, fn, run_on_daemon=True, *args, **kwargs):
         self.fn = fn
+        self.run_on_daemon = run_on_daemon
         self.args = args
         self.kwargs = kwargs
 
@@ -10,6 +11,9 @@ class Payload(object):
         if isinstance(other, self.__class__):
             return self.fn == other.fn and self.args == other.args and self.kwargs == other.kwargs
         return False
+
+    def run(self):
+        self.fn(self.args, self.kwargs)
 
     def serialize(self):
         doc = {'fn': self.fn, 'args': self.args, 'kwargs': sorted(self.kwargs.items())}
