@@ -24,4 +24,4 @@ def main(argv):
     if not args['<script_name>']:
         return Payload(script_info_for_app, args['<app_name>'])
     else:
-        return execute_script(args['<app_name>'], args['<script_name>'], script_arguments=args['<args>'])
+        return Payload(execute_script, args['<app_name>'], args['<script_name>'], script_arguments=args['<args>'], run_on_daemon=False)
