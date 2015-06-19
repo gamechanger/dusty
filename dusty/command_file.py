@@ -35,6 +35,13 @@ def _get_test_image_setup_commands(app_or_lib_name, expanded_specs, testing_spec
     commands += testing_spec['once']
     return commands
 
+
+def _get_test_image_setup_commands(app_or_lib_name, expanded_specs, testing_spec):
+    commands = lib_install_commands_for_app_or_lib(app_or_lib_name, expanded_specs)
+    commands += ['cd {}'.format(container_code_path(_spec_for_service(app_or_lib_name, expanded_specs)))]
+    commands += [_get_testing_spec_command(testing_spec)]
+    return commands
+
 def _lib_install_commands_for_libs(assembled_specs, libs):
     commands = []
     for lib in libs:

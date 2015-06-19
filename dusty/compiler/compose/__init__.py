@@ -106,6 +106,9 @@ def _get_build_path(app_spec):
         return app_spec['build']
     return os.path.join(Repo(app_spec['repo']).local_path, app_spec['build'])
 
+def _compile_docker_command(app_spec):
+    return 'sh {}/{}'.format(container_code_path(app_spec), dusty_command_file_name(app_spec.name))
+
 def _composed_app_dict(app_name, assembled_specs, port_specs):
     """ This function returns a dictionary of the docker-compose.yml specifications for one app """
     logging.info("Compose Compiler: Compiling dict for app {}".format(app_name))
@@ -120,7 +123,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
         compose_dict['build'] = _get_build_path(app_spec)
     else:
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
-    compose_dict['command'] = _compile_docker_command(app_name, assembled_specs)
+    compose_dict['command'] = _compile_docker_command(app_spec)
     logging.info("Compose Compiler: compiled command {}".format(compose_dict['command']))
     compose_dict['links'] = app_spec['depends']['services'] + \
                             app_spec['depends']['apps'] + \

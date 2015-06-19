@@ -34,27 +34,24 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
+    make_test_command_files(expanded_specs)
+    remove_test_command_files(expanded_specs)
     sync_repos_by_specs([spec])
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
     _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command)
 
 def _construct_test_command(spec, suite_name, test_arguments):
-    suite_command = None
+    found_command = False
     for suite_dict in spec['test']['suites']:
         if suite_dict['name'] == suite_name:
-            suite_command = '; '.join(suite_dict['command'])
-            suite_default_args = suite_dict['default_args']
+            found_command = True
             break
-    if suite_command is None:
+    if not found_command:
         raise RuntimeError('{} is not a valid suite name'.format(suite_name))
     if not test_arguments:
         test_arguments = suite_default_args.split(' ')
-    cd_command = 'cd {}'.format(container_code_path(spec))
-    sub_command = "{} {}".format(suite_command, ' '.join(test_arguments))
-    test_command = 'sh -c "{}; {}"'.format(cd_command, sub_command.strip())
-    log_to_client('Command to run in test is {}'.format(test_command))
-    return test_command
+    return 'sh {}/{} {}'.format(container_code_path(spec), dusty_command_file_name(spec.name, test_name=suite_name), test_arguments)
 
 def _test_composefile_path(service_name):
     return os.path.expanduser('~/.dusty-testing/test_{}.yml'.format(service_name))
