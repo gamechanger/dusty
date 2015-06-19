@@ -28,8 +28,11 @@ Options:
 For help on a specific command, provide the '-h' flag to the command, e.g. 'dusty repos -h'
 """
 
+import logging
+import os
 import sys
 import socket
+import threading
 
 from docopt import docopt
 
@@ -63,9 +66,12 @@ MODULE_MAP = {
 
 def _run_command(sock, command):
     error_response = False
+    timer = threading.Timer(2, _notify_on_hang)
+    timer.start()
     sock.sendall(command)
     while True:
         data = sock.recv(65535)
+        timer.cancel()
         if data:
             stripped = data.decode('utf-8').replace(constants.SOCKET_TERMINATOR, '').replace(constants.SOCKET_ERROR_TERMINATOR, '')
             sys.stdout.write(stripped)
@@ -79,14 +85,20 @@ def _run_command(sock, command):
 
     return error_response
 
+def _notify_on_hang():
+    print 'The Dusty daemon will run your command once it\'s finished running previous commands'
+
 def _connect_to_daemon():
+    if not os.path.exists(constants.SOCKET_PATH):
+        logging.info('Socket doesn\'t exist; make sure the Dusty daemon is running')
+        return None
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.settimeout(.2)
     try:
         sock.connect(constants.SOCKET_PATH)
     except:
-        print 'Couldn\'t connect to dusty\'s socket; make sure the daemon is running, and that it\'s not connected to another client'
-        sys.exit(1)
+        logging.info('Couldn\'t connect to Dusty\'s socket; make sure the daemon is running, and that it\'s not connected to another client')
+        return None
     sock.settimeout(None)
     return sock
 
@@ -114,6 +126,8 @@ def main():
     result = MODULE_MAP[command].main(command_args)
     if isinstance(result, Payload):
         sock = _connect_to_daemon()
+        if sock is None:
+            sys.exit(1)
         try:
             errored = _run_command(sock, result.serialize())
         except KeyboardInterrupt:
