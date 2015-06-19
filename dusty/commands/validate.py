@@ -7,6 +7,7 @@ from schemer import ValidationException
 from ..compiler.spec_assembler import get_specs_path, get_specs_from_path
 from ..log import log_to_client
 from ..schemas import app_schema, bundle_schema, lib_schema
+from ..schemas.base_schema_class import notifies_validation_exception
 from .. import constants
 
 def _check_bare_minimum(specs):
