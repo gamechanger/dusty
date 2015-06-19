@@ -5,6 +5,7 @@ from .source import Repo
 from .compiler.compose.common import container_code_path
 from .systems.docker.common import spec_for_service
 
+
 def _write_commands_to_file(list_of_commands, file_location):
     with open(file_location, 'w+') as f:
         for command in list_of_commands:
