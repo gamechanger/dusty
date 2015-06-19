@@ -10,7 +10,6 @@ from .repos import update_managed_repos
 from .. import constants
 from ..command_file import make_up_command_files, remove_up_command_files
 
-
 def start_local_env(recreate_containers=True, pull_repos=True):
     """This command will use the compilers to get compose specs
     will pass those specs to the systems that need them. Those
@@ -48,6 +47,8 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     hosts.update_hosts_file_from_port_spec(port_spec)
     log_to_client("Syncing local repos to the VM")
     rsync.sync_repos(active_repos)
+    log_to_client("Removing the command files locally")
+    remove_command_files(assembled_spec)
     log_to_client("Saving nginx config and ensure nginx is running")
     nginx.update_nginx_from_config(nginx_config)
     log_to_client("Saving docker-compose config and starting all containers")
