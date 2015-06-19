@@ -10,6 +10,7 @@ from .repos import update_managed_repos
 from .. import constants
 from ..command_file import make_up_command_files, remove_up_command_files
 
+
 def start_local_env(recreate_containers=True, pull_repos=True):
     """This command will use the compilers to get compose specs
     will pass those specs to the systems that need them. Those
@@ -38,6 +39,8 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     port_spec = port_spec_compiler.get_port_spec_document(assembled_spec, docker_ip)
     log_to_client("Compiling the nginx config")
     nginx_config = nginx_compiler.get_nginx_configuration_spec(port_spec)
+    log_to_client("Creating setup and script bash files")
+
     log_to_client("Compiling docker-compose config")
     compose_config = compose_compiler.get_compose_dict(assembled_spec, port_spec)
 
