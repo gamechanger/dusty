@@ -4,9 +4,6 @@ class Payload(object):
     def __init__(self, fn, *args, **kwargs):
         self.fn = fn
         self.run_on_daemon = True
-        if 'run_on_daemon' in kwargs:
-            self.run_on_daemon = kwargs['run_on_daemon']
-            del kwargs['run_on_daemon']
         self.args = args
         self.kwargs = kwargs
 

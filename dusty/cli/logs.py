@@ -16,4 +16,6 @@ from ..commands.logs import tail_container_logs
 
 def main(argv):
     args = docopt(__doc__, argv)
-    return Payload(tail_container_logs, args['<service>'], args['-f'], args['--tail'], run_on_daemon=False)
+    payload = Payload(tail_container_logs, args['<service>'], args['-f'], args['--tail'])
+    payload.run_on_daemon = False
+    return payload

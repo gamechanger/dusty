@@ -16,4 +16,6 @@ from ..payload import Payload
 
 def main(argv):
     args = docopt(__doc__, argv)
-    return Payload(execute_shell, args['<service>'], run_on_daemon=False)
+    payload = Payload(execute_shell, args['<service>'])
+    payload.run_on_daemon = False
+    return payload
