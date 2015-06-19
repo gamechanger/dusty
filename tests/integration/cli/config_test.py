@@ -13,7 +13,7 @@ class TestConfigCLI(DustyIntegrationTestCase):
         self.assertInSameLine(result, 'setup_has_run', 'True')
 
     def test_config_listvalues_returns(self):
-        result = yaml.load(self.run_command('config listvalues'))
+        result = yaml.load(self.run_command_stripped('config listvalues'))
         self.assertItemsEqual(result, get_config())
 
     def test_config_set_fails_with_no_args(self):
@@ -26,5 +26,5 @@ class TestConfigCLI(DustyIntegrationTestCase):
 
     def test_config_set_works_with_valid_input(self):
         self.run_command('config set nginx_includes_dir /var/nginx')
-        result = yaml.load(self.run_command('config listvalues'))
+        result = yaml.load(self.run_command_stripped('config listvalues'))
         self.assertEqual(result['nginx_includes_dir'], '/var/nginx')
