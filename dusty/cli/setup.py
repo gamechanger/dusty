@@ -15,10 +15,12 @@ Options:
 """
 
 from docopt import docopt
+from ..payload import Payload
 from ..commands.setup import setup_dusty_config
 
 def main(argv):
     args = docopt(__doc__, argv)
-    return setup_dusty_config(mac_username=args['--mac_username'],
+    return Payload(setup_dusty_config, mac_username=args['--mac_username'],
                               specs_repo=args['--default_specs_repo'],
-                              nginx_includes_dir=args['--nginx_includes_dir'])
+                              nginx_includes_dir=args['--nginx_includes_dir'],
+                              run_on_daemon=False)

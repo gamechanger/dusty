@@ -12,6 +12,6 @@ from ..commands.validate import validate_specs, validate_specs_from_path
 def main(argv):
     args = docopt(__doc__, argv)
     if args.get('<specs-path>'):
-        return validate_specs_from_path(args['<specs-path>'])
+        return Payload(validate_specs_from_path, args['<specs-path>'], run_on_daemon=False)
     else:
         return Payload(validate_specs)

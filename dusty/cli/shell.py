@@ -12,7 +12,8 @@ Example:
 from docopt import docopt
 
 from ..commands.shell import execute_shell
+from ..payload import Payload
 
 def main(argv):
     args = docopt(__doc__, argv)
-    return execute_shell(args['<service>'])
+    return Payload(execute_shell, args['<service>'], run_on_daemon=False)

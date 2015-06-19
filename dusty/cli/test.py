@@ -27,4 +27,5 @@ def main(argv):
     if not args['<suite_name>']:
         return Payload(test_info_for_app_or_lib, args['<app_or_lib_name>'])
     else:
-        run_app_or_lib_tests(args['<app_or_lib_name>'], args['<suite_name>'], args['<args>'], force_recreate=args['--recreate'])
+        Payload(run_app_or_lib_tests, args['<app_or_lib_name>'], args['<suite_name>'], args['<args>'], force_recreate=args['--recreate'],
+                run_on_daemon=False)

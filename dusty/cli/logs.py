@@ -11,8 +11,9 @@ Options:
 """
 from docopt import docopt
 
+from ..payload import Payload
 from ..commands.logs import tail_container_logs
 
 def main(argv):
     args = docopt(__doc__, argv)
-    return tail_container_logs(args['<service>'], args['-f'], args['--tail'])
+    return Payload(tail_container_logs, args['<service>'], args['-f'], args['--tail'], run_on_daemon=False)
