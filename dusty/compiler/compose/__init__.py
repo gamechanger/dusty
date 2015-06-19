@@ -165,7 +165,9 @@ def get_app_volume_mounts(app_name, assembled_specs):
     and mounts declared in all lib specs the app depends on"""
     app_spec = assembled_specs['apps'][app_name]
     volumes = []
-    volumes.append(_get_app_repo_volume_mount(app_spec))
+    repo_mount = _get_app_repo_volume_mount(app_spec)
+    if repo_mount:
+        volumes.append(repo_mount)
     volumes += _get_app_libs_volume_mounts(app_name, assembled_specs)
     return volumes
 
@@ -180,7 +182,8 @@ def get_lib_volume_mounts(base_lib_name, assembled_specs):
 def _get_app_repo_volume_mount(app_spec):
     """ This returns the formatted volume mount spec to mount the local code for an app in the
     container """
-    return "{}:{}".format(Repo(app_spec['repo']).vm_path, container_code_path(app_spec))
+    if app_spec['repo']:
+        return "{}:{}".format(Repo(app_spec['repo']).vm_path, container_code_path(app_spec))
 
 def _get_lib_repo_volume_mount(lib_spec):
     """ This returns the formatted volume mount spec to mount the local code for a lib in the
