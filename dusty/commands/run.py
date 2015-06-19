@@ -24,7 +24,11 @@ def start_local_env(recreate_containers=True, pull_repos=True):
 
     # Stop will fail if we've never written a Composefile before
     if os.path.exists(constants.COMPOSEFILE_PATH):
-        stop_apps_or_services()
+        try:
+            stop_apps_or_services()
+        except CalledProcessError as e:
+            log_to_client("WARNING: docker-compose stop failed")
+            log_to_client(str(e))
     log_to_client("Compiling together the assembled specs")
     if pull_repos:
         update_managed_repos()
@@ -57,11 +61,7 @@ def stop_apps_or_services(app_or_service_names=None, rm_containers=False):
     else:
         log_to_client("Stopping all running containers associated with Dusty")
 
-    try:
-        compose.stop_running_services(app_or_service_names)
-    except CalledProcessError as e:
-        log_to_client("WARNING: docker-compose stop failed")
-        log_to_client(str(e))
+    compose.stop_running_services(app_or_service_names)
     if rm_containers:
         compose.rm_containers(app_or_service_names)
 
