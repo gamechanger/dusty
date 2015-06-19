@@ -1,5 +1,6 @@
 import logging
 import copy
+import os
 import yaml
 
 from ..spec_assembler import get_assembled_specs
@@ -44,6 +45,13 @@ def _conditional_links(assembled_specs, app_name):
             link_to_apps.append(potential_link)
     return link_to_apps
 
+def _get_build_path(app_spec):
+    """ Given a spec for an app, returns the value of the `build` field for docker-compose.
+    If the path is relative, it is expanded and added to the path of the app's repo. """
+    if os.path.isabs(app_spec['build']):
+        return app_spec['build']
+    return os.path.join(Repo(app_spec['repo']).local_path, app_spec['build'])
+
 def _composed_app_dict(app_name, assembled_specs, port_specs):
     """ This function returns a dictionary of the docker-compose.yml specifications for one app """
     logging.info("Compose Compiler: Compiling dict for app {}".format(app_name))
@@ -55,7 +63,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
         logging.info
         compose_dict['image'] = app_spec['image']
     elif 'build' in app_spec:
-        compose_dict['build'] = app_spec['build']
+        compose_dict['build'] = _get_build_path(app_spec)
     else:
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
     compose_dict['command'] = _compile_docker_command(app_name, assembled_specs)
