@@ -107,7 +107,6 @@ def _run_payload(payload):
         sock = _connect_to_daemon()
         if sock is None:
             return 1
-        print 'The Dusty daemon will run your command once it\'s finished running previous commands'
         try:
             errored = _run_command(sock, payload.serialize())
         except KeyboardInterrupt:
