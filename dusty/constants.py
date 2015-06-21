@@ -2,6 +2,8 @@ import os
 
 VERSION = '0.1.2'
 
+EXAMPLE_SPECS_REPO = 'github.com/gamechanger/dusty-example-specs'
+
 SOCKET_TERMINATOR = '\0\0'
 SOCKET_ERROR_TERMINATOR = '\0\1'
 

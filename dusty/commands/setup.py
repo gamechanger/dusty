@@ -24,9 +24,14 @@ def _get_mac_username():
     else:
         return _get_raw_input('Enter your actual mac_username: ')
 
-def _get_default_specs_repo():
+def _get_specs_repo():
     _pretty_print_key_info(constants.CONFIG_SPECS_REPO_KEY)
-    return _get_raw_input('Input the full name of your specs repo, e.g. github.com/gamechanger/dusty-example-specs: ')
+    print 'Repos may be specified with a URL (e.g. github.com/org/repo) or an absolute file path to a local repository'
+    specs_repo = _get_raw_input('Input the path to oyour specs repo, or leave blank to start with the example specs: ')
+    if not specs_repo:
+        print 'Using example specs repo {}'.format(constants.EXAMPLE_SPECS_REPO)
+        specs_repo = constants.EXAMPLE_SPECS_REPO
+    return specs_repo
 
 def _get_contents_of_file(file_location):
     with open(file_location) as f:
@@ -71,7 +76,7 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
     if specs_repo:
         print 'Setting specs_repo to {} based on flag'.format(specs_repo)
     else:
-        specs_repo = _get_default_specs_repo()
+        specs_repo = _get_specs_repo()
     print ''
 
     if nginx_includes_dir:
