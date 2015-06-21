@@ -20,8 +20,6 @@ from ..commands.setup import setup_dusty_config
 
 def main(argv):
     args = docopt(__doc__, argv)
-    payload =  Payload(setup_dusty_config, mac_username=args['--mac_username'],
+    return setup_dusty_config(mac_username=args['--mac_username'],
                               specs_repo=args['--default_specs_repo'],
                               nginx_includes_dir=args['--nginx_includes_dir'])
-    payload.run_on_daemon = False
-    return payload
