@@ -27,7 +27,7 @@ def _get_mac_username():
 def _get_specs_repo():
     _pretty_print_key_info(constants.CONFIG_SPECS_REPO_KEY)
     print 'Repos may be specified with a URL (e.g. github.com/org/repo) or an absolute file path to a local repository'
-    specs_repo = _get_raw_input('Input the path to your specs repo, or leave blank to start with the example specs: ')
+    specs_repo = _get_raw_input('Input the path to oyour specs repo, or leave blank to start with the example specs: ')
     if not specs_repo:
         print 'Using example specs repo {}'.format(constants.EXAMPLE_SPECS_REPO)
         specs_repo = constants.EXAMPLE_SPECS_REPO

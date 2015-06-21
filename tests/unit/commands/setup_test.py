@@ -159,7 +159,7 @@ class TestSetupCommands(DustyTestCase):
 
     @patch('pwd.getpwnam')
     @patch('dusty.commands.setup._get_and_configure_nginx_includes_dir')
-    @patch('dusty.commands.setup._get_default_specs_repo')
+    @patch('dusty.commands.setup._get_specs_repo')
     @patch('dusty.commands.setup._get_mac_username')
     def test_setup_dusty_config(self, fake_get_mac, fake_get_default_specs, fake_get_nginx, fake_pwnam):
         fake_get_mac.return_value = 'user'
@@ -192,7 +192,7 @@ class TestSetupCommands(DustyTestCase):
 
     @patch('pwd.getpwnam')
     @patch('dusty.commands.setup._get_and_configure_nginx_includes_dir')
-    @patch('dusty.commands.setup._get_default_specs_repo')
+    @patch('dusty.commands.setup._get_specs_repo')
     @patch('dusty.commands.setup._get_mac_username')
     def test_setup_dusty_config_pass_arguments_1(self, fake_get_mac, fake_get_default_specs, fake_get_nginx, fake_pwnam):
         setup_dusty_config(mac_username='1',
@@ -204,7 +204,7 @@ class TestSetupCommands(DustyTestCase):
 
     @patch('pwd.getpwnam')
     @patch('dusty.commands.setup._get_and_configure_nginx_includes_dir')
-    @patch('dusty.commands.setup._get_default_specs_repo')
+    @patch('dusty.commands.setup._get_specs_repo')
     @patch('dusty.commands.setup._get_mac_username')
     def test_setup_dusty_config_pass_arguments_2(self, fake_get_mac, fake_get_default_specs, fake_get_nginx, fake_pwnam):
         setup_dusty_config(mac_username='1')
@@ -214,7 +214,7 @@ class TestSetupCommands(DustyTestCase):
 
     @patch('pwd.getpwnam')
     @patch('dusty.commands.setup._get_and_configure_nginx_includes_dir')
-    @patch('dusty.commands.setup._get_default_specs_repo')
+    @patch('dusty.commands.setup._get_specs_repo')
     @patch('dusty.commands.setup._get_mac_username')
     def test_setup_dusty_config_pass_arguments_3(self, fake_get_mac, fake_get_default_specs, fake_get_nginx, fake_pwnam):
         setup_dusty_config(specs_repo='1')
@@ -224,7 +224,7 @@ class TestSetupCommands(DustyTestCase):
 
     @patch('pwd.getpwnam')
     @patch('dusty.commands.setup._get_and_configure_nginx_includes_dir')
-    @patch('dusty.commands.setup._get_default_specs_repo')
+    @patch('dusty.commands.setup._get_specs_repo')
     @patch('dusty.commands.setup._get_mac_username')
     def test_setup_dusty_config_pass_arguments_4(self, fake_get_mac, fake_get_default_specs, fake_get_nginx, fake_pwnam):
         setup_dusty_config(nginx_includes_dir='1')
