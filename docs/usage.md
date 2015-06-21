@@ -1,4 +1,4 @@
-# Dusty Cli Usage
+# Dusty CLI Usage
 
 ## Options
 
