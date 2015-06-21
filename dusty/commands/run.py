@@ -39,7 +39,7 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     log_to_client("Compiling the nginx config")
     nginx_config = nginx_compiler.get_nginx_configuration_spec(port_spec)
     log_to_client("Creating setup and script bash files")
-
+    make_up_command_files(assembled_spec)
     log_to_client("Compiling docker-compose config")
     compose_config = compose_compiler.get_compose_dict(assembled_spec, port_spec)
 

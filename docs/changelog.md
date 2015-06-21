@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.1.2 (In Progress)
+  * NEW: Commands can now be run in the background using the & symbol.
+
   * `repo` and `mount` keys in app specs are now optional
 
 ## 0.1.1 (June 18, 2015)
