@@ -8,22 +8,22 @@ $ docker ps
 FATA[0000] Get http:///var/run/docker.sock/v1.18/containers/json: dial unix /var/run/docker.sock: no such file or directory. Are you trying to connect to a TLS-enabled daemon without TLS?
 ```
 
-This isn't Dusty's fault. You probably just need to run `$(boot2docker shellinit)`
+You probably just need to run `$(boot2docker shellinit)`
 
-### How can Dusty access my private github repos?
+### How can Dusty access my private GitHub repos?
 
-The Dusty daemon, which runs as root and as a daemon, manages your Github repos (at least
-the repos which you don't manually override). To get permissions to clone from Github, the
+The Dusty daemon, which runs as root and as a daemon, manages your GitHub repos (at least
+the repos which you don't manually override). To get permissions to clone from GitHub, the
 Daemon will make use of your unpriveleged user's SSH_AUTH_SOCK. This means that the Daemon's
 behavior using git should be the same as your user's, in terms of permissions.
 
 If you want Dusty to be
-able to clone your private Github repos, you need to configure your standard user (whoever
+able to clone your private GitHub repos, you need to configure your standard user (whoever
 your `mac_username` is set to), to be able to clone repositories without any prompt for
 confirmation or password.
 
-See [this Github help article](https://help.github.com/articles/generating-ssh-keys/)
-for some info about setting up Github ssh keys.
+See [this GitHub help article](https://help.github.com/articles/generating-ssh-keys/)
+for some info about setting up GitHub ssh keys.
 
 Since the Daemon has no way to accept a password via user input, if your key requires a
 passphrase, you should run
