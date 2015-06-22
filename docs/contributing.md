@@ -44,4 +44,4 @@ Before a new release, please do the following:
 * Add a date to the changelog for this version
 * Run the `DustyRelease` Jenkins job with your new version number
 * Bump the version number in dusty/constants.py to the *next* version
-* Bump the version of the curl command on the Readme
+* Bump the version of the curl command on the Readme, and in `docs/installation.md`
