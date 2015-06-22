@@ -68,6 +68,8 @@ class DustySchema(BaseMutable):
         self.spec_type = spec_type
         if isinstance(spec_type, basestring):
             self.type_singular = spec_type.rstrip('s')
+        else:
+            self.type_singular = spec_type
         self.validate(schema, document)
         self._document = deepcopy(document)
         super(DustySchema, self).__init__(deepcopy(document))

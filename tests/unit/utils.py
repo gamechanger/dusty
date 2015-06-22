@@ -23,7 +23,10 @@ def get_bundle_dusty_schema(doc):
     return DustySchema(bundle_schema, doc)
 
 def apply_required_keys(specs):
-    for k, v in specs.get('apps', {}).iteritems():
+    for spec_type in ['apps', 'bundles', 'libs', 'services']:
+        if spec_type not in specs.keys():
+            specs[spec_type] = {}
+    for k, v in specs['apps'].iteritems():
         specs['apps'][k] = get_app_dusty_schema(v, k)
-    for k, v in specs.get('libs', {}).iteritems():
+    for k, v in specs['libs'].iteritems():
         specs['libs'][k] = get_lib_dusty_schema(v, k)

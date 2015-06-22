@@ -23,7 +23,7 @@ class ValidatorTest(DustyTestCase):
         }
         apply_required_keys(specs)
         specs = self.make_test_specs(specs)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValidationException):
             _validate_app_references(specs['apps']['app1'], specs)
 
     def test_validate_app_with_bad_app(self):
@@ -40,7 +40,7 @@ class ValidatorTest(DustyTestCase):
         }
         apply_required_keys(specs)
         specs = self.make_test_specs(specs)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValidationException):
             _validate_app_references(specs['apps']['app1'], specs)
 
     def test_validate_app_with_bad_lib(self):
@@ -59,7 +59,7 @@ class ValidatorTest(DustyTestCase):
         }
         apply_required_keys(specs)
         specs = self.make_test_specs(specs)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValidationException):
             _validate_app_references(specs['apps']['app1'], specs)
 
     def test_app_cycle_detection(self):
