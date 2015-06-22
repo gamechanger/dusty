@@ -62,7 +62,7 @@ def _lib_install_command(lib_spec):
     return "cd {}; {}".format(lib_spec['mount'], '; '.join(lib_spec['install']))
 
 def get_compose_dict(assembled_specs, port_specs):
-    """ This function returns a dictionary representation of a dockercompose.yml file, based on assembled_specs from
+    """ This function returns a dictionary representation of a docker-compose.yml file, based on assembled_specs from
     the spec_assembler, and port_specs from the port_spec compiler """
     compose_dict = {}
     for app_name in assembled_specs['apps'].keys():
@@ -99,14 +99,14 @@ def _conditional_links(assembled_specs, app_name):
     return link_to_apps
 
 def _get_build_path(app_spec):
-    """ Given a spec for an app, returns the value of the `build` field for dockercompose.
+    """ Given a spec for an app, returns the value of the `build` field for docker-compose.
     If the path is relative, it is expanded and added to the path of the app's repo. """
     if os.path.isabs(app_spec['build']):
         return app_spec['build']
     return os.path.join(Repo(app_spec['repo']).local_path, app_spec['build'])
 
 def _composed_app_dict(app_name, assembled_specs, port_specs):
-    """ This function returns a dictionary of the dockercompose.yml specifications for one app """
+    """ This function returns a dictionary of the docker-compose.yml specifications for one app """
     logging.info("Compose Compiler: Compiling dict for app {}".format(app_name))
     app_spec = assembled_specs['apps'][app_name]
     compose_dict = app_spec["compose"]
@@ -119,7 +119,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
         compose_dict['build'] = _get_build_path(app_spec)
     else:
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
-    compose_dict['command'] = _compile_docker_command(app_spec)
+    compose_dict['command'] = _compile_docker_command(app_name, assembled_specs)
     logging.info("Compose Compiler: compiled command {}".format(compose_dict['command']))
     compose_dict['links'] = app_spec['depends']['services'] + \
                             app_spec['depends']['apps'] + \
@@ -149,7 +149,7 @@ def _get_ports_list(app_name, port_specs):
             for port_spec in port_specs['docker_compose'][app_name]]
 
 def _get_compose_volumes(app_name, assembled_specs):
-    """ This returns formatted volume specifications for a dockercompose app. We mount the app
+    """ This returns formatted volume specifications for a docker-compose app. We mount the app
     as well as any libs it needs so that local code is used in our container, instead of whatever
     code was in the docker image.
 
