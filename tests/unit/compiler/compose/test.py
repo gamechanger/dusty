@@ -4,7 +4,8 @@ from copy import copy
 from dusty import constants
 from dusty.compiler.compose import (get_compose_dict, _composed_app_dict,
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
-                                    _conditional_links, get_app_volume_mounts, get_lib_volume_mounts)
+                                    _conditional_links, get_app_volume_mounts, get_lib_volume_mounts,
+                                    _lib_install_command, _lib_install_commands_for_app)
 from dusty.compiler import compose
 from ..test_test_cases import all_test_configs
 from ....testcases import DustyTestCase
