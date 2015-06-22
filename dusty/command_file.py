@@ -1,5 +1,4 @@
 import os
-from nose.tools import nottest
 
 from . import constants
 from .source import Repo

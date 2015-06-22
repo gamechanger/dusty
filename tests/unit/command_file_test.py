@@ -2,9 +2,7 @@ from mock import patch, Mock, call
 
 from ..testcases import DustyTestCase
 from .utils import get_lib_dusty_schema, get_app_dusty_schema
-from dusty.command_file import (_lib_install_commands, _lib_install_commands_for_app, dusty_command_file_name,
-                                make_up_command_files, remove_up_command_files, make_test_command_files,
-                                remove_test_command_files)
+from dusty import command_file
 from dusty.compiler.spec_assembler import get_expanded_libs_specs
 from dusty import constants
 
@@ -16,7 +14,7 @@ class TestCommandFile(DustyTestCase):
             'install': ['python install.py some args']
         }
         expected_command = ["cd /mount/point",  "python install.py some args"]
-        actual_command = _lib_install_commands(lib_spec)
+        actual_command = command_file._lib_install_commands(lib_spec)
         self.assertEqual(expected_command, actual_command)
 
     def test_lib_install_command_with_no_install_spec(self, *args):
@@ -25,14 +23,14 @@ class TestCommandFile(DustyTestCase):
             'mount': '/mount/point'
         })
         expected_command = []
-        actual_command = _lib_install_commands(lib_spec)
+        actual_command = command_file._lib_install_commands(lib_spec)
         self.assertEqual(expected_command, actual_command)
 
     @patch('dusty.command_file._lib_install_commands')
     def test_lib_installs_for_app(self, fake_lib_install, *args):
         basic_specs = {'apps': {'app1': {'depends': {'libs': ['lib1', 'lib2']}}},
                        'libs': {'lib1': {}, 'lib2': {}}}
-        _lib_install_commands_for_app('app1', basic_specs)
+        command_file._lib_install_commands_for_app('app1', basic_specs)
         # Mock is weird, it picks up on the truthiness calls we do
         # on the result after we call the function
         fake_lib_install.assert_has_calls([call(basic_specs['libs']['lib1']),
@@ -43,16 +41,16 @@ class TestCommandFile(DustyTestCase):
                                            call().__radd__().__iadd__(fake_lib_install())])
 
     def test_dusty_command_file_name_basic(self):
-        self.assertEquals('dusty_command_file_app.sh', dusty_command_file_name('app'))
+        self.assertEquals('dusty_command_file_app.sh', command_file.dusty_command_file_name('app'))
 
     def test_dusty_command_file_name_test(self):
-        self.assertEquals('dusty_command_file_app_test_1.sh', dusty_command_file_name('app', test_name='1'))
+        self.assertEquals('dusty_command_file_app_test_1.sh', command_file.dusty_command_file_name('app', test_name='1'))
 
     def test_dusty_command_file_name_script(self):
-        self.assertEquals('dusty_command_file_app_script_1.sh', dusty_command_file_name('app', script_name='1'))
+        self.assertEquals('dusty_command_file_app_script_1.sh', command_file.dusty_command_file_name('app', script_name='1'))
 
     def test_dusty_command_file_name_both(self):
-        self.assertEquals('dusty_command_file_app_script_1.sh', dusty_command_file_name('app', test_name='1', script_name='1'))
+        self.assertEquals('dusty_command_file_app_script_1.sh', command_file.dusty_command_file_name('app', test_name='1', script_name='1'))
 
     @patch('dusty.command_file._write_commands_to_file')
     def test_make_up_command_files(self, fake_write_commands_to_file):
@@ -74,7 +72,7 @@ class TestCommandFile(DustyTestCase):
                               'repo': '/gc/lib2',
                               'mount': '/gc/lib2'})}
         }
-        make_up_command_files(assembled_spec)
+        command_file.make_up_command_files(assembled_spec)
 
         commands1 = ['cd /gc/lib1',
                      'lib1 command 1',
@@ -123,7 +121,7 @@ class TestCommandFile(DustyTestCase):
                               'repo': '/gc/lib2',
                               'mount': '/gc/lib2'})}
         }
-        remove_up_command_files(assembled_spec)
+        command_file.remove_up_command_files(assembled_spec)
         call1 = call('{}/gc/app1/dusty_command_file_app1.sh'.format(constants.REPOS_DIR))
         call2 = call('{}/gc/app1/dusty_command_file_app1_script_script1.sh'.format(constants.REPOS_DIR))
         call3 = call('{}/gc/app1/dusty_command_file_app1_script_script2.sh'.format(constants.REPOS_DIR))
@@ -150,7 +148,7 @@ class TestCommandFile(DustyTestCase):
                      'lib2': get_lib_dusty_schema({}, name='lib2')}
         }
         assembled_spec = get_expanded_libs_specs()
-        make_test_command_files(assembled_spec)
+        command_file.make_test_command_files(assembled_spec)
 
         commands1 = ['cd /gc/app1',
                      'app1 test command 1',
@@ -200,7 +198,7 @@ class TestCommandFile(DustyTestCase):
                      'lib2': get_lib_dusty_schema({}, name='lib2')}
         }
         assembled_spec = get_expanded_libs_specs()
-        remove_test_command_files(assembled_spec)
+        command_file.remove_test_command_files(assembled_spec)
 
         call1 = call('{}/gc/app1/dusty_command_file_app1.sh'.format(constants.REPOS_DIR))
         call2 = call('{}/gc/app1/dusty_command_file_app1_test_suite1.sh'.format(constants.REPOS_DIR))
