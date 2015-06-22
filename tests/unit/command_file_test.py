@@ -83,13 +83,19 @@ class TestCommandFile(DustyTestCase):
                      'lib2 command 2',
                      'cd /gc/app1',
                      'export PATH=$PATH:/gc/app1',
-                     'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
-                     'then mkdir -p {}; touch {}'.format(constants.RUN_DIR, constants.FIRST_RUN_FILE_PATH),
+                     'dusty_once_fn () {',
                      'app1 once 1',
                      'app1 once 2 &',
+                     '}',
+                     'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
+                     'then mkdir -p {}; touch {}'.format(constants.RUN_DIR, constants.FIRST_RUN_FILE_PATH),
+                     'dusty_once_fn | tee {}'.format(constants.ONCE_LOG_PATH),
                      'fi',
+                     'dusty_always_fn () {',
                      'app1 always 1',
-                     'app1 always 2']
+                     'app1 always 2',
+                     '}',
+                     'dusty_always_fn | tee {}'.format(constants.ALWAYS_LOG_PATH)]
         call1 = call(commands1, '{}/app1/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
         commands2 = ['cd /gc/app1',
                      'script1 1',
