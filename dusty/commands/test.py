@@ -50,7 +50,7 @@ def _construct_test_command(spec, suite_name, test_arguments):
         raise RuntimeError('{} is not a valid suite name'.format(suite_name))
     if not test_arguments:
         test_arguments = suite_spec['default_args'].split(' ')
-    return 'sh {}/{} {}'.format(container_code_path(spec), dusty_command_file_name(spec.name, test_name=suite_name), ' '.join(test_arguments))
+    return 'sh {}/{} {}'.format(constants.CONTAINER_COMMAND_FILES_DIR, dusty_command_file_name(spec.name, test_name=suite_name), ' '.join(test_arguments))
 
 def _test_composefile_path(service_name):
     return os.path.expanduser('~/.dusty-testing/test_{}.yml'.format(service_name))
@@ -92,7 +92,7 @@ def _app_or_lib_compose_up(testing_spec, app_or_lib_name, app_or_lib_volumes, te
 def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command):
     testing_spec = expanded_specs.get_app_or_lib(app_or_lib_name)['test']
 
-    volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
+    volumes = get_volume_mounts(app_or_lib_name, expanded_specs, test=True)
     previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, testing_spec)
     previous_container_name = previous_container_names[-1] if previous_container_names else None
     test_container_name = _app_or_lib_compose_up(testing_spec, app_or_lib_name,

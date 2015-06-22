@@ -30,6 +30,9 @@ VM_REPOS_DIR = os.path.join(VM_PERSIST_DIR, 'repos')
 VM_CP_DIR = '/cp'
 CONTAINER_CP_DIR = '/cp'
 
+VM_COMMAND_FILES_DIR = '/command_files'
+CONTAINER_COMMAND_FILES_DIR = '/command_files'
+
 GIT_USER = 'git'
 
 HOSTS_PATH = '/etc/hosts'

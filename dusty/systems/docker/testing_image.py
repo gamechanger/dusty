@@ -6,6 +6,7 @@ from ...compiler.compose import container_code_path, get_volume_mounts
 from ...log import log_to_client
 from ...command_file import dusty_command_file_name, lib_install_commands_for_app_or_lib
 from .common import spec_for_service
+from ... import constants
 
 def _ensure_testing_spec_base_image(docker_client, testing_spec):
     log_to_client('Getting the base image for the new image')
@@ -74,14 +75,14 @@ def test_image_name(app_or_lib_name):
     return "dusty/test_{}".format(app_or_lib_name)
 
 def _get_test_image_setup_command(app_or_lib_name, app_or_lib_spec):
-    return 'sh {}/{}'.format(container_code_path(app_or_lib_spec), dusty_command_file_name(app_or_lib_name))
+    return 'sh {}/{}'.format(constants.CONTAINER_COMMAND_FILES_DIR, dusty_command_file_name(app_or_lib_name))
 
 def _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs):
     image_name = test_image_name(app_or_lib_name)
     testing_spec = _testing_spec(app_or_lib_name, expanded_specs)
     base_image_tag = _ensure_testing_spec_base_image(docker_client, testing_spec)
     image_setup_command = _get_test_image_setup_command(app_or_lib_name, spec_for_service(app_or_lib_name, expanded_specs))
-    volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
+    volumes = get_volume_mounts(app_or_lib_name, expanded_specs, test=True)
     _make_installed_requirements_image(docker_client, base_image_tag, image_setup_command, image_name, volumes)
 
 def ensure_test_image(docker_client, app_or_lib_name, expanded_specs, force_recreate=False):

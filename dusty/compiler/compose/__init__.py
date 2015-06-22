@@ -55,7 +55,7 @@ def _get_build_path(app_spec):
     return os.path.join(Repo(app_spec['repo']).local_path, app_spec['build'])
 
 def _compile_docker_command(app_spec):
-    return 'sh {}/{}'.format(container_code_path(app_spec), dusty_command_file_name(app_spec.name))
+    return 'sh {}/{}'.format(constants.CONTAINER_COMMAND_FILES_DIR, dusty_command_file_name(app_spec.name))
 
 def _composed_app_dict(app_name, assembled_specs, port_specs):
     """ This function returns a dictionary of the docker-compose.yml specifications for one app """

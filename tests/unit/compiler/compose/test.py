@@ -85,6 +85,7 @@ class TestComposeCompiler(DustyTestCase):
     def test_composed_volumes(self, *args):
         expected_volumes = [
             '/cp/app1:/cp',
+            '/command_files/app1:/command_files',
             '/Users/gc/app1:/gc/app1',
             '/Users/gc/lib1:/gc/lib1',
             '/Users/gc/lib2:/gc/lib2'
@@ -95,39 +96,43 @@ class TestComposeCompiler(DustyTestCase):
     def testget_app_volume_mounts_1(self, *args):
         expected_volumes = [
             '/Users/gc/app1:/gc/app1',
+            '/command_files/app1:/command_files',
             '/Users/gc/lib1:/gc/lib1',
             '/Users/gc/lib2:/gc/lib2'
         ]
         returned_volumes = get_app_volume_mounts('app1', basic_specs)
-        self.assertEqual(expected_volumes, returned_volumes)
+        self.assertEqual(set(expected_volumes), set(returned_volumes))
 
     def testget_app_volume_mounts_2(self, *args):
-        expected_volumes = ['/Users/gc/app2:/gc/app2']
+        expected_volumes = ['/Users/gc/app2:/gc/app2',
+                            '/command_files/app2:/command_files',]
         returned_volumes = get_app_volume_mounts('app2', basic_specs)
-        self.assertEqual(expected_volumes, returned_volumes)
+        self.assertEqual(set(expected_volumes), set(returned_volumes))
 
     def testget_lib_volume_mounts_1(self, *args):
         expected_volumes = [
             '/Users/gc/lib1:/gc/lib1',
-            '/Users/gc/lib2:/gc/lib2'
+            '/Users/gc/lib2:/gc/lib2',
+            '/command_files/lib1/test:/command_files',
         ]
         returned_volumes = get_lib_volume_mounts('lib1', basic_specs)
-        self.assertEqual(expected_volumes, returned_volumes)
+        self.assertEqual(set(expected_volumes), set(returned_volumes))
 
     def testget_lib_volume_mounts_2(self, *args):
-        expected_volumes = ['/Users/gc/lib2:/gc/lib2']
+        expected_volumes = ['/Users/gc/lib2:/gc/lib2',
+                            '/command_files/lib2/test:/command_files',]
         returned_volumes = get_lib_volume_mounts('lib2', basic_specs)
-        self.assertEqual(expected_volumes, returned_volumes)
+        self.assertEqual(set(expected_volumes), set(returned_volumes))
 
     def test_compile_command_with_once(self, *args):
-        expected_command_list = "sh /gc/app1/dusty_command_file_app1.sh"
+        expected_command_list = "sh /command_files/dusty_command_file_app1.sh"
         returned_command = _compile_docker_command(basic_specs['apps']['app1'])
         self.assertEqual(expected_command_list, returned_command)
 
     def test_compile_command_without_once(self, *args):
         new_specs = copy(basic_specs)
         new_specs['apps']['app1']['commands']['once'] = ['']
-        expected_command_list = "sh /gc/app1/dusty_command_file_app1.sh"
+        expected_command_list = "sh /command_files/dusty_command_file_app1.sh"
         returned_command = _compile_docker_command(new_specs['apps']['app1'])
         self.assertEqual(expected_command_list, returned_command)
 
@@ -154,6 +159,7 @@ class TestComposeCompiler(DustyTestCase):
             ],
             'volumes': [
                 '/cp/app1:/cp',
+                '/command_files/app1:/command_files',
                 '/Users/gc/app1:/gc/app1',
                 '/Users/gc/lib1:/gc/lib1',
                 '/Users/gc/lib2:/gc/lib2'

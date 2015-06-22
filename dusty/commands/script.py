@@ -7,6 +7,7 @@ from ..compiler.compose import container_code_path
 from . import utils
 from ..systems.docker import get_dusty_container_name
 from ..command_file import dusty_command_file_name
+from .. import constants
 
 def script_info_for_app(app_name):
     app_specs = get_specs()['apps'].get(app_name)
@@ -34,7 +35,7 @@ def execute_script(app_name, script_name, script_arguments=[]):
     if not found_spec:
         raise KeyError('No script found named {} in specs for app {}'.format(script_name, app_name))
 
-    command_file = '{}/{}'.format(container_code_path(app_specs), dusty_command_file_name(app_specs.name, script_name=script_name))
+    command_file = '{}/{}'.format(constants.CONTAINER_COMMAND_FILES_DIR, dusty_command_file_name(app_specs.name, script_name=script_name))
 
     container_name = get_dusty_container_name(app_name)
     utils.exec_docker('exec', '-ti', container_name, 'sh', command_file, *script_arguments)

@@ -1,5 +1,3 @@
-import os
-
 from . import constants
 from .source import Repo
 from .compiler.compose.common import container_code_path
@@ -75,9 +73,9 @@ def dusty_command_file_name(app_or_lib_name, script_name=None, test_name=None):
         command_file_name = '{}_test_{}'.format(command_file_name, test_name)
     return "{}.sh".format(command_file_name)
 
-def _write_sync_and_remove_command_file(commands, dusty_command_file_name, spec):
+def _write_sync_and_remove_command_file(commands, dusty_command_file_name, spec, test=False):
     repo = Repo(spec['repo'])
-    vm_path = '{}/{}'.format(repo.vm_path, dusty_command_file_name)
+    vm_path = '{}{}/{}'.format(repo.vm_path,'/test' if test else '' , dusty_command_file_name)
     local_path = '{}/{}'.format(constants.COMMAND_FILES_DIR, dusty_command_file_name)
     _write_commands_to_file(commands, local_path)
     sync_local_path_to_vm(local_path, vm_path)
@@ -88,13 +86,16 @@ def make_up_command_files(assembled_specs):
         spec = assembled_specs['apps'][app_name]
         commands = _compile_docker_commands(app_name, assembled_specs)
         command_file_name = dusty_command_file_name(app_name)
-        _write_sync_and_remove_command_file(commands, command_file_name, spec)
+        local_path = '{}/{}/{}'.format(constants.COMMAND_FILES_DIR, app_name, command_file_name)
+        _write_commands_to_file(commands, local_path)
         script_specs = spec['scripts']
         for script_spec in script_specs:
             commands = ["cd {}".format(container_code_path(spec))] + script_spec['command']
             commands[-1] = '{} $@'.format(commands[-1])
             command_file_name = dusty_command_file_name(app_name, script_name=script_spec['name'])
-            _write_sync_and_remove_command_file(commands, command_file_name, spec)
+            local_path = '{}/{}/{}'.format(constants.COMMAND_FILES_DIR, app_name, command_file_name)
+            _write_commands_to_file(commands, local_path)
+    sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)
 
 def make_test_command_files(expanded_specs):
     for app_or_lib_spec in expanded_specs.get_apps_and_libs():
@@ -102,11 +103,14 @@ def make_test_command_files(expanded_specs):
         if test_spec and test_spec['once']:
             commands = _get_test_image_setup_commands(app_or_lib_spec.name, expanded_specs, test_spec)
             command_file_name = dusty_command_file_name(app_or_lib_spec.name)
-            _write_sync_and_remove_command_file(commands, command_file_name, app_or_lib_spec)
+            local_path = '{}/{}/test/{}'.format(constants.COMMAND_FILES_DIR, app_or_lib_spec.name, command_file_name)
+            _write_commands_to_file(commands, local_path)
             suite_specs = test_spec['suites']
             for suite_spec in suite_specs:
                 commands = ["cd {}".format(container_code_path(app_or_lib_spec))] + suite_spec['command']
                 commands[-1] = '{} $@'.format(commands[-1])
                 command_file_name = dusty_command_file_name(app_or_lib_spec.name, test_name=suite_spec['name'])
-                _write_sync_and_remove_command_file(commands, command_file_name, app_or_lib_spec)
+                local_path = '{}/{}/test/{}'.format(constants.COMMAND_FILES_DIR, app_or_lib_spec.name, command_file_name)
+                _write_commands_to_file(commands, local_path)
 
+    sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)
