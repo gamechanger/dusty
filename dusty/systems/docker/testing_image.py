@@ -5,7 +5,6 @@ import docker
 from ...compiler.compose import container_code_path, get_volume_mounts
 from ...log import log_to_client
 from ...command_file import dusty_command_file_name, lib_install_commands_for_app_or_lib
-from .common import spec_for_service
 
 def _ensure_testing_spec_base_image(docker_client, testing_spec):
     log_to_client('Getting the base image for the new image')
