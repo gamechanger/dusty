@@ -248,39 +248,3 @@ class TestGetExpandedLibSpecs(DustyTestCase):
                 for spec_level_key, value in spec.iteritems():
                     self.assertEquals(specs[spec_type][name][spec_level_key], value)
 
-class TestGetDependentRepos(DustyTestCase):
-    @patch('dusty.schemas.base_schema_class.get_specs_from_path')
-    def test_get_all_repos_for_app_or_library_app(self, fake_get_specs):
-        fake_get_specs.return_value = {'apps': {'app1': get_app_dusty_schema(
-                                                    {'depends': {'apps': ['app2', 'app3'],
-                                                                 'libs': ['lib1']},
-                                                     'repo': '/gc/app1'}),
-                                                'app2': get_app_dusty_schema(
-                                                    {'depends': {'apps': ['app4'],
-                                                     'libs': []},
-                                                     'repo': '/gc/app2'}),
-                                                'app3': get_app_dusty_schema({'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app3'}),
-                                                'app4': get_app_dusty_schema({'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app4'})},
-                                       'libs': {'lib1': get_lib_dusty_schema({'depends': {'libs': ['lib2']}, 'repo': '/gc/lib1'}),
-                                                'lib2': get_lib_dusty_schema({'depends': {'libs': []}, 'repo': '/gc/lib2'})}}
-
-        self.assertEquals(set(spec_assembler.get_all_repos_for_app_or_library('app1')),
-                          set([Repo('/gc/app1'), Repo('/gc/lib1'), Repo('/gc/lib2')]))
-
-    @patch('dusty.schemas.base_schema_class.get_specs_from_path')
-    def test_get_all_repos_for_app_or_library_lib(self, fake_get_specs):
-        fake_get_specs.return_value = {'apps': {'app1': get_app_dusty_schema(
-                                                    {'depends': {'apps': ['app2', 'app3'],
-                                                                 'libs': ['lib1']},
-                                                     'repo': '/gc/app1'}),
-                                                'app2': get_app_dusty_schema(
-                                                    {'depends': {'apps': ['app4'],
-                                                     'libs': []},
-                                                     'repo': '/gc/app2'}),
-                                                'app3': get_app_dusty_schema({'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app3'}),
-                                                'app4': get_app_dusty_schema({'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app4'})},
-                                       'libs': {'lib1': get_lib_dusty_schema({'depends': {'libs': ['lib2']}, 'repo': '/gc/lib1'}),
-                                                'lib2': get_lib_dusty_schema({'depends': {'libs': []}, 'repo': '/gc/lib2'})}}
-
-        self.assertEquals(set(spec_assembler.get_all_repos_for_app_or_library('lib1')),
-                          set([Repo('/gc/lib1'), Repo('/gc/lib2')]))

@@ -4,8 +4,7 @@ import textwrap
 from prettytable import PrettyTable
 
 from .. import constants
-from ..compiler.spec_assembler import (get_expanded_libs_specs, get_all_repos_for_app_or_library,
-                                       get_specs_repo)
+from ..compiler.spec_assembler import get_expanded_libs_specs, get_specs_repo, get_repo_of_app_or_library
 from ..compiler.compose import get_volume_mounts, get_testing_compose_dict, container_code_path
 from ..systems.docker.testing_image import ensure_test_image, test_image_name
 from ..systems.docker import get_docker_client
@@ -14,6 +13,21 @@ from ..systems.rsync import sync_repos_by_specs
 from ..systems.virtualbox import initialize_docker_vm
 from ..log import log_to_client
 from ..command_file import make_test_command_files, dusty_command_file_name
+from ..source import Repo
+
+
+def _get_dependent_repos_for_app_or_library(app_or_library_name):
+    specs = get_expanded_libs_specs()
+    spec = specs.get_app_or_lib(app_or_library_name)
+    repos = set()
+    for dependent_name in spec['depends']['libs']:
+        repos.add(Repo(specs.get_app_or_lib(dependent_name)['repo']))
+    return repos
+
+def _get_all_repos_for_app_or_library(app_or_library_name):
+    repos = _get_dependent_repos_for_app_or_library(app_or_library_name)
+    repos.add(get_repo_of_app_or_library(app_or_library_name))
+    return repos
 
 def test_info_for_app_or_lib(app_or_lib_name):
     expanded_specs = get_expanded_libs_specs()
@@ -34,7 +48,7 @@ def _update_test_repos(app_or_lib_name):
     log_to_client('Updating managed copy of specs-repo before loading specs')
     if not specs_repo.is_overridden:
         specs_repo.update_local_repo()
-    for repo in get_all_repos_for_app_or_library(app_or_lib_name):
+    for repo in _get_all_repos_for_app_or_library(app_or_lib_name):
         if not repo.is_overridden:
             repo.update_local_repo()
 
