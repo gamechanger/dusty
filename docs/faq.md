@@ -22,7 +22,7 @@ able to clone your private Github repos, you need to configure your standard use
 your `mac_username` is set to), to be able to clone repositories without any prompt for
 confirmation or password.
 
-See the Github help article [here](https://help.github.com/articles/generating-ssh-keys/)
+See [this Github help article](https://help.github.com/articles/generating-ssh-keys/)
 for some info about setting up Github ssh keys.
 
 Since the Daemon has no way to accept a password via user input, if your key requires a
@@ -30,16 +30,18 @@ passphrase, you should run
 ```
 ssh-add -K <path-of-private-key>
 ```
+This will securely save the passphrase for that key in your Keychain.
 
 ### Why doesn't Dusty support Linux?
 
 Dusty might be ported to Linux in the future, although we don't have concrete plans to
-do so. Many of the problems Dusty solves are specific to an OSX environment.
+do so. Many of the problems Dusty solves are specific to an OSX environment, where
+Docker can't run natively.
 
 ### I've read the Dusty docs but I'd like more information
 
 We have a Slack board where you can talk to the core contributors.
-Register [here](https://dusty-slackin.herokuapp.com/)
+[Register here](https://dusty-slackin.herokuapp.com/)
 
 ### Why Dusty?
 
