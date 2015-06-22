@@ -4,7 +4,10 @@ import glob
 import os
 import yaml
 
+from schemer import ValidationException
+
 from . import app_schema, lib_schema, bundle_schema
+from ..log import log_to_client
 
 class BaseMutable(collections.MutableMapping):
     def __init__(self, document):
@@ -50,18 +53,33 @@ def _get_respective_schema(specs_type):
     else:
         raise RuntimeError('Specs must be of the type apps, bundles, libs or services')
 
+def notifies_validation_exception(f):
+    def inner(spec, *args):
+        try:
+            f(spec, *args)
+        except ValidationException as e:
+            raise ValidationException("Error validating {} {}: {}".format(spec.type_singular, spec.name, str(e)))
+    return inner
 
 # This is build on top of Schemer's functionality
 class DustySchema(BaseMutable):
     def __init__(self, schema, document, name=None, spec_type=None):
-        if schema is not None:
-            schema.validate(document)
         self.name = name
         self.spec_type = spec_type
+        if isinstance(spec_type, basestring):
+            self.type_singular = spec_type.rstrip('s')
+        else:
+            self.type_singular = spec_type
+        self.validate(schema, document)
         self._document = deepcopy(document)
         super(DustySchema, self).__init__(deepcopy(document))
         if schema is not None:
             schema.apply_defaults(self._document)
+
+    @notifies_validation_exception
+    def validate(self, schema, document):
+        if schema is not None:
+            schema.validate(document)
 
 def get_specs_from_path(specs_path):
     specs = {}
