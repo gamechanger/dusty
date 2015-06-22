@@ -114,12 +114,12 @@ def make_up_command_files(assembled_specs):
             _write_up_script_command(app_name, spec, script_spec)
     sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)
 
-def make_test_command_files(expanded_specs):
-    for app_or_lib_spec in expanded_specs.get_apps_and_libs():
-        test_spec = app_or_lib_spec['test']
-        if test_spec and test_spec['once']:
-            suite_specs = test_spec['suites']
-            _write_test_command(app_or_lib_spec, expanded_specs)
-            for suite_spec in suite_specs:
-                _write_test_suite_command(app_or_lib_spec, suite_spec)
+def make_test_command_files(app_or_lib_name, expanded_specs):
+    app_or_lib_spec = expanded_specs.get_app_or_lib(app_or_lib_name)
+    test_spec = app_or_lib_spec['test']
+    if test_spec and test_spec['once']:
+        suite_specs = test_spec['suites']
+        _write_test_command(app_or_lib_spec, expanded_specs)
+        for suite_spec in suite_specs:
+            _write_test_suite_command(app_or_lib_spec, suite_spec)
     sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)

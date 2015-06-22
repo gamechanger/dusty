@@ -40,17 +40,32 @@ def _update_test_repos(app_or_lib_name):
         if not repo.is_overridden:
             repo.update_local_repo()
 
-def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False, pull_repos=True):
+def ensure_valid_suite_name(app_or_lib_name, suite_name):
+    expanded_specs = get_expanded_libs_specs()
+    app_or_lib_spec = expanded_specs.get_app_or_lib(app_or_lib_name)
+    found_suite = False
+    for suite_spec in app_or_lib_spec['test']['suites']:
+        if suite_spec['name'] == suite_name:
+            found_suite = True
+            break
+    if not found_suite:
+        raise RuntimeError('Must specify a valid suite name')
+
+def pull_repos_and_sync_commands(app_or_lib_name, pull_repos=False):
+    expanded_specs = get_expanded_libs_specs()
+    log_to_client('Syncing test command files to virtual machine')
+    make_test_command_files(app_or_lib_name, expanded_specs)
+    if pull_repos:
+        _update_test_repos(app_or_lib_name)
+
+def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
     log_to_client("Ensuring virtualbox vm is running")
     initialize_docker_vm()
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
-    if pull_repos:
-        _update_test_repos(app_or_lib_name)
     sync_repos_by_specs([spec])
     test_command = _construct_test_command(spec, suite_name, test_arguments)
-    make_test_command_files(expanded_specs)
     sync_repos_by_specs([spec])
     ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
     _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command)

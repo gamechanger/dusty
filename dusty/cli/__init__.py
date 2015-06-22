@@ -146,3 +146,4 @@ def main():
             errored = _run_payload(payload)
             if errored:
                 sys.exit(1)
+        sys.exit(0)
