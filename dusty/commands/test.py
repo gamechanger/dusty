@@ -39,16 +39,10 @@ def _update_test_repos(app_or_lib_name):
             repo.update_local_repo()
 
 def ensure_valid_suite_name(app_or_lib_name, suite_name):
-    import logging
     expanded_specs = get_expanded_libs_specs()
-    logging.error(expanded_specs)
     app_or_lib_spec = expanded_specs.get_app_or_lib(app_or_lib_name)
     found_suite = False
-    logging.error(app_or_lib_spec)
     for suite_spec in app_or_lib_spec['test']['suites']:
-        import logging
-        logging.error(suite_name)
-        logging.error(suite_spec)
         if suite_spec['name'] == suite_name:
             found_suite = True
             break

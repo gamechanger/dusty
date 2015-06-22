@@ -101,8 +101,6 @@ class DustySpecs(BaseMutable):
         super(DustySpecs, self).__init__(document)
 
     def get_app_or_lib(self, app_or_lib_name):
-        import logging
-        logging.error(self._document)
         if app_or_lib_name in self._document['apps']:
             return self._document['apps'][app_or_lib_name]
         elif app_or_lib_name in self._document['libs']:
