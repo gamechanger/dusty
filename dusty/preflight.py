@@ -89,7 +89,7 @@ def _ensure_config_dir_exists():
     if not os.path.exists(constants.CONFIG_DIR):
         os.makedirs(constants.CONFIG_DIR)
 
-def _ensure_config_dir_exists():
+def _ensure_command_files_dir_exists():
     if not os.path.exists(constants.COMMAND_FILES_DIR):
         os.makedirs(constants.COMMAND_FILES_DIR)
 
