@@ -25,7 +25,9 @@ takes the following actions:
 * Loads the plist that was downloaded, if the previous step was successful
 
 To download and run this install script, run
-`bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.1.1/install.sh`"`
+```
+bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.1.1/install.sh`"
+```
 
 ## Setup
 
