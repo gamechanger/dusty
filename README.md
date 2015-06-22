@@ -1,5 +1,5 @@
 ![](http://i.imgur.com/XITuXg3.png)
-Docker-based development environment manager
+Docker-powered development environments
 
 [![Join the Dusty chat](https://dusty-slackin.herokuapp.com/badge.svg)](https://dusty-slackin.herokuapp.com/)
 [![Dusty Documentation](https://readthedocs.org/projects/dusty/badge/)](http://dusty.readthedocs.org/en/latest/)
