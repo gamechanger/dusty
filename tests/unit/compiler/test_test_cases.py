@@ -247,3 +247,4 @@ class TestGetExpandedLibSpecs(DustyTestCase):
             for name, spec in expected_expanded_specs[spec_type].iteritems():
                 for spec_level_key, value in spec.iteritems():
                     self.assertEquals(specs[spec_type][name][spec_level_key], value)
+
