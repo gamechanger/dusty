@@ -58,8 +58,7 @@ def notifies_validation_exception(f):
         try:
             f(spec, *args)
         except ValidationException as e:
-            log_to_client("Error validating {} {}: {}".format(spec.type_singular, spec.name, str(e)))
-            raise e
+            raise ValidationException("Error validating {} {}: {}".format(spec.type_singular, spec.name, str(e)))
     return inner
 
 # This is build on top of Schemer's functionality

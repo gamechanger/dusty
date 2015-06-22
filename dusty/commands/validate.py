@@ -14,20 +14,27 @@ def _check_bare_minimum(specs):
     if not specs.get('bundles'):
         raise ValidationException("No Bundles found - exiting")
 
+@notifies_validation_exception
 def _validate_app_references(app, specs):
     for spec_type in ['apps', 'libs', 'services']:
         dependent = app['depends'][spec_type]
         if spec_type in ['apps', 'services']:
             dependent += app['conditional_links'][spec_type]
-        assert(all(spec_name in specs[spec_type].keys() for spec_name in dependent))
+        not_present = set(dependent) - set(specs[spec_type].keys())
+        if not_present:
+            raise ValidationException('{} {} are not present in your specs'.format(spec_type, ', '.join(not_present)))
 
+@notifies_validation_exception
 def _validate_bundle_references(bundle, specs):
-    for app in bundle['apps']:
-        assert(app in specs['apps'].keys())
+    not_present = set(bundle['apps']) - set(specs['apps'].keys())
+    if not_present:
+        raise ValidationException('Apps {} are not present in your specs'.format(', '.join(not_present)))
 
+@notifies_validation_exception
 def _validate_lib_references(lib, specs):
-    for lib in lib['depends']['libs']:
-        assert(lib in specs['libs'].keys())
+    not_present = set(lib['depends']['libs']) - set(specs['libs'].keys())
+    if not_present:
+        raise ValidationException('Libs {} are not present in your specs'.format(', '.join(not_present)))
 
 def _validate_spec_names(specs):
     for app in specs['apps'].values():
@@ -41,7 +48,7 @@ def _cycle_check(spec, specs, upstream):
     for dependent in spec['depends'][spec.spec_type]:
         print dependent
         if dependent in upstream:
-            raise ValidationException("Cycle found for {0} {1}.  Upstream {0}: {2}".format(spec.spec_type, spec.name, upstream))
+            raise ValidationException("Cycle found for {0} {1}.  Upstream: {2}".format(spec.type_singular, spec.name, upstream))
         else:
             new_upstream = copy(upstream)
             new_upstream.add(dependent)
