@@ -1,8 +1,9 @@
-from mock import patch, call
+from mock import patch, call, Mock
 
 from ...testcases import DustyTestCase
 from ..utils import get_app_dusty_schema, get_lib_dusty_schema
 from dusty.commands import test
+from dusty.schemas.base_schema_class import DustySpecs
 
 @patch('dusty.commands.test.initialize_docker_vm')
 @patch('dusty.commands.test.get_docker_client')
@@ -100,3 +101,27 @@ class TestTestsCommands(DustyTestCase):
     def test_construct_test_command_lib_arguments(self, *args):
         return_command = test._construct_test_command(self.specs['libs']['lib-a'], 'nose', ['1', '2', '3'])
         self.assertEquals('sh /command_files/dusty_command_file_lib-a_test_nose.sh 1 2 3', return_command.strip())
+
+    @patch('dusty.commands.test._update_test_repos')
+    @patch('dusty.commands.test.make_test_command_files')
+    def test_pull_repos_and_sync_commands_1(self, fake_make, fake_update_test, fake_lib_get_volumes,
+                                            fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
+                                            fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
+        fake_specs = Mock()
+        fake_expanded_libs.return_value = fake_specs
+        test.pull_repos_and_sync_commands('app1', pull_repos=True)
+
+        fake_update_test.assert_has_calls([call('app1')])
+        fake_make.assert_has_calls([call('app1', fake_specs)])
+
+    @patch('dusty.commands.test._update_test_repos')
+    @patch('dusty.commands.test.make_test_command_files')
+    def test_pull_repos_and_sync_commands_2(self, fake_make, fake_update_test, fake_lib_get_volumes,
+                                            fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
+                                            fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
+        fake_specs = Mock()
+        fake_expanded_libs.return_value = fake_specs
+        test.pull_repos_and_sync_commands('app1')
+
+        fake_update_test.assert_has_calls([])
+        fake_make.assert_has_calls([call('app1', fake_specs)])

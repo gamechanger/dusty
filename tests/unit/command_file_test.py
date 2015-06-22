@@ -146,7 +146,7 @@ class TestCommandFile(DustyTestCase):
     @patch('dusty.command_file._write_commands_to_file')
     @patch('dusty.schemas.base_schema_class.get_specs_from_path')
     @patch('dusty.command_file.sync_local_path_to_vm')
-    def test_make_test_command_files_1(self, fake_sync, fake_get_specs, fake_write_commands_to_file):
+    def test_make_test_command_files_2(self, fake_sync, fake_get_specs, fake_write_commands_to_file):
         fake_get_specs.return_value = {
             'apps': {'app1': get_app_dusty_schema({'repo': '/gc/app1',
                               'mount': '/gc/app1',

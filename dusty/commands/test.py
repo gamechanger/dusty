@@ -35,16 +35,20 @@ def _update_test_repos(app_or_lib_name):
         log_to_client('Updating managed copy of specs-repo before loading specs')
         specs_repo.update_local_repo()
     for repo in get_all_repos_for_app_or_library(app_or_lib_name):
-        import logging
-        logging.error(repo.managed_path)
         if not repo.is_overridden:
             repo.update_local_repo()
 
 def ensure_valid_suite_name(app_or_lib_name, suite_name):
+    import logging
     expanded_specs = get_expanded_libs_specs()
+    logging.error(expanded_specs)
     app_or_lib_spec = expanded_specs.get_app_or_lib(app_or_lib_name)
     found_suite = False
+    logging.error(app_or_lib_spec)
     for suite_spec in app_or_lib_spec['test']['suites']:
+        import logging
+        logging.error(suite_name)
+        logging.error(suite_spec)
         if suite_spec['name'] == suite_name:
             found_suite = True
             break
@@ -66,7 +70,6 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
     sync_repos_by_specs([spec])
     test_command = _construct_test_command(spec, suite_name, test_arguments)
-    sync_repos_by_specs([spec])
     ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
     _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command)
 
