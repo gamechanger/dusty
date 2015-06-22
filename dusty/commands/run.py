@@ -8,6 +8,7 @@ from ..systems.docker import compose
 from ..log import log_to_client
 from .repos import update_managed_repos
 from .. import constants
+from ..command_file import make_up_command_files, remove_up_command_files
 
 def start_local_env(recreate_containers=True, pull_repos=True):
     """This command will use the compilers to get compose specs

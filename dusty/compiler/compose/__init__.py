@@ -3,10 +3,64 @@ import copy
 import os
 import yaml
 
+from ...source import Repo
 from ..spec_assembler import get_assembled_specs
 from ...path import vm_cp_path
-from ...source import Repo
 from ... import constants
+from ...command_file import dusty_command_file_name
+from .common import container_code_path, get_volume_mounts, get_app_volume_mounts, get_lib_volume_mounts
+
+
+def _compile_docker_command(app_name, assembled_specs):
+    """ This is used to compile the command that will be run when the docker container starts
+    up. This command has to install any libs that the app uses, run the `always` command, and
+    run the `once` command if the container is being launched for the first time """
+    app_spec = assembled_specs['apps'][app_name]
+    first_run_file = constants.FIRST_RUN_FILE_PATH
+    command = []
+    command += _lib_install_commands_for_app(app_name, assembled_specs)
+    command.append("cd {}".format(container_code_path(app_spec)))
+    command.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
+    command.append("if [ ! -f {} ]".format(first_run_file))
+    once_command = '; '.join(app_spec['commands']["once"])
+    command.append("then mkdir -p {}; touch {}".format(constants.RUN_DIR, first_run_file))
+    if once_command:
+        command.append(once_command)
+    command.append("fi")
+    command.append('; '.join(app_spec['commands']['always']))
+    return "sh -c \"{}\"".format('; '.join(command))
+
+def _lib_install_commands_for_libs(assembled_specs, libs):
+    commands = []
+    for lib in libs:
+        lib_spec = assembled_specs['libs'][lib]
+        install_command = _lib_install_command(lib_spec)
+        if install_command:
+            commands.append(install_command)
+    return commands
+
+def _lib_install_commands_for_app(app_name, assembled_specs):
+    """ This returns a list of all the commands that will install libraries for a
+    given app """
+    libs = assembled_specs['apps'][app_name]['depends']['libs']
+    return _lib_install_commands_for_libs(assembled_specs, libs)
+
+def _lib_install_commands_for_lib(app_name, assembled_specs):
+    """ This returns a list of all the commands that will install libraries for a
+    given lib """
+    libs = assembled_specs['libs'][app_name]['depends']['libs']
+    return _lib_install_commands_for_libs(assembled_specs, libs)
+
+def lib_install_commands_for_app_or_lib(app_or_lib_name, assembled_specs):
+    if app_or_lib_name in assembled_specs['apps']:
+        return _lib_install_commands_for_app(app_or_lib_name, assembled_specs)
+    return _lib_install_commands_for_lib(app_or_lib_name, assembled_specs)
+
+def _lib_install_command(lib_spec):
+    """ This returns a single commmand that will install a library in a docker container """
+    if not lib_spec['install']:
+        return ''
+    return "cd {}; {}".format(lib_spec['mount'], '; '.join(lib_spec['install']))
 
 def get_compose_dict(assembled_specs, port_specs):
     """ This function returns a dictionary representation of a docker-compose.yml file, based on assembled_specs from
@@ -95,57 +149,6 @@ def _get_ports_list(app_name, port_specs):
     return ["{}:{}".format(port_spec['mapped_host_port'], port_spec['in_container_port'])
             for port_spec in port_specs['docker_compose'][app_name]]
 
-def _compile_docker_command(app_name, assembled_specs):
-    """ This is used to compile the command that will be run when the docker container starts
-    up. This command has to install any libs that the app uses, run the `always` command, and
-    run the `once` command if the container is being launched for the first time """
-    app_spec = assembled_specs['apps'][app_name]
-    first_run_file = constants.FIRST_RUN_FILE_PATH
-    command = []
-    command += _lib_install_commands_for_app(app_name, assembled_specs)
-    command.append("cd {}".format(container_code_path(app_spec)))
-    command.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
-    command.append("if [ ! -f {} ]".format(first_run_file))
-    once_command = '; '.join(app_spec['commands']["once"])
-    command.append("then mkdir -p {}; touch {}".format(constants.RUN_DIR, first_run_file))
-    if once_command:
-        command.append(once_command)
-    command.append("fi")
-    command.append('; '.join(app_spec['commands']['always']))
-    return "sh -c \"{}\"".format('; '.join(command))
-
-def _lib_install_commands_for_libs(assembled_specs, libs):
-    commands = []
-    for lib in libs:
-        lib_spec = assembled_specs['libs'][lib]
-        install_command = _lib_install_command(lib_spec)
-        if install_command:
-            commands.append(install_command)
-    return commands
-
-def _lib_install_commands_for_app(app_name, assembled_specs):
-    """ This returns a list of all the commands that will install libraries for a
-    given app """
-    libs = assembled_specs['apps'][app_name]['depends']['libs']
-    return _lib_install_commands_for_libs(assembled_specs, libs)
-
-def _lib_install_commands_for_lib(app_name, assembled_specs):
-    """ This returns a list of all the commands that will install libraries for a
-    given lib """
-    libs = assembled_specs['libs'][app_name]['depends']['libs']
-    return _lib_install_commands_for_libs(assembled_specs, libs)
-
-def lib_install_commands_for_app_or_lib(app_or_lib_name, assembled_specs):
-    if app_or_lib_name in assembled_specs['apps']:
-        return _lib_install_commands_for_app(app_or_lib_name, assembled_specs)
-    return _lib_install_commands_for_lib(app_or_lib_name, assembled_specs)
-
-def _lib_install_command(lib_spec):
-    """ This returns a single commmand that will install a library in a docker container """
-    if not lib_spec['install']:
-        return ''
-    return "cd {}; {}".format(lib_spec['mount'], '; '.join(lib_spec['install']))
-
 def _get_compose_volumes(app_name, assembled_specs):
     """ This returns formatted volume specifications for a docker-compose app. We mount the app
     as well as any libs it needs so that local code is used in our container, instead of whatever
@@ -160,53 +163,3 @@ def _get_compose_volumes(app_name, assembled_specs):
 
 def _get_cp_volume_mount(app_name):
     return "{}:{}".format(vm_cp_path(app_name), constants.CONTAINER_CP_DIR)
-
-def get_volume_mounts(app_or_lib_name, assembled_specs):
-    if app_or_lib_name in assembled_specs['apps']:
-        return get_app_volume_mounts(app_or_lib_name, assembled_specs)
-    elif app_or_lib_name in assembled_specs['libs']:
-        return get_lib_volume_mounts(app_or_lib_name, assembled_specs)
-    raise KeyError('{} is not an app or lib'.format(app_or_lib_name))
-
-def get_app_volume_mounts(app_name, assembled_specs):
-    """ This returns a list of formatted volume specs for an app. These mounts declared in the apps' spec
-    and mounts declared in all lib specs the app depends on"""
-    app_spec = assembled_specs['apps'][app_name]
-    volumes = []
-    repo_mount = _get_app_repo_volume_mount(app_spec)
-    if repo_mount:
-        volumes.append(repo_mount)
-    volumes += _get_app_libs_volume_mounts(app_name, assembled_specs)
-    return volumes
-
-def get_lib_volume_mounts(base_lib_name, assembled_specs):
-    """ Returns a list of the formatted volume specs for a lib"""
-    volumes = [_get_lib_repo_volume_mount(assembled_specs['libs'][base_lib_name])]
-    for lib_name in assembled_specs['libs'][base_lib_name]['depends']['libs']:
-        lib_spec = assembled_specs['libs'][lib_name]
-        volumes.append(_get_lib_repo_volume_mount(lib_spec))
-    return volumes
-
-def _get_app_repo_volume_mount(app_spec):
-    """ This returns the formatted volume mount spec to mount the local code for an app in the
-    container """
-    if app_spec['repo']:
-        return "{}:{}".format(Repo(app_spec['repo']).vm_path, container_code_path(app_spec))
-
-def _get_lib_repo_volume_mount(lib_spec):
-    """ This returns the formatted volume mount spec to mount the local code for a lib in the
-    container """
-    return "{}:{}".format(Repo(lib_spec['repo']).vm_path, container_code_path(lib_spec))
-
-def container_code_path(spec):
-    """ Returns the path inside the docker container that a spec (for an app or lib) says it wants
-    to live at """
-    return spec['mount']
-
-def _get_app_libs_volume_mounts(app_name, assembled_specs):
-    """ Returns a list of the formatted volume mounts for all libs that an app uses """
-    volumes = []
-    for lib_name in assembled_specs['apps'][app_name]['depends']['libs']:
-        lib_spec = assembled_specs['libs'][lib_name]
-        volumes.append("{}:{}".format(Repo(lib_spec['repo']).vm_path, container_code_path(lib_spec)))
-    return volumes

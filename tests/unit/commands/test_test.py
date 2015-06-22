@@ -37,8 +37,10 @@ class TestTestsCommands(DustyTestCase):
             test.run_app_or_lib_tests('app-a', 'nosetests', [])
 
     @patch('dusty.commands.test._run_tests_with_image')
-    def test_run_app_or_lib_tests_lib_found(self, fake_run_tests, fake_lib_get_volumes, fake_app_get_volumes,
-                                            fake_repos_by_specs, fake_ensure_image,
+    @patch('dusty.command_file._write_commands_to_file')
+    @patch('dusty.commands.test.remove_test_command_files')
+    def test_run_app_or_lib_tests_lib_found(self, fake_remove_commads, fake_write_commands, fake_run_tests, fake_lib_get_volumes,
+                                            fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
                                             fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
         fake_lib_get_volumes.return_value = ['/host/route:/container/route']
@@ -55,8 +57,10 @@ class TestTestsCommands(DustyTestCase):
                                                  force_recreate=False)])
 
     @patch('dusty.commands.test._run_tests_with_image')
-    def test_run_app_or_lib_tests_app_found(self, fake_run_tests, fake_lib_get_volumes, fake_app_get_volumes,
-                                            fake_repos_by_specs, fake_ensure_image,
+    @patch('dusty.command_file._write_commands_to_file')
+    @patch('dusty.commands.test.remove_test_command_files')
+    def test_run_app_or_lib_tests_app_found(self, fake_remove_commads, fake_write_commands, fake_run_tests, fake_lib_get_volumes,
+                                            fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
                                             fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
         fake_lib_get_volumes.return_value = ['/host/route:/container/route']
