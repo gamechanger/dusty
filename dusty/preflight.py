@@ -89,6 +89,10 @@ def _ensure_config_dir_exists():
     if not os.path.exists(constants.CONFIG_DIR):
         os.makedirs(constants.CONFIG_DIR)
 
+def _ensure_config_dir_exists():
+    if not os.path.exists(constants.COMMAND_FILES_DIR):
+        os.makedirs(constants.COMMAND_FILES_DIR)
+
 def _ensure_github_known_host():
     known_hosts_path = os.path.expanduser('~root/.ssh/known_hosts')
     with open(known_hosts_path, 'w+') as f:
@@ -107,6 +111,7 @@ def preflight_check():
         raise PreflightException("Preflight Errors: \n\t{}".format('\n\t'.join(str_errors)))
     _ensure_run_dir_exists()
     _ensure_config_dir_exists()
+    _ensure_command_files_dir_exists()
     _ensure_github_known_host()
     if not os.path.exists(constants.CONFIG_PATH):
         logging.info('Creating default config file at {}'.format(constants.CONFIG_PATH))

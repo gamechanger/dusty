@@ -4,6 +4,7 @@ from . import constants
 from .source import Repo
 from .compiler.compose.common import container_code_path
 from .systems.docker.common import spec_for_service
+from .systems.rsync import sync_local_path_to_vm
 
 def _write_commands_to_file(list_of_commands, file_location):
     with open(file_location, 'w+') as f:
@@ -74,49 +75,38 @@ def dusty_command_file_name(app_or_lib_name, script_name=None, test_name=None):
         command_file_name = '{}_test_{}'.format(command_file_name, test_name)
     return "{}.sh".format(command_file_name)
 
-def _get_command_file_path(app_or_lib_name, assembled_specs, script_name=None, test_name=None):
-    if app_or_lib_name in assembled_specs['apps']:
-        spec = assembled_specs['apps'][app_or_lib_name]
-    else:
-        spec = assembled_specs['libs'][app_or_lib_name]
-    file_name = dusty_command_file_name(app_or_lib_name, script_name=script_name, test_name=test_name)
+def _write_sync_and_remove_command_file(commands, dusty_command_file_name, spec):
     repo = Repo(spec['repo'])
-    return '{}/{}'.format(repo.local_path, file_name)
+    vm_path = '{}/{}'.format(repo.vm_path, dusty_command_file_name)
+    local_path = '{}/{}'.format(constants.COMMAND_FILES_DIR, dusty_command_file_name)
+    _write_commands_to_file(commands, local_path)
+    sync_local_path_to_vm(local_path, vm_path)
+    os.remove(local_path)
 
 def make_up_command_files(assembled_specs):
     for app_name in assembled_specs['apps'].keys():
+        spec = assembled_specs['apps'][app_name]
         commands = _compile_docker_commands(app_name, assembled_specs)
-        _write_commands_to_file(commands, _get_command_file_path(app_name, assembled_specs))
-        script_specs = assembled_specs['apps'][app_name]['scripts']
+        command_file_name = dusty_command_file_name(app_name)
+        _write_sync_and_remove_command_file(commands, command_file_name, spec)
+        script_specs = spec['scripts']
         for script_spec in script_specs:
-            commands = ["cd {}".format(container_code_path(assembled_specs['apps'][app_name]))] + script_spec['command']
+            commands = ["cd {}".format(container_code_path(spec))] + script_spec['command']
             commands[-1] = '{} $@'.format(commands[-1])
-            _write_commands_to_file(commands, _get_command_file_path(app_name, assembled_specs, script_name=script_spec['name']))
-
-def remove_up_command_files(assembled_specs):
-    for app_name in assembled_specs['apps'].keys():
-        os.remove(_get_command_file_path(app_name, assembled_specs))
-        script_specs = assembled_specs['apps'][app_name]['scripts']
-        for script_spec in script_specs:
-            os.remove(_get_command_file_path(app_name, assembled_specs, script_name=script_spec['name']))
+            command_file_name = dusty_command_file_name(app_name, script_name=script_spec['name'])
+            _write_sync_and_remove_command_file(commands, command_file_name, spec)
 
 def make_test_command_files(expanded_specs):
     for app_or_lib_spec in expanded_specs.get_apps_and_libs():
         test_spec = app_or_lib_spec['test']
         if test_spec and test_spec['once']:
             commands = _get_test_image_setup_commands(app_or_lib_spec.name, expanded_specs, test_spec)
-            _write_commands_to_file(commands, _get_command_file_path(app_or_lib_spec.name, expanded_specs))
+            command_file_name = dusty_command_file_name(app_or_lib_spec.name)
+            _write_sync_and_remove_command_file(commands, command_file_name, app_or_lib_spec)
             suite_specs = test_spec['suites']
             for suite_spec in suite_specs:
                 commands = ["cd {}".format(container_code_path(app_or_lib_spec))] + suite_spec['command']
                 commands[-1] = '{} $@'.format(commands[-1])
-                _write_commands_to_file(commands, _get_command_file_path(app_or_lib_spec.name, expanded_specs, test_name=suite_spec['name']))
+                command_file_name = dusty_command_file_name(app_or_lib_spec.name, test_name=suite_spec['name'])
+                _write_sync_and_remove_command_file(commands, command_file_name, app_or_lib_spec)
 
-def remove_test_command_files(expanded_specs):
-    for app_or_lib_spec in expanded_specs.get_apps_and_libs():
-        test_spec = app_or_lib_spec['test']
-        if test_spec and test_spec['once']:
-            os.remove(_get_command_file_path(app_or_lib_spec.name, expanded_specs))
-            suite_specs = test_spec['suites']
-            for suite_spec in suite_specs:
-                os.remove(_get_command_file_path(app_or_lib_spec.name, expanded_specs, test_name=suite_spec['name']))

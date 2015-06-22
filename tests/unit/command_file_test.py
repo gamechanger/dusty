@@ -53,7 +53,9 @@ class TestCommandFile(DustyTestCase):
         self.assertEquals('dusty_command_file_app_script_1.sh', command_file.dusty_command_file_name('app', test_name='1', script_name='1'))
 
     @patch('dusty.command_file._write_commands_to_file')
-    def test_make_up_command_files(self, fake_write_commands_to_file):
+    @patch('dusty.command_file.os.remove')
+    @patch('dusty.command_file.sync_local_path_to_vm')
+    def test_make_up_command_files(self, fake_sync, fake_remove, fake_write_commands_to_file):
         assembled_spec = {
             'apps': {'app1': get_app_dusty_schema({'repo': '/gc/app1',
                               'mount': '/gc/app1',
@@ -89,49 +91,31 @@ class TestCommandFile(DustyTestCase):
                      'fi',
                      'app1 always 1',
                      'app1 always 2']
-        call1 = call(commands1, '{}/gc/app1/dusty_command_file_app1.sh'.format(constants.REPOS_DIR))
+        call1 = call(commands1, '{}/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
         commands2 = ['cd /gc/app1',
                      'script1 1',
                      'script1 2 $@']
-        call2 = call(commands2, '{}/gc/app1/dusty_command_file_app1_script_script1.sh'.format(constants.REPOS_DIR))
+        call2 = call(commands2, '{}/dusty_command_file_app1_script_script1.sh'.format(constants.COMMAND_FILES_DIR))
         commands3 = ['cd /gc/app1',
                      'script2 1',
                      'script2 2 $@']
-        call3 = call(commands3, '{}/gc/app1/dusty_command_file_app1_script_script2.sh'.format(constants.REPOS_DIR))
+        call3 = call(commands3, '{}/dusty_command_file_app1_script_script2.sh'.format(constants.COMMAND_FILES_DIR))
 
         fake_write_commands_to_file.assert_has_calls([call1, call2, call3])
 
-    @patch('dusty.command_file.os.remove')
-    def test_remove_up_command_files(self, fake_remove):
-        assembled_spec = {
-            'apps': {'app1': get_app_dusty_schema({'repo': '/gc/app1',
-                              'mount': '/gc/app1',
-                              'commands': {
-                                'once': ['app1 once 1', 'app1 once 2 &'],
-                                'always': ['app1 always 1', 'app1 always 2']
-                              },
-                              'depends': {'libs': ['lib1', 'lib2']},
-                              'scripts': [
-                                {'name': 'script1', 'description': '', 'command': ['script1 1', 'script1 2']},
-                                {'name': 'script2', 'description': '', 'command': ['script1 2', 'script2 2']}]})},
-            'libs': {'lib1': get_lib_dusty_schema({'install': ['lib1 command 1', 'lib1 command 2'],
-                              'repo': '/gc/lib1',
-                              'mount': '/gc/lib1'}),
-                     'lib2': get_lib_dusty_schema({'install': ['lib2 command 1', 'lib2 command 2'],
-                              'repo': '/gc/lib2',
-                              'mount': '/gc/lib2'})}
-        }
-        command_file.remove_up_command_files(assembled_spec)
-        call1 = call('{}/gc/app1/dusty_command_file_app1.sh'.format(constants.REPOS_DIR))
-        call2 = call('{}/gc/app1/dusty_command_file_app1_script_script1.sh'.format(constants.REPOS_DIR))
-        call3 = call('{}/gc/app1/dusty_command_file_app1_script_script2.sh'.format(constants.REPOS_DIR))
+        fake_sync.assert_has_calls([call('{}/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR), '{}/gc/app1/dusty_command_file_app1.sh'.format(constants.VM_REPOS_DIR)),
+                                    call('{}/dusty_command_file_app1_script_script1.sh'.format(constants.COMMAND_FILES_DIR), '{}/gc/app1/dusty_command_file_app1_script_script1.sh'.format(constants.VM_REPOS_DIR)),
+                                    call('{}/dusty_command_file_app1_script_script2.sh'.format(constants.COMMAND_FILES_DIR), '{}/gc/app1/dusty_command_file_app1_script_script2.sh'.format(constants.VM_REPOS_DIR))])
 
-        fake_remove.assert_has_calls([call1, call2, call3])
-
+        fake_remove.assert_has_calls([call('{}/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR)),
+                                      call('{}/dusty_command_file_app1_script_script1.sh'.format(constants.COMMAND_FILES_DIR)),
+                                      call('{}/dusty_command_file_app1_script_script2.sh'.format(constants.COMMAND_FILES_DIR))])
 
     @patch('dusty.command_file._write_commands_to_file')
     @patch('dusty.schemas.base_schema_class.get_specs_from_path')
-    def test_make_test_command_files(self, fake_get_specs, fake_write_commands_to_file):
+    @patch('dusty.command_file.os.remove')
+    @patch('dusty.command_file.sync_local_path_to_vm')
+    def test_make_test_command_files(self, fake_sync, fake_remove, fake_get_specs, fake_write_commands_to_file):
         fake_get_specs.return_value = {
             'apps': {'app1': get_app_dusty_schema({'repo': '/gc/app1',
                               'mount': '/gc/app1',
@@ -153,59 +137,43 @@ class TestCommandFile(DustyTestCase):
         commands1 = ['cd /gc/app1',
                      'app1 test command 1',
                      'app1 test command 2']
-        call1 = call(commands1, '{}/gc/app1/dusty_command_file_app1.sh'.format(constants.REPOS_DIR))
+        call1 = call(commands1, '{}/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
         commands2 = ['cd /gc/app1',
                      'suite1 command1',
                      'suite1 command2 $@']
-        call2 = call(commands2, '{}/gc/app1/dusty_command_file_app1_test_suite1.sh'.format(constants.REPOS_DIR))
+        call2 = call(commands2, '{}/dusty_command_file_app1_test_suite1.sh'.format(constants.COMMAND_FILES_DIR))
         commands3 = ['cd /gc/app1',
                      'suite2 command1',
                      'suite2 command2 $@']
-        call3 = call(commands3, '{}/gc/app1/dusty_command_file_app1_test_suite2.sh'.format(constants.REPOS_DIR))
+        call3 = call(commands3, '{}/dusty_command_file_app1_test_suite2.sh'.format(constants.COMMAND_FILES_DIR))
 
 
         commands4 = ['cd /gc/lib1',
                      'lib1 test command 1',
                      'lib1 test command 2']
-        call4 = call(commands4, '{}/gc/lib1/dusty_command_file_lib1.sh'.format(constants.REPOS_DIR))
+        call4 = call(commands4, '{}/dusty_command_file_lib1.sh'.format(constants.COMMAND_FILES_DIR))
         commands5 = ['cd /gc/lib1',
                      'suite3 command1',
                      'suite3 command2 $@']
-        call5 = call(commands5, '{}/gc/lib1/dusty_command_file_lib1_test_suite3.sh'.format(constants.REPOS_DIR))
+        call5 = call(commands5, '{}/dusty_command_file_lib1_test_suite3.sh'.format(constants.COMMAND_FILES_DIR))
         commands6 = ['cd /gc/lib1',
                      'suite4 command1',
                      'suite4 command2 $@']
-        call6 = call(commands6, '{}/gc/lib1/dusty_command_file_lib1_test_suite4.sh'.format(constants.REPOS_DIR))
+        call6 = call(commands6, '{}/dusty_command_file_lib1_test_suite4.sh'.format(constants.COMMAND_FILES_DIR))
 
         fake_write_commands_to_file.assert_has_calls([call1, call2, call3, call4, call5, call6])
 
-    @patch('dusty.command_file.os.remove')
-    @patch('dusty.schemas.base_schema_class.get_specs_from_path')
-    def test_remove_test_command_files(self, fake_get_specs, fake_remove):
-        fake_get_specs.return_value = {
-            'apps': {'app1': get_app_dusty_schema({'repo': '/gc/app1',
-                              'mount': '/gc/app1',
-                              'test': {'once': ['app1 test command 1', 'app1 test command 2'],
-                                       'suites': [{'name': 'suite1', 'command': ['suite1 command1', 'suite1 command2']},
-                                                  {'name': 'suite2', 'command': ['suite2 command1', 'suite2 command2']}]
-                                       }}, name='app1')},
-            'libs': {'lib1': get_lib_dusty_schema({'repo': '/gc/lib1',
-                              'mount': '/gc/lib1',
-                              'test': {'once': ['lib1 test command 1', 'lib1 test command 2'],
-                                       'suites': [{'name': 'suite3', 'command': ['suite3 command1', 'suite3 command2']},
-                                                  {'name': 'suite4', 'command': ['suite4 command1', 'suite4 command2']}]
-                                       }}, name='lib1'),
-                     'lib2': get_lib_dusty_schema({}, name='lib2')}
-        }
-        assembled_spec = get_expanded_libs_specs()
-        command_file.remove_test_command_files(assembled_spec)
+        fake_sync.assert_has_calls([call('{}/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR), '{}/gc/app1/dusty_command_file_app1.sh'.format(constants.VM_REPOS_DIR)),
+                                    call('{}/dusty_command_file_app1_test_suite1.sh'.format(constants.COMMAND_FILES_DIR), '{}/gc/app1/dusty_command_file_app1_test_suite1.sh'.format(constants.VM_REPOS_DIR)),
+                                    call('{}/dusty_command_file_app1_test_suite2.sh'.format(constants.COMMAND_FILES_DIR), '{}/gc/app1/dusty_command_file_app1_test_suite2.sh'.format(constants.VM_REPOS_DIR)),
+                                    call('{}/dusty_command_file_lib1.sh'.format(constants.COMMAND_FILES_DIR), '{}/gc/lib1/dusty_command_file_lib1.sh'.format(constants.VM_REPOS_DIR)),
+                                    call('{}/dusty_command_file_lib1_test_suite3.sh'.format(constants.COMMAND_FILES_DIR), '{}/gc/lib1/dusty_command_file_lib1_test_suite3.sh'.format(constants.VM_REPOS_DIR)),
+                                    call('{}/dusty_command_file_lib1_test_suite4.sh'.format(constants.COMMAND_FILES_DIR), '{}/gc/lib1/dusty_command_file_lib1_test_suite4.sh'.format(constants.VM_REPOS_DIR))])
 
-        call1 = call('{}/gc/app1/dusty_command_file_app1.sh'.format(constants.REPOS_DIR))
-        call2 = call('{}/gc/app1/dusty_command_file_app1_test_suite1.sh'.format(constants.REPOS_DIR))
-        call3 = call('{}/gc/app1/dusty_command_file_app1_test_suite2.sh'.format(constants.REPOS_DIR))
-        call4 = call('{}/gc/lib1/dusty_command_file_lib1.sh'.format(constants.REPOS_DIR))
-        call5 = call('{}/gc/lib1/dusty_command_file_lib1_test_suite3.sh'.format(constants.REPOS_DIR))
-        call6 = call('{}/gc/lib1/dusty_command_file_lib1_test_suite4.sh'.format(constants.REPOS_DIR))
-
-        fake_remove.assert_has_calls([call1, call2, call3, call4, call5, call6])
+        fake_remove.assert_has_calls([call('{}/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR)),
+                                      call('{}/dusty_command_file_app1_test_suite1.sh'.format(constants.COMMAND_FILES_DIR)),
+                                      call('{}/dusty_command_file_app1_test_suite2.sh'.format(constants.COMMAND_FILES_DIR)),
+                                      call('{}/dusty_command_file_lib1.sh'.format(constants.COMMAND_FILES_DIR)),
+                                      call('{}/dusty_command_file_lib1_test_suite3.sh'.format(constants.COMMAND_FILES_DIR)),
+                                      call('{}/dusty_command_file_lib1_test_suite4.sh'.format(constants.COMMAND_FILES_DIR))])
 

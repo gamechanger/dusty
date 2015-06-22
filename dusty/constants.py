@@ -20,6 +20,7 @@ CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.yml')
 REPOS_DIR = os.path.join(CONFIG_DIR, 'repos')
 COMPOSE_DIR = os.path.join(CONFIG_DIR, 'compose')
 COMPOSEFILE_PATH = os.path.join(COMPOSE_DIR, 'docker-compose.yml')
+COMMAND_FILES_DIR = os.path.join(CONFIG_DIR, 'commands')
 
 NGINX_MAX_FILE_SIZE = "500M"
 

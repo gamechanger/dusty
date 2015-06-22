@@ -12,7 +12,7 @@ from ..systems.docker.compose import write_composefile, compose_up
 from ..systems.rsync import sync_repos_by_specs
 from ..systems.virtualbox import initialize_docker_vm
 from ..log import log_to_client
-from ..command_file import make_test_command_files, remove_test_command_files, dusty_command_file_name
+from ..command_file import make_test_command_files, dusty_command_file_name
 
 def test_info_for_app_or_lib(app_or_lib_name):
     expanded_specs = get_expanded_libs_specs()
@@ -37,7 +37,6 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     make_test_command_files(expanded_specs)
     sync_repos_by_specs([spec])
-    remove_test_command_files(expanded_specs)
     ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
     _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command)
 
