@@ -19,11 +19,11 @@ def _get_once_commands(app_spec):
     once_commands = app_spec['commands']['once']
     commands_with_function = []
     if once_commands:
-        commands_with_function.append('function dusty_once_fn {')
+        commands_with_function.append('dusty_once_fn () {')
         commands_with_function += once_commands
         commands_with_function.append('}')
     commands_with_function.append("if [ ! -f {} ]".format(constants.FIRST_RUN_FILE_PATH))
-    commands_with_function.append("then mkdir -p {}; touch {}".format(constants.RUN_DIR, first_run_file))
+    commands_with_function.append("then mkdir -p {}; touch {}".format(constants.RUN_DIR, constants.FIRST_RUN_FILE_PATH))
     if once_commands:
         commands_with_function.append("dusty_once_fn | tee {}".format(constants.ONCE_LOG_PATH))
     commands_with_function.append("fi")
@@ -33,7 +33,7 @@ def _get_always_commands(app_spec):
     commands_with_function = []
     always_commands = app_spec['commands']['always']
     if always_commands:
-        commands_with_function.append('function dusty_always_fn {')
+        commands_with_function.append('dusty_always_fn () {')
         commands_with_function += always_commands
         commands_with_function.append('}')
         commands_with_function.append('dusty_always_fn | tee {}'.format(constants.ALWAYS_LOG_PATH))
@@ -44,11 +44,9 @@ def _compile_docker_commands(app_name, assembled_specs):
     up. This command has to install any libs that the app uses, run the `always` command, and
     run the `once` command if the container is being launched for the first time """
     app_spec = assembled_specs['apps'][app_name]
-    first_run_file = constants.FIRST_RUN_FILE_PATH
     commands = _lib_install_commands_for_app(app_name, assembled_specs)
     commands.append("cd {}".format(container_code_path(app_spec)))
     commands.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
-    commands.append("if [ ! -f {} ]".format(first_run_file))
     commands += _get_once_commands(app_spec)
     commands += _get_always_commands(app_spec)
     return commands
