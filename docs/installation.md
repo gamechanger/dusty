@@ -15,16 +15,18 @@ programs.
 
 ## Installation
 
-We provide a install script with each release.  This install script
-takes the following actions:
+We provide a install script with each release. The install script should work
+to install Dusty from scratch, as well as to update Dusty to a new version.
+
+This install script takes the following actions:
 
 * Downloads the Dusty binary, and places it at `/usr/local/bin/dusty`
 * Unloads any existing Dusty Daemon plist from `/System/Library/LaunchDaemons/org.gamechanger.dusty.plist`
 * Downloads our plist file to the same location
-* Runs dusty with `--preflight-only`, which will check some components of your system setup
+* Runs Dusty with `--preflight-only`, which will check some components of your system setup
 * Loads the plist that was downloaded, if the previous step was successful
 
-To download and run this install script, run
+To download and run this install script:
 ```
 bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.1.1/install.sh`"
 ```
@@ -57,8 +59,9 @@ The specific steps Dusty takes are:
 
 * Search standard nginx config file locations ('/usr/local/nginx/conf', '/etc/nginx', '/usr/local/etc/nginx') for `nginx.conf`
 * Search the first `nginx.conf` found for the `include` directive - this specifies a folder of additional nginx configuration files, which is where Dusty will write its configuration
-* If you don't include any folders, Dusty will ask you to let it add `include servers/*;` to the end of your Dusty config
-* If no `nginx.conf` is found, Dusty will let you know
+* If you don't include any folders, Dusty will ask you to let it add `include servers/*;` to the end of your nginx config
+* If no `nginx.conf` is found, Dusty will let you know.
+
 If Dusty can't setup its nginx config automatically, you just need to run
 ```dusty config set nginx_includes_dir <folder>```
 Where `folder` is the absolute path to a folder from which your nginx will include `.conf`
