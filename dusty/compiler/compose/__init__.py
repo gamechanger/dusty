@@ -3,6 +3,7 @@ import copy
 import os
 import yaml
 
+from ...source import Repo
 from ..spec_assembler import get_assembled_specs
 from ...path import vm_cp_path
 from ... import constants
