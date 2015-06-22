@@ -73,14 +73,6 @@ def dusty_command_file_name(app_or_lib_name, script_name=None, test_name=None):
         command_file_name = '{}_test_{}'.format(command_file_name, test_name)
     return "{}.sh".format(command_file_name)
 
-def _write_sync_and_remove_command_file(commands, dusty_command_file_name, spec, test=False):
-    repo = Repo(spec['repo'])
-    vm_path = '{}{}/{}'.format(repo.vm_path,'/test' if test else '' , dusty_command_file_name)
-    local_path = '{}/{}'.format(constants.COMMAND_FILES_DIR, dusty_command_file_name)
-    _write_commands_to_file(commands, local_path)
-    sync_local_path_to_vm(local_path, vm_path)
-    os.remove(local_path)
-
 def make_up_command_files(assembled_specs):
     for app_name in assembled_specs['apps'].keys():
         spec = assembled_specs['apps'][app_name]
