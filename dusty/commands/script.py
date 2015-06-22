@@ -3,8 +3,10 @@ from prettytable import PrettyTable
 
 from ..log import log_to_client
 from ..compiler.spec_assembler import get_specs
+from ..compiler.compose import container_code_path
 from . import utils
 from ..systems.docker import get_dusty_container_name
+from ..command_file import dusty_command_file_name
 
 def script_info_for_app(app_name):
     app_specs = get_specs()['apps'].get(app_name)
