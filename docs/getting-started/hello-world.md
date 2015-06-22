@@ -11,12 +11,12 @@ The first step to running any bundle is to activate it:
 > dusty bundles activate hello-world
 Activated bundles hello-world
 > dusty bundles list
-+-------------+--------------------------------------------------------+----------+
-|     Name    |                      Description                       | Enabled? |
-+-------------+--------------------------------------------------------+----------+
-|  fileserver |      A simple fileserver to demonstrate dusty cp       |          |
-| hello-world | Hello world! Two running copies of a simple Flask app. |    X     |
-+-------------+--------------------------------------------------------+----------+
++-------------+--------------------------------------------------------+------------+
+|     Name    |                      Description                       | Activated? |
++-------------+--------------------------------------------------------+------------+
+|  fileserver |      A simple fileserver to demonstrate dusty cp       |            |
+| hello-world | Hello world! Two running copies of a simple Flask app. |            |
++-------------+--------------------------------------------------------+------------+
 ```
 
 Once the bundle is activated, you can use `dusty status` to see what apps, services, and
