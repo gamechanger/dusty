@@ -4,8 +4,13 @@ from . import constants
 from .source import Repo
 from .compiler.compose.common import container_code_path
 from .systems.docker.common import spec_for_service
+from .systems.rsync import sync_local_path_to_vm
+from .path import parent_dir
 
 def _write_commands_to_file(list_of_commands, file_location):
+    file_location_parent = parent_dir(file_location)
+    if not os.path.exists(file_location_parent):
+        os.makedirs(file_location_parent)
     with open(file_location, 'w+') as f:
         for command in list_of_commands:
             f.write('{} \n'.format(command))
@@ -74,49 +79,47 @@ def dusty_command_file_name(app_or_lib_name, script_name=None, test_name=None):
         command_file_name = '{}_test_{}'.format(command_file_name, test_name)
     return "{}.sh".format(command_file_name)
 
-def _get_command_file_path(app_or_lib_name, assembled_specs, script_name=None, test_name=None):
-    if app_or_lib_name in assembled_specs['apps']:
-        spec = assembled_specs['apps'][app_or_lib_name]
-    else:
-        spec = assembled_specs['libs'][app_or_lib_name]
-    file_name = dusty_command_file_name(app_or_lib_name, script_name=script_name, test_name=test_name)
-    repo = Repo(spec['repo'])
-    return '{}/{}'.format(repo.local_path, file_name)
+def _write_up_command(app_name, assembled_specs):
+    commands = _compile_docker_commands(app_name, assembled_specs)
+    command_file_name = dusty_command_file_name(app_name)
+    local_path = '{}/{}/{}'.format(constants.COMMAND_FILES_DIR, app_name, command_file_name)
+    _write_commands_to_file(commands, local_path)
+
+def _write_up_script_command(app_name, app_spec, script_spec):
+    commands = ["cd {}".format(container_code_path(app_spec))] + script_spec['command']
+    commands[-1] = '{} $@'.format(commands[-1])
+    command_file_name = dusty_command_file_name(app_name, script_name=script_spec['name'])
+    local_path = '{}/{}/{}'.format(constants.COMMAND_FILES_DIR, app_name, command_file_name)
+    _write_commands_to_file(commands, local_path)
+
+def _write_test_command(app_or_lib_spec, expanded_specs):
+    commands = _get_test_image_setup_commands(app_or_lib_spec.name, expanded_specs, app_or_lib_spec['test'])
+    command_file_name = dusty_command_file_name(app_or_lib_spec.name)
+    local_path = '{}/{}/test/{}'.format(constants.COMMAND_FILES_DIR, app_or_lib_spec.name, command_file_name)
+    _write_commands_to_file(commands, local_path)
+
+def _write_test_suite_command(app_or_lib_spec, suite_spec):
+    commands = ["cd {}".format(container_code_path(app_or_lib_spec))] + suite_spec['command']
+    commands[-1] = '{} $@'.format(commands[-1])
+    command_file_name = dusty_command_file_name(app_or_lib_spec.name, test_name=suite_spec['name'])
+    local_path = '{}/{}/test/{}'.format(constants.COMMAND_FILES_DIR, app_or_lib_spec.name, command_file_name)
+    _write_commands_to_file(commands, local_path)
 
 def make_up_command_files(assembled_specs):
     for app_name in assembled_specs['apps'].keys():
-        commands = _compile_docker_commands(app_name, assembled_specs)
-        _write_commands_to_file(commands, _get_command_file_path(app_name, assembled_specs))
-        script_specs = assembled_specs['apps'][app_name]['scripts']
+        spec = assembled_specs['apps'][app_name]
+        _write_up_command(app_name, assembled_specs)
+        script_specs = spec['scripts']
         for script_spec in script_specs:
-            commands = ["cd {}".format(container_code_path(assembled_specs['apps'][app_name]))] + script_spec['command']
-            commands[-1] = '{} $@'.format(commands[-1])
-            _write_commands_to_file(commands, _get_command_file_path(app_name, assembled_specs, script_name=script_spec['name']))
-
-def remove_up_command_files(assembled_specs):
-    for app_name in assembled_specs['apps'].keys():
-        os.remove(_get_command_file_path(app_name, assembled_specs))
-        script_specs = assembled_specs['apps'][app_name]['scripts']
-        for script_spec in script_specs:
-            os.remove(_get_command_file_path(app_name, assembled_specs, script_name=script_spec['name']))
+            _write_up_script_command(app_name, spec, script_spec)
+    sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)
 
 def make_test_command_files(expanded_specs):
     for app_or_lib_spec in expanded_specs.get_apps_and_libs():
         test_spec = app_or_lib_spec['test']
         if test_spec and test_spec['once']:
-            commands = _get_test_image_setup_commands(app_or_lib_spec.name, expanded_specs, test_spec)
-            _write_commands_to_file(commands, _get_command_file_path(app_or_lib_spec.name, expanded_specs))
             suite_specs = test_spec['suites']
+            _write_test_command(app_or_lib_spec, expanded_specs)
             for suite_spec in suite_specs:
-                commands = ["cd {}".format(container_code_path(app_or_lib_spec))] + suite_spec['command']
-                commands[-1] = '{} $@'.format(commands[-1])
-                _write_commands_to_file(commands, _get_command_file_path(app_or_lib_spec.name, expanded_specs, test_name=suite_spec['name']))
-
-def remove_test_command_files(expanded_specs):
-    for app_or_lib_spec in expanded_specs.get_apps_and_libs():
-        test_spec = app_or_lib_spec['test']
-        if test_spec and test_spec['once']:
-            os.remove(_get_command_file_path(app_or_lib_spec.name, expanded_specs))
-            suite_specs = test_spec['suites']
-            for suite_spec in suite_specs:
-                os.remove(_get_command_file_path(app_or_lib_spec.name, expanded_specs, test_name=suite_spec['name']))
+                _write_test_suite_command(app_or_lib_spec, suite_spec)
+    sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)

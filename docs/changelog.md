@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.1.2 (In Progress)
+  * NEW: Commands are now placed in a file, copied over to the container and the file containing the commands is run. This allows you to use & in your commands.
+
   * `repo` and `mount` keys in app specs are now optional
 
 ## 0.1.1 (June 18, 2015)

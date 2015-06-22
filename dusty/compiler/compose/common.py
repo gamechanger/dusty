@@ -1,18 +1,22 @@
 from ...source import Repo
+from ...path import vm_command_files_path
+from ... import constants
 
+def get_command_files_volume_mount(app_or_lib_name, test=False):
+    return "{}{}:{}".format(vm_command_files_path(app_or_lib_name), '/test' if test else '', constants.CONTAINER_COMMAND_FILES_DIR)
 
-def get_volume_mounts(app_or_lib_name, assembled_specs):
+def get_volume_mounts(app_or_lib_name, assembled_specs, test=False):
     if app_or_lib_name in assembled_specs['apps']:
-        return get_app_volume_mounts(app_or_lib_name, assembled_specs)
+        return get_app_volume_mounts(app_or_lib_name, assembled_specs, test=test)
     elif app_or_lib_name in assembled_specs['libs']:
         return get_lib_volume_mounts(app_or_lib_name, assembled_specs)
     raise KeyError('{} is not an app or lib'.format(app_or_lib_name))
 
-def get_app_volume_mounts(app_name, assembled_specs):
+def get_app_volume_mounts(app_name, assembled_specs, test=False):
     """ This returns a list of formatted volume specs for an app. These mounts declared in the apps' spec
     and mounts declared in all lib specs the app depends on"""
     app_spec = assembled_specs['apps'][app_name]
-    volumes = []
+    volumes = [get_command_files_volume_mount(app_name, test=test)]
     repo_mount = _get_app_repo_volume_mount(app_spec)
     if repo_mount:
         volumes.append(repo_mount)
@@ -22,6 +26,7 @@ def get_app_volume_mounts(app_name, assembled_specs):
 def get_lib_volume_mounts(base_lib_name, assembled_specs):
     """ Returns a list of the formatted volume specs for a lib"""
     volumes = [_get_lib_repo_volume_mount(assembled_specs['libs'][base_lib_name])]
+    volumes.append(get_command_files_volume_mount(base_lib_name, test=True))
     for lib_name in assembled_specs['libs'][base_lib_name]['depends']['libs']:
         lib_spec = assembled_specs['libs'][lib_name]
         volumes.append(_get_lib_repo_volume_mount(lib_spec))

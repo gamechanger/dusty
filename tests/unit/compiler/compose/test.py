@@ -4,8 +4,7 @@ from copy import copy
 from dusty import constants
 from dusty.compiler.compose import (get_compose_dict, _composed_app_dict,
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
-                                    _conditional_links, get_app_volume_mounts, get_lib_volume_mounts,
-                                    _lib_install_command, _lib_install_commands_for_app)
+                                    _conditional_links, get_app_volume_mounts, get_lib_volume_mounts)
 from dusty.compiler import compose
 from ..test_test_cases import all_test_configs
 from ....testcases import DustyTestCase
@@ -26,13 +25,15 @@ basic_specs = {
             },
             'image': 'awesomeGCimage',
             'mount': '/gc/app1'
-        }),
+        },
+        name='app1'),
         'app2': get_app_dusty_schema({
             'repo': '/app2',
             'depends': {},
             'mount': '/gc/app2',
             'image': ''
-        })
+        },
+        name='app2')
     },
     'libs': {
         'lib1': get_lib_dusty_schema({
@@ -42,12 +43,14 @@ basic_specs = {
             'depends': {
                 'libs': ['lib2']
             }
-        }),
+        },
+        name='lib1'),
         'lib2': get_lib_dusty_schema({
             'repo': '/lib2',
             'mount': '/gc/lib2',
             'install': ['python setup.py develop']
-        })
+        },
+        name='lib2')
     },
     'services':{
         'service1': {
@@ -82,6 +85,7 @@ class TestComposeCompiler(DustyTestCase):
     def test_composed_volumes(self, *args):
         expected_volumes = [
             '/cp/app1:/cp',
+            '/command_files/app1:/command_files',
             '/Users/gc/app1:/gc/app1',
             '/Users/gc/lib1:/gc/lib1',
             '/Users/gc/lib2:/gc/lib2'
@@ -92,61 +96,44 @@ class TestComposeCompiler(DustyTestCase):
     def testget_app_volume_mounts_1(self, *args):
         expected_volumes = [
             '/Users/gc/app1:/gc/app1',
+            '/command_files/app1:/command_files',
             '/Users/gc/lib1:/gc/lib1',
             '/Users/gc/lib2:/gc/lib2'
         ]
         returned_volumes = get_app_volume_mounts('app1', basic_specs)
-        self.assertEqual(expected_volumes, returned_volumes)
+        self.assertEqual(set(expected_volumes), set(returned_volumes))
 
     def testget_app_volume_mounts_2(self, *args):
-        expected_volumes = ['/Users/gc/app2:/gc/app2']
+        expected_volumes = ['/Users/gc/app2:/gc/app2',
+                            '/command_files/app2:/command_files',]
         returned_volumes = get_app_volume_mounts('app2', basic_specs)
-        self.assertEqual(expected_volumes, returned_volumes)
+        self.assertEqual(set(expected_volumes), set(returned_volumes))
 
     def testget_lib_volume_mounts_1(self, *args):
         expected_volumes = [
             '/Users/gc/lib1:/gc/lib1',
-            '/Users/gc/lib2:/gc/lib2'
+            '/Users/gc/lib2:/gc/lib2',
+            '/command_files/lib1/test:/command_files',
         ]
         returned_volumes = get_lib_volume_mounts('lib1', basic_specs)
-        self.assertEqual(expected_volumes, returned_volumes)
+        self.assertEqual(set(expected_volumes), set(returned_volumes))
 
     def testget_lib_volume_mounts_2(self, *args):
-        expected_volumes = ['/Users/gc/lib2:/gc/lib2']
+        expected_volumes = ['/Users/gc/lib2:/gc/lib2',
+                            '/command_files/lib2/test:/command_files',]
         returned_volumes = get_lib_volume_mounts('lib2', basic_specs)
-        self.assertEqual(expected_volumes, returned_volumes)
+        self.assertEqual(set(expected_volumes), set(returned_volumes))
 
     def test_compile_command_with_once(self, *args):
-        expected_command_list = ["sh -c \"cd /gc/lib1",
-                                 " ./install.sh",
-                                 " cd /gc/lib2",
-                                 " python setup.py develop",
-                                 " cd /gc/app1",
-                                 " export PATH=$PATH:/gc/app1",
-                                 " if [ ! -f /var/run/dusty/docker_first_time_started ]",
-                                 " then mkdir -p /var/run/dusty",
-                                 " touch /var/run/dusty/docker_first_time_started",
-                                 " one_time.sh",
-                                 " fi",
-                                 " always.sh\""]
-        returned_command = _compile_docker_command('app1', basic_specs).split(";")
+        expected_command_list = "sh /command_files/dusty_command_file_app1.sh"
+        returned_command = _compile_docker_command(basic_specs['apps']['app1'])
         self.assertEqual(expected_command_list, returned_command)
 
     def test_compile_command_without_once(self, *args):
         new_specs = copy(basic_specs)
         new_specs['apps']['app1']['commands']['once'] = ['']
-        expected_command_list = ["sh -c \"cd /gc/lib1",
-                                 " ./install.sh",
-                                 " cd /gc/lib2",
-                                 " python setup.py develop",
-                                 " cd /gc/app1",
-                                 " export PATH=$PATH:/gc/app1",
-                                 " if [ ! -f /var/run/dusty/docker_first_time_started ]",
-                                 " then mkdir -p /var/run/dusty",
-                                 " touch /var/run/dusty/docker_first_time_started",
-                                 " fi",
-                                 " always.sh\""]
-        returned_command = _compile_docker_command('app1', new_specs).split(";")
+        expected_command_list = "sh /command_files/dusty_command_file_app1.sh"
+        returned_command = _compile_docker_command(new_specs['apps']['app1'])
         self.assertEqual(expected_command_list, returned_command)
 
     def test_ports_list(self, *args):
@@ -172,6 +159,7 @@ class TestComposeCompiler(DustyTestCase):
             ],
             'volumes': [
                 '/cp/app1:/cp',
+                '/command_files/app1:/command_files',
                 '/Users/gc/app1:/gc/app1',
                 '/Users/gc/lib1:/gc/lib1',
                 '/Users/gc/lib2:/gc/lib2'
@@ -184,34 +172,6 @@ class TestComposeCompiler(DustyTestCase):
         retured_config = _composed_app_dict('app1', basic_specs, basic_port_specs)
         self.assertEqual(expected_app_config, retured_config)
 
-    def test_lib_install_command(self, *args):
-        lib_spec = {
-            'repo': 'some repo',
-            'mount': '/mount/point',
-            'install': ['python install.py some args']
-        }
-        expected_command = "cd /mount/point; python install.py some args"
-        actual_command = _lib_install_command(lib_spec)
-        self.assertEqual(expected_command, actual_command)
-
-    def test_lib_install_command_with_no_install_spec(self, *args):
-        lib_spec = get_lib_dusty_schema({
-            'repo': 'some repo',
-            'mount': '/mount/point'
-        })
-        expected_command = ""
-        actual_command = _lib_install_command(lib_spec)
-        self.assertEqual(expected_command, actual_command)
-
-    @patch('dusty.compiler.compose._lib_install_command')
-    def test_lib_installs_for_app(self, fake_lib_install, *args):
-        _lib_install_commands_for_app('app1', basic_specs)
-        # Mock is weird, it picks up on the truthiness calls we do
-        # on the result after we call the function
-        fake_lib_install.assert_has_calls([call(basic_specs['libs']['lib1']),
-                                           call().__nonzero__(),
-                                           call(basic_specs['libs']['lib2']),
-                                           call().__nonzero__()])
 
     def test_get_available_app_links_no_services_1(self, *args):
         assembled_specs = {'apps': {

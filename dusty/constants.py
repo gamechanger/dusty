@@ -20,6 +20,7 @@ CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.yml')
 REPOS_DIR = os.path.join(CONFIG_DIR, 'repos')
 COMPOSE_DIR = os.path.join(CONFIG_DIR, 'compose')
 COMPOSEFILE_PATH = os.path.join(COMPOSE_DIR, 'docker-compose.yml')
+COMMAND_FILES_DIR = os.path.join(CONFIG_DIR, 'commands')
 
 NGINX_MAX_FILE_SIZE = "500M"
 
@@ -28,6 +29,9 @@ VM_REPOS_DIR = os.path.join(VM_PERSIST_DIR, 'repos')
 
 VM_CP_DIR = '/cp'
 CONTAINER_CP_DIR = '/cp'
+
+VM_COMMAND_FILES_DIR = '/command_files'
+CONTAINER_COMMAND_FILES_DIR = '/command_files'
 
 GIT_USER = 'git'
 
