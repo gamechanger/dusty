@@ -5,12 +5,12 @@ from .source import Repo
 from .compiler.compose.common import container_code_path
 from .systems.docker.common import spec_for_service
 from .systems.rsync import sync_local_path_to_vm
-from path import parent_dir
+from .path import parent_dir
 
 def _write_commands_to_file(list_of_commands, file_location):
-    repo_path_parent = parent_dir(file_location)
-    if not os.path.exists(repo_path_parent):
-        os.makedirs(repo_path_parent)
+    file_location_parent = parent_dir(file_location)
+    if not os.path.exists(file_location_parent):
+        os.makedirs(file_location_parent)
     with open(file_location, 'w+') as f:
         for command in list_of_commands:
             f.write('{} \n'.format(command))
