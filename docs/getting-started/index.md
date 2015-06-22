@@ -21,12 +21,12 @@ field blank when prompted, or you can run the following:
 To verify that this has worked, run `dusty bundles list`. You should see this:
 
 ```
-+-------------+--------------------------------------------------------+----------+
-|     Name    |                      Description                       | Enabled? |
-+-------------+--------------------------------------------------------+----------+
-|  fileserver |      A simple fileserver to demonstrate dusty cp       |          |
-| hello-world | Hello world! Two running copies of a simple Flask app. |          |
-+-------------+--------------------------------------------------------+----------+
++-------------+--------------------------------------------------------+------------+
+|     Name    |                      Description                       | Activated? |
++-------------+--------------------------------------------------------+------------+
+|  fileserver |      A simple fileserver to demonstrate dusty cp       |            |
+| hello-world | Hello world! Two running copies of a simple Flask app. |            |
++-------------+--------------------------------------------------------+------------+
 ```
 
 ## Exploring the Example Specs

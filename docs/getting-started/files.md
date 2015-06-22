@@ -10,12 +10,12 @@ Let's activate its bundle and run it now.
 
 ```
 > dusty bundles list
-+-------------+--------------------------------------------------------+----------+
-|     Name    |                      Description                       | Enabled? |
-+-------------+--------------------------------------------------------+----------+
-|  fileserver |      A simple fileserver to demonstrate dusty cp       |          |
-| hello-world | Hello world! Two running copies of a simple Flask app. |          |
-+-------------+--------------------------------------------------------+----------+
++-------------+--------------------------------------------------------+------------+
+|     Name    |                      Description                       | Activated? |
++-------------+--------------------------------------------------------+------------+
+|  fileserver |      A simple fileserver to demonstrate dusty cp       |            |
+| hello-world | Hello world! Two running copies of a simple Flask app. |            |
++-------------+--------------------------------------------------------+------------+
 
 > dusty bundles activate fileserver
 Activated bundles fileserver

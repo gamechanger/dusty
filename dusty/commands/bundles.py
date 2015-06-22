@@ -7,7 +7,7 @@ from .. import constants
 
 def list_bundles():
     specs, activated_bundles = get_specs(), get_config_value(constants.CONFIG_BUNDLES_KEY)
-    table = PrettyTable(["Name", "Description", "Enabled?"])
+    table = PrettyTable(["Name", "Description", "Activated?"])
     for bundle, bundle_spec in specs[constants.CONFIG_BUNDLES_KEY].iteritems():
         table.add_row([bundle,
                        bundle_spec['description'],
