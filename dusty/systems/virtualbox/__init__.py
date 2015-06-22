@@ -4,7 +4,7 @@ import logging
 
 from ... import constants
 from ...config import get_config_value
-from ...subprocess import check_and_log_output_and_error_demoted, check_output_demoted
+from ...subprocess import check_and_log_output_and_error_demoted, check_output_demoted, check_call_demoted
 from ...log import log_to_client
 
 def _ensure_rsync_is_installed():
@@ -26,12 +26,12 @@ def _ensure_cp_dir_exists():
 def _ensure_docker_vm_exists():
     """Initialize the boot2docker VM if it does not already exist."""
     logging.info('Initializing boot2docker, this will take a while the first time it runs')
-    check_and_log_output_and_error_demoted(['boot2docker', 'init'])
+    check_call_demoted(['boot2docker', 'init'], redirect_stderr=True)
 
 def _ensure_docker_vm_is_started():
     """Start the boot2docker VM if it is not already running."""
     logging.info('Making sure the boot2docker VM is started')
-    check_and_log_output_and_error_demoted(['boot2docker', 'start'])
+    check_call_demoted(['boot2docker', 'start'], redirect_stderr=True)
 
 def initialize_docker_vm():
     _ensure_docker_vm_exists()
@@ -43,7 +43,7 @@ def initialize_docker_vm():
 def get_docker_vm_ip():
     """Checks boot2docker's IP, assuming that the VM is started"""
     logging.info("Checking boot2docker's ip")
-    ip = check_and_log_output_and_error_demoted(['boot2docker', 'ip']).rstrip()
+    ip = check_output_demoted(['boot2docker', 'ip']).rstrip()
     return ip
 
 def _format_df_line(line):
