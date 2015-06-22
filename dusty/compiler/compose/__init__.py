@@ -7,7 +7,7 @@ from ..spec_assembler import get_assembled_specs
 from ...path import vm_cp_path
 from ... import constants
 from ...command_file import dusty_command_file_name
-from .helper_functions import container_code_path, get_volume_mounts, get_app_volume_mounts, get_lib_volume_mounts
+from .common import container_code_path, get_volume_mounts, get_app_volume_mounts, get_lib_volume_mounts
 
 
 def _compile_docker_command(app_name, assembled_specs):
