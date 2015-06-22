@@ -15,5 +15,6 @@ pages:
       - Moving Files Around: getting-started/files.md
   - Usage: usage.md
   - Architecture: architecture.md
+  - FAQ: faq.md
   - Changelog: changelog.md
   - Contributing: contributing.md
