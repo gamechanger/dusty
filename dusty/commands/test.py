@@ -44,9 +44,6 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
 def _construct_test_command(spec, suite_name, test_arguments):
     suite_spec = None
     for suite_dict in spec['test']['suites']:
-        import logging
-        logging.error(suite_dict)
-        logging.error(suite_name)
         if suite_dict['name'] == suite_name:
             suite_spec = suite_dict
             break
