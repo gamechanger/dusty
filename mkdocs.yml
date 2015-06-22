@@ -10,6 +10,7 @@ pages:
       - Example Specs: getting-started/index.md
       - Hello World!: getting-started/hello-world.md
       - Developing an App: getting-started/developing.md
+      - Moving Files Around: getting-started/files.md
   - Usage: usage.md
   - Architecture: architecture.md
   - Changelog: changelog.md
