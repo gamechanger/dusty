@@ -5,6 +5,8 @@
 
   * `repo` and `mount` keys in app specs are now optional
 
+  * `always` and `once` scripts in app specs have their output logged to `/var/log/dusty_always.log` and `/var/log/dusty_once.log`, respectively. These are in-container locations
+
 ## 0.1.1 (June 18, 2015)
   * BREAKING CHANGE: We have changed the types of some of the values in app, lib, and test schema.  All commands to run in the container are now lists instead of single strings.
 
