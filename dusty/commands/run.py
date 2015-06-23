@@ -89,9 +89,10 @@ def restart_apps_or_services(app_or_service_names=None, sync=True):
 
 def restart_apps_by_repo(repo_names, sync=True):
     all_active_repos = spec_assembler.get_all_repos()
-    resolved_repos = [Repo.resolve(all_active_repos, repo_name) for repo_name in repo_names]
+    resolved_repos = set([Repo.resolve(all_active_repos, repo_name) for repo_name in repo_names])
     specs = spec_assembler.get_assembled_specs()
     apps_with_repos = set()
-    for repo in resolved_repos:
-
-
+    for app_spec in specs['apps'].itervalues():
+        if spec_assembler.get_same_container_repos_from_spec(app_spec, specs).intersection(resolved_repos):
+            apps_with_repos.add(app_spec.name)
+    restart_apps_or_services(list(apps_with_repos), sync=sync)
