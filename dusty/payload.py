@@ -1,9 +1,12 @@
 import cPickle
 
+from .constants import VERSION
+
 class Payload(object):
     def __init__(self, fn, *args, **kwargs):
         self.fn = fn
         self.run_on_daemon = True
+        self.client_version = VERSION
         self.args = args
         self.kwargs = kwargs
 
@@ -16,10 +19,10 @@ class Payload(object):
         self.fn(*self.args, **self.kwargs)
 
     def serialize(self):
-        doc = {'fn': self.fn, 'args': self.args, 'kwargs': sorted(self.kwargs.items())}
+        doc = {'fn': self.fn, 'client_version': self.client_version, 'args': self.args, 'kwargs': sorted(self.kwargs.items())}
         return cPickle.dumps(doc).encode('string_escape')
 
     @staticmethod
     def deserialize(doc):
         original_doc = cPickle.loads(doc.decode('string_escape'))
-        return original_doc['fn'], original_doc['args'], dict(original_doc['kwargs'])
+        return original_doc['fn'], original_doc['client_version'], original_doc['args'], dict(original_doc['kwargs'])
