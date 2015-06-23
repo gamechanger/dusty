@@ -1,9 +1,11 @@
 import cPickle
+from constants import VERSION
 
 class Payload(object):
     def __init__(self, fn, *args, **kwargs):
         self.fn = fn
         self.run_on_daemon = True
+        self.client_version = VERSION
         self.args = args
         self.kwargs = kwargs
 
@@ -13,6 +15,8 @@ class Payload(object):
         return False
 
     def run(self):
+        if self.client_version != VERSION:
+            raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, self.client_version))
         self.fn(*self.args, **self.kwargs)
 
     def serialize(self):

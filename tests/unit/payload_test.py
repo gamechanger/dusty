@@ -39,3 +39,9 @@ class TestPayload(DustyTestCase):
 
     def test_equality_fails_wrong_class(self):
         self.assertNotEqual(self.test_payload, object())
+
+    def test_raise_version_error(self):
+        payload = Payload(_fn, 'arg1', arg2='arg2value')
+        payload.client_version = 'foo'
+        with self.assertRaises(RuntimeError):
+            payload.run()
