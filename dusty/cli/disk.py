@@ -18,7 +18,8 @@ Commands:
 from docopt import docopt
 
 from ..payload import Payload
-from ..commands.disk import inspect_vm_disk, cleanup_inactive_containers, cleanup_images
+from ..commands.disk import (inspect_vm_disk, cleanup_inactive_containers, cleanup_images,
+                             backup, restore)
 
 def main(argv):
     args = docopt(__doc__, argv)
@@ -28,3 +29,7 @@ def main(argv):
         return Payload(cleanup_inactive_containers)
     elif args['cleanup_images']:
         return Payload(cleanup_images)
+    elif args['backup']:
+        return Payload(backup)
+    elif args['restore']:
+        return Payload(restore)
