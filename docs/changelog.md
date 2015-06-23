@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.1.3 (In Progress)
+  * Add support for boot2docker 1.7. This means supporting a boot2docker vm that runs 64 bit tiny core linux
+
 
 ## 0.1.2 (June 23, 2015)
   * NEW: Commands are now placed in a file, copied over to the container and the file containing the commands is run. This allows you to use & in your commands.
