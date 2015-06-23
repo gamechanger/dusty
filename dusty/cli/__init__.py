@@ -24,6 +24,7 @@ Commands:
 
 Options:
   -d    Run the Dusty daemon
+  -v    Print the installed dusty version
 
 For help on a specific command, provide the '-h' flag to the command, e.g. 'dusty repos -h'
 """
@@ -125,7 +126,10 @@ def main():
     args = docopt(__doc__, options_first=True)
     command, command_args = args['<command>'], args['<args>']
     if command is None:
-        print __doc__.strip()
+        if '-v' in sys.argv:
+            print 'Dusty version {}'.format(constants.VERSION)
+        else:
+            print __doc__.strip()
         sys.exit(0)
     if command not in MODULE_MAP:
         print "No such command {}.".format(command)
