@@ -23,19 +23,22 @@ def _ensure_cp_dir_exists():
     mkdir_if_cmd = 'if [ ! -d {0} ]; then sudo mkdir {0}; fi'.format(constants.VM_CP_DIR)
     check_and_log_output_and_error_demoted(['boot2docker', 'ssh', mkdir_if_cmd])
 
-def _ensure_docker_vm_exists():
+def _init_docker_vm():
     """Initialize the boot2docker VM if it does not already exist."""
     logging.info('Initializing boot2docker, this will take a while the first time it runs')
     check_and_log_output_and_error_demoted(['boot2docker', 'init'])
 
-def _ensure_docker_vm_is_started():
+def _start_docker_vm():
     """Start the boot2docker VM if it is not already running."""
     logging.info('Making sure the boot2docker VM is started')
     check_and_log_output_and_error_demoted(['boot2docker', 'start'])
 
+def ensure_docker_vm_is_started():
+    _init_docker_vm()
+    _start_docker_vm()
+
 def initialize_docker_vm():
-    _ensure_docker_vm_exists()
-    _ensure_docker_vm_is_started()
+    ensure_docker_vm_is_started()
     _ensure_rsync_is_installed()
     _ensure_persist_dir_is_linked()
     _ensure_cp_dir_exists()
