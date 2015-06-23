@@ -9,11 +9,13 @@ Usage:
   restart ( --repos <repos>... | [<services>...] ) [--no-sync]
 
 Options:
-  --no-sync    If provided, Dusty will not sync repos used by
-               services being restarted prior to the restart.
-  <services>   If provided, Dusty will only restart the given
-               services. Otherwise, all currently running
-               services are restarted.
+  --no-sync       If provided, Dusty will not sync repos used by
+                  services being restarted prior to the restart.
+  --repos <repos> If provided, Dusty will restart any containers
+                  that are using the repos specified.
+  <services>      If provided, Dusty will only restart the given
+                  services. Otherwise, all currently running
+                  services are restarted.
 """
 
 from docopt import docopt
