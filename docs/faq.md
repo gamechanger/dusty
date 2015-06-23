@@ -1,6 +1,6 @@
 # Frequently Asked Questions
 
-### I'm having trouble running docker commands on my Mac - what gives??
+### I'm having trouble running Docker commands on my Mac - what gives??
 
 If you're seeing something like:
 ```
