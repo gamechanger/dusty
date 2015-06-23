@@ -57,12 +57,11 @@ class TestComposeSystem(DustyTestCase):
 
     @patch('dusty.subprocess.get_config_value')
     @patch('dusty.systems.docker.check_output_demoted')
-    @patch('dusty.systems.docker.os.environ')
-    def test_get_docker_env_2(self, fake_envs, fake_check_output, fake_config_value):
+    @patch.dict('dusty.systems.docker.os.environ', {'DOCKER_TLS_VERIFY': '1',
+                                                    'DOCKER_HOST': 'tcp://192.168.59.103:2376',
+                                                    'DOCKER_CERT_PATH': '/Users/root/.boot2docker/certs/boot2docker-vm'})
+    def test_get_docker_env_2(self, fake_check_output, fake_config_value):
         fake_config_value.return_value = 'root'
-        fake_envs = {'DOCKER_TLS_VERIFY': '1',
-                     'DOCKER_HOST': 'tcp://192.168.59.103:2376',
-                     'DOCKER_CERT_PATH': '/Users/root/.boot2docker/certs/boot2docker-vm'}
         fake_check_output.return_value = """Variables are already set"""
         expected = {'DOCKER_TLS_VERIFY': '1',
                     'DOCKER_HOST': 'tcp://192.168.59.103:2376',
@@ -72,11 +71,10 @@ class TestComposeSystem(DustyTestCase):
 
     @patch('dusty.subprocess.get_config_value')
     @patch('dusty.systems.docker.check_output_demoted')
-    @patch('dusty.systems.docker.os.environ')
-    def test_get_docker_env_3(self, fake_envs, fake_check_output, fake_config_value):
+    @patch('dusty.systems.docker.os.environ', {'DOCKER_TLS_VERIFY': '2',
+                                               'DOCKER_HOST': 'tcp://192.168.59.103:2375'})
+    def test_get_docker_env_3(self, fake_check_output, fake_config_value):
         fake_config_value.return_value = 'root'
-        fake_envs = {'DOCKER_TLS_VERIFY': '2',
-                     'DOCKER_HOST': 'tcp://192.168.59.103:2375'}
         fake_check_output.return_value = """    export DOCKER_TLS_VERIFY=1
         export DOCKER_HOST=tcp://192.168.59.103:2376
         export DOCKER_CERT_PATH=/Users/root/.boot2docker/certs/boot2docker-vm"""
