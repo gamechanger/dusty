@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.1.2 (In Progress)
+## 0.1.3 (In Progress)
+
+## 0.1.2 (June 23, 2015)
   * BREAKING CHANGE: We have switched to using docker-compose 1.3. https://github.com/docker/compose/releases/tag/1.3.0
 
   * NEW: Commands are now placed in a file, copied over to the container and the file containing the commands is run. This allows you to use & in your commands.
