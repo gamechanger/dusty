@@ -21,6 +21,7 @@ Commands:
   test       Run test scripts in isolated environments
   up         Set up the Dusty environment and start activated applications
   validate   Validates that Dusty specs have correct fields and references
+  version    Print Dusty daemon's current version
 
 Options:
   -d    Run the Dusty daemon
@@ -42,7 +43,7 @@ from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
 from . import (bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop,
-               sync, up, validate, setup, test, status)
+               sync, up, validate, version, setup, test, status)
 from .. import constants
 
 MODULE_MAP = {
@@ -63,6 +64,7 @@ MODULE_MAP = {
     'test': test,
     'up': up,
     'validate': validate,
+    'version': version,
 }
 
 def _run_command(sock, command):
