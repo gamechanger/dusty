@@ -44,7 +44,7 @@ SYSTEM_DEPENDENCY_VERSIONS = {
     'virtualbox': '4.3.26',
     'boot2docker': '1.6.0',
     'docker': '1.6.0',
-    'docker-compose': '1.2.0'
+    'docker-compose': '1.3.0'
 }
 
 NGINX_CONFIG_FILE_LOCATIONS = ['/usr/local/nginx/conf', '/etc/nginx', '/usr/local/etc/nginx']
