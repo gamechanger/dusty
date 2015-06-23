@@ -73,7 +73,7 @@ def _check_docker():
 @returns_exception
 def _check_docker_compose():
     _assert_executable_exists('docker-compose')
-    installed_version = subprocess.check_output(['docker-compose', '--version']).split(' ')[1].strip()
+    installed_version = subprocess.check_output(['docker-compose', '--version']).split('\n')[0].split()[-1].strip()
     _maybe_version_warning('docker-compose', installed_version)
 
 @returns_exception
