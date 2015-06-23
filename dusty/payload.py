@@ -1,5 +1,6 @@
 import cPickle
-from constants import VERSION
+
+from .constants import VERSION
 
 class Payload(object):
     def __init__(self, fn, *args, **kwargs):
@@ -15,15 +16,13 @@ class Payload(object):
         return False
 
     def run(self):
-        if self.client_version != VERSION:
-            raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, self.client_version))
         self.fn(*self.args, **self.kwargs)
 
     def serialize(self):
-        doc = {'fn': self.fn, 'args': self.args, 'kwargs': sorted(self.kwargs.items())}
+        doc = {'fn': self.fn, 'client_version': self.client_version, 'args': self.args, 'kwargs': sorted(self.kwargs.items())}
         return cPickle.dumps(doc).encode('string_escape')
 
     @staticmethod
     def deserialize(doc):
         original_doc = cPickle.loads(doc.decode('string_escape'))
-        return original_doc['fn'], original_doc['args'], dict(original_doc['kwargs'])
+        return original_doc['fn'], original_doc['client_version'], original_doc['args'], dict(original_doc['kwargs'])

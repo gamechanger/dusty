@@ -21,6 +21,7 @@ from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .payload import Payload
 from .warnings import daemon_warnings
 from .config import refresh_config_warnings
+from .constants import VERSION
 
 def _clean_up_existing_socket(socket_path):
     try:
@@ -51,10 +52,12 @@ def _listen_on_socket(socket_path, suppress_warnings):
                     data = connection.recv(1024)
                     if not data:
                         break
-                    fn, args, kwargs = Payload.deserialize(data)
+                    fn, client_version, args, kwargs = Payload.deserialize(data)
                     logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
                     try:
                         _send_warnings_to_client(connection, suppress_warnings)
+                        if client_version != VERSION:
+                            raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, self.client_version))
                         fn(*args, **kwargs)
                     except Exception as e:
                         logging.exception("Daemon encountered exception while processing command")
