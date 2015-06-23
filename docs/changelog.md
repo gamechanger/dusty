@@ -5,6 +5,7 @@
 
   * `repo` and `mount` keys in app specs are now optional
 
+
 ## 0.1.1 (June 18, 2015)
   * BREAKING CHANGE: We have changed the types of some of the values in app, lib, and test schema.  All commands to run in the container are now lists instead of single strings.
 
