@@ -122,14 +122,14 @@ def main():
     # we can process daemon-specific options
     if '-d' in sys.argv:
         return run_daemon()
-    if len(sys.argv) == 2 and sys.argv[1] == '-v':
-        print 'Dusty version {}'.format(constants.VERSION)
-        sys.exit(0)
 
     args = docopt(__doc__, options_first=True)
     command, command_args = args['<command>'], args['<args>']
     if command is None:
-        print __doc__.strip()
+        if '-v' in sys.argv:
+            print 'Dusty version {}'.format(constants.VERSION)
+        else:
+            print __doc__.strip()
         sys.exit(0)
     if command not in MODULE_MAP:
         print "No such command {}.".format(command)
