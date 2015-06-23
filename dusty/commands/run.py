@@ -93,6 +93,6 @@ def restart_apps_by_repo(repo_names, sync=True):
     specs = spec_assembler.get_assembled_specs()
     apps_with_repos = set()
     for app_spec in specs['apps'].itervalues():
-        if spec_assembler.get_same_container_repos_from_spec(app_spec, specs).intersection(resolved_repos):
+        if spec_assembler.get_same_container_repos_from_spec(app_spec).intersection(resolved_repos):
             apps_with_repos.add(app_spec.name)
     restart_apps_or_services(list(apps_with_repos), sync=sync)

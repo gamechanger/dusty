@@ -30,3 +30,4 @@ def apply_required_keys(specs):
         specs['apps'][k] = get_app_dusty_schema(v, k)
     for k, v in specs['libs'].iteritems():
         specs['libs'][k] = get_lib_dusty_schema(v, k)
+    return specs

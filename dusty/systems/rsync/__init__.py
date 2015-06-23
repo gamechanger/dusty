@@ -62,5 +62,5 @@ def sync_repos_by_specs(specs_list):
     """
     repos = set()
     for spec in specs_list:
-        repos = repos.union(get_same_container_repos_from_spec())
+        repos = repos.union(get_same_container_repos_from_spec(spec))
     sync_repos(repos)
