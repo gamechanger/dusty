@@ -57,7 +57,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
                     try:
                         _send_warnings_to_client(connection, suppress_warnings)
                         if client_version != VERSION:
-                            raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, self.client_version))
+                            raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, client_version))
                         fn(*args, **kwargs)
                     except Exception as e:
                         logging.exception("Daemon encountered exception while processing command")
