@@ -88,7 +88,8 @@ class TestCommandFile(DustyTestCase):
                      'app1 once 2 &',
                      '}',
                      'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
-                     'then mkdir -p {}; touch {}'.format(constants.RUN_DIR, constants.FIRST_RUN_FILE_PATH),
+                     'then mkdir -p {}'.format(constants.RUN_DIR),
+                     'touch {}'.format(constants.FIRST_RUN_FILE_PATH),
                      'dusty_once_fn | tee {}'.format(constants.ONCE_LOG_PATH),
                      'fi',
                      'dusty_always_fn () {',
@@ -162,3 +163,66 @@ class TestCommandFile(DustyTestCase):
         fake_write_commands_to_file.assert_has_calls([call1, call2, call3, call4, call5, call6])
 
         fake_sync.assert_has_calls([call('{}'.format(constants.COMMAND_FILES_DIR), '{}'.format(constants.VM_COMMAND_FILES_DIR))])
+
+    def test_once_commands(self):
+        spec = {
+            'commands': {
+                'once': [
+                    'once_script.sh'
+                ]
+            }
+        }
+        expected = [
+            'dusty_once_fn () {',
+            'once_script.sh',
+            '}',
+            'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
+            'then mkdir -p {}'.format(constants.RUN_DIR),
+            'touch {}'.format(constants.FIRST_RUN_FILE_PATH),
+            'dusty_once_fn | tee {}'.format(constants.ONCE_LOG_PATH),
+            'fi'
+        ]
+        actual = command_file._get_once_commands(spec)
+        self.assertEqual(expected, actual)
+
+    def test_once_commands_blank(self):
+        spec = {
+            'commands': {
+                'once': []
+            }
+        }
+        expected = [
+            'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
+            'then mkdir -p {}'.format(constants.RUN_DIR),
+            'touch {}'.format(constants.FIRST_RUN_FILE_PATH),
+            'fi'
+        ]
+        actual = command_file._get_once_commands(spec)
+        self.assertEqual(expected, actual)
+
+    def test_always_commands(self):
+        spec = {
+            'commands': {
+                'always': [
+                    'always_script.sh'
+                ]
+            }
+        }
+        expected = [
+            'dusty_always_fn () {',
+            'always_script.sh',
+            '}',
+            'dusty_always_fn | tee {}'.format(constants.ALWAYS_LOG_PATH),
+        ]
+        actual = command_file._get_always_commands(spec)
+        self.assertEqual(expected, actual)
+
+    def test_always_commands_blank(self):
+        spec = {
+            'commands': {
+                'always': []
+            }
+        }
+        expected = []
+        actual = command_file._get_always_commands(spec)
+        self.assertEqual(expected, actual)
