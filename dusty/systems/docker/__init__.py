@@ -26,18 +26,15 @@ def get_dusty_container_name(service_name):
 def _get_set_envs():
     env = {}
     environment_variables = os.environ
-    if 'DOCKER_HOST' in environment_variables:
-        env['DOCKER_HOST'] = environment_variables['DOCKER_HOST']
-    if 'DOCKER_CERT_PATH' in environment_variables:
-        env['DOCKER_CERT_PATH'] = environment_variables['DOCKER_CERT_PATH']
-    if 'DOCKER_TLS_VERIFY' in environment_variables:
-        env['DOCKER_TLS_VERIFY'] = environment_variables['DOCKER_TLS_VERIFY']
+    for key in ('DOCKER_HOST', 'DOCKER_CERT_PATH', 'DOCKER_TLS_VERIFY'):
+        if key in environment_variables:
+            env[key] = environment_variables[key]
     return env
 
 def get_docker_env():
     env = _get_set_envs()
     if len(env.keys()) < 3:
-        output = check_output_demoted(['boot2docker', 'shellinit'])
+        output = check_output_demoted(['boot2docker', 'shellinit'], redirect_stderr=True)
         for line in output.splitlines():
             if not line.strip().startswith('export'):
                 continue
