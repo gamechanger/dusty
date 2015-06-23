@@ -25,10 +25,9 @@ def get_dusty_container_name(service_name):
 
 def _get_set_envs():
     env = {}
-    environment_variables = os.environ
     for key in ('DOCKER_HOST', 'DOCKER_CERT_PATH', 'DOCKER_TLS_VERIFY'):
-        if key in environment_variables:
-            env[key] = environment_variables[key]
+        if key in os.environ:
+            env[key] = os.environ[key]
     return env
 
 def get_docker_env():
