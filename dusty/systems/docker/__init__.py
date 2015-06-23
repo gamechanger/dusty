@@ -23,14 +23,26 @@ def get_dusty_images():
 def get_dusty_container_name(service_name):
     return 'dusty_{}_1'.format(service_name)
 
-def get_docker_env():
-    output = check_output_demoted(['boot2docker', 'shellinit'], redirect_stderr=True)
+def _get_set_envs():
     env = {}
-    for line in output.splitlines():
-        if not line.strip().startswith('export'):
-            continue
-        k, v = line.strip().split()[1].split('=')
-        env[k] = v
+    set_environment_variables = os.environ
+    if 'DOCKER_HOST' in set_environment_variables:
+        env['DOCKER_HOST'] = set_environment_variables['DOCKER_HOST']
+    if 'DOCKER_CERT_PATH' in set_environment_variables:
+        env['DOCKER_CERT_PATH'] = set_environment_variables['DOCKER_CERT_PATH']
+    if 'DOCKER_TLS_VERIFY' in set_environment_variables:
+        env['DOCKER_TLS_VERIFY'] = set_environment_variables['DOCKER_TLS_VERIFY']
+    return env
+
+def get_docker_env():
+    env = _get_set_envs()
+    if len(env.keys()) < 3:
+        output = check_output_demoted(['boot2docker', 'shellinit'])
+        for line in output.splitlines():
+            if not line.strip().startswith('export'):
+                continue
+            k, v = line.strip().split()[1].split('=')
+            env[k] = v
     return env
 
 def get_docker_client():
