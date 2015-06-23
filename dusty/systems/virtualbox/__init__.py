@@ -11,7 +11,7 @@ def _ensure_rsync_is_installed():
     logging.info('Installing rsync inside the Docker VM')
     version = check_output_demoted(['boot2docker', 'ssh', 'uname -m'])
     if '_64' in version:
-        # rsync 64 bit binary does not exist for tiny core linux. Made our own binary and our pulling and installing that
+        # rsync 64 bit binary does not exist for tiny core linux. Made our own binary and are pulling and installing that
         check_and_log_output_and_error_demoted(['boot2docker', 'ssh', 'curl https://64bit-rsync.s3.amazonaws.com/rsync > rsync; sudo chmod 755 rsync; sudo mv rsync /usr/bin/rsync'])
     else:
         check_and_log_output_and_error_demoted(['boot2docker', 'ssh', 'tce-load -wi rsync'])
