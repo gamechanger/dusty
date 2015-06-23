@@ -2,7 +2,6 @@
 
 ## 0.1.2 (In Progress)
   * NEW: Commands are now placed in a file, copied over to the container and the file containing the commands is run. This allows you to use & in your commands.
-  * NEW: `always` and `once` scripts in app specs have their output logged to `/var/log/dusty_always.log` and `/var/log/dusty_once.log`, respectively. These are in-container locations
 
   * `repo` and `mount` keys in app specs are now optional
 
