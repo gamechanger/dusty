@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.1.3 (In Progress)
-  * Add support for boot2docker 1.7. This means supporting a boot2docker vm that runs 64 bit tiny core linux
+  * Added support for boot2docker 1.7+, which uses 64-bit Tiny Core Linux
 
 
 ## 0.1.2 (June 23, 2015)
