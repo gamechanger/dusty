@@ -6,7 +6,7 @@ also perform a sync of any local repos needed inside the container
 prior to restarting.
 
 Usage:
-  restart [--no-sync] [<services>...]
+  restart ( --repos <repos>... | [<services>...] ) [--no-sync]
 
 Options:
   --no-sync    If provided, Dusty will not sync repos used by
@@ -19,8 +19,10 @@ Options:
 from docopt import docopt
 
 from ..payload import Payload
-from ..commands.run import restart_apps_or_services
+from ..commands.run import restart_apps_or_services, restart_apps_by_repo
 
 def main(argv):
     args = docopt(__doc__, argv)
+    if args['--repos']:
+        return Payload(restart_apps_by_repo, args['<repos>'], sync=not args['--no-sync'])
     return Payload(restart_apps_or_services, args['<services>'], sync=not args['--no-sync'])

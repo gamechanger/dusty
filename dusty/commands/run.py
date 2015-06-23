@@ -9,6 +9,7 @@ from ..log import log_to_client
 from .repos import update_managed_repos
 from .. import constants
 from ..command_file import make_up_command_files
+from ..source import Repo
 
 def start_local_env(recreate_containers=True, pull_repos=True):
     """This command will use the compilers to get compose specs
@@ -85,3 +86,12 @@ def restart_apps_or_services(app_or_service_names=None, sync=True):
             rsync.sync_repos(spec_assembler.get_all_repos(active_only=True, include_specs_repo=False))
 
     compose.restart_running_services(app_or_service_names)
+
+def restart_apps_by_repo(repo_names, sync=True):
+    all_active_repos = spec_assembler.get_all_repos()
+    resolved_repos = [Repo.resolve(all_active_repos, repo_name) for repo_name in repo_names]
+    specs = spec_assembler.get_assembled_specs()
+    apps_with_repos = set()
+    for repo in resolved_repos:
+
+
