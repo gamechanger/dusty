@@ -35,9 +35,7 @@ def _split_path(path):
     return None, path
 
 def _resolve_path(path):
-    if path.startswith('/'):
-        return path
-    return os.path.join(os.getcwd(), path)
+    return os.path.abspath(path)
 
 def _validate_path_pair(name, path):
     if name and not path.startswith('/'):

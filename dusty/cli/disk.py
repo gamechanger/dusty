@@ -4,8 +4,8 @@ Usage:
   disk inspect
   disk cleanup_containers
   disk cleanup_images
-  disk backup <destination-path>
-  disk restore <source-path>
+  disk backup <destination>
+  disk restore <source>
 
 Commands:
   inspect             Prints VM disk usage information
@@ -16,6 +16,7 @@ Commands:
 """
 
 from docopt import docopt
+import os
 
 from ..payload import Payload
 from ..commands.disk import (inspect_vm_disk, cleanup_inactive_containers, cleanup_images,
@@ -30,6 +31,12 @@ def main(argv):
     elif args['cleanup_images']:
         return Payload(cleanup_images)
     elif args['backup']:
-        return Payload(backup, args['<destination-path>'])
+        path = os.path.abspath(args['<destination>'])
+        return Payload(backup, path)
     elif args['restore']:
-        return Payload(restore, args['<source-path>'])
+        path = os.path.abspath(args['<source>'])
+        print "Warning: this will overwrite the /persist directory on your VM with the contents of {}".format(path)
+        if raw_input("Continue? (y/n) ").strip().upper() == 'Y':
+            return Payload(restore, path)
+        else:
+            print "Restore cancelled"
