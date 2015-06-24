@@ -117,5 +117,5 @@ The yml seen above will set the variables defined in the app container's environ
 test:
     ...
 ```
-Apps contain the test key.  To find out more about the testing spec, visit the [testing spec page](./testing-specs.md#services).
+Apps contain the test key.  To find out more about the testing spec, visit the [testing spec page](./testing-specs.md).
 

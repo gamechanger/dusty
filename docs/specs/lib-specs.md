@@ -4,7 +4,7 @@ These specs are used to specify libs in your local environment. They should go i
 ## Keys
 
 ### repo and mount
-The **repo** and **mount** keys are almost identical to those found in the [app specs](./app-specs.md). The only difference is that both repo and mount are required in the lib spec.
+The **repo** and **mount** keys are almost identical to those found in the [app specs](./app-specs.md#repo). The only difference is that both repo and mount are required in the lib spec.
 
 ### install
 ```

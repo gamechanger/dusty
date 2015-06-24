@@ -4,7 +4,7 @@ These specs are used to specify tests you can run in apps and libs. These do not
 ## Keys
 
 ### image and build
-The image and build keys in test specs mirror the image and build keys in the [app-spec](./app-specs.md).
+The image and build keys in test specs mirror the image and build keys in the [app-spec](./app-specs.md#build).
 
 ### services
 ```
