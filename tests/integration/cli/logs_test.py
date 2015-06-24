@@ -10,7 +10,7 @@ class TestLogsCLI(DustyIntegrationTestCase):
 
     def tearDown(self):
         try:
-            self.run_command('down')
+            self.run_command('stop')
         except Exception:
             pass
         super(TestLogsCLI, self).tearDown()
