@@ -4,8 +4,8 @@ Usage:
   disk inspect
   disk cleanup_containers
   disk cleanup_images
-  disk backup
-  disk restore
+  disk backup <destination-path>
+  disk restore <source-path>
 
 Commands:
   inspect             Prints VM disk usage information
@@ -30,6 +30,6 @@ def main(argv):
     elif args['cleanup_images']:
         return Payload(cleanup_images)
     elif args['backup']:
-        return Payload(backup)
+        return Payload(backup, args['<destination-path>'])
     elif args['restore']:
-        return Payload(restore)
+        return Payload(restore, args['<source-path>'])
