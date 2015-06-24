@@ -1,6 +1,10 @@
 # Changelog
 
 ## 0.1.3 (In Progress)
+  * NEW: `dusty restart --repos <repos>` will restart active containers which use the specified repos.
+  * NEW: `dusty disk backup <destination>` will save the contents of your VM's `/persist` directory
+  * NEW: `dusty disk restore <source>` will write to your VM's `/persist` from `<source>`
+
   * Added support for boot2docker 1.7+, which uses 64-bit Tiny Core Linux
 
 
