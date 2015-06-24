@@ -1,5 +1,13 @@
-from ...testcases import DustyIntegrationTestCase
+from os import path
+import shutil
+from subprocess import check_output
+
+import git
+
+from dusty.constants import REPOS_DIR
 from ...fixtures import busybox_single_app_bundle_fixture
+from ...testcases import DustyIntegrationTestCase
+
 
 class TestReposCLI(DustyIntegrationTestCase):
     def setUp(self):
@@ -42,4 +50,16 @@ class TestReposCLI(DustyIntegrationTestCase):
         self.run_command('repos from /tmp/from')
         result = self.run_command('repos list')
         self.assertInSameLine(result, '/tmp/fake-repo', 'fake-repo', 'tmp/from/fake-repo')
-        self.tear_down_fake_local_repo(path='/tmp/from/fake-repo')
+        self.run_command('repos manage /tmp/fake-repo')
+        result = self.run_command('repos list')
+        shutil.rmtree('/tmp/from')
+
+    def test_repos_update(self):
+        self.run_command('bundles activate busyboxa')
+        git_repo = git.Repo('/tmp/fake-repo')
+        check_output(['touch', '/tmp/fake-repo/foo'])
+        git_repo.index.add(['/tmp/fake-repo/foo'])
+        git_repo.index.commit('Second commit')
+        self.assertFalse(path.isfile('{}/tmp/fake-repo/foo'.format(REPOS_DIR)))
+        self.run_command('repos update')
+        self.assertTrue(path.isfile('{}/tmp/fake-repo/foo'.format(REPOS_DIR)))
