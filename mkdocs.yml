@@ -8,6 +8,13 @@ pages:
   - Installation:
     - Installation: installation.md
     - Setup: setup.md
+  - Dusty Specs:
+    - Specs Overview: specs/index.md
+    - Bundle Specs: specs/bundle-specs.md
+    - App Specs: specs/app-specs.md
+    - Lib Specs: specs/lib-specs.md
+    - Service Specs: specs/service-specs.md
+    - Test Specs: specs/test-specs.md
   - Getting Started:
       - Example Specs: getting-started/index.md
       - Hello World!: getting-started/hello-world.md
