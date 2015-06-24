@@ -136,11 +136,11 @@ class DustyIntegrationTestCase(TestCase):
         self._clear_stdout()
         return result
 
-    def _set_up_fake_local_repo(self):
-        repo = git.Repo.init('/tmp/fake-repo')
-        with open('/tmp/fake-repo/README.md', 'w') as f:
+    def _set_up_fake_local_repo(self, path='/tmp/fake-repo'):
+        repo = git.Repo.init(path)
+        with open(os.path.join(path, 'README.md'), 'w') as f:
             f.write('# Fake Repo')
-        repo.index.add(['/tmp/fake-repo/README.md'])
+        repo.index.add(os.path.join(path, 'README.md'))
         repo.index.commit('Initial commit')
 
     def _in_same_line(self, string, *values):
