@@ -103,15 +103,22 @@ Usage:
   disk inspect
   disk cleanup_containers
   disk cleanup_images
+  disk backup <destination>
+  disk restore <source>
 
 Commands:
   inspect             Prints VM disk usage information
   cleanup_containers  Cleans docker containers that have exited
   cleanup_images      Removes docker images that can be removed without the --force flag
+  backup              Backs up the /persist directory on your boot2docker to your local file system
+  restore             Restores a backed up /persist directory
 ```
-Used to manage the disk usage of Dusty's docker images and containers.  These can end
-up taking up a lot of space on boot2docker's virtual disk, which is 20G max (dynamically
-allocated by Virtualbox).
+Inspect, cleanup_containers, and cleanup_images are used to manage the disk usage of Dusty's docker
+images and containers.  These can end up taking up a lot of space on boot2docker's virtual disk,
+which is 20G max (dynamically allocated by Virtualbox).
+
+Backup and restore are usefull for saving persistent data.  You may want to save the data and
+send it to someone else, or save your data after recreating your boot2docker VM.
 
 #### dump
 ```
