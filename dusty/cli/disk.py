@@ -19,6 +19,7 @@ from docopt import docopt
 import os
 
 from ..payload import Payload
+from ..log import log_to_client
 from ..commands.disk import (inspect_vm_disk, cleanup_inactive_containers, cleanup_images,
                              backup, restore)
 
@@ -39,4 +40,4 @@ def main(argv):
         if raw_input("Continue? (y/n) ").strip().upper() == 'Y':
             return Payload(restore, path)
         else:
-            print "Restore cancelled"
+            log_to_client("Restore cancelled")
