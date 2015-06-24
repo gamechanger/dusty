@@ -8,7 +8,7 @@ These specs are used to specify apps for you local environment. They should go i
 repo: github.com/gamechanger/app1
 repo: /Users/dusty/app1
 ```
-This repo key is used to specify a local or remote github repo where the code for the app lives.
+This repo key is used to specify a local or remote GitHub repo where the code for the app lives.
 
 ### mount
 ```
