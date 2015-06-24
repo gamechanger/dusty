@@ -103,15 +103,22 @@ Usage:
   disk inspect
   disk cleanup_containers
   disk cleanup_images
+  disk backup <destination>
+  disk restore <source>
 
 Commands:
   inspect             Prints VM disk usage information
   cleanup_containers  Cleans docker containers that have exited
   cleanup_images      Removes docker images that can be removed without the --force flag
+  backup              Backs up the /persist directory on your boot2docker to your local file system
+  restore             Restores a backed up /persist directory
 ```
-Used to manage the disk usage of Dusty's docker images and containers.  These can end
-up taking up a lot of space on boot2docker's virtual disk, which is 20G max (dynamically
-allocated by Virtualbox).
+Inspect, cleanup_containers, and cleanup_images are used to manage the disk usage of Dusty's docker
+images and containers.  These can end up taking up a lot of space on boot2docker's virtual disk,
+which is 20G max (dynamically allocated by Virtualbox).
+
+Backup and restore are usefull for saving persistent data.  You may want to save the data and
+send it to someone else, or save your data after recreating your boot2docker VM.
 
 #### dump
 ```
@@ -176,17 +183,19 @@ also perform a sync of any local repos needed inside the container
 prior to restarting.
 
 Usage:
-  restart [--no-sync] [<services>...]
+  restart ( --repos <repos>... | [<services>...] ) [--no-sync]
 
 Options:
-  --no-sync    If provided, Dusty will not sync repos used by
-               services being restarted prior to the restart.
-  <services>   If provided, Dusty will only restart the given
-               services. Otherwise, all currently running
-               services are restarted.
+  --no-sync         If provided, Dusty will not sync repos used by
+                    services being restarted prior to the restart.
+  --repos <repos>   If provided, Dusty will restart any containers
+                    that are using the repos specified.
+  <services>        If provided, Dusty will only restart the given
+                    services. Otherwise, all currently running
+                    services are restarted.
 ```
 Restarts active containers associated with Dusty.  The following actions are performed:
-* Sync repositories on your mac to boot2docker (using rsyinc)
+* Sync repositories on your mac to boot2docker (using rsync)
 * Use the `docker restart` command for each active container
 * Since containers are not recreated, specified `once` commands will not be run
 

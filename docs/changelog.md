@@ -1,6 +1,10 @@
 # Changelog
 
 ## 0.1.3 (In Progress)
+  * NEW: `--repos <repos>` option added to `dusty restart` CLI command.  This will restart active containers which use the specified repos.  Using this option is mutually exclusive with specifying containers to restart.
+  * NEW: `dusty disk backup <destination>` CLI command added.  This will save the contents of your VM's `/persist` directory.
+  * NEW: `dusty disk restore <source>` CLI command added.  This will write to your VM's `/persist` from `<source>`.
+
   * Added support for boot2docker 1.7+, which uses 64-bit Tiny Core Linux
 
 
