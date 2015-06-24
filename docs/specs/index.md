@@ -17,3 +17,6 @@ dusty-specs/
   libs/
   services/
 ```
+
+## Note About Commands
+All commands specified in dusty, be they app's once and always, scripts, tests, ...etc are put in a shell file and run using sh.  This allows some more flexibility of what types of commands we allow, including running commands in the background (&).
