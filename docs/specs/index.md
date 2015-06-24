@@ -6,7 +6,7 @@ There are 4 main types of objects in Dusty.<br/>
 4. [Libs](./lib-specs.md) - objects that have code from the user, but do not run in their own container. These will be included in app containers for app code to use.
 
 There is a 5th subtype that is important enough to get its own spec page.<br/>
-5. [Tests](./testing-specs.md) - objects found on both the lib and apps objects. They define how to run tests on a user's app and lib code.
+5. [Tests](./test-specs.md) - objects found on both the lib and apps objects. They define how to run tests on a user's app and lib code.
 
 ## Dusty Specs Repo
 The dusty specs repo is organized as follows.
