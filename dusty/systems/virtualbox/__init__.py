@@ -4,13 +4,12 @@ import logging
 
 from ... import constants
 from ...config import get_config_value
-from ...subprocess import check_and_log_output_and_error_demoted, check_output_demoted, check_call_demoted
+from ...subprocess import check_and_log_output_and_error_demoted, check_output_demoted, check_call_demoted, call_demoted
 from ...log import log_to_client
 
 def _ensure_rsync_is_installed():
     logging.info('Installing rsync inside the Docker VM')
-    version = check_output_demoted(['boot2docker', 'ssh', 'uname -m'])
-    if '_64' in version:
+    if call_demoted(['test', '-f', '/lib/ld-linux-x86-64.so.2']) == 0:
         # rsync 64 bit binary does not exist for tiny core linux. Made our own binary and are pulling and installing that
         check_and_log_output_and_error_demoted(['boot2docker', 'ssh', 'which rsync || (curl https://64bit-rsync.s3.amazonaws.com/rsync > rsync; sudo chmod 755 rsync; sudo mv rsync /usr/bin/rsync)'])
     else:

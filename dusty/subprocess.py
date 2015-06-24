@@ -37,6 +37,10 @@ def run_subprocess(fn, shell_args, demote=True, env=None, **kwargs):
     output = fn(shell_args, env=passed_env, **kwargs)
     return output
 
+def call_demoted(shell_args, env=None, redirect_stderr=False):
+    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
+    return run_subprocess(subprocess.call, shell_args, demote=True, env=env, **kwargs)
+
 def check_call_demoted(shell_args, env=None, redirect_stderr=False):
     kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
     return run_subprocess(subprocess.check_call, shell_args, demote=True, env=env, **kwargs)
