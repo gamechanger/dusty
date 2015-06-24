@@ -176,17 +176,19 @@ also perform a sync of any local repos needed inside the container
 prior to restarting.
 
 Usage:
-  restart [--no-sync] [<services>...]
+  restart ( --repos <repos>... | [<services>...] ) [--no-sync]
 
 Options:
-  --no-sync    If provided, Dusty will not sync repos used by
-               services being restarted prior to the restart.
-  <services>   If provided, Dusty will only restart the given
-               services. Otherwise, all currently running
-               services are restarted.
+  --no-sync         If provided, Dusty will not sync repos used by
+                    services being restarted prior to the restart.
+  --repos <repos>   If provided, Dusty will restart any containers
+                    that are using the repos specified.
+  <services>        If provided, Dusty will only restart the given
+                    services. Otherwise, all currently running
+                    services are restarted.
 ```
 Restarts active containers associated with Dusty.  The following actions are performed:
-* Sync repositories on your mac to boot2docker (using rsyinc)
+* Sync repositories on your mac to boot2docker (using rsync)
 * Use the `docker restart` command for each active container
 * Since containers are not recreated, specified `once` commands will not be run
 
