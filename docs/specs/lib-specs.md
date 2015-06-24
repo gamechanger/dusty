@@ -27,4 +27,4 @@ The depends key allows a lib to specify other libs that it depends on. A lib can
 test:
     ...
 ```
-Libs contain the test key.  To find out more about the sub test spec, visit the [testing spec page](./testing-specs.md).
+Libs contain the test key.  To find out more about the sub test spec, visit the [testing spec page](./test-specs.md).
