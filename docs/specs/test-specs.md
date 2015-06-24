@@ -19,7 +19,7 @@ The services key represents a list of services that the app or lib being tested 
 once:
   - pip install -r test_requirements.txt
 ```
-The once key is a list of commands to be run when you are creating the testing base image.  In order to speed up the process of running tests, the first time tests are run, Dusty will create a testing base image based off of the image or build key and the once commands. This image is then used to run the actual tests.  This allows the heavy install commands to only happen the very first time tests are run. From there forward, tests should run very fast. <br />
+The once key is a list of commands to be run when you are creating the testing base image.  In order to speed up the process of running tests, the first time tests are run, Dusty will create a testing base image based off of the image or build key and the once commands. This image is then used to run the actual tests.  This allows the heavy install commands to only happen the very first time tests are run. Each subsequent test run should run much more quickly. <br />
 
 ### suites
 ```
