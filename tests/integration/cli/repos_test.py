@@ -1,0 +1,46 @@
+from ...testcases import DustyIntegrationTestCase
+from ...fixtures import busybox_single_app_bundle_fixture
+
+class TestReposCLI(DustyIntegrationTestCase):
+    def setUp(self):
+        super(TestReposCLI, self).setUp()
+        busybox_single_app_bundle_fixture(num_bundles=1)
+        self.set_up_fake_local_repo(path='/tmp/fake-repo-1', short_name='fake-repo-1')
+
+    def tearDown(self):
+        super(TestReposCLI, self).tearDown()
+        self.tear_down_fake_local_repo(path='/tmp/fake-repo-1')
+
+    def test_repos_list(self):
+        result = self.run_command('repos list')
+        self.assertInSameLine(result, 'Full Name', 'Short Name', 'Local Override')
+        self.assertInSameLine(result, 'github.com/gamechanger/dusty-example-specs', 'dusty-example-specs', self.overridden_specs_path)
+        self.assertInSameLine(result, 'tmp/fake-repo', 'fake-repo')
+
+    def test_repos_override(self):
+        result = self.run_command('repos list')
+        self.assertInSameLine(result, 'fake-repo', '/tmp/fake-repo')
+        self.assertNotInSameLine(result, 'fake-repo', '/tmp/fake-repo-1')
+        self.run_command('repos override fake-repo /tmp/fake-repo-1')
+        result = self.run_command('repos list')
+        self.assertInSameLine(result, 'tmp/fake-repo', 'fake-repo', '/tmp/fake-repo-1')
+
+    def test_repos_manage(self):
+        result = self.run_command('repos list')
+        self.assertNotInSameLine(result, 'fake-repo', '/tmp/fake-repo-1')
+        self.run_command('repos override fake-repo /tmp/fake-repo-1')
+        result = self.run_command('repos list')
+        self.assertInSameLine(result, '/tmp/fake-repo', 'fake-repo', '/tmp/fake-repo-1')
+        result = self.run_command('repos manage fake-repo')
+        self.assertNotInSameLine(result, 'fake-repo', '/tmp/fake-repo-1')
+
+    def test_repos_from(self):
+        self.set_up_fake_local_repo(path='/tmp/from/fake-repo', short_name='fake-repo')
+        result = self.run_command('repos list')
+        self.assertNotInSameLine(result, 'fake-repo', '/tmp/from/fake-repo-1')
+        self.assertNotInSameLine(result, 'tmp/from/fake-repo', 'fake-repo')
+        self.run_command('repos from /tmp/from')
+        result = self.run_command('repos list')
+        self.assertInSameLine(result, '/tmp/fake-repo', 'fake-repo', 'tmp/from/fake-repo')
+        self.tear_down_fake_local_repo(path='/tmp/from/fake-repo')
+
