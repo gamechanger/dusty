@@ -1,8 +1,8 @@
 from ...testcases import DustyIntegrationTestCase
-from ...fixtures import busybox_single_app_bundle_fixture
+from ...fixtures import specs_fixture_with_depends
 
 class TestRestartCli(DustyIntegrationTestCase):
     def setUp(self):
         super(TestRestartCli, self).setUp()
-        busybox_single_app_bundle_fixture(num_bundles=3)
-        self.run_command('bundles activate busyboxa busyboxb busyboxc')
+        specs_fixture_with_depends()
+        self.run_command('bundles activate bundle-a bundle-b')

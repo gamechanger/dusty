@@ -49,6 +49,41 @@ def basic_specs_fixture():
                             'mount': '/lib/a',})
     _write('service', 'service-a', {'image': 'service/a'})
 
+def specs_fixture_with_depends():
+    _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['app-a']})
+    _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['app-b']})
+    _write('app', 'app-a', {'repo': '/tmp/app-a',
+                            'image': 'app/a',
+                            'mount': '/app/a',
+                            'scripts': [{'description': 'A script description',
+                                        'command': ['ls /'],
+                                        'name': 'example'}]
+                            'depends': {
+                                'libs': ['lib-a']
+                            }})
+    _write('app', 'app-b', {'repo': '/tmp/app-b',
+                            'image': 'app/b',
+                            'mount': '/app/b',
+                            'scripts': [{'description': 'A script description',
+                                        'command': ['ls /'],
+                                        'name': 'example'}]
+                            'depends': {
+                                'apps': ['app-a'],
+                                'libs': ['lib-b']
+                            }})
+    _write('app', 'app-c', {'repo': '/tmp/app-c',
+                            'image': 'app/c',
+                            'mount': '/app/c',})
+    _write('lib', 'lib-a', {'repo': '/tmp/lib-a',
+                            'mount': '/lib/a',})
+    _write('lib', 'lib-b', {'repo': '/tmp/lib-b',
+                            'mount': '/lib/b',
+                            'depends': {
+                                'libs': ['lib-a']
+                            }})
+    _write('service', 'service-a', {'image': 'service/a'})
+
+
 def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']):
     """Fixture for use in integration tests. The local repo at
     /tmp/fake-repo should be set up before using this fixture."""
