@@ -43,4 +43,3 @@ class TestReposCLI(DustyIntegrationTestCase):
         result = self.run_command('repos list')
         self.assertInSameLine(result, '/tmp/fake-repo', 'fake-repo', 'tmp/from/fake-repo')
         self.tear_down_fake_local_repo(path='/tmp/from/fake-repo')
-
