@@ -45,7 +45,7 @@ SYSTEM_DEPENDENCY_VERSIONS = {
     'nginx': '1.8.0',
     'virtualbox': '4.3.26',
     'boot2docker': '1.7.0',
-    'docker': '1.6.0',
+    'docker': '1.7.0',
     'docker-compose': '1.3.0'
 }
 
