@@ -72,7 +72,7 @@ def get_docker_vm_disk_info():
     return _format_df_line(output_lines[0])
 
 def set_read_persist_permission():
-    check_output_demoted(['boot2docker', 'ssh', 'sudo', 'chmod', '-R', '+r', contants.VM_PERSIST_DIR])
+    check_output_demoted(['boot2docker', 'ssh', 'sudo', 'chmod', '-R', '+r', constants.VM_PERSIST_DIR])
 
 def set_write_persist_permission():
     check_output_demoted(['boot2docker', 'ssh', 'sudo', 'chmod', '-R', '+w', constants.VM_PERSIST_DIR])
