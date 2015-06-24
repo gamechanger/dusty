@@ -208,3 +208,9 @@ class DustyIntegrationTestCase(TestCase):
 
     def assertExecDocker(self, *args):
         self.fake_exec_docker.assert_called_with(*args)
+
+    def inspect_container(self, service_name):
+        client = get_docker_client()
+        container_id = _get_container_for_app_or_service(client, service_name, include_exited=True)['Id']
+        return client.exec_inspect(container_id)
+
