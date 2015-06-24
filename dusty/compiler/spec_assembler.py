@@ -149,3 +149,20 @@ def get_all_repos(active_only=False, include_specs_repo=True):
         if spec['repo']:
             repos.add(Repo(spec['repo']))
     return repos
+
+def get_same_container_repos_from_spec(app_or_library_spec):
+    """Given the spec of an app or library, returns all repos that are guaranteed
+    to live in the same container"""
+    repos = set()
+    repos.add(get_repo_of_app_or_library(app_or_library_spec.name))
+    for dependent_name in app_or_library_spec['depends']['libs']:
+        repos.add(get_repo_of_app_or_library(dependent_name))
+    return repos
+
+def get_same_container_repos(app_or_library_name):
+    """Given the name of an app or library, returns all repos that are guaranteed
+    to live in the same container"""
+    specs = get_expanded_libs_specs()
+    spec = specs.get_app_or_lib(app_or_library_name)
+    return get_same_container_repos_from_spec(spec)
+

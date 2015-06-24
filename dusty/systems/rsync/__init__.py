@@ -8,7 +8,7 @@ from ...subprocess import check_call_demoted, check_and_log_output_and_error_dem
 from ...source import Repo
 from ...path import parent_dir
 from ...log import log_to_client
-from dusty.compiler.spec_assembler import get_repo_of_app_or_library, get_assembled_specs
+from dusty.compiler.spec_assembler import get_same_container_repos_from_spec
 
 def _ensure_vm_dir_exists(remote_dir):
     check_call_demoted(['boot2docker', 'ssh', 'sudo mkdir -p {0}; sudo chown -R docker {0}'.format(remote_dir)])
@@ -62,7 +62,5 @@ def sync_repos_by_specs(specs_list):
     """
     repos = set()
     for spec in specs_list:
-        for lib_name in spec['depends']['libs']:
-            repos.add(get_repo_of_app_or_library(lib_name))
-        repos.add(get_repo_of_app_or_library(spec.name))
+        repos = repos.union(get_same_container_repos_from_spec(spec))
     sync_repos(repos)

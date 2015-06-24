@@ -9,7 +9,7 @@ from dusty.compiler import spec_assembler
 from ...testcases import DustyTestCase
 from dusty import constants
 from dusty.source import Repo
-from ..utils import get_app_dusty_schema, get_lib_dusty_schema, get_bundle_dusty_schema
+from ..utils import get_app_dusty_schema, get_lib_dusty_schema, get_bundle_dusty_schema, apply_required_keys
 
 @nottest
 def all_test_configs(test_func):
@@ -248,3 +248,42 @@ class TestGetExpandedLibSpecs(DustyTestCase):
                 for spec_level_key, value in spec.iteritems():
                     self.assertEquals(specs[spec_type][name][spec_level_key], value)
 
+
+class TestGetDependentRepos(DustyTestCase):
+    @patch('dusty.compiler.spec_assembler.get_specs')
+    def test_get_same_container_repos_app(self, fake_get_specs):
+        fake_get_specs.return_value = self.make_test_specs(apply_required_keys(
+                                      {'apps': {'app1':
+                                                    {'depends': {'apps': ['app2', 'app3'],
+                                                                 'libs': ['lib1']},
+                                                     'repo': '/gc/app1'},
+                                                'app2':
+                                                    {'depends': {'apps': ['app4'],
+                                                     'libs': []},
+                                                     'repo': '/gc/app2'},
+                                                'app3': {'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app3'},
+                                                'app4': {'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app4'}},
+                                       'libs': {'lib1': {'depends': {'libs': ['lib2']}, 'repo': '/gc/lib1'},
+                                                'lib2': {'depends': {'libs': []}, 'repo': '/gc/lib2'}}}))
+
+        self.assertEquals(set(spec_assembler.get_same_container_repos('app1')),
+                          set([Repo('/gc/app1'), Repo('/gc/lib1'), Repo('/gc/lib2')]))
+
+    @patch('dusty.compiler.spec_assembler.get_specs')
+    def test_get_same_container_repos_lib(self, fake_get_specs):
+        fake_get_specs.return_value = self.make_test_specs(apply_required_keys(
+                                      {'apps': {'app1':
+                                                    {'depends': {'apps': ['app2', 'app3'],
+                                                                 'libs': ['lib1']},
+                                                     'repo': '/gc/app1'},
+                                                'app2':
+                                                    {'depends': {'apps': ['app4'],
+                                                     'libs': []},
+                                                     'repo': '/gc/app2'},
+                                                'app3': {'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app3'},
+                                                'app4': {'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app4'}},
+                                       'libs': {'lib1': {'depends': {'libs': ['lib2']}, 'repo': '/gc/lib1'},
+                                                'lib2': {'depends': {'libs': []}, 'repo': '/gc/lib2'}}}))
+
+        self.assertEquals(set(spec_assembler.get_same_container_repos('lib1')),
+                          set([Repo('/gc/lib1'), Repo('/gc/lib2')]))
