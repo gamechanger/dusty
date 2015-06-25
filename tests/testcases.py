@@ -96,7 +96,7 @@ class DustyIntegrationTestCase(TestCase):
             shutil.rmtree(constants.REPOS_DIR)
         if os.path.exists(constants.COMPOSE_DIR):
             shutil.rmtree(constants.COMPOSE_DIR)
-        self.tear_down_fake_local_repo()
+        shutil.rmtree(self.fake_local_location)
         save_config(self.previous_config)
 
     def _clear_stdout(self):
@@ -142,9 +142,6 @@ class DustyIntegrationTestCase(TestCase):
             f.write('# Fake Repo')
         repo.index.add([os.path.join(path, 'README.md')])
         repo.index.commit('Initial commit')
-
-    def tear_down_fake_local_repo(self, path='/tmp/fake-repo'):
-        shutil.rmtree(path)
 
     def _in_same_line(self, string, *values):
         for line in string.splitlines():
