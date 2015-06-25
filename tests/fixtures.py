@@ -53,6 +53,9 @@ def specs_fixture_with_depends():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
     _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['appb']})
     _write('app', 'appa', {'repo': '/tmp/app-a',
+                            'commands': {
+                                'always': ['sleep 1000']
+                            },
                             'image': 'busybox',
                             'mount': '/app/a',
                             'scripts': [{'description': 'A script description',
@@ -62,6 +65,9 @@ def specs_fixture_with_depends():
                                 'libs': ['lib-a']
                             }})
     _write('app', 'appb', {'repo': '/tmp/app-b',
+                            'commands': {
+                                'always': ['sleep 1000']
+                            },
                             'image': 'busybox',
                             'mount': '/app/b',
                             'scripts': [{'description': 'A script description',
@@ -71,9 +77,6 @@ def specs_fixture_with_depends():
                                 'apps': ['appa'],
                                 'libs': ['lib-b']
                             }})
-    _write('app', 'appc', {'repo': '/tmp/app-c',
-                            'image': 'busybox',
-                            'mount': '/app/c',})
     _write('lib', 'lib-a', {'repo': '/tmp/lib-a',
                             'mount': '/lib/a',})
     _write('lib', 'lib-b', {'repo': '/tmp/lib-b',
