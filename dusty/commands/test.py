@@ -66,7 +66,7 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
     sync_repos_by_specs([spec])
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
-    _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command)
+    _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name)
 
 def _construct_test_command(spec, suite_name, test_arguments):
     suite_spec = None
@@ -83,10 +83,10 @@ def _construct_test_command(spec, suite_name, test_arguments):
 def _test_composefile_path(service_name):
     return os.path.expanduser('~/.dusty-testing/test_{}.yml'.format(service_name))
 
-def _compose_project_name(service_name):
-    return 'test{}'.format(service_name.lower())
+def _compose_project_name(service_name, suite_name):
+    return 'test{}{}'.format(service_name.lower(), suite_name.lower())
 
-def _services_compose_up(expanded_specs, app_or_lib_name, testing_spec):
+def _services_compose_up(expanded_specs, app_or_lib_name, testing_spec, suite_name):
     previous_container_names = []
     for service_name in testing_spec['services']:
         service_spec = expanded_specs['services'][service_name]
@@ -99,11 +99,11 @@ def _services_compose_up(expanded_specs, app_or_lib_name, testing_spec):
         write_composefile(service_compose_config, composefile_path)
         log_to_client('Compose config {}: \n {}'.format(service_name, service_compose_config))
 
-        compose_up(composefile_path, _compose_project_name(app_or_lib_name))
-        previous_container_names.append("{}_{}_1".format(_compose_project_name(app_or_lib_name), service_name))
+        compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name))
+        previous_container_names.append("{}_{}_1".format(_compose_project_name(app_or_lib_name, suite_name), service_name))
     return previous_container_names
 
-def _app_or_lib_compose_up(testing_spec, app_or_lib_name, app_or_lib_volumes, test_command, previous_container_name):
+def _app_or_lib_compose_up(testing_spec, app_or_lib_name, app_or_lib_volumes, test_command, previous_container_name, suite_name):
     image_name = test_image_name(app_or_lib_name)
     kwargs = {'testing_image_identifier': image_name,
               'volumes': app_or_lib_volumes,
@@ -114,17 +114,17 @@ def _app_or_lib_compose_up(testing_spec, app_or_lib_name, app_or_lib_volumes, te
     composefile_path = _test_composefile_path(app_or_lib_name)
     compose_config = get_testing_compose_dict(app_or_lib_name, testing_spec.get('compose', {}), **kwargs)
     write_composefile(compose_config, composefile_path)
-    compose_up(composefile_path, _compose_project_name(app_or_lib_name))
-    return '{}_{}_1'.format(_compose_project_name(app_or_lib_name), app_or_lib_name)
+    compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name))
+    return '{}_{}_1'.format(_compose_project_name(app_or_lib_name, suite_name), app_or_lib_name)
 
-def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command):
+def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name):
     testing_spec = expanded_specs.get_app_or_lib(app_or_lib_name)['test']
 
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs, test=True)
-    previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, testing_spec)
+    previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, testing_spec, suite_name)
     previous_container_name = previous_container_names[-1] if previous_container_names else None
     test_container_name = _app_or_lib_compose_up(testing_spec, app_or_lib_name,
-                                                 volumes, test_command, previous_container_name)
+                                                 volumes, test_command, previous_container_name, suite_name)
 
     for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
         log_to_client(line.strip())

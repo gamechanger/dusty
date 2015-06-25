@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.1.4 (In progress)
-
+  * FIXED: Changed test container name spaces to include suite name. This allows all test suites app or lib to run concurrently.
 
 ## 0.1.3 (June 25, 2015)
   * NEW: `--repos <repos>` option added to `dusty restart` CLI command.  This will restart active containers which use the specified repos.  Using this option is mutually exclusive with specifying containers to restart.
