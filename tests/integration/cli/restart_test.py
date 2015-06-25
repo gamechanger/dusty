@@ -1,8 +1,8 @@
 import datetime
-import dateutil.parser
 import os
 import time
 
+import dateutil.parser
 from nose.tools import nottest
 
 from dusty.compiler.spec_assembler import get_all_repos
