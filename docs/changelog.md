@@ -8,7 +8,7 @@
   * NEW: `dusty disk backup <destination>` CLI command added.  This will save the contents of your VM's `/persist` directory.
   * NEW: `dusty disk restore <source>` CLI command added.  This will write to your VM's `/persist` from `<source>`.
 
-  * FIXED: bug where Dusty could not recognize test commands containing options (`dusty test <service> <command> [options]`)
+  * FIXED: `dusty test [options] <service> <command [options]>` is now functioning. Previously options supplied to the command to be tested were being incorrectly applied to `dusty test`.
 
   * Added support for boot2docker 1.7+, which uses 64-bit Tiny Core Linux
 
