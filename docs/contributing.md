@@ -41,6 +41,11 @@ $ mkdocs serve
 
 Before a new release, please do the following:
 
+* Update the changelog to reflect your new changes with appropriate descriptions
+  * NEW:
+  * BREAKING: Development environments must
+  * FIXED
+  * Added
 * Add a date to the changelog for this version
 * Run the `DustyRelease` Jenkins job with your new version number
 * Bump the version number in dusty/constants.py to the *next* version
