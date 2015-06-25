@@ -41,12 +41,21 @@ $ mkdocs serve
 
 Before a new release, please do the following:
 
-* Update the changelog to reflect your new changes with appropriate descriptions
-  * NEW:
-  * BREAKING: Development environments must
-  * FIXED
-  * Added
-* Add a date to the changelog for this version
-* Run the `DustyRelease` Jenkins job with your new version number
-* Bump the version number in dusty/constants.py to the *next* version
-* Bump the version of the curl command on the Readme, and in `docs/installation.md`
+* Update the changelog
+  * Add a date to the changelog for this version
+  * Add a new version that has an `In progress` title rather than a date
+  * Update the changelog to reflect your new changes with appropriate descriptions
+    * NEW: This change is an addition to the existing code/functionality, and should include a description of what the addition does.
+    * BREAKING: This update changes the existing promises of the dusty CLI API or specs API
+    * FIXED: This is a patch for something broken in the current dusty version
+    * other comments: anything that is not one of the above
+  * Submit a pull request for your changelog updates and merge once accepted
+
+* Cut a new version of Dusty
+  * Run the `DustyRelease` Jenkins job with your new version number supplied as a parameter
+
+* Update README.md to reflect the new Dusty version
+  * After the `DustyRelease` Jenkins job has successfully run, change the curl target specified in the readme to reference the newly minted version
+  * Create a pull request for this change and merge once accepted
+
+* Bump the version number dusty/constants.py to the *next* version assigned to the `VERSION` variable
