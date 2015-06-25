@@ -9,7 +9,7 @@ from ...fixtures import specs_fixture_with_depends
 
 class TestRestartCLI(DustyIntegrationTestCase):
     def setUp(self):
-        super(TestRestartCli, self).setUp()
+        super(TestRestartCLI, self).setUp()
         specs_fixture_with_depends()
         for repo in get_all_repos(include_specs_repo=False):
             print repo.remote_path
@@ -32,16 +32,16 @@ class TestRestartCLI(DustyIntegrationTestCase):
         return start_time > self.up_complete_time
 
     def test_restart_one(self):
-        self.run_command('restart app-a')
-        self.assertTrue(self.container_has_restarted('app-a'))
-        self.assertTrue(not self.container_has_restarted('app-b'))
-        self.assertTrue(not self.container_has_restarted('app-c'))
+        self.run_command('restart appa')
+        self.assertTrue(self.container_has_restarted('appa'))
+        self.assertTrue(not self.container_has_restarted('appb'))
+        self.assertTrue(not self.container_has_restarted('appc'))
 
     def test_restart_all(self):
         self.run_command('restart')
-        self.assertTrue(self.container_has_restarted('app-a'))
-        self.assertTrue(self.container_has_restarted('app-b'))
-        self.assertTrue(self.container_has_restarted('app-c'))
+        self.assertTrue(self.container_has_restarted('appa'))
+        self.assertTrue(self.container_has_restarted('appb'))
+        self.assertTrue(self.container_has_restarted('appc'))
 
     def test_restart_by_app_repo(self):
         pass

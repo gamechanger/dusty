@@ -50,9 +50,9 @@ def basic_specs_fixture():
     _write('service', 'service-a', {'image': 'service/a'})
 
 def specs_fixture_with_depends():
-    _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['app-a']})
-    _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['app-b']})
-    _write('app', 'app-a', {'repo': '/tmp/app-a',
+    _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
+    _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['appb']})
+    _write('app', 'appa', {'repo': '/tmp/app-a',
                             'image': 'app/a',
                             'mount': '/app/a',
                             'scripts': [{'description': 'A script description',
@@ -61,17 +61,17 @@ def specs_fixture_with_depends():
                             'depends': {
                                 'libs': ['lib-a']
                             }})
-    _write('app', 'app-b', {'repo': '/tmp/app-b',
+    _write('app', 'appb', {'repo': '/tmp/app-b',
                             'image': 'app/b',
                             'mount': '/app/b',
                             'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
                                         'name': 'example'}],
                             'depends': {
-                                'apps': ['app-a'],
+                                'apps': ['appa'],
                                 'libs': ['lib-b']
                             }})
-    _write('app', 'app-c', {'repo': '/tmp/app-c',
+    _write('app', 'appc', {'repo': '/tmp/app-c',
                             'image': 'app/c',
                             'mount': '/app/c',})
     _write('lib', 'lib-a', {'repo': '/tmp/lib-a',
@@ -81,7 +81,7 @@ def specs_fixture_with_depends():
                             'depends': {
                                 'libs': ['lib-a']
                             }})
-    _write('service', 'service-a', {'image': 'service/a'})
+    _write('service', 'servica', {'image': 'service/a'})
 
 
 def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']):
