@@ -189,6 +189,14 @@ class DustyIntegrationTestCase(TestCase):
     def assertFileContentsInContainer(self, service_name, file_path, contents):
         self.assertEqual(self.exec_in_container(service_name, 'cat {}'.format(file_path)), contents)
 
+    def assertFileNotInContainer(self, service_name, file_path):
+        self.assertEqual(self.exec_in_container(service_name,
+            'sh -c \'[ -f {} ] && echo "yes" || echo "no"\''.format(file_path)).rstrip(), 'no')
+
+    def assertFileInContainer(self, service_name, file_path):
+        self.assertEqual(self.exec_in_container(service_name,
+            'sh -c \'[ -f {} ] && echo "yes" || echo "no"\''.format(file_path)).rstrip(), 'yes')
+
     def assertContainerRunning(self, service_name):
         self.assertTrue(self._container_exists_in_set(service_name, False))
 

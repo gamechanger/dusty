@@ -1,9 +1,12 @@
 import datetime
 import dateutil.parser
+import os
+import time
 
 from nose.tools import nottest
 
 from dusty.compiler.spec_assembler import get_all_repos
+from dusty.source import Repo
 from ...testcases import DustyIntegrationTestCase
 from ...fixtures import specs_fixture_with_depends
 
@@ -12,10 +15,10 @@ class TestRestartCLI(DustyIntegrationTestCase):
         super(TestRestartCLI, self).setUp()
         specs_fixture_with_depends()
         for repo in get_all_repos(include_specs_repo=False):
-            print repo.remote_path
             self._set_up_fake_local_repo(path=repo.remote_path)
         self.run_command('bundles activate bundle-a bundle-b')
         self.run_command('up')
+        time.sleep(1)
         self.up_complete_time = datetime.datetime.utcnow()
 
     def tearDown(self):
@@ -52,4 +55,17 @@ class TestRestartCLI(DustyIntegrationTestCase):
         self.assertTrue(self.container_has_restarted('appb'))
 
     def test_restart_nosync(self):
-        pass
+        new_file_name = 'nosync_file'
+        repo = Repo.resolve(get_all_repos(include_specs_repo=False), 'app-a')
+        with open(os.path.join(repo.local_path, new_file_name), 'w+') as f:
+            f.write('new file!')
+        self.run_command('restart --no-sync appa')
+        self.assertFileNotInContainer('appa', os.path.join('/app/a/', new_file_name))
+
+    def test_restart_nosync(self):
+        new_file_name = 'sync_file'
+        repo = Repo.resolve(get_all_repos(include_specs_repo=False), 'app-a')
+        with open(os.path.join(repo.local_path, new_file_name), 'w+') as f:
+            f.write('new file!')
+        self.run_command('restart appa')
+        self.assertFileInContainer('appa', os.path.join('/app/a/', new_file_name))
