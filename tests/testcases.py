@@ -140,7 +140,7 @@ class DustyIntegrationTestCase(TestCase):
         repo = git.Repo.init(path)
         with open(os.path.join(path, 'README.md'), 'w') as f:
             f.write('# Fake Repo')
-        repo.index.add(os.path.join(path, 'README.md'))
+        repo.index.add([os.path.join(path, 'README.md')])
         repo.index.commit('Initial commit')
 
     def _in_same_line(self, string, *values):
