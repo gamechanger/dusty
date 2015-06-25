@@ -9,7 +9,7 @@ from ...log import log_to_client
 
 def _ensure_rsync_is_installed():
     logging.info('Installing rsync inside the Docker VM')
-    if call_demoted(['test', '-f', '/lib/ld-linux-x86-64.so.2']) == 0:
+    if call_demoted(['boot2docker', 'ssh', 'test -f /lib/ld-linux-x86-64.so.2']) == 0:
         # rsync 64 bit binary does not exist for tiny core linux. Made our own binary and are pulling and installing that
         check_and_log_output_and_error_demoted(['boot2docker', 'ssh', 'which rsync || (curl https://64bit-rsync.s3.amazonaws.com/rsync > rsync; sudo chmod 755 rsync; sudo mv rsync /usr/bin/rsync)'])
     else:
