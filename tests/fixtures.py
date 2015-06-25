@@ -57,7 +57,7 @@ def specs_fixture_with_depends():
                             'mount': '/app/a',
                             'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
-                                        'name': 'example'}]
+                                        'name': 'example'}],
                             'depends': {
                                 'libs': ['lib-a']
                             }})
@@ -66,7 +66,7 @@ def specs_fixture_with_depends():
                             'mount': '/app/b',
                             'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
-                                        'name': 'example'}]
+                                        'name': 'example'}],
                             'depends': {
                                 'apps': ['app-a'],
                                 'libs': ['lib-b']
