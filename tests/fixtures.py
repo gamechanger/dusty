@@ -53,7 +53,7 @@ def specs_fixture_with_depends():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
     _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['appb']})
     _write('app', 'appa', {'repo': '/tmp/app-a',
-                            'image': 'app/a',
+                            'image': 'busybox',
                             'mount': '/app/a',
                             'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
@@ -62,7 +62,7 @@ def specs_fixture_with_depends():
                                 'libs': ['lib-a']
                             }})
     _write('app', 'appb', {'repo': '/tmp/app-b',
-                            'image': 'app/b',
+                            'image': 'busybox',
                             'mount': '/app/b',
                             'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
@@ -72,7 +72,7 @@ def specs_fixture_with_depends():
                                 'libs': ['lib-b']
                             }})
     _write('app', 'appc', {'repo': '/tmp/app-c',
-                            'image': 'app/c',
+                            'image': 'busybox',
                             'mount': '/app/c',})
     _write('lib', 'lib-a', {'repo': '/tmp/lib-a',
                             'mount': '/lib/a',})
@@ -81,7 +81,7 @@ def specs_fixture_with_depends():
                             'depends': {
                                 'libs': ['lib-a']
                             }})
-    _write('service', 'servica', {'image': 'service/a'})
+    _write('service', 'servica', {'image': 'busybox'})
 
 
 def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']):
