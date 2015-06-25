@@ -7,12 +7,13 @@ from dusty.compiler.spec_assembler import get_all_repos
 from ...testcases import DustyIntegrationTestCase
 from ...fixtures import specs_fixture_with_depends
 
-class TestRestartCli(DustyIntegrationTestCase):
+class TestRestartCLI(DustyIntegrationTestCase):
     def setUp(self):
         super(TestRestartCli, self).setUp()
         specs_fixture_with_depends()
-        for repo in get_all_repos():
-            self._set_up_fake_local_repo(path=repo.local_path)
+        for repo in get_all_repos(include_specs_repo=False):
+            print repo.remote_path
+            self._set_up_fake_local_repo(path=repo.remote_path)
         self.run_command('bundles activate bundle-a bundle-b')
         self.run_command('up')
         self.up_complete_time = datetime.datetime.now()
@@ -41,3 +42,12 @@ class TestRestartCli(DustyIntegrationTestCase):
         self.assertTrue(self.container_has_restarted('app-a'))
         self.assertTrue(self.container_has_restarted('app-b'))
         self.assertTrue(self.container_has_restarted('app-c'))
+
+    def test_restart_by_app_repo(self):
+        pass
+
+    def test_restart_by_lib_repo(self):
+        pass
+
+    def test_restart_nosync(self):
+        pass

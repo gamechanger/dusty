@@ -137,6 +137,7 @@ class DustyIntegrationTestCase(TestCase):
         return result
 
     def _set_up_fake_local_repo(self, path='/tmp/fake-repo'):
+        print "PATH: {}".format(path)
         repo = git.Repo.init(path)
         with open(os.path.join(path, 'README.md'), 'w') as f:
             f.write('# Fake Repo')

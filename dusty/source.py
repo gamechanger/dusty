@@ -109,6 +109,7 @@ class Repo(object):
         self.ensure_local_repo()
 
         logging.info('Updating local repo {}'.format(self.remote_path))
+        print self.managed_path
 
         managed_repo = git.Repo(self.managed_path)
         with git_error_handling():
