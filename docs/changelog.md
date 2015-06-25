@@ -1,13 +1,17 @@
 # Changelog
 
-## 0.1.3 (In Progress)
+## 0.1.4 (In progress)
+
+
+## 0.1.3 (June 25, 2015)
   * NEW: `--repos <repos>` option added to `dusty restart` CLI command.  This will restart active containers which use the specified repos.  Using this option is mutually exclusive with specifying containers to restart.
   * NEW: `dusty disk backup <destination>` CLI command added.  This will save the contents of your VM's `/persist` directory.
   * NEW: `dusty disk restore <source>` CLI command added.  This will write to your VM's `/persist` from `<source>`.
 
+  * FIXED: bug where Dusty could not recognize test commands containing options (`dusty test <service> <command> [options]`)
+
   * Added support for boot2docker 1.7+, which uses 64-bit Tiny Core Linux
 
-  * FIXED: allow passing options with commands supplied to `dusty test`
 
 ## 0.1.2 (June 23, 2015)
   * NEW: Commands are now placed in a file, copied over to the container and the file containing the commands is run. This allows you to use & in your commands.
