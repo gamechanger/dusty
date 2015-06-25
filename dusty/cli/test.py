@@ -25,7 +25,7 @@ from ..commands.test import (run_app_or_lib_tests, test_info_for_app_or_lib, pul
                              ensure_valid_suite_name)
 
 def main(argv):
-    args = docopt(__doc__, argv)
+    args = docopt(__doc__, argv, options_first=True)
     if not args['<suite_name>']:
         return Payload(test_info_for_app_or_lib, args['<app_or_lib_name>'])
     else:
