@@ -48,7 +48,7 @@ Before a new release, please do the following:
     * NEW: This change is an addition to the existing code/functionality, and should include a description of what the addition does.
     * BREAKING: This update changes the existing promises of the dusty CLI API or specs API
     * FIXED: This is a patch for something broken in the current dusty version
-    * other comments: anything that is not one of the above
+    * other comments: anything that is not one of the above but is still important enough that users should know about change before upgrading
   * Submit a pull request for your changelog updates and merge once accepted
 
 * Cut a new version of Dusty
