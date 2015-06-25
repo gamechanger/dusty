@@ -7,6 +7,7 @@
 
   * Added support for boot2docker 1.7+, which uses 64-bit Tiny Core Linux
 
+  * FIXED: allow passing options with commands supplied to `dusty test`
 
 ## 0.1.2 (June 23, 2015)
   * NEW: Commands are now placed in a file, copied over to the container and the file containing the commands is run. This allows you to use & in your commands.
