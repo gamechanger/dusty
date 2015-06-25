@@ -11,4 +11,5 @@ install_requires = [
 test_requires = [
     'nose==1.3.7',
     'mock==1.0.1',
+    'python-dateutil==2.4.2'
 ]

@@ -212,5 +212,5 @@ class DustyIntegrationTestCase(TestCase):
     def inspect_container(self, service_name):
         client = get_docker_client()
         container_id = _get_container_for_app_or_service(client, service_name, include_exited=True)['Id']
-        return client.exec_inspect(container_id)
+        return client.inspect_container(container_id)
 
