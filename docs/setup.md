@@ -14,9 +14,14 @@ Dusty needs to know where your Dusty specs live.  You can enter a git
 repository here if you want to manage them that way (recommended).  You
 can also just specify a local file path.
 
-We've created a public example specs repo, at github.com/gamechanger/dusty-example-specs
+If you're new to Dusty and would like to try things out, leave this blankn
+to use the example specs.
 
-You should also see our [Getting Started](http://dusty.readthedocs.org/en/latest/getting-started/) page.
+#### Tutorial
+
+If this is your first time using Dusty, you can now run through the [tutorial.](../getting-started)
+
+## Advanced Setup
 
 #### nginx Configuration
 

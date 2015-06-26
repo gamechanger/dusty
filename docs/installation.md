@@ -28,3 +28,5 @@ bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.1.3/i
 This script will install Dusty as a service and run the preflight check to ensure that all
 dependencies are installed. If the script throws an error, make sure to resolve that before
 continuing.
+
+If that worked, [continue to Setup.](setup.md)
