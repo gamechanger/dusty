@@ -35,7 +35,7 @@ following section on OS X Support).
 specific bundle of apps. It's difficult to share service configuration across these large files. Dusty simplifies the
 specs model: each container is defined in exactly one place, then specs are stitched together at runtime based on the
 dependencies for the bundles you want to run.
-* **Mix and Match**: Dusty's simplified specs model makes it trivial to run exactly the containers you need and none
+* **Mix and Match**: Dusty's simplified specs model makes it trivial to run exactly the containers you need and no
 others. Define each container once, then tell Dusty what you want to run. It'll handle the dependency graph.
 
 ## OS X Support
