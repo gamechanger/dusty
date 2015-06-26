@@ -87,7 +87,8 @@ class DustyIntegrationTestCase(TestCase):
         save_config_value(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/dusty-example-specs')
         save_config_value(constants.CONFIG_MAC_USERNAME_KEY, self.current_user)
         override_repo(get_specs_repo().remote_path, self.overridden_specs_path)
-        self.set_up_fake_local_repo()
+        self.fake_local_repo_location = '/tmp/fake-repo'
+        self.set_up_fake_local_repo('/tmp/fake-repo', 'fake-repo')
         self._clear_stdout()
 
     def tearDown(self):
@@ -96,7 +97,7 @@ class DustyIntegrationTestCase(TestCase):
             shutil.rmtree(constants.REPOS_DIR)
         if os.path.exists(constants.COMPOSE_DIR):
             shutil.rmtree(constants.COMPOSE_DIR)
-        shutil.rmtree(self.fake_local_location)
+        shutil.rmtree('/tmp/fake-repo')
         save_config(self.previous_config)
 
     def _clear_stdout(self):
