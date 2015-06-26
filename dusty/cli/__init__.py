@@ -1,4 +1,4 @@
-"""Dusty: Docker development environments
+"""Dusty: Docker-powered development environments
 
 Usage:
   dusty [options] [<command>] [<args>...]
