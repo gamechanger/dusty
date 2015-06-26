@@ -9,6 +9,11 @@ pages:
   - Installation:
     - Installation: installation.md
     - Setup: setup.md
+  - Getting Started:
+      - Example Specs: getting-started/index.md
+      - Hello World!: getting-started/hello-world.md
+      - Developing an App: getting-started/developing.md
+      - Moving Files Around: getting-started/files.md
   - Dusty Specs:
     - Specs Overview: specs/index.md
     - Bundle Specs: specs/bundle-specs.md
@@ -16,11 +21,6 @@ pages:
     - Lib Specs: specs/lib-specs.md
     - Service Specs: specs/service-specs.md
     - Test Specs: specs/test-specs.md
-  - Getting Started:
-      - Example Specs: getting-started/index.md
-      - Hello World!: getting-started/hello-world.md
-      - Developing an App: getting-started/developing.md
-      - Moving Files Around: getting-started/files.md
   - Usage: usage.md
   - Architecture: architecture.md
   - FAQ: faq.md
