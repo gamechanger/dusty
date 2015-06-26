@@ -1,6 +1,6 @@
 # Why Dusty?
 
-We built Dusty to be a great way to run a development environment, and we've tried to learn from
+We built Dusty to be a great way to run a development environment. We've tried to learn from
 the existing solutions out there and make improvements where we could. Here, we'll briefly go over
 a few reasons why we think you'll love Dusty more than the alternatives.
 
@@ -33,8 +33,7 @@ browser running on your Mac, or to get files between your Mac and the container.
 following section on OS X Support).
 * **Simplified Specs**: Compose's specs model is fairly static. You write a large Composefile with all the containers for a
 specific bundle of apps. It's difficult to share service configuration across these large files. Dusty simplifies the
-specs model: each container is defined in exactly one place, then specs are stitched together at runtime based on the
-dependencies for the bundles you want to run.
+specs model: each container is defined in exactly one place, then the containers you need are stitched together at runtime.
 * **Mix and Match**: Dusty's simplified specs model makes it trivial to run exactly the containers you need and no
 others. Define each container once, then tell Dusty what you want to run. It'll handle the dependency graph.
 
