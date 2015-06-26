@@ -20,19 +20,11 @@ brew install docker-compose
 
 ## Installation
 
-We provide a install script with each release. The install script should work
-to install Dusty from scratch, as well as to update Dusty to a new version.
-
-This install script takes the following actions:
-
-* Downloads the Dusty binary, and places it at `/usr/local/bin/dusty`
-* Unloads any existing Dusty Daemon plist from `/System/Library/LaunchDaemons/org.gamechanger.dusty.plist`
-* Downloads our plist file to the same location
-* Runs Dusty with `--preflight-only`, which will check some components of your system setup
-* Loads the plist that was downloaded, if the previous step was successful
-
-To download and run this install script:
+To download and install Dusty, run:
 ```
-bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.1.1/install.sh`"
+bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.1.3/install.sh`"
 ```
 
+This script will install Dusty as a service and run the preflight check to ensure that all
+dependencies are installed. If the script throws an error, make sure to resolve that before
+continuing.
