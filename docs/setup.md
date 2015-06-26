@@ -19,7 +19,7 @@ to use the example specs.
 
 #### Tutorial
 
-If this is your first time using Dusty, you can now run through the [tutorial.](../getting-started)
+If this is your first time using Dusty, you can now run through the [tutorial.](getting-started.md)
 
 ## Advanced Setup
 
