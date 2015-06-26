@@ -5,6 +5,7 @@ repo_name: GitHub
 site_author: GameChanger
 pages:
   - Home: index.md
+  - Why Dusty?: why-dusty.md
   - Installation:
     - Installation: installation.md
     - Setup: setup.md
