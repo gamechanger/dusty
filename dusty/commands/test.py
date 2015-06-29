@@ -51,6 +51,8 @@ def ensure_valid_suite_name(app_or_lib_name, suite_name):
         raise RuntimeError('Must specify a valid suite name')
 
 def pull_repos_and_sync_commands(app_or_lib_name, pull_repos=False):
+    log_to_client("Ensuring virtualbox vm is running")
+    initialize_docker_vm()
     expanded_specs = get_expanded_libs_specs()
     log_to_client('Syncing test command files to virtual machine')
     make_test_command_files(app_or_lib_name, expanded_specs)
@@ -58,8 +60,6 @@ def pull_repos_and_sync_commands(app_or_lib_name, pull_repos=False):
         _update_test_repos(app_or_lib_name)
 
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
-    log_to_client("Ensuring virtualbox vm is running")
-    initialize_docker_vm()
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
