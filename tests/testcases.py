@@ -182,6 +182,7 @@ class DustyIntegrationTestCase(TestCase):
 
     def inspect_container(self, service_name):
         container_id = self.container_id(service_name)
+        client = get_docker_client()
         return client.inspect_container(container_id)
 
     def assertInSameLine(self, string, *values):
