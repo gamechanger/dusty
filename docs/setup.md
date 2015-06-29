@@ -14,7 +14,7 @@ Dusty needs to know where your Dusty specs live.  You can enter a git
 repository here if you want to manage them that way (recommended).  You
 can also just specify a local file path.
 
-If you're new to Dusty and would like to try things out, leave this blankn
+If you're new to Dusty and would like to try things out, leave this blank
 to use the example specs.
 
 #### Tutorial
