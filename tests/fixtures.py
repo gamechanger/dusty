@@ -78,6 +78,7 @@ def specs_fixture_with_depends():
                                 'libs': ['lib-b']
                             }})
     _write('app', 'appc', {'repo': '/tmp/repo-app-c',
+                           'mount': '/app/c',
                            'commands': {
                                 'always': ['sleep 1000']
                            },

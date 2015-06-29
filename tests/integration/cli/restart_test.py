@@ -28,6 +28,12 @@ class TestRestartCLI(DustyIntegrationTestCase):
             pass
         super(TestRestartCLI, self).tearDown()
 
+    def assertContainerHasRestarted(self, app_name):
+        self.assertTrue(self.container_has_restarted(app_name))
+
+    def assertContainerNotRestarted(self, app_name):
+        self.assertFalse(self.container_has_restarted(app_name))
+
     @nottest
     def container_has_restarted(self, app_name):
         inspected = self.inspect_container(app_name)
@@ -36,26 +42,27 @@ class TestRestartCLI(DustyIntegrationTestCase):
 
     def test_restart_one(self):
         self.run_command('restart appa')
-        self.assertTrue(self.container_has_restarted('appa'))
-        self.assertTrue(not self.container_has_restarted('appb'))
+        self.assertContainerHasRestarted(self.container_has_restarted('appa'))
+        self.assertContainerNotRestarted(self.container_has_restarted('appb'))
+        self.assertContainerNotRestarted(self.container_has_restarted('appc'))
 
     def test_restart_all(self):
         self.run_command('restart')
-        self.assertTrue(self.container_has_restarted('appa'))
-        self.assertTrue(self.container_has_restarted('appb'))
-        self.assertTrue(self.container_has_restarted('appc'))
+        self.assertContainerHasRestarted(self.container_has_restarted('appa'))
+        self.assertContainerHasRestarted(self.container_has_restarted('appb'))
+        self.assertContainerHasRestarted(self.container_has_restarted('appc'))
 
     def test_restart_by_app_repo(self):
         self.run_command('restart --repos repo-app-a')
-        self.assertTrue(self.container_has_restarted('appa'))
-        self.assertTrue(not self.container_has_restarted('appb'))
-        self.assertTrue(not self.container_has_restarted('appc'))
+        self.assertContainerHasRestarted(self.container_has_restarted('appa'))
+        self.assertContainerNotRestarted(self.container_has_restarted('appb'))
+        self.assertContainerNotRestarted(self.container_has_restarted('appc'))
 
     def test_restart_by_lib_repo(self):
         self.run_command('restart --repos repo-lib-a')
-        self.assertTrue(self.container_has_restarted('appa'))
-        self.assertTrue(self.container_has_restarted('appb'))
-        self.assertTrue(not self.container_has_restarted('appc'))
+        self.assertContainerHasRestarted(self.container_has_restarted('appa'))
+        self.assertContainerHasRestarted(self.container_has_restarted('appb'))
+        self.assertContainerNotRestarted(self.container_has_restarted('appc'))
 
     def test_restart_nosync(self):
         new_file_name = 'nosync_file'
