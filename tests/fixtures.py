@@ -51,8 +51,8 @@ def basic_specs_fixture():
 
 def specs_fixture_with_depends():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
-    _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['appb']})
-    _write('app', 'appa', {'repo': '/tmp/app-a',
+    _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['appb', 'appc']})
+    _write('app', 'appa', {'repo': '/tmp/repo-app-a',
                             'commands': {
                                 'always': ['sleep 1000']
                             },
@@ -64,7 +64,7 @@ def specs_fixture_with_depends():
                             'depends': {
                                 'libs': ['lib-a']
                             }})
-    _write('app', 'appb', {'repo': '/tmp/app-b',
+    _write('app', 'appb', {'repo': '/tmp/repo-app-b',
                             'commands': {
                                 'always': ['sleep 1000']
                             },
@@ -77,9 +77,14 @@ def specs_fixture_with_depends():
                                 'apps': ['appa'],
                                 'libs': ['lib-b']
                             }})
-    _write('lib', 'lib-a', {'repo': '/tmp/lib-a',
+    _write('app', 'appc', {'repo': '/tmp/repo-app-c',
+                           'commands': {
+                                'always': ['sleep 1000']
+                           },
+                           'image': 'busybox',})
+    _write('lib', 'lib-a', {'repo': '/tmp/repo-lib-a',
                             'mount': '/lib/a',})
-    _write('lib', 'lib-b', {'repo': '/tmp/lib-b',
+    _write('lib', 'lib-b', {'repo': '/tmp/repo-lib-b',
                             'mount': '/lib/b',
                             'depends': {
                                 'libs': ['lib-a']

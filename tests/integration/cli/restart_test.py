@@ -18,7 +18,7 @@ class TestRestartCLI(DustyIntegrationTestCase):
             self._set_up_fake_local_repo(path=repo.remote_path)
         self.run_command('bundles activate bundle-a bundle-b')
         self.run_command('up')
-        time.sleep(1)
+        time.sleep(.1)
         self.up_complete_time = datetime.datetime.utcnow()
 
     def tearDown(self):
@@ -43,26 +43,29 @@ class TestRestartCLI(DustyIntegrationTestCase):
         self.run_command('restart')
         self.assertTrue(self.container_has_restarted('appa'))
         self.assertTrue(self.container_has_restarted('appb'))
+        self.assertTrue(self.container_has_restarted('appc'))
 
     def test_restart_by_app_repo(self):
-        self.run_command('restart --repos app-a')
+        self.run_command('restart --repos repo-app-a')
         self.assertTrue(self.container_has_restarted('appa'))
         self.assertTrue(not self.container_has_restarted('appb'))
+        self.assertTrue(not self.container_has_restarted('appc'))
 
     def test_restart_by_lib_repo(self):
-        self.run_command('restart --repos lib-a')
+        self.run_command('restart --repos repo-lib-a')
         self.assertTrue(self.container_has_restarted('appa'))
         self.assertTrue(self.container_has_restarted('appb'))
+        self.assertTrue(not self.container_has_restarted('appc'))
 
     def test_restart_nosync(self):
         new_file_name = 'nosync_file'
-        repo = Repo.resolve(get_all_repos(include_specs_repo=False), 'app-a')
+        repo = Repo.resolve(get_all_repos(include_specs_repo=False), 'repo-app-a')
         with open(os.path.join(repo.local_path, new_file_name), 'w+') as f:
             f.write('new file!')
         self.run_command('restart --no-sync appa')
         self.assertFileNotInContainer('appa', os.path.join('/app/a/', new_file_name))
 
-    def test_restart_nosync(self):
+    def test_restart_sync(self):
         new_file_name = 'sync_file'
         repo = Repo.resolve(get_all_repos(include_specs_repo=False), 'app-a')
         with open(os.path.join(repo.local_path, new_file_name), 'w+') as f:
