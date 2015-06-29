@@ -115,6 +115,7 @@ def _run_payload(payload):
         except KeyboardInterrupt:
             print "Dusty Client stopping on KeyboardInterrupt..."
             print "-----Dusty Daemon is still processing your last command!-----"
+            return 0
         return errored
     else:
         payload.run()
