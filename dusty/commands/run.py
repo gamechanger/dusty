@@ -54,7 +54,6 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     compose.update_running_containers_from_spec(compose_config, recreate_containers=recreate_containers)
 
     log_to_client("Your local environment is now started!")
-    log_to_client("Use `dusty logs` to track your containers")
 
 def stop_apps_or_services(app_or_service_names=None, rm_containers=False):
     """Stop any currently running Docker containers associated with
