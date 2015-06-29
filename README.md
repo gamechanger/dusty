@@ -9,21 +9,8 @@ Docker-powered development environments
 
 
 # Installation
-Currently the recommended way to install dusty is to use our installation script, which will install dusty's binary, and set up a dusty daemon plist:
-```
-bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.1.4/install.sh`"
-```
 
-This will:
- * Add the `dusty` binary inside /usr/local/bin
- * Put an `org.gamechanger.dusty.plist` file in `/System/Library/LaunchDaemons`
- * Load the plist file (after unloading it, in case you're updating dusty)
-
-The daemon will throw errors if any of its required programs aren't already installed:
- * VBoxManage
- * boot2docker
- * docker-compose
- * nginx
+See [Installation](https://http://dusty.readthedocs.org/en/latest/installation/) in the documentation.
 
 # Basics
 Dusty is a python application for docker based environment management.  It is built in two parts, a client and a daemon.  The daemon is a single threaded python process that should run as root.  The client is a python command line interface that interacts with both the daemon and your docker containers.
