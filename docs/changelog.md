@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.1.5 (In Progress)
-  * FIXED: `boot2docker version` command in preflight is now
+  * FIXED: Install script now passes -H flag to `sudo dusty -d --preflight-only`, so that `boot2docker version` won't create `~/.boot2docker` owned by root.
 
 ## 0.1.4 (June 29, 2015)
   * BREAKING CHANGE: `services` and `compose` keys in test specs are now specified at the suite level, not the test level.
