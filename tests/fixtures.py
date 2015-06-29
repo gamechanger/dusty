@@ -49,6 +49,50 @@ def basic_specs_fixture():
                             'mount': '/lib/a',})
     _write('service', 'service-a', {'image': 'service/a'})
 
+def specs_fixture_with_depends():
+    _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
+    _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['appb', 'appc']})
+    _write('app', 'appa', {'repo': '/tmp/repo-app-a',
+                            'commands': {
+                                'always': ['sleep 1000']
+                            },
+                            'image': 'busybox',
+                            'mount': '/app/a',
+                            'scripts': [{'description': 'A script description',
+                                        'command': ['ls /'],
+                                        'name': 'example'}],
+                            'depends': {
+                                'libs': ['lib-a']
+                            }})
+    _write('app', 'appb', {'repo': '/tmp/repo-app-b',
+                            'commands': {
+                                'always': ['sleep 1000']
+                            },
+                            'image': 'busybox',
+                            'mount': '/app/b',
+                            'scripts': [{'description': 'A script description',
+                                        'command': ['ls /'],
+                                        'name': 'example'}],
+                            'depends': {
+                                'apps': ['appa'],
+                                'libs': ['lib-b']
+                            }})
+    _write('app', 'appc', {'repo': '/tmp/repo-app-c',
+                           'mount': '/app/c',
+                           'commands': {
+                                'always': ['sleep 1000']
+                           },
+                           'image': 'busybox',})
+    _write('lib', 'lib-a', {'repo': '/tmp/repo-lib-a',
+                            'mount': '/lib/a',})
+    _write('lib', 'lib-b', {'repo': '/tmp/repo-lib-b',
+                            'mount': '/lib/b',
+                            'depends': {
+                                'libs': ['lib-a']
+                            }})
+    _write('service', 'servica', {'image': 'busybox'})
+
+
 def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']):
     """Fixture for use in integration tests. The local repo at
     /tmp/fake-repo should be set up before using this fixture."""

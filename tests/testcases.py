@@ -136,11 +136,11 @@ class DustyIntegrationTestCase(TestCase):
         self._clear_stdout()
         return result
 
-    def _set_up_fake_local_repo(self):
-        repo = git.Repo.init('/tmp/fake-repo')
-        with open('/tmp/fake-repo/README.md', 'w') as f:
+    def _set_up_fake_local_repo(self, path='/tmp/fake-repo'):
+        repo = git.Repo.init(path)
+        with open(os.path.join(path, 'README.md'), 'w') as f:
             f.write('# Fake Repo')
-        repo.index.add(['/tmp/fake-repo/README.md'])
+        repo.index.add([os.path.join(path, 'README.md')])
         repo.index.commit('Initial commit')
 
     def _in_same_line(self, string, *values):
@@ -159,6 +159,11 @@ class DustyIntegrationTestCase(TestCase):
         all_images = client.images(all=True)
         return any(image_to_find in image['RepoTags'] for image in all_images)
 
+    def _file_exists_in_container(self, service_name, file_path):
+        file_exists_str = self.exec_in_container(service_name,
+            'sh -c \'[ -f {} ] && echo "yes" || echo "no"\''.format(file_path)).rstrip()
+        return file_exists_str == 'yes'
+
     def exec_in_container(self, service_name, command):
         client = get_docker_client()
         container = _get_container_for_app_or_service(client, service_name, raise_if_not_found=True)
@@ -173,7 +178,12 @@ class DustyIntegrationTestCase(TestCase):
 
     def container_id(self, service_name):
         client = get_docker_client()
-        return _get_container_for_app_or_service(client, service_name, include_exited=True)['Id']
+        return _get_container_for_app_or_service(client, service_name, include_exited=True, raise_if_not_found=True)['Id']
+
+    def inspect_container(self, service_name):
+        container_id = self.container_id(service_name)
+        client = get_docker_client()
+        return client.inspect_container(container_id)
 
     def assertInSameLine(self, string, *values):
         self.assertTrue(self._in_same_line(string, *values))
@@ -187,6 +197,12 @@ class DustyIntegrationTestCase(TestCase):
 
     def assertFileContentsInContainer(self, service_name, file_path, contents):
         self.assertEqual(self.exec_in_container(service_name, 'cat {}'.format(file_path)), contents)
+
+    def assertFileNotInContainer(self, service_name, file_path):
+        self.assertFalse(self._file_exists_in_container(service_name, file_path))
+
+    def assertFileInContainer(self, service_name, file_path):
+        self.assertTrue(self._file_exists_in_container(service_name, file_path))
 
     def assertContainerRunning(self, service_name):
         self.assertTrue(self._container_exists_in_set(service_name, False))
@@ -208,3 +224,4 @@ class DustyIntegrationTestCase(TestCase):
 
     def assertExecDocker(self, *args):
         self.fake_exec_docker.assert_called_with(*args)
+
