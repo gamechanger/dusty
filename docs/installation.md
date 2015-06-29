@@ -13,9 +13,9 @@ will warn you if you have a version installed that may be too old.
 We recommend brew-installing the latest versions of each of these
 programs:
 ```
-brew install nginx
-brew install boot2docker
-brew install docker-compose
+which nginx || brew install nginx
+which boot2docker || brew install boot2docker
+which docker-compose || brew install docker-compose
 ```
 
 ## Installation
