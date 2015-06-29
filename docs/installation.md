@@ -22,7 +22,7 @@ which docker-compose || brew install docker-compose
 
 To download and install Dusty, run:
 ```
-bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.1.3/install.sh`"
+bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.1.4/install.sh`"
 ```
 
 This script will install Dusty as a service and run the preflight check to ensure that all
