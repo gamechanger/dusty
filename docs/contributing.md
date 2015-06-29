@@ -56,6 +56,7 @@ Before a new release, please do the following:
 
 * Update README.md to reflect the new Dusty version
   * After the `DustyRelease` Jenkins job has successfully run, change the curl target specified in the readme to reference the newly minted version
+  * Change the curl target referenced in the installation docs as well
   * Create a pull request for this change and merge once accepted
 
 * Bump the version number dusty/constants.py to the *next* version assigned to the `VERSION` variable
