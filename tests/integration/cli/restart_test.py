@@ -74,7 +74,7 @@ class TestRestartCLI(DustyIntegrationTestCase):
 
     def test_restart_sync(self):
         new_file_name = 'sync_file'
-        repo = Repo.resolve(get_all_repos(include_specs_repo=False), 'app-a')
+        repo = Repo.resolve(get_all_repos(include_specs_repo=False), 'repo-app-a')
         with open(os.path.join(repo.local_path, new_file_name), 'w+') as f:
             f.write('new file!')
         self.run_command('restart appa')
