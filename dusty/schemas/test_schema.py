@@ -5,13 +5,13 @@ test_suite_schema = Schema({
     'command': {'type': Array(basestring), 'required': True},
     'default_args': {'type': basestring, 'default': ''},
     'description': {'type': basestring, 'default': ''}
+    'compose': {'type': dict, 'default': dict},
+    'services': {'type': Array(basestring), 'default': list},
 })
 
 test_schema = Schema({
     'image': {'type': basestring},
     'build': {'type': basestring},
-    'services': {'type': Array(basestring), 'default': list},
     'once': {'type': Array(basestring), 'default': []},
-    'compose': {'type': dict, 'default': dict},
     'suites': {'type': Array(test_suite_schema), 'default': list},
     })
