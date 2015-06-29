@@ -1,6 +1,6 @@
 import os
 
-VERSION = '0.1.4'
+VERSION = '0.1.5'
 
 EXAMPLE_SPECS_REPO = 'github.com/gamechanger/dusty-example-specs'
 
