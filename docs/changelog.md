@@ -1,6 +1,9 @@
 # Changelog
 
-## 0.1.4 (In progress)
+## 0.1.5 (In Progress)
+
+## 0.1.4 (June 29, 2015)
+  * BREAKING CHANGE: `services` and `compose` keys in test specs are now specified at the suite level, not the test level.
   * FIXED: Changed test container name spaces to include suite name. This allows all test suites app or lib to run concurrently.
 
 ## 0.1.3 (June 25, 2015)
