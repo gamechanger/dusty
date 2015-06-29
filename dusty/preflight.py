@@ -12,7 +12,7 @@ import warnings
 from .config import write_default_config, check_and_load_ssh_auth
 from . import constants
 from .warnings import daemon_warnings
-from .subprocess import check_and_log_output_and_error
+from .subprocess import check_and_log_output_and_error, check_output_demoted
 from . import constants
 
 class PreflightException(Exception):
@@ -61,19 +61,19 @@ def _check_virtualbox():
 @returns_exception
 def _check_boot2docker():
     _assert_executable_exists('boot2docker')
-    installed_version = subprocess.check_output(['boot2docker', 'version']).splitlines()[0].split(':')[1].split('v')[-1]
+    installed_version = check_output_demoted(['boot2docker', 'version']).splitlines()[0].split(':')[1].split('v')[-1]
     _maybe_version_warning('boot2docker', installed_version)
 
 @returns_exception
 def _check_docker():
     _assert_executable_exists('docker')
-    installed_version = subprocess.check_output(['docker', '-v']).split(',')[0].split(' ')[-1]
+    installed_version = check_output_demoted(['docker', '-v']).split(',')[0].split(' ')[-1]
     _maybe_version_warning('docker', installed_version)
 
 @returns_exception
 def _check_docker_compose():
     _assert_executable_exists('docker-compose')
-    installed_version = subprocess.check_output(['docker-compose', '--version']).split('\n')[0].split()[-1].strip()
+    installed_version = check_output_demoted(['docker-compose', '--version']).split('\n')[0].split()[-1].strip()
     _maybe_version_warning('docker-compose', installed_version)
 
 @returns_exception
