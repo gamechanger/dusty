@@ -88,7 +88,7 @@ def _compose_project_name(service_name, suite_name):
 
 def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
     previous_container_names = []
-    for service_name in testing_spec['services']:
+    for service_name in services:
         service_spec = expanded_specs['services'][service_name]
         kwargs = {}
         if previous_container_names:
