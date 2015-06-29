@@ -103,7 +103,7 @@ def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
         previous_container_names.append("{}_{}_1".format(_compose_project_name(app_or_lib_name, suite_name), service_name))
     return previous_container_names
 
-def _app_or_lib_compose_up(base_compose_spec, app_or_lib_name, app_or_lib_volumes, test_command, previous_container_name, suite_name):
+def _app_or_lib_compose_up(test_suite_compose_spec, app_or_lib_name, app_or_lib_volumes, test_command, previous_container_name, suite_name):
     image_name = test_image_name(app_or_lib_name)
     kwargs = {'testing_image_identifier': image_name,
               'volumes': app_or_lib_volumes,
@@ -112,7 +112,7 @@ def _app_or_lib_compose_up(base_compose_spec, app_or_lib_name, app_or_lib_volume
     if previous_container_name is not None:
         kwargs['net_container_identifier'] = previous_container_name
     composefile_path = _test_composefile_path(app_or_lib_name)
-    compose_config = get_testing_compose_dict(app_or_lib_name, base_compose_spec, **kwargs)
+    compose_config = get_testing_compose_dict(app_or_lib_name, test_suite_compose_spec, **kwargs)
     write_composefile(compose_config, composefile_path)
     compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name))
     return '{}_{}_1'.format(_compose_project_name(app_or_lib_name, suite_name), app_or_lib_name)
