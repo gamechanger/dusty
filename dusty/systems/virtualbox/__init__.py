@@ -1,6 +1,7 @@
 import os
 import re
 import logging
+import textwrap
 
 from ... import constants
 from ...config import get_config_value
@@ -41,8 +42,32 @@ def ensure_docker_vm_is_started():
     _init_docker_vm()
     _start_docker_vm()
 
+def _apply_1_7_cert_hack():
+    """boot2docker 1.7 has been a total disaster. One of the upgrade problems is that
+    the certificates used for TLS to the Docker client become invalid. There's some sort
+    of race condition here which is fixed by this hack.
+    Issue: https://github.com/boot2docker/boot2docker/issues/938
+    Hack: https://github.com/boot2docker/boot2docker/issues/824#issuecomment-113904164
+    """
+    hack = textwrap.dedent("""
+    wait4eth1() {
+        CNT=0
+        until ip a show eth1 | grep -q UP
+        do
+                [ $((CNT++)) -gt 60 ] && break || sleep 1
+        done
+        sleep 1
+    }
+    wait4eth1""")
+    if call_demoted(['boot2docker', 'ssh', 'test -f /var/lib/boot2docker/profile']) != 0:
+        log_to_client('Applying boot2docker 1.7 cert hack')
+        check_and_log_output_and_error_demoted(['boot2docker', 'ssh',
+                                                'sudo sh -c \'printf \"{}\" > /var/lib/boot2docker/profile\''.format(hack)])
+        check_and_log_output_and_error_demoted(['boot2docker', 'ssh', 'sudo /etc/init.d/docker restart'])
+
 def initialize_docker_vm():
     ensure_docker_vm_is_started()
+    _apply_1_7_cert_hack()
     _ensure_rsync_is_installed()
     _ensure_persist_dir_is_linked()
     _ensure_cp_dir_exists()
