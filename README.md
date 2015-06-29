@@ -10,7 +10,7 @@ Docker-powered development environments
 
 # Installation
 
-See [Installation](https://http://dusty.readthedocs.org/en/latest/installation/) in the documentation.
+See [Installation](https://dusty.readthedocs.org/en/latest/installation/) in the documentation.
 
 # Basics
 Dusty is a python application for docker based environment management.  It is built in two parts, a client and a daemon.  The daemon is a single threaded python process that should run as root.  The client is a python command line interface that interacts with both the daemon and your docker containers.
