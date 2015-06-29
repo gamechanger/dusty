@@ -86,7 +86,7 @@ def _test_composefile_path(service_name):
 def _compose_project_name(service_name, suite_name):
     return 'test{}{}'.format(service_name.lower(), suite_name.lower())
 
-def _services_compose_up(expanded_specs, app_or_lib_name, testing_spec, suite_name):
+def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
     previous_container_names = []
     for service_name in testing_spec['services']:
         service_spec = expanded_specs['services'][service_name]
@@ -103,7 +103,7 @@ def _services_compose_up(expanded_specs, app_or_lib_name, testing_spec, suite_na
         previous_container_names.append("{}_{}_1".format(_compose_project_name(app_or_lib_name, suite_name), service_name))
     return previous_container_names
 
-def _app_or_lib_compose_up(testing_spec, app_or_lib_name, app_or_lib_volumes, test_command, previous_container_name, suite_name):
+def _app_or_lib_compose_up(base_compose_spec, app_or_lib_name, app_or_lib_volumes, test_command, previous_container_name, suite_name):
     image_name = test_image_name(app_or_lib_name)
     kwargs = {'testing_image_identifier': image_name,
               'volumes': app_or_lib_volumes,
@@ -112,18 +112,25 @@ def _app_or_lib_compose_up(testing_spec, app_or_lib_name, app_or_lib_volumes, te
     if previous_container_name is not None:
         kwargs['net_container_identifier'] = previous_container_name
     composefile_path = _test_composefile_path(app_or_lib_name)
-    compose_config = get_testing_compose_dict(app_or_lib_name, testing_spec.get('compose', {}), **kwargs)
+    compose_config = get_testing_compose_dict(app_or_lib_name, base_compose_spec, **kwargs)
     write_composefile(compose_config, composefile_path)
     compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name))
     return '{}_{}_1'.format(_compose_project_name(app_or_lib_name, suite_name), app_or_lib_name)
 
+def _get_suite_spec(testing_spec, suite_name):
+    for suite in testing_spec['suites']:
+        if suite['name'] == suite_name:
+            return suite
+    raise RuntimeError('Couldn\'t find suite named {}'.format(suite_name))
+
 def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name):
     testing_spec = expanded_specs.get_app_or_lib(app_or_lib_name)['test']
+    suite_spec = _get_suite_spec(testing_spec, suite_name)
 
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs, test=True)
-    previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, testing_spec, suite_name)
+    previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, suite_spec['services'], suite_name)
     previous_container_name = previous_container_names[-1] if previous_container_names else None
-    test_container_name = _app_or_lib_compose_up(testing_spec, app_or_lib_name,
+    test_container_name = _app_or_lib_compose_up(suite_spec['compose'], app_or_lib_name,
                                                  volumes, test_command, previous_container_name, suite_name)
 
     for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
