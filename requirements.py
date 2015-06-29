@@ -1,5 +1,5 @@
 install_requires = [
-    'docker-py-paetling==1.3.0',
+    'gc-docker-py==1.3.0',
     'PyYAML==3.11',
     'PrettyTable==0.7.0',
     'GitPython==1.0.1',
