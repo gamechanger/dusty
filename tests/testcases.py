@@ -88,7 +88,7 @@ class DustyIntegrationTestCase(TestCase):
         save_config_value(constants.CONFIG_MAC_USERNAME_KEY, self.current_user)
         override_repo(get_specs_repo().remote_path, self.overridden_specs_path)
         self.fake_local_repo_location = '/tmp/fake-repo'
-        self.set_up_fake_local_repo('/tmp/fake-repo', 'fake-repo')
+        self._set_up_fake_local_repo('/tmp/fake-repo')
         self._clear_stdout()
 
     def tearDown(self):
@@ -140,7 +140,7 @@ class DustyIntegrationTestCase(TestCase):
     def _set_up_fake_local_repo(self, path='/tmp/fake-repo'):
         repo = git.Repo.init(path)
         with open(os.path.join(path, 'README.md'), 'w') as f:
-            f.write('# Fake Repo')
+            f.write('# {}'.format(path.split('/')[-1]))
         repo.index.add([os.path.join(path, 'README.md')])
         repo.index.commit('Initial commit')
 
