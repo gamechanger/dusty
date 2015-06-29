@@ -42,27 +42,27 @@ class TestRestartCLI(DustyIntegrationTestCase):
 
     def test_restart_one(self):
         self.run_command('restart appa')
-        self.assertContainerHasRestarted(self.container_has_restarted('appa'))
-        self.assertContainerNotRestarted(self.container_has_restarted('appb'))
-        self.assertContainerNotRestarted(self.container_has_restarted('appc'))
+        self.assertContainerHasRestarted('appa')
+        self.assertContainerNotRestarted('appb')
+        self.assertContainerNotRestarted('appc')
 
     def test_restart_all(self):
         self.run_command('restart')
-        self.assertContainerHasRestarted(self.container_has_restarted('appa'))
-        self.assertContainerHasRestarted(self.container_has_restarted('appb'))
-        self.assertContainerHasRestarted(self.container_has_restarted('appc'))
+        self.assertContainerHasRestarted('appa')
+        self.assertContainerHasRestarted('appb')
+        self.assertContainerHasRestarted('appc')
 
     def test_restart_by_app_repo(self):
         self.run_command('restart --repos repo-app-a')
-        self.assertContainerHasRestarted(self.container_has_restarted('appa'))
-        self.assertContainerNotRestarted(self.container_has_restarted('appb'))
-        self.assertContainerNotRestarted(self.container_has_restarted('appc'))
+        self.assertContainerHasRestarted('appa')
+        self.assertContainerNotRestarted('appb')
+        self.assertContainerNotRestarted('appc')
 
     def test_restart_by_lib_repo(self):
         self.run_command('restart --repos repo-lib-a')
-        self.assertContainerHasRestarted(self.container_has_restarted('appa'))
-        self.assertContainerHasRestarted(self.container_has_restarted('appb'))
-        self.assertContainerNotRestarted(self.container_has_restarted('appc'))
+        self.assertContainerHasRestarted('appa')
+        self.assertContainerHasRestarted('appb')
+        self.assertContainerNotRestarted('appc')
 
     def test_restart_nosync(self):
         new_file_name = 'nosync_file'

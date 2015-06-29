@@ -178,11 +178,10 @@ class DustyIntegrationTestCase(TestCase):
 
     def container_id(self, service_name):
         client = get_docker_client()
-        return _get_container_for_app_or_service(client, service_name, include_exited=True)['Id']
+        return _get_container_for_app_or_service(client, service_name, include_exited=True, raise_if_not_found=True)['Id']
 
     def inspect_container(self, service_name):
-        client = get_docker_client()
-        container_id = _get_container_for_app_or_service(client, service_name, include_exited=True)['Id']
+        container_id = self.container_id(service_name)
         return client.inspect_container(container_id)
 
     def assertInSameLine(self, string, *values):
