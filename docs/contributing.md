@@ -37,26 +37,26 @@ $ pip install mkdocs
 $ mkdocs serve
 ```
 
+## Maintaining the Changelog
+
+User-facing changes should be documented in the Changelog as they are merged. The following
+types of changes should be prefixed with the appropriate change type:
+
+* BREAKING CHANGE: Changes to the existing Dusty CLI, specs, or runtime environment which are not backwards-compatible
+* NEW: A new user-facing feature, or something that enables a workflow that wasn't possible before.
+* FIXED: Noteworthy, user-facing bug fixes.
+
+Any changes which do not meet any of these definitions but do affect the user experience
+may be listed without a prefix.
+
 ## Release Checklist
 
-Before a new release, please do the following:
-
 * Update the changelog
-  * Add a date to the changelog for this version
-  * Add a new version that has an `In progress` title rather than a date
-  * Update the changelog to reflect your new changes with appropriate descriptions
-    * NEW: This change is an addition to the existing code/functionality, and should include a description of what the addition does.
-    * BREAKING: This update changes the existing promises of the dusty CLI API or specs API
-    * FIXED: This is a patch for something broken in the current dusty version
-    * other comments: anything that is not one of the above but is still important enough that users should know about change before upgrading
-  * Submit a pull request for your changelog updates and merge once accepted
+    * Add a date to the changelog for this version
+    * Add a new version with `(In Progress)` after it
 
-* Cut a new version of Dusty
-  * Run the `DustyRelease` Jenkins job with your new version number supplied as a parameter
+* Cut a new release by running the `DustyRelease` Jenkins job with your new version number
 
-* Update README.md to reflect the new Dusty version
-  * After the `DustyRelease` Jenkins job has successfully run, change the curl target specified in the readme to reference the newly minted version
-  * Change the curl target referenced in the installation docs as well
-  * Create a pull request for this change and merge once accepted
+* Update [Installation](installation.md) to point to the binary for your new version
 
-* Bump the version number dusty/constants.py to the *next* version assigned to the `VERSION` variable
+* Bump the version number in `dusty/constants.py` to the new, in-progress version
