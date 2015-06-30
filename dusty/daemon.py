@@ -34,6 +34,9 @@ def _send_warnings_to_client(connection, suppress_warnings):
     if daemon_warnings.has_warnings and not suppress_warnings:
         connection.sendall("{}\n".format(daemon_warnings.pretty()))
 
+def _get_payload_function_data(payload):
+    return payload['fn'], payload['args'], payload['kwargs']
+
 def _listen_on_socket(socket_path, suppress_warnings):
     _clean_up_existing_socket(socket_path)
 
@@ -52,10 +55,10 @@ def _listen_on_socket(socket_path, suppress_warnings):
                     data = connection.recv(1024)
                     if not data:
                         break
-                    fn, client_version, client_suppress_warnings, args, kwargs = Payload.deserialize(data)
-                    suppress_warnings |= client_suppress_warnings
-                    logging.error(suppress_warnings)
-                    logging.error(client_suppress_warnings)
+                    payload = Payload.deserialize(data)
+                    client_version = payload['client_version']
+                    fn, args, kwargs = _get_payload_function_data(payload)
+                    suppress_warnings |= payload['suppress_warnings']
                     logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
                     try:
                         _send_warnings_to_client(connection, suppress_warnings)

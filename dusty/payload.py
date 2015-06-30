@@ -21,10 +21,10 @@ class Payload(object):
 
     def serialize(self):
         doc = {'fn': self.fn, 'client_version': self.client_version, 'suppress_warnings': self.suppress_warnings,
-               'args': self.args, 'kwargs': sorted(self.kwargs.items())}
+               'args': self.args, 'kwargs': self.kwargs}
         return cPickle.dumps(doc).encode('string_escape')
 
     @staticmethod
     def deserialize(doc):
-        original_doc = cPickle.loads(doc.decode('string_escape'))
-        return original_doc['fn'], original_doc['client_version'], original_doc['suppress_warnings'], original_doc['args'], dict(original_doc['kwargs'])
+        return cPickle.loads(doc.decode('string_escape'))
+

@@ -21,7 +21,8 @@ class TestPayload(DustyTestCase):
         self.assertItemsEqual(result, self.serialized_payload)
 
     def test_deserialize(self):
-        fn, client_version, suppress_warnings, args, kwargs = Payload.deserialize(self.test_payload.serialize())
+        payload = Payload.deserialize(self.test_payload.serialize())
+        fn, client_version, suppress_warnings, args, kwargs = payload['fn'], payload['client_version'], payload['suppress_warnings'], payload['args'], payload['kwargs']
         self.assertEqual(fn, _fn)
         self.assertEqual(client_version, VERSION)
         self.assertEqual(args, ('arg1',))
