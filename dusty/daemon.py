@@ -15,7 +15,7 @@ import socket
 
 from docopt import docopt
 
-from .preflight import preflight_check
+from .preflight import preflight_check, refresh_preflight_warnings
 from .log import configure_logging, make_socket_logger, close_socket_logger
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .payload import Payload
@@ -36,6 +36,11 @@ def _send_warnings_to_client(connection, suppress_warnings):
 
 def _get_payload_function_data(payload):
     return payload['fn'], payload['args'], payload['kwargs']
+
+def _refresh_warnings():
+    if daemon_warnings.has_warnings:
+        refresh_config_warnings()
+        refresh_preflight_warnings()
 
 def _listen_on_socket(socket_path, suppress_warnings):
     _clean_up_existing_socket(socket_path)
@@ -61,6 +66,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
                     suppress_warnings |= payload['suppress_warnings']
                     logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
                     try:
+                        _refresh_warnings()
                         _send_warnings_to_client(connection, suppress_warnings)
                         if client_version != VERSION:
                             raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, client_version))
