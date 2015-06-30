@@ -1,22 +1,38 @@
-# Dusty Specs Overview
-There are 4 main types of objects in Dusty.<br/>
-1. [Bundles](./bundle-specs.md) - highest level objects in Dusty.  They can be activated or deactivated.  Bundles are organized in logical groups, like the website or api. `dusty up` will run the set of activated bundles.<br/>
-2. [Apps](./app-specs.md) - objects that should run in their own container and have code from the user.<br/>
-3. [Services](./service-specs.md) - objects that should run in their own container but uses external code (mongo or redis instance).<br/>
-4. [Libs](./lib-specs.md) - objects that have code from the user, but do not run in their own container. These will be included in app containers for app code to use.
+# Specs Overview
 
-There is a 5th subtype that is important enough to get its own spec page.<br/>
-5. [Tests](./test-specs.md) - objects found on both the lib and apps objects. They define how to run tests on a user's app and lib code.
+Dusty uses YAML specifications for configuration of the applications, services, and
+libraries used to create your stack.
+
+An additional entrypoint layer, called a Bundle, is used to provide toggleable entrypoints
+into your stack's dependency graph. Users can decide which Bundles they want to run,
+and Dusty runs the applications, services, and libraries defined by those Bundles.
+
+1. [Bundles](./bundle-specs.md) -  Logical groups of applications. These can be
+toggled by users at runtime to mix and match parts of the stack.
+1. [Apps](./app-specs.md) -  Applications which you actively develop. These may link
+to a source repo and install Libs. May include test specifications.
+1. [Services](./service-specs.md) -  Applications which you do not develop. Services are
+often used to run database containers off of a public Docker image.
+1. [Libs](./lib-specs.md) -  Libraries which you actively develop. These may be depended on
+by Apps, which will then install them automatically. May include test specifications.
+
+Additionally, apps and libs share the following common sub-schemata -
+
+* [Tests](./test-specs.md) -  Specifications of test images and suites. Libs and Apps with
+test specs can be tested using `dusty test`.
 
 ## Dusty Specs Repo
-The dusty specs repo is organized as follows.
+
+Dusty assumes that your specs are defined in a Git repo with the following format -
+
 ```
-dusty-specs/
+/
   apps/
   bundles/
   libs/
   services/
 ```
 
-## Note About Commands
-All commands specified in dusty, be they app's once and always, scripts, tests, ...etc are put in a shell file and run using sh.  This allows some more flexibility of what types of commands we allow, including running commands in the background (&).
+Each folder must contain YAML files with specs which match the schema for that type. The
+[example specs repo](https://github.com/gamechanger/dusty-example-specs) has valid
+examples for each of these.

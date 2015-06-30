@@ -1,4 +1,7 @@
-# Dusty Service Specs
-These specs are used to specify services for you local environment. They should go in the services folder in your specs repo.
+# Service Specs
 
-The service spec is actually just a direct copy of [Docker Compose's yml spec](https://docs.docker.com/compose/yml/).  All keys are just mapped directly into the Docker Compose yml.
+Services represent running containers for which you do not manage the source code.
+A typical use case for services is to run a database container using publicly
+available Docker images.
+
+Services are defined using [Docker Compose specs](https://docs.docker.com/compose/yml/).

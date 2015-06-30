@@ -1,39 +1,120 @@
-# Dusty Testing Specs
+# Test Specs
+
 These specs are used to specify tests you can run in apps and libs. These do not exist as distinct documents but as subfields of lib and app specs. They are found under the **test** key.
 
-## Keys
+## How Dusty Runs Tests
 
-### build and image
-The image and build keys in test specs mirror the image and build keys in the [app-spec](./app-specs.md#build).
+To facilitate quick turnaround times with testing, Dusty does the following to run tests:
+
+1. Pull or create the image defined in `image` or `build`
+2. Run the `once` script and commit the resulting image locally
+3. Use the image from Step 2 as the starting point for all test suite runs
+
+## image
+
+```
+image: ubuntu:15.04
+```
+
+`image` specifies a Docker image on which to base the container used to create the
+intermediate testing image. If the image does not exist locally, Dusty will pull it.
+
+Either `build` or `image` must be supplied in the test spec. They cannot both be supplied.
+
+## build
+
+```
+build: .
+```
+
+`build` specifies a directory containing a Dockerfile on the host OS which will be used
+to build the intermediate testing image.
+
+This path can be absolute or relative. If it is relative, it is relative to repo directory
+on the host OS.
+
+Either `build` or `image` must be supplied in the spec. They cannot both be supplied.
+
+## once
+
+```
+once:
+  - pip install -r test_requirements.txt
+```
+
+`once` specifies the commands used in Step 2 of test image creation to create a final
+testing image. The resulting image is committed locally and used as the starting point
+for test suite runs.
+
+Expensive install steps should go in `once` so that Dusty can cache their results.
+
+## suites
+
+`suites` specifies a list of test suites available for this app or lib. Each suite provides
+`name` and `description` keys which are shown when using the `dusty test` command.
+
+Each suite may also contain the following keys:
 
 ### services
+
 ```
 services:
   - testMongo
   - testRedis
 ```
-The services key represents a list of services that the app or lib being tested depends on. These services will be spun up and daisy chained together over the Docker network bridge.  This is done using Docker Compose's **net** key.
 
-### once
-```
-once:
-  - pip install -r test_requirements.txt
-```
-The once key is a list of commands to be run when you are creating the testing base image.  In order to speed up the process of running tests, the first time tests are run, Dusty will create a testing base image based off of the image or build key and the once commands. This image is then used to run the actual tests.  This allows the heavy install commands to only happen the very first time tests are run. Each subsequent test run should run much more quickly. <br />
+`services` provides a list of Dusty services which will be linked to the test container for this
+suite. Containers are spun up for each service and linked to the final test container. All containers
+for a given test suite are also connected to the same network stack. This allows your testing
+container to access ports exposed by any test services through its own `localhost`.
 
-### suites
-```
-suites:
-  - name: frontend
-    command:
-      - ./manage.py test frontend
-    description: test of gcweb through django
-```
-The suites key provides a list of tests that can be run for the app or lib.
-**name** defines what you need to call to run the test.  If the testing spec is in an app named app1, you would be able to call the following:
-* `dusty test app1 frontend`
+Unlike runtime container dependencies, each test suite gets its own copy of the service containers.
+This provides service isolation across multiple apps and test suites.
 
-Arguments can be passed to the tests in much the same way as the app's script key.
+### command
+
+```
+command:
+  - nosetests
+```
+
+`command` defines the script to be run to perform the test for this suite.
+
+Tests can accept arguments at runtime through the `dusty test` command.  Arguments are passed through
+to the final command specified by the `command` list for the suite.
+
+### default_args
+
+```
+default_args: tests/unit
+```
+
+`default_args` allows you to specify arguments which are passed to the final command in the
+suite's `command` list if no arguments are given at runtime. If the user provides arguments to
+the `dusty test` command, the `default_args` are ignored.
+
+In this example, the following Dusty commands would cause the following commands to be run inside
+the suite's container:
+
+```
+> dusty test my-app suiteName
+=> nosetests tests/unit
+
+> dusty test my-app suiteName tests/integration
+=> nosetests tests/integration
+```
 
 ### compose
-The compose key mirrors exactly the compose key in the [app-spec](./app-specs.md#compose)
+
+```
+compose:
+  environment:
+    APP_ENVIRONMENT: local
+    MONGO_HOST: persistentMongo
+```
+
+Dusty uses Docker Compose to create and manage containers. The `compose` key allows you to
+override any of the values passed through to Docker Compose at runtime.
+
+For more information on what you can override through this key, please see
+the [Docker Compose specification](https://docs.docker.com/compose/yml/).
