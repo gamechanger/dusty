@@ -260,7 +260,7 @@ class TestSetupCommands(DustyTestCase):
     @patch('dusty.commands.setup.virtual_memory')
     def test_get_boot2docker_vm_size_16_y(self, fake_virtual_memory, fake_get_raw_input):
         total_mock = Mock()
-        total_mock.total = 16 * 10**9
+        total_mock.total = 16 * 2**30
         fake_virtual_memory.return_value = total_mock
         fake_get_raw_input.return_value = 'y'
         self.assertEqual(_get_boot2docker_vm_size(), 6)
@@ -270,7 +270,7 @@ class TestSetupCommands(DustyTestCase):
     @patch('dusty.commands.setup.virtual_memory')
     def test_get_boot2docker_vm_size_16_n(self, fake_virtual_memory, fake_get_raw_input):
         total_mock = Mock()
-        total_mock.total = 16 * 10**9
+        total_mock.total = 16 * 2**30
         fake_virtual_memory.return_value = total_mock
         fake_get_raw_input.side_effect = ['n', 2]
         self.assertEqual(_get_boot2docker_vm_size(), 2)
@@ -281,7 +281,7 @@ class TestSetupCommands(DustyTestCase):
     @patch('dusty.commands.setup.virtual_memory')
     def test_get_boot2docker_vm_size_8_y(self, fake_virtual_memory, fake_get_raw_input):
         total_mock = Mock()
-        total_mock.total = 8 * 10**9
+        total_mock.total = 8 * 2**30
         fake_virtual_memory.return_value = total_mock
         fake_get_raw_input.return_value = 'y'
         self.assertEqual(_get_boot2docker_vm_size(), 4)
@@ -291,7 +291,7 @@ class TestSetupCommands(DustyTestCase):
     @patch('dusty.commands.setup.virtual_memory')
     def test_get_boot2docker_vm_size_8_n(self, fake_virtual_memory, fake_get_raw_input):
         total_mock = Mock()
-        total_mock.total = 8 * 10**9
+        total_mock.total = 8 * 2**30
         fake_virtual_memory.return_value = total_mock
         fake_get_raw_input.side_effect = ['n', 2]
         self.assertEqual(_get_boot2docker_vm_size(), 2)

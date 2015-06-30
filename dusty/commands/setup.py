@@ -66,14 +66,12 @@ def _get_and_configure_nginx_includes_dir():
     return ''
 
 def _get_boot2docker_vm_size():
-    memory_gigs = 1.0 * virtual_memory().total / 10**9
-    if memory_gigs >= 15:
+    memory_gigs = virtual_memory().total / 2**30
+    if memory_gigs == 16:
         vm_gigs = 6
-        host_gigs = 16
     else:
         vm_gigs = 4
-        host_gigs = 8
-    if _get_raw_input('Your system seems to have {} gigabytes of memory. We would like to allocate {} to your vm. Is that ok? (y/n) '.format(host_gigs, vm_gigs)).upper() == 'Y':
+    if _get_raw_input('Your system seems to have {} gigabytes of memory. We would like to allocate {} to your vm. Is that ok? (y/n) '.format(memory_gigs, vm_gigs)).upper() == 'Y':
         return vm_gigs
     else:
         return int(_get_raw_input('Please input the number of gigabytes to allocate to the vm: '))
