@@ -105,10 +105,18 @@ def _ensure_github_known_host():
             command = ['sh', '-c', 'ssh-keyscan -t rsa github.com >> {}'.format(known_hosts_path)]
             check_and_log_output_and_error(command, demote=False)
 
+def _check_executables():
+    return [check() for check in [_check_nginx, _check_rsync, _check_virtualbox, _check_boot2docker,
+              _check_docker, _check_docker_compose]]
+
+def refresh_preflight_warnings():
+    daemon_warnings.clear_namespace('preflight')
+    _check_executables()
+
 def preflight_check():
     logging.info('Starting preflight check')
-    errors = [check() for check in [_check_nginx, _check_rsync, _check_virtualbox, _check_boot2docker,
-              _check_docker, _check_docker_compose, _assert_hosts_file_is_writable]]
+    errors = _check_executables()
+    errors.append(_assert_hosts_file_is_writable())
     str_errors = [str(e) for e in errors if e is not None]
     if str_errors:
         raise PreflightException("Preflight Errors: \n\t{}".format('\n\t'.join(str_errors)))
