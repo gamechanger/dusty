@@ -94,7 +94,10 @@ def _ensure_command_files_dir_exists():
         os.makedirs(constants.COMMAND_FILES_DIR)
 
 def _ensure_github_known_host():
-    known_hosts_path = os.path.expanduser('~root/.ssh/known_hosts')
+    ssh_dir = os.path.expanduser('~root/.ssh')
+    if not os.path.isdir(ssh_dir):
+        os.makedirs(ssh_dir)
+    known_hosts_path = os.path.join(ssh_dir, 'known_hosts')
     with open(known_hosts_path, 'w+') as f:
         contents = f.read()
         if 'github.com' not in contents:
