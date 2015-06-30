@@ -2,8 +2,9 @@ import cPickle
 
 from ..testcases import DustyTestCase
 from dusty.constants import VERSION
-from dusty.payload import Payload
+from dusty.payload import Payload, daemon_command
 
+@daemon_command
 def _fn(*args, **kwargs):
     return args, kwargs
 
