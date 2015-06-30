@@ -58,7 +58,7 @@ CONFIG_MAC_USERNAME_KEY = 'mac_username'
 CONFIG_SPECS_REPO_KEY = 'specs_repo'
 CONFIG_NGINX_DIR_KEY = 'nginx_includes_dir'
 CONFIG_SETUP_KEY = 'setup_has_run'
-CONFIG_VM_MEM_SIZE = 'boot2docker_vm_memory_size'
+CONFIG_VM_MEM_SIZE = 'vm_memory_size'
 
 CONFIG_SETTINGS = {
     CONFIG_BUNDLES_KEY: 'All currently activated bundles. These are the bundles that Dusty will set up for you when you run "dusty up".',
