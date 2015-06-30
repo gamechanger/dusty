@@ -3,6 +3,7 @@ import subprocess
 import textwrap
 from os.path import isfile, isdir
 from os import mkdir
+from psutil import virtual_memory
 
 from ..payload import Payload
 from ..config import save_config_value, get_config_value, verify_mac_username, refresh_config_warnings
@@ -64,6 +65,19 @@ def _get_and_configure_nginx_includes_dir():
     _get_raw_input('\n'.join(textwrap.wrap('You have a custom nginx config setup. Could not find an nginx.conf file. Please read our docs to see what is needed for the nginx config.  Once you have figured it out, please use `dusty config` command to adjust your `nginx_includes_dir`', 80)))
     return ''
 
+def _get_boot2docker_vm_size():
+    memory_gigs = 1.0 * virtual_memory().total / 10**9
+    if memory_gigs >= 15:
+        vm_gigs = 6
+        host_gigs = 16
+    else:
+        vm_gigs = 4
+        host_gigs = 8
+    if _get_raw_input('Your system seems to have {} gigabytes of memory. We would like to allocate {} to your vm. Is that ok? (y/n) '.format(host_gigs, vm_gigs)).upper() == 'Y':
+        return vm_gigs
+    else:
+        return int(_get_raw_input('Please input the number of gigabytes to allocate to the vm: '))
+
 def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
     print "We just need to verify a few settings before we get started.\n"
     if mac_username:
@@ -84,9 +98,12 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
     else:
         nginx_includes_dir = _get_and_configure_nginx_includes_dir()
 
+    boot2docker_vm_size = _get_boot2docker_vm_size()
+
     config_dictionary = {constants.CONFIG_MAC_USERNAME_KEY: mac_username,
                          constants.CONFIG_SPECS_REPO_KEY: specs_repo,
-                         constants.CONFIG_NGINX_DIR_KEY: nginx_includes_dir}
+                         constants.CONFIG_NGINX_DIR_KEY: nginx_includes_dir,
+                         constants.CONFIG_VM_MEM_SIZE: boot2docker_vm_size}
     payload = Payload(complete_setup, config_dictionary)
     payload.suppress_warnings = True
     return payload
