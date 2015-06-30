@@ -40,7 +40,7 @@ install:
 ```
 
 `install` specifies a list of commands that should be run to prepare the library to be used.
-This command is run the container of an app which depends on the lib.
+This command is run in the container of an app which depends on the lib.
 
 Lib install commands are executed prior to the app's `once` and `always` commands during
 container startup.

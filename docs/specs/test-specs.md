@@ -2,14 +2,22 @@
 
 These specs are used to specify tests you can run in apps and libs. These do not exist as distinct documents but as subfields of lib and app specs. They are found under the **test** key.
 
+## How Dusty Runs Tests
+
+To facilitate quick turnaround times with testing, Dusty does the following to run tests:
+
+1. Pull or create the image defined in `image` or `build`
+2. Run the `once` script and commit the resulting image locally
+3. Use the image from Step 2 as the starting point for all test suite runs
+
 ## image
 
 ```
 image: ubuntu:15.04
 ```
 
-`image` specifies a Docker image on which to base the container which will be used
-to run the test suite. If the image does not exist locally, Dusty will pull it.
+`image` specifies a Docker image on which to base the container used to create the
+intermediate testing image. If the image does not exist locally, Dusty will pull it.
 
 Either `build` or `image` must be supplied in the test spec. They cannot both be supplied.
 
@@ -20,7 +28,7 @@ build: .
 ```
 
 `build` specifies a directory containing a Dockerfile on the host OS which will be used
-to build a new image to serve as the base image for this test suite's container.
+to build the intermediate testing image.
 
 This path can be absolute or relative. If it is relative, it is relative to repo directory
 on the host OS.
@@ -34,11 +42,9 @@ once:
   - pip install -r test_requirements.txt
 ```
 
-To facilitate quick turnaround times with testing, Dusty does the following to run tests:
-
-1. Pull or create the image defined in `image` or `build`
-2. Run the `once` script and commit the resulting image
-3. Use the image from Step 2 as the starting point for all future test runs
+`once` specifies the commands used in Step 2 of test image creation to create a final
+testing image. The resulting image is committed locally and used as the starting point
+for test suite runs.
 
 Expensive install steps should go in `once` so that Dusty can cache their results.
 
