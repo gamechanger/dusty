@@ -28,3 +28,12 @@ class Payload(object):
     def deserialize(doc):
         return cPickle.loads(doc.decode('string_escape'))
 
+_daemon_command_mapping = {}
+
+def daemon_command(f):
+    key = '{}.{}'.join(f.__module__, f.__name__)
+    if key in _daemon_command_mapping and _daemon_command_mapping[key] != f:
+        raise RuntimeError("Function mapping key collision: {}. Name one of the functions something else".format(key))
+    _daemon_command_mapping[key] = f
+    return f
+
