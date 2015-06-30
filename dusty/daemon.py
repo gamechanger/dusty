@@ -54,6 +54,8 @@ def _listen_on_socket(socket_path, suppress_warnings):
                         break
                     fn, client_version, client_suppress_warnings, args, kwargs = Payload.deserialize(data)
                     suppress_warnings |= client_suppress_warnings
+                    logging.error(suppress_warnings)
+                    logging.error(client_suppress_warnings)
                     logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
                     try:
                         _send_warnings_to_client(connection, suppress_warnings)
