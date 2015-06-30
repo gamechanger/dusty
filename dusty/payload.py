@@ -34,7 +34,7 @@ class Payload(object):
 _daemon_command_mapping = {}
 
 def _get_key(f):
-    return '{}.{}'.join(f.__module__, f.__name__)
+    return '{}.{}'.format(f.__module__, f.__name__)
 
 def daemon_command(f):
     key = _get_key(f)
@@ -46,4 +46,4 @@ def daemon_command(f):
 def get_payload_function(fn_key):
     if fn_key not in _daemon_command_mapping:
         raise RuntimeError('Function key {} not found'.format(fn_key))
-    _daemon_command_mapping[fn_key]
+    return _daemon_command_mapping[fn_key]
