@@ -4,6 +4,7 @@ script:
   - cd /gc
   - cd $REPO
   - python setup.py install
+  - pip install logilab-common<=1.0.0
   - pip install pylint nose
   - python setup.py nosetests --tests tests/unit
   - |
