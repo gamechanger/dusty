@@ -1,4 +1,4 @@
-import cPickle
+import json
 
 from .constants import VERSION
 
@@ -20,20 +20,30 @@ class Payload(object):
         self.fn(*self.args, **self.kwargs)
 
     def serialize(self):
-        doc = {'fn': self.fn, 'client_version': self.client_version, 'suppress_warnings': self.suppress_warnings,
+        fn_key = _get_key(self.fn)
+        if fn_key not in _daemon_command_mapping:
+            raise RuntimeError('Function key {} not found; you may need to decorate your function'.format(fn_key))
+        doc = {'fn_key': fn_key, 'client_version': self.client_version, 'suppress_warnings': self.suppress_warnings,
                'args': self.args, 'kwargs': self.kwargs}
-        return cPickle.dumps(doc).encode('string_escape')
+        return json.dumps(doc).encode('string_escape')
 
     @staticmethod
     def deserialize(doc):
-        return cPickle.loads(doc.decode('string_escape'))
+        return json.loads(doc.decode('string_escape'))
 
 _daemon_command_mapping = {}
 
+def _get_key(f):
+    return '{}.{}'.join(f.__module__, f.__name__)
+
 def daemon_command(f):
-    key = '{}.{}'.join(f.__module__, f.__name__)
+    key = _get_key(f)
     if key in _daemon_command_mapping and _daemon_command_mapping[key] != f:
         raise RuntimeError("Function mapping key collision: {}. Name one of the functions something else".format(key))
     _daemon_command_mapping[key] = f
     return f
 
+def run_command_as_daemon(fn_key):
+    if fn_key not in _daemon_command_mapping:
+        raise RuntimeError('Function key {} not found'.format(fn_key))
+    _daemon_command_mapping[fn_key]()
