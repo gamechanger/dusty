@@ -1,8 +1,8 @@
-import cPickle
+import json
 
 from ..testcases import DustyTestCase
 from dusty.constants import VERSION
-from dusty.payload import Payload, daemon_command
+from dusty.payload import Payload, daemon_command, _get_key, get_payload_function
 
 @daemon_command
 def _fn(*args, **kwargs):
@@ -15,18 +15,18 @@ class TestPayload(DustyTestCase):
     def setUp(self):
         super(TestPayload, self).setUp()
         self.test_payload = Payload(_fn, 'arg1', arg2='arg2value')
-        self.serialized_payload = {'fn': _fn, 'client_version': VERSION, 'suppress_warnings': False, 'args': ('arg1',), 'kwargs': (('arg2', 'arg2value'),)}
+        self.serialized_payload = {'fn_key': _get_key(_fn), 'client_version': VERSION, 'suppress_warnings': False, 'args': ('arg1',), 'kwargs': (('arg2', 'arg2value'),)}
 
     def test_serialize(self):
-        result = cPickle.loads(self.test_payload.serialize().decode('string_escape'))
+        result = json.loads(self.test_payload.serialize().decode('string_escape'))
         self.assertItemsEqual(result, self.serialized_payload)
 
     def test_deserialize(self):
         payload = Payload.deserialize(self.test_payload.serialize())
-        fn, client_version, suppress_warnings, args, kwargs = payload['fn'], payload['client_version'], payload['suppress_warnings'], payload['args'], payload['kwargs']
-        self.assertEqual(fn, _fn)
+        fn_key, client_version, suppress_warnings, args, kwargs = payload['fn_key'], payload['client_version'], payload['suppress_warnings'], payload['args'], payload['kwargs']
+        self.assertEqual(get_payload_function(fn_key), _fn)
         self.assertEqual(client_version, VERSION)
-        self.assertEqual(args, ('arg1',))
+        self.assertEqual(set(args), set(('arg1',)))
         self.assertItemsEqual(kwargs, {'arg2': 'arg2value'})
         self.assertEqual(suppress_warnings, False)
 
