@@ -4,9 +4,8 @@ script:
   - cd /gc
   - cd $REPO
   - python setup.py install
-  - pip install logilab-common<=1.0.0
-  - |
-    pip install pylint nose
+  - pip install logilab-common==0.63.0
+  - pip install pylint nose
   - python setup.py nosetests --tests tests/unit
   - |
     pylint --ignored-classes=_socketobject --msg-template="{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}" --reports=y -E y $REPO/dusty
