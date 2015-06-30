@@ -84,7 +84,8 @@ def _test_composefile_path(service_name):
     return os.path.expanduser('~/.dusty-testing/test_{}.yml'.format(service_name))
 
 def _compose_project_name(service_name, suite_name):
-    return 'test{}{}'.format(service_name.lower(), suite_name.lower())
+    # Suite names should be able to have underscores. docker-compose does not allow project name to have underscores
+    return 'test{}{}'.format(service_name.lower(), suite_name.lower().replace('_', ''))
 
 def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
     previous_container_names = []
