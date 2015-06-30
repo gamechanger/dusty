@@ -3,12 +3,14 @@ from prettytable import PrettyTable
 from ..compiler.spec_assembler import get_assembled_specs
 from ..log import log_to_client
 from ..systems.docker import get_dusty_containers
+from ..payload import daemon_command
 
 def _has_active_container(spec_type, service_name):
     if spec_type == 'lib':
         return False
     return get_dusty_containers([service_name]) != []
 
+@daemon_command
 def get_dusty_status():
     assembled_specs = get_assembled_specs()
     table = PrettyTable(["Name", "Type", "Has Active Container"])

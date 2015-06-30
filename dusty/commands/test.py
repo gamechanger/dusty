@@ -14,7 +14,7 @@ from ..systems.virtualbox import initialize_docker_vm
 from ..log import log_to_client
 from ..command_file import make_test_command_files, dusty_command_file_name
 from ..source import Repo
-
+from ..payload import daemon_command
 
 def test_info_for_app_or_lib(app_or_lib_name):
     expanded_specs = get_expanded_libs_specs()
@@ -39,6 +39,7 @@ def _update_test_repos(app_or_lib_name):
         if not repo.is_overridden:
             repo.update_local_repo()
 
+@daemon_command
 def ensure_valid_suite_name(app_or_lib_name, suite_name):
     expanded_specs = get_expanded_libs_specs()
     app_or_lib_spec = expanded_specs.get_app_or_lib(app_or_lib_name)
@@ -50,6 +51,7 @@ def ensure_valid_suite_name(app_or_lib_name, suite_name):
     if not found_suite:
         raise RuntimeError('Must specify a valid suite name')
 
+@daemon_command
 def pull_repos_and_sync_commands(app_or_lib_name, pull_repos=False):
     log_to_client("Ensuring virtualbox vm is running")
     initialize_docker_vm()

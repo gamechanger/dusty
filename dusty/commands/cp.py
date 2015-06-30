@@ -9,6 +9,7 @@ from ..path import vm_cp_path
 from ..systems.rsync import sync_local_path_to_vm, sync_local_path_from_vm, vm_path_is_directory
 from ..systems.docker.files import (move_dir_inside_container, move_file_inside_container,
                                copy_path_inside_container)
+from ..payload import daemon_command
 
 @contextmanager
 def _cleanup_path(path):
@@ -23,6 +24,7 @@ def _cleanup_path(path):
             else:
                 os.remove(path)
 
+@daemon_command
 def copy_between_containers(source_name, source_path, dest_name, dest_path):
     """Copy a file from the source container to an intermediate staging
     area on the local filesystem, then from that staging area to the
@@ -40,6 +42,7 @@ def copy_between_containers(source_name, source_path, dest_name, dest_path):
         copy_to_local(temp_path, source_name, source_path, demote=False)
         copy_from_local(temp_path, dest_name, dest_path, demote=False)
 
+@daemon_command
 def copy_from_local(local_path, remote_name, remote_path, demote=True):
     """Copy a path from the local filesystem to a path inside a Dusty
     container. The files on the local filesystem must be accessible
@@ -52,6 +55,7 @@ def copy_from_local(local_path, remote_name, remote_path, demote=True):
         sync_local_path_to_vm(local_path, os.path.join(vm_cp_path(remote_name), temp_identifier), demote=demote)
         move_file_inside_container(remote_name, os.path.join(constants.CONTAINER_CP_DIR, temp_identifier), remote_path)
 
+@daemon_command
 def copy_to_local(local_path, remote_name, remote_path, demote=True):
     """Copy a path from inside a Dusty container to a path on the
     local filesystem. The path on the local filesystem must be

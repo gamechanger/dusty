@@ -8,7 +8,9 @@ from . import utils
 from ..systems.docker import get_dusty_container_name
 from ..command_file import dusty_command_file_name
 from .. import constants
+from ..payload import daemon_command
 
+@daemon_command
 def script_info_for_app(app_name):
     app_specs = get_specs()['apps'].get(app_name)
     if not app_specs:

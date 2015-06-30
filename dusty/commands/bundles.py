@@ -4,7 +4,9 @@ from ..config import get_config_value, save_config_value
 from ..compiler.spec_assembler import get_specs
 from ..log import log_to_client
 from .. import constants
+from ..payload import daemon_command
 
+@daemon_command
 def list_bundles():
     specs, activated_bundles = get_specs(), get_config_value(constants.CONFIG_BUNDLES_KEY)
     table = PrettyTable(["Name", "Description", "Activated?"])
@@ -14,6 +16,7 @@ def list_bundles():
                        "X" if bundle in activated_bundles else ""])
     log_to_client(table.get_string(sortby="Name"))
 
+@daemon_command
 def activate_bundle(bundle_names):
     specs = get_specs()
     for bundle_name in bundle_names:
@@ -23,6 +26,7 @@ def activate_bundle(bundle_names):
     save_config_value(constants.CONFIG_BUNDLES_KEY, list(activated_bundles))
     log_to_client('Activated bundles {}'.format(', '.join(bundle_names)))
 
+@daemon_command
 def deactivate_bundle(bundle_names):
     specs = get_specs()
     for bundle_name in bundle_names:

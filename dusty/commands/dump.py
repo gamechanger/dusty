@@ -4,6 +4,7 @@ from .. import constants
 from ..log import log_to_client
 from ..subprocess import check_output_demoted
 from ..warnings import daemon_warnings
+from ..payload import daemon_command
 
 DIAGNOSTIC_SUBPROCESS_COMMANDS = [
     ['nginx', '-v'],
@@ -24,6 +25,7 @@ DIAGNOSTIC_DUSTY_COMMANDS = [
     ('Daemon Warnings', daemon_warnings.pretty)
 ]
 
+@daemon_command
 def dump_diagnostics():
     for title, fn in DIAGNOSTIC_DUSTY_COMMANDS:
         log_to_client('COMMAND: {}'.format(title))

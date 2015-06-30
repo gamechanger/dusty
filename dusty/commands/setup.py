@@ -10,6 +10,7 @@ from ..config import save_config_value, get_config_value, verify_mac_username, r
 from ..log import log_to_client
 from .. import constants
 from .repos import update_managed_repos
+from ..payload import daemon_command
 
 def _pretty_print_key_info(config_key):
     print '{}: {}\n'.format(config_key, '\n'.join(textwrap.wrap(constants.CONFIG_SETTINGS[config_key], 80)))
@@ -79,6 +80,7 @@ def _get_boot2docker_vm_size():
     else:
         return int(_get_raw_input('Please input the number of megabytes to allocate to the vm: '))
 
+@daemon_command
 def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
     print "We just need to verify a few settings before we get started.\n"
     if mac_username:

@@ -7,7 +7,9 @@ from ..compiler.spec_assembler import get_specs, get_specs_repo, get_all_repos, 
 from ..source import Repo
 from ..log import log_to_client
 from .. import constants
+from ..payload import daemon_command
 
+@daemon_command
 def list_repos():
     repos, overrides = get_all_repos(), get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
     table = PrettyTable(['Full Name', 'Short Name', 'Local Override'])
@@ -16,6 +18,7 @@ def list_repos():
                        repo.override_path if repo.is_overridden else ''])
     log_to_client(table.get_string(sortby='Full Name'))
 
+@daemon_command
 def override_repo(repo_name, source_path):
     repo = Repo.resolve(get_all_repos(), repo_name)
     if not os.path.exists(source_path):
@@ -25,6 +28,7 @@ def override_repo(repo_name, source_path):
     save_config_value(constants.CONFIG_REPO_OVERRIDES_KEY, config)
     log_to_client('Locally overriding repo {} to use source at {}'.format(repo.remote_path, source_path))
 
+@daemon_command
 def manage_repo(repo_name):
     repo = Repo.resolve(get_all_repos(), repo_name)
     config = get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
@@ -33,6 +37,7 @@ def manage_repo(repo_name):
     save_config_value(constants.CONFIG_REPO_OVERRIDES_KEY, config)
     log_to_client('Will manage repo {} with Dusty-managed copy of source'.format(repo.remote_path))
 
+@daemon_command
 def override_repos_from_directory(source_path):
     log_to_client('Overriding all repos found at {}'.format(source_path))
     for repo in get_all_repos():
@@ -40,6 +45,7 @@ def override_repos_from_directory(source_path):
         if os.path.isdir(repo_path):
             override_repo(repo.remote_path, repo_path)
 
+@daemon_command
 def update_managed_repos():
     """For any active, managed repos, update the Dusty-managed
     copy to bring it up to date with the latest master."""
