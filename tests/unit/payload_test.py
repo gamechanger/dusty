@@ -32,6 +32,16 @@ class TestPayload(DustyTestCase):
     def test_equality_matches(self):
         self.assertEqual(self.test_payload, Payload(_fn, 'arg1', arg2='arg2value'))
 
+    def test_equality_fails_bad_suppress(self):
+        payload = Payload(_fn, 'arg1', arg2='arg2value')
+        payload.suppress_warnings = True
+        self.assertNotEqual(self.test_payload, payload)
+
+    def test_equality_fails_bad_run_on_daemon(self):
+        payload = Payload(_fn, 'arg1', arg2='arg2value')
+        payload.run_on_daemon = False
+        self.assertNotEqual(self.test_payload, payload)
+
     def test_equality_fails_bad_fn(self):
         self.assertNotEqual(self.test_payload, Payload(_fn2, 'arg1', arg2='arg2value'))
 
