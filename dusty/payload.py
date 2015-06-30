@@ -43,7 +43,7 @@ def daemon_command(f):
     _daemon_command_mapping[key] = f
     return f
 
-def run_command_as_daemon(fn_key):
+def get_payload_function(fn_key):
     if fn_key not in _daemon_command_mapping:
         raise RuntimeError('Function key {} not found'.format(fn_key))
-    _daemon_command_mapping[fn_key]()
+    _daemon_command_mapping[fn_key]
