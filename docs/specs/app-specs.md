@@ -1,121 +1,186 @@
-# Dusty App Specs
-These specs are used to specify apps for you local environment. They should go in the apps folder in your specs repo.
+# App Specs
 
-## Keys
+Apps define running containers based on source code under your control. App specs tell
+Dusty how to run this container, including any dependencies the app may have on other
+apps, services, or libs. You can also specify common scripts and testing commands for
+an app in its spec.
 
-### repo
+By default, Dusty manages the source for an app for you and keeps it up to date automatically.
+You can tell Dusty to use your own locally checked out copy of the source using `dusty repos`.
+
+## repo
+
 ```
-repo: github.com/gamechanger/app1
-repo: /Users/dusty/app1
+repo: github.com/my-org/my-app
+  -or-
+repo: /Users/myuser/my-app
 ```
-This repo key is used to specify a local or remote GitHub repo where the code for the app lives.
 
-### mount
+`repo` specifies the repo containing the source for an app. By default, Dusty manages this
+repo for you and will keep its local copy up to date. Once a repo is defined in an active spec,
+it can be controlled using the `dusty repos` command.
+
+Repos can be specified using either a URL or an absolute path to a Git repo on your local filesystem.
+
+## mount
+
 ```
-mount: /gc/app1
+mount: /my-app
 ```
-The mount key is used to specify where in the container's file system to mount the code specified by the repo key.  The mounting is done using Docker's volume mounts. <br />
-Using the image and mount keys specified above, the code specified in `/Users/dusty/app1` on your Mac will be visible in your container at `/gc/app1`.<br />
-The repo and mount keys are linked.  If you specify one you must specify the other.<br />
 
+`mount` tells Dusty where to mount the contents of the repo inside the running container.
 
-### depends
+`mount` must be provided if `repo` is provided.
+
+## depends
+
 ```
 depends:
   services:
-    - coreMongo
-    - coreRedis
+    - myService1
+    - myService2
   apps:
-    - deferrableworker
-    - docketsworker
+    - myOtherApp
   libs:
-    - gclib
+    - myLib
 ```
-The depends key is used to specify what libs, apps and services this app depends on.<br />
-Apps and services specified in the depends dict are spun up before the current app. The current app is then linked (using Docker Compose's links) to the apps and services. Because we are using Docker Compose links, dependencies must only be 1 way.  This means you cannot have app1 depend on app2 and app2 depend on app1.
 
-Libs specified in the depends dict have a different meaning.  They tell Dusty that these libs (and their recursive dependencies) need to be mounted into this app's container (using Docker's volume mounts).  In so doing, the running app will have access to the most recent code in these libs.
+`depends` is used to specify what libs, apps and services this app depends on.
 
-### conditional_links
+Containers for apps and services specified in the `depends` dict are created before the container
+for the referencing app. The referencing app is then linked (using [Docker links](https://docs.docker.com/userguide/dockerlinks/))
+to the dependent apps and services. Once containers are linked, they may reference each other through
+the environment variables or `/etc/hosts` overrides provided by Docker links.
+
+**N.B.:** All container links, including those from both `depends` and `conditional_links`, must be acyclical.
+
+Dependent libs (and their lib dependencies) will be mounted into the running app container and
+installed according to their specs.
+
+## conditional_links
+
 ```
 conditional_links:
   apps:
-    - app2
+    - myConditionalApp
 ```
-The conditional_links key is similar to the depends key. There are some big differences though. First, the conditional_links key can only specify apps. Second, the current app will only link to the apps specified (here app2) when: <br/>
-1. It is specified in different activated app's depends dict. <br/>
-2. It is specified in an activated bundles apps list. <br/>
-As in the depends dict, circular dependencies are not allowed.
 
-### host_forwarding
+`conditional_links` specifies downstream apps which are not required by the referencing app but
+should be linked if they are running as the result of a different bundle or dependency. This lets
+you layer optional containers onto a stack without forcing them all to be run whenever the main
+container is run.
+
+Unlike `depends`, `conditional_links` do not support links to libs.
+
+**N.B.:** All container links, including those from both `depends` and `conditional_links`, must be acyclical.
+
+## host_forwarding
+
 ```
 host_forwarding:
   - host_name: local.website.com
     host_port: 80
     container_port: 80
 ```
-The host_forwarding key is used specify a list of dictionaries.  Each dictionary allows you to specify a mapping from the containers ip space to your Mac's ip space.<br />
-**host_name** is the local url you would like to hit.<br />
-**host_port** is the port on which you will hit the host_name.<br />
-**container_port** is the port the app is running on in the Docker container.<br />
 
-### build
-```
-build .
-```
-The build key is one way to specify how to get the base image for the app's container. <br />
-The build key specifies a path to a Dockerfile's parent directory. This patch can be absolute or relative. If it is relative, it is relative to the local path of the app's repo.<br />
-### image
-```
-image: docker.gamechanger.io/gcweb
-```
-The image key is the other way to specify how to get the base image for the app's container.<br />
-The image key is a local or remote image.  Dusty (using Docker Compose) will attempt to pull the image if it is not found locally.
+`host_forwarding` allows you to specify multiple routes which should be linked between your host OS
+and the application running inside this app's container.
 
-The image and build keys are linked. One, but not both, must be specified. Both are direct mappings to Docker Compose's yml spec.<br />
+**host_name**: local hostname exposed on your host OS.
+**host_port**: local port which routes through to the container port.
+**container_port**: remote port the app is running on in the Docker container.
 
-### commands
+In this example, we would be able to go to `local.website.com:80` on our host OS and talk to
+the process inside this app's container on port 80.
+
+## image
+
+```
+image: ubuntu:15.04
+```
+
+`image` specifies a Docker image on which to base the container which will run this
+app. If the image does not exist locally, Dusty will pull it.
+
+Either `build` or `image` must be supplied in the spec. They cannot both be supplied.
+
+## build
+
+```
+build: .
+```
+
+`build` specifies a directory containing a Dockerfile on the host OS which will be used
+to build a new image to serve as the base image for this app's container.
+
+This path can be absolute or relative. If it is relative, it is relative to repo directory
+on the host OS.
+
+Either `build` or `image` must be supplied in the spec. They cannot both be supplied.
+
+## commands
+
 ```
 commands:
   once:
-    - apt-get update &
+    - apt-get update
+    - apt-get install -qy python
   always:
     - python manage.py runserver --noreload
 ```
-The commands key is used to specify a list of once and always commands.  These commands are run at different times in the container's life cycle.<br />
-The once commands will only be run the first time a container is started. This mainly occurs if you are running `dusty up`.<br />
-The always commands are run every time the app restarts. This includes on `dusty up` and `dusty restart <app_name>`.<br />
-Two sets of commands allows you to do the heavy work of installation in the once command. This frees your restart commands to be very fast and responsive.<br />
-We save the logs of these commands inside the app's container at `/var/log/dusty_always.log` and `/var/log/dusty_once.log`.<br />
 
-### scripts
+`commands` define scripts that are run at various points in a container's lifecycle. Two sub-commands are
+supported: `once` and `always`.
+
+`once`: Runs only the first time a container is started. Generally, this is run during a `dusty up`.
+`always`: Runs every time the container is started, *after* the `once` script has run if it is the first time.
+The `always` script must run the application's main process.
+
+Generally, you will want to do expensive setup operations like installs inside `once`, then start your
+application inside of `always`.
+
+The output of these commands is logged inside the app's container at `/var/log/dusty_always.log` and `/var/log/dusty_once.log`.
+
+## scripts
+
 ```
 scripts:
-    - name: grunt
-      description: Build assets compiled by Grunt (CSS, JS, that sort of thing)
-      command:
-        - /gc/gcweb/grunt/node_modules/.bin/grunt build
+  - name: grunt
+    description: Build assets compiled by Grunt (CSS, JS, that sort of thing)
+    command:
+      - grunt build
 ```
-The scripts key is used to specify a list of scripts that can be run in each container.<br />
-**name** specifies how you would call the the script. If the current spec is for app1, I could execute the following script:<br />
-`dusty scripts app1 grunt` <br/>
-Scripts can accept arguments.  Arguments will be passed through to the final command specified by the command key.<br />
 
-### compose
+`scripts` allows you to specify scripts that can be run inside the app's container. This is useful
+for sharing common functionality across all users of the specs.
+
+The `dusty scripts` command is used for introspection and execution of available scripts.
+
+Scripts can accept arguments at runtime through the `dusty scripts` command.  Arguments are passed through
+to the final command specified by the `command` list.
+
+## compose
+
 ```
 compose:
   environment:
-    gcenv: local
-    MONGO_URI: coreMongo
-    REDIS_HOST: coreRedis
+    APP_ENVIRONMENT: local
+    MONGO_HOST: persistentMongo
 ```
-The compose key is a direct mapping to the keys specified in the [Docker Compose yml spec](https://docs.docker.com/compose/yml/).<br />
-The yml seen above will set the variables defined in the app container's environment.<br />
 
-### test
+Dusty uses Docker Compose to create and manage containers. The `compose` key allows you to
+override any of the values passed through to Docker Compose at runtime.
+
+For more information on what you can override through this key, please see
+the [Docker Compose specification](https://docs.docker.com/compose/yml/).
+
+## test
+
 ```
 test:
-    ...
+  ...
 ```
-Apps contain the test key.  To find out more about the testing spec, visit the [testing spec page](./test-specs.md).
 
+The `test` key contains information on how to run tests for an application. Once specified,
+tests may be run with the `dusty test` command. To find out more about the testing spec,
+see the [testing spec page](./test-specs.md).

@@ -1,4 +1,4 @@
-# Dusty Specs Overview
+# Specs Overview
 
 Dusty uses YAML specifications for configuration of the applications, services, and
 libraries used to create your stack.
