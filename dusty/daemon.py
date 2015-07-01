@@ -20,7 +20,7 @@ from .log import configure_logging, make_socket_logger, close_socket_logger
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .payload import Payload, get_payload_function
 from .warnings import daemon_warnings
-from .config import refresh_config_warnings
+from .config import refresh_config_warnings, check_and_load_ssh_auth
 from .constants import VERSION
 
 def _clean_up_existing_socket(socket_path):
@@ -45,8 +45,6 @@ def _refresh_warnings():
 def _run_pre_command_functions(connection, suppress_warnings, client_version):
     _refresh_warnings()
     _send_warnings_to_client(connection, suppress_warnings)
-    if client_version != VERSION:
-        raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, client_version))
     check_and_load_ssh_auth()
 
 
@@ -74,6 +72,8 @@ def _listen_on_socket(socket_path, suppress_warnings):
                     suppress_warnings |= payload['suppress_warnings']
                     logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
                     try:
+                        if client_version != VERSION:
+                            raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, client_version))
                         _run_pre_command_functions(connection, suppress_warnings, client_version)
                         fn(*args, **kwargs)
                     except Exception as e:
