@@ -27,7 +27,8 @@ def write_default_config():
     default_config = {constants.CONFIG_BUNDLES_KEY: [],
                       constants.CONFIG_REPO_OVERRIDES_KEY: {},
                       constants.CONFIG_NGINX_DIR_KEY: '/usr/local/etc/nginx/servers',
-                      constants.CONFIG_SETUP_KEY: False}
+                      constants.CONFIG_SETUP_KEY: False,
+                      constants.CONFIG_VM_MEM_SIZE: '2048'}
     save_config(default_config)
 
 def get_config():
