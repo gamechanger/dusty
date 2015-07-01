@@ -45,11 +45,9 @@ def _refresh_warnings():
 def _run_pre_command_functions(connection, suppress_warnings, client_version):
     check_and_load_ssh_auth()
     _refresh_warnings()
-    _send_warnings_to_client(connection, suppress_warnings)
 
 def _listen_on_socket(socket_path, suppress_warnings):
     _clean_up_existing_socket(socket_path)
-
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.bind(socket_path)
     os.chmod(socket_path, 0777) # don't delete the 0, it makes Python interpret this as octal
@@ -74,6 +72,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
                         if client_version != VERSION:
                             raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, client_version))
                         _run_pre_command_functions(connection, suppress_warnings, client_version)
+                        _send_warnings_to_client(connection, suppress_warnings)
                         fn(*args, **kwargs)
                     except Exception as e:
                         logging.exception("Daemon encountered exception while processing command")

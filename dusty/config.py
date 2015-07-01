@@ -101,6 +101,7 @@ def _set_ssh_auth_sock(ssh_auth_sock):
     if ssh_auth_sock:
         logging.info("Setting SSH_AUTH_SOCK to {}".format(ssh_auth_sock))
         os.environ['SSH_AUTH_SOCK'] = ssh_auth_sock
+        daemon_warnings.clear_namespace('ssh')
     else:
         daemon_warnings.warn('ssh', 'SSH_AUTH_SOCK not determined; git operations may fail')
 
