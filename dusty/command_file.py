@@ -45,7 +45,8 @@ def _compile_docker_commands(app_name, assembled_specs):
     up. This command has to install any libs that the app uses, run the `always` command, and
     run the `once` command if the container is being launched for the first time """
     app_spec = assembled_specs['apps'][app_name]
-    commands = _lib_install_commands_for_app(app_name, assembled_specs)
+    commands = ['set -e']
+    commands += _lib_install_commands_for_app(app_name, assembled_specs)
     commands.append("cd {}".format(container_code_path(app_spec)))
     commands.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
     commands += _get_once_commands(app_spec)
