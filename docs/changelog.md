@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.1.5 (In Progress)
+  * NEW: Using a config variable, Dusty now manages how large (in megabytes) to make your vm.  On each start of boot2docker, Dusty will adjust your vm's memory size.
+
   * FIXED: Install script now passes -H flag to `sudo dusty -d --preflight-only`, so that `boot2docker version` won't create `~/.boot2docker` owned by root.
 
 ## 0.1.4 (June 29, 2015)
