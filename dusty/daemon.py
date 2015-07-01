@@ -43,10 +43,9 @@ def _refresh_warnings():
         refresh_preflight_warnings()
 
 def _run_pre_command_functions(connection, suppress_warnings, client_version):
+    check_and_load_ssh_auth()
     _refresh_warnings()
     _send_warnings_to_client(connection, suppress_warnings)
-    check_and_load_ssh_auth()
-
 
 def _listen_on_socket(socket_path, suppress_warnings):
     _clean_up_existing_socket(socket_path)
