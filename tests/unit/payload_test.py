@@ -54,3 +54,10 @@ class TestPayload(DustyTestCase):
 
     def test_equality_fails_wrong_class(self):
         self.assertNotEqual(self.test_payload, object())
+
+    def test_get_payload_function_succeeds(self):
+        self.assertEqual(_fn, get_payload_function(_function_key(_fn)))
+
+    def test_get_payload_function_raises(self):
+        with self.assertRaises(RuntimeError):
+            get_payload_function(_function_key(_fn2))
