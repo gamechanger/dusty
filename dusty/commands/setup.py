@@ -66,12 +66,11 @@ def _get_and_configure_nginx_includes_dir():
     return ''
 
 def _get_boot2docker_vm_size():
+    # all math is done in megabytes
     memory_megs = virtual_memory().total / 2**20
-    sixteen_megs = 16 * 2**10
-    eight_megs = 8 * 2**10
-    if memory_megs >= sixteen_megs:
+    if memory_megs >= 16 * 2**10:
         vm_megs = 6 * 2**10
-    elif memory_megs >= eight_megs:
+    elif memory_megs >= 8 * 2**10:
         vm_megs = 4 * 2**10
     else:
         vm_megs = 2 * 2**10

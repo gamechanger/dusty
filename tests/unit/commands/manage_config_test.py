@@ -20,7 +20,7 @@ class TestManageConfigCommands(DustyTestCase):
                                 constants.CONFIG_SPECS_REPO_KEY: 'github.com/org/dusty-specs',
                                 constants.CONFIG_NGINX_DIR_KEY: '/usr/local/etc/nginx/servers',
                                 constants.CONFIG_SETUP_KEY: False,
-                                constants.CONFIG_VM_MEM_SIZE: '2'}
+                                constants.CONFIG_VM_MEM_SIZE: '2048'}
 
     def tearDown(self):
         super(TestManageConfigCommands, self).tearDown()
@@ -44,7 +44,7 @@ class TestManageConfigCommands(DustyTestCase):
                                constants.CONFIG_SPECS_REPO_KEY: 'github.com/org/dusty-specs',
                                constants.CONFIG_NGINX_DIR_KEY: '/usr/local/etc/nginx/servers',
                                constants.CONFIG_SETUP_KEY: False,
-                               constants.CONFIG_VM_MEM_SIZE: '2'})
+                               constants.CONFIG_VM_MEM_SIZE: '2048'})
 
     def test_save_value_no_changes(self):
         with self.assertRaises(KeyError):
