@@ -4,6 +4,7 @@
   * NEW: Using a config variable, Dusty now manages how large (in megabytes) to make your vm.  On each start of boot2docker, Dusty will adjust your vm's memory size.
 
   * FIXED: Install script now passes -H flag to `sudo dusty -d --preflight-only`, so that `boot2docker version` won't create `~/.boot2docker` owned by root.
+  * FIXED: We are now attempting to load the SSH_AUTH_SOCK, if it is not currently set, with each Dusty command. This fixes a race condition in launchd between Dusty and SSH_AUTH_SOCK.
 
 ## 0.1.4 (June 29, 2015)
   * BREAKING CHANGE: `services` and `compose` keys in test specs are now specified at the suite level, not the test level.
