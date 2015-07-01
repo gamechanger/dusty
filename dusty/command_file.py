@@ -15,6 +15,9 @@ def _write_commands_to_file(list_of_commands, file_location):
         for command in list_of_commands:
             f.write('{} \n'.format(command))
 
+def _check_piped_command_success():
+    return 'test $PIPESTATUS -eq 0'
+
 def _get_once_commands(app_spec):
     once_commands = app_spec['commands']['once']
     commands_with_function = []
@@ -27,6 +30,8 @@ def _get_once_commands(app_spec):
     commands_with_function.append("touch {}".format(constants.FIRST_RUN_FILE_PATH))
     if once_commands:
         commands_with_function.append("dusty_once_fn | tee {}".format(constants.ONCE_LOG_PATH))
+        commands_with_function.append(_check_piped_command_success())
+
     commands_with_function.append("fi")
     return commands_with_function
 
@@ -38,6 +43,7 @@ def _get_always_commands(app_spec):
         commands_with_function += always_commands
         commands_with_function.append('}')
         commands_with_function.append('dusty_always_fn | tee {}'.format(constants.ALWAYS_LOG_PATH))
+        commands_with_function.append(_check_piped_command_success())
     return commands_with_function
 
 def _compile_docker_commands(app_name, assembled_specs):
