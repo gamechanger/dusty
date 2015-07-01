@@ -66,15 +66,19 @@ def _get_and_configure_nginx_includes_dir():
     return ''
 
 def _get_boot2docker_vm_size():
-    memory_gigs = virtual_memory().total / 2**30
-    if memory_gigs == 16:
-        vm_gigs = 6
+    memory_megs = virtual_memory().total / 2**20
+    sixteen_megs = 16 * 2**10
+    eight_megs = 8 * 2**10
+    if memory_megs >= sixteen_megs:
+        vm_megs = 6 * 2**10
+    elif memory_megs >= eight_megs:
+        vm_megs = 4 * 2**10
     else:
-        vm_gigs = 4
-    if _get_raw_input('Your system seems to have {} gigabytes of memory. We would like to allocate {} to your vm. Is that ok? (y/n) '.format(memory_gigs, vm_gigs)).upper() == 'Y':
-        return vm_gigs
+        vm_megs = 2 * 2**10
+    if _get_raw_input('Your system seems to have {} megabytes of memory. We would like to allocate {} to your vm. Is that ok? (y/n) '.format(memory_megs, vm_megs)).upper() == 'Y':
+        return vm_megs
     else:
-        return int(_get_raw_input('Please input the number of gigabytes to allocate to the vm: '))
+        return int(_get_raw_input('Please input the number of megabytes to allocate to the vm: '))
 
 def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
     print "We just need to verify a few settings before we get started.\n"

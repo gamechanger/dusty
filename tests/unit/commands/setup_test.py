@@ -263,8 +263,8 @@ class TestSetupCommands(DustyTestCase):
         total_mock.total = 16 * 2**30
         fake_virtual_memory.return_value = total_mock
         fake_get_raw_input.return_value = 'y'
-        self.assertEqual(_get_boot2docker_vm_size(), 6)
-        fake_get_raw_input.assert_has_calls([call('Your system seems to have 16 gigabytes of memory. We would like to allocate 6 to your vm. Is that ok? (y/n) ')])
+        self.assertEqual(_get_boot2docker_vm_size(), 6144)
+        fake_get_raw_input.assert_has_calls([call('Your system seems to have 16384 megabytes of memory. We would like to allocate 6144 to your vm. Is that ok? (y/n) ')])
 
     @patch('dusty.commands.setup._get_raw_input')
     @patch('dusty.commands.setup.virtual_memory')
@@ -274,8 +274,8 @@ class TestSetupCommands(DustyTestCase):
         fake_virtual_memory.return_value = total_mock
         fake_get_raw_input.side_effect = ['n', 2]
         self.assertEqual(_get_boot2docker_vm_size(), 2)
-        fake_get_raw_input.assert_has_calls([call('Your system seems to have 16 gigabytes of memory. We would like to allocate 6 to your vm. Is that ok? (y/n) '),
-                                             call('Please input the number of gigabytes to allocate to the vm: ')])
+        fake_get_raw_input.assert_has_calls([call('Your system seems to have 16384 megabytes of memory. We would like to allocate 6144 to your vm. Is that ok? (y/n) '),
+                                             call('Please input the number of megabytes to allocate to the vm: ')])
 
     @patch('dusty.commands.setup._get_raw_input')
     @patch('dusty.commands.setup.virtual_memory')
@@ -284,8 +284,8 @@ class TestSetupCommands(DustyTestCase):
         total_mock.total = 8 * 2**30
         fake_virtual_memory.return_value = total_mock
         fake_get_raw_input.return_value = 'y'
-        self.assertEqual(_get_boot2docker_vm_size(), 4)
-        fake_get_raw_input.assert_has_calls([call('Your system seems to have 8 gigabytes of memory. We would like to allocate 4 to your vm. Is that ok? (y/n) ')])
+        self.assertEqual(_get_boot2docker_vm_size(), 4096)
+        fake_get_raw_input.assert_has_calls([call('Your system seems to have 8192 megabytes of memory. We would like to allocate 4096 to your vm. Is that ok? (y/n) ')])
 
     @patch('dusty.commands.setup._get_raw_input')
     @patch('dusty.commands.setup.virtual_memory')
@@ -295,5 +295,26 @@ class TestSetupCommands(DustyTestCase):
         fake_virtual_memory.return_value = total_mock
         fake_get_raw_input.side_effect = ['n', 2]
         self.assertEqual(_get_boot2docker_vm_size(), 2)
-        fake_get_raw_input.assert_has_calls([call('Your system seems to have 8 gigabytes of memory. We would like to allocate 4 to your vm. Is that ok? (y/n) '),
-                                             call('Please input the number of gigabytes to allocate to the vm: ')])
+        fake_get_raw_input.assert_has_calls([call('Your system seems to have 8192 megabytes of memory. We would like to allocate 4096 to your vm. Is that ok? (y/n) '),
+                                             call('Please input the number of megabytes to allocate to the vm: ')])
+
+    @patch('dusty.commands.setup._get_raw_input')
+    @patch('dusty.commands.setup.virtual_memory')
+    def test_get_boot2docker_vm_size_less_8_y(self, fake_virtual_memory, fake_get_raw_input):
+        total_mock = Mock()
+        total_mock.total = 6 * 2**30
+        fake_virtual_memory.return_value = total_mock
+        fake_get_raw_input.return_value = 'y'
+        self.assertEqual(_get_boot2docker_vm_size(), 2048)
+        fake_get_raw_input.assert_has_calls([call('Your system seems to have 6144 megabytes of memory. We would like to allocate 2048 to your vm. Is that ok? (y/n) ')])
+
+    @patch('dusty.commands.setup._get_raw_input')
+    @patch('dusty.commands.setup.virtual_memory')
+    def test_get_boot2docker_vm_size_less_8_n(self, fake_virtual_memory, fake_get_raw_input):
+        total_mock = Mock()
+        total_mock.total = 6 * 2**30
+        fake_virtual_memory.return_value = total_mock
+        fake_get_raw_input.side_effect = ['n', 1]
+        self.assertEqual(_get_boot2docker_vm_size(), 1)
+        fake_get_raw_input.assert_has_calls([call('Your system seems to have 6144 megabytes of memory. We would like to allocate 2048 to your vm. Is that ok? (y/n) '),
+                                             call('Please input the number of megabytes to allocate to the vm: ')])

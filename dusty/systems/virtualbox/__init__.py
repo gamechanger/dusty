@@ -36,7 +36,7 @@ def _init_docker_vm():
 def _start_docker_vm():
     """Start the boot2docker VM if it is not already running."""
     logging.info('Making sure the boot2docker VM is started')
-    memory_size = 1024 * int(get_config_value(constants.CONFIG_VM_MEM_SIZE))
+    memory_size = int(get_config_value(constants.CONFIG_VM_MEM_SIZE))
     call_demoted(['VBoxManage', 'modifyvm', 'boot2docker-vm', '--memory', '{}'.format(memory_size)])
     check_call_demoted(['boot2docker', 'start'], redirect_stderr=True)
 
