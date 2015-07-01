@@ -2,7 +2,7 @@ import json
 
 from ..testcases import DustyTestCase
 from dusty.constants import VERSION
-from dusty.payload import Payload, daemon_command, _get_key, get_payload_function
+from dusty.payload import Payload, daemon_command, _function_key, get_payload_function
 
 @daemon_command
 def _fn(*args, **kwargs):
@@ -15,7 +15,7 @@ class TestPayload(DustyTestCase):
     def setUp(self):
         super(TestPayload, self).setUp()
         self.test_payload = Payload(_fn, 'arg1', arg2='arg2value')
-        self.serialized_payload = {'fn_key': _get_key(_fn), 'client_version': VERSION, 'suppress_warnings': False, 'args': ('arg1',), 'kwargs': (('arg2', 'arg2value'),)}
+        self.serialized_payload = {'fn_key': _function_key(_fn), 'client_version': VERSION, 'suppress_warnings': False, 'args': ('arg1',), 'kwargs': (('arg2', 'arg2value'),)}
 
     def test_serialize(self):
         result = json.loads(self.test_payload.serialize().decode('string_escape'))
