@@ -18,6 +18,8 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     will pass those specs to the systems that need them. Those
     systems will in turn launch the services needed to make the
     local environment go."""
+    if pull_repos:
+        update_managed_repos()
     assembled_spec = spec_assembler.get_assembled_specs()
     if not assembled_spec[constants.CONFIG_BUNDLES_KEY]:
         raise RuntimeError('No bundles are activated. Use `dusty bundles` to activate bundles before running `dusty up`.')
@@ -34,8 +36,6 @@ def start_local_env(recreate_containers=True, pull_repos=True):
             log_to_client("WARNING: docker-compose stop failed")
             log_to_client(str(e))
     log_to_client("Compiling together the assembled specs")
-    if pull_repos:
-        update_managed_repos()
     active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
     log_to_client("Compiling the port specs")
     port_spec = port_spec_compiler.get_port_spec_document(assembled_spec, docker_ip)
