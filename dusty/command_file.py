@@ -29,7 +29,7 @@ def _get_once_commands(app_spec):
     commands_with_function.append("then mkdir -p {}".format(constants.RUN_DIR))
     commands_with_function.append("touch {}".format(constants.FIRST_RUN_FILE_PATH))
     if once_commands:
-        commands_with_function.append("dusty_once_fn | tee {}".format(constants.ONCE_LOG_PATH))
+        commands_with_function.append("dusty_once_fn 2>&1 | tee {}".format(constants.ONCE_LOG_PATH))
         commands_with_function.append(_check_piped_command_success())
 
     commands_with_function.append("fi")
@@ -42,7 +42,7 @@ def _get_always_commands(app_spec):
         commands_with_function.append('dusty_always_fn () {')
         commands_with_function += always_commands
         commands_with_function.append('}')
-        commands_with_function.append('dusty_always_fn | tee {}'.format(constants.ALWAYS_LOG_PATH))
+        commands_with_function.append('dusty_always_fn 2>&1 | tee {}'.format(constants.ALWAYS_LOG_PATH))
         commands_with_function.append(_check_piped_command_success())
     return commands_with_function
 
