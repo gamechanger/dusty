@@ -67,7 +67,7 @@ CONFIG_SETTINGS = {
     CONFIG_SPECS_REPO_KEY: 'This repository is used for storing the specs used by Dusty.  It is managed the same way as other repos',
     CONFIG_NGINX_DIR_KEY: 'This is the location that your nginx config will import extra files from.  Dusty\'s nginx config will be stored here',
     CONFIG_SETUP_KEY: 'Key indicating if you have run the required command `dusty setup`',
-    CONFIG_VM_MEM_SIZE: 'Specifies how much memory (in gigabytes) you want your boot2docker vm to have'
+    CONFIG_VM_MEM_SIZE: 'Specifies how much memory (in megabytes) you want your boot2docker vm to have'
 }
 
 WARN_ON_MISSING_CONFIG_KEYS = [CONFIG_MAC_USERNAME_KEY, CONFIG_SPECS_REPO_KEY, CONFIG_NGINX_DIR_KEY, CONFIG_VM_MEM_SIZE]
