@@ -9,6 +9,7 @@ from ..log import log_to_client
 from ..schemas import app_schema, bundle_schema, lib_schema
 from ..schemas.base_schema_class import notifies_validation_exception
 from .. import constants
+from ..payload import daemon_command
 
 def _check_bare_minimum(specs):
     if not specs.get('bundles'):
@@ -79,6 +80,7 @@ def validate_specs_from_path(specs_path):
     _validate_cycle_free(specs)
     log_to_client("Validation Complete!")
 
+@daemon_command
 def validate_specs():
     """
     Validates specs using the path configured in Dusty's configuration

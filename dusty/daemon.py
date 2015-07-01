@@ -18,7 +18,7 @@ from docopt import docopt
 from .preflight import preflight_check, refresh_preflight_warnings
 from .log import configure_logging, make_socket_logger, close_socket_logger
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
-from .payload import Payload
+from .payload import Payload, get_payload_function
 from .warnings import daemon_warnings
 from .config import refresh_config_warnings
 from .constants import VERSION
@@ -35,7 +35,7 @@ def _send_warnings_to_client(connection, suppress_warnings):
         connection.sendall("{}\n".format(daemon_warnings.pretty()))
 
 def _get_payload_function_data(payload):
-    return payload['fn'], payload['args'], payload['kwargs']
+    return get_payload_function(payload['fn_key']), payload['args'], payload['kwargs']
 
 def _refresh_warnings():
     if daemon_warnings.has_warnings:

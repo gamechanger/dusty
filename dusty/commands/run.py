@@ -10,7 +10,9 @@ from .repos import update_managed_repos
 from .. import constants
 from ..command_file import make_up_command_files
 from ..source import Repo
+from ..payload import daemon_command
 
+@daemon_command
 def start_local_env(recreate_containers=True, pull_repos=True):
     """This command will use the compilers to get compose specs
     will pass those specs to the systems that need them. Those
@@ -55,6 +57,7 @@ def start_local_env(recreate_containers=True, pull_repos=True):
 
     log_to_client("Your local environment is now started!")
 
+@daemon_command
 def stop_apps_or_services(app_or_service_names=None, rm_containers=False):
     """Stop any currently running Docker containers associated with
     Dusty, or associated with the provided apps_or_services. Does not remove
@@ -68,6 +71,7 @@ def stop_apps_or_services(app_or_service_names=None, rm_containers=False):
     if rm_containers:
         compose.rm_containers(app_or_service_names)
 
+@daemon_command
 def restart_apps_or_services(app_or_service_names=None, sync=True):
     """Restart any containers associated with Dusty, or associated with
     the provided app_or_service_names."""
@@ -86,6 +90,7 @@ def restart_apps_or_services(app_or_service_names=None, sync=True):
 
     compose.restart_running_services(app_or_service_names)
 
+@daemon_command
 def restart_apps_by_repo(repo_names, sync=True):
     all_repos = spec_assembler.get_all_repos()
     resolved_repos = set([Repo.resolve(all_repos, repo_name) for repo_name in repo_names])
