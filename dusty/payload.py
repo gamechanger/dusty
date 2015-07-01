@@ -1,4 +1,5 @@
 import json
+import yaml
 
 from .constants import VERSION
 
@@ -29,7 +30,7 @@ class Payload(object):
 
     @staticmethod
     def deserialize(doc):
-        return json.loads(doc.decode('string_escape'))
+        return yaml.safe_load(doc.decode('string_escape'))
 
 _daemon_command_mapping = {}
 
