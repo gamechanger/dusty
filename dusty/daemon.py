@@ -42,6 +42,14 @@ def _refresh_warnings():
         refresh_config_warnings()
         refresh_preflight_warnings()
 
+def _run_pre_command_functions(connection, suppress_warnings, client_version):
+    _refresh_warnings()
+    _send_warnings_to_client(connection, suppress_warnings)
+    if client_version != VERSION:
+        raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, client_version))
+    check_and_load_ssh_auth()
+
+
 def _listen_on_socket(socket_path, suppress_warnings):
     _clean_up_existing_socket(socket_path)
 
@@ -66,10 +74,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
                     suppress_warnings |= payload['suppress_warnings']
                     logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
                     try:
-                        _refresh_warnings()
-                        _send_warnings_to_client(connection, suppress_warnings)
-                        if client_version != VERSION:
-                            raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(VERSION, client_version))
+                        _run_pre_command_functions(connection, suppress_warnings, client_version)
                         fn(*args, **kwargs)
                     except Exception as e:
                         logging.exception("Daemon encountered exception while processing command")
