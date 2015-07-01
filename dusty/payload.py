@@ -26,11 +26,11 @@ class Payload(object):
             raise RuntimeError('Function key {} not found; you may need to decorate your function'.format(fn_key))
         doc = {'fn_key': fn_key, 'client_version': self.client_version, 'suppress_warnings': self.suppress_warnings,
                'args': self.args, 'kwargs': self.kwargs}
-        return json.dumps(doc).encode('string_escape')
+        return json.dumps(doc)
 
     @staticmethod
     def deserialize(doc):
-        return yaml.safe_load(doc.decode('string_escape'))
+        return yaml.safe_load(doc)
 
 _daemon_command_mapping = {}
 
