@@ -11,7 +11,6 @@ Options:
   --no-pull     Do not pull dusty managed repos from remotes.
   --all         Run all test suites
 
-
 Examples:
   To call test suite frontend with default arguments:
     dusty test web frontend
