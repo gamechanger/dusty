@@ -75,7 +75,8 @@ class TestCommandFile(DustyTestCase):
         }
         command_file.make_up_command_files(assembled_spec)
 
-        commands1 = ['cd /gc/lib1',
+        commands1 = ['set -e',
+                     'cd /gc/lib1',
                      'lib1 command 1',
                      'lib1 command 2',
                      'cd /gc/lib2',
