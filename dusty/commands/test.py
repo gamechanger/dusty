@@ -70,6 +70,16 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recr
     ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
     _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name)
 
+def run_all_app_or_lib_suites(app_or_lib_name, force_recreate=False):
+    expanded_specs = get_expanded_libs_specs()
+    spec = expanded_specs.get_app_or_lib(app_or_lib_name)
+    for index, suite_spec in enumerate(spec['test']['suites']):
+        args = [app_or_lib_name, suite_spec['name'], []]
+        if index == 0 and force_recreate:
+            log_to_client('Recreating the image during the first test run')
+            args.append(True)
+        run_app_or_lib_tests(*args)
+
 def _construct_test_command(spec, suite_name, test_arguments):
     suite_spec = None
     for suite_dict in spec['test']['suites']:
