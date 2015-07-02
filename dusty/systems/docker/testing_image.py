@@ -64,7 +64,7 @@ def _make_installed_requirements_image(docker_client, base_image_tag, command, i
                                                volumes=create_container_volumes,
                                                host_config=docker.utils.create_host_config(binds=create_container_binds))
     docker_client.start(container=container['Id'])
-    log_to_client('Starting installs to create new image:')
+    log_to_client('Running commands to create new image:')
     for line in docker_client.logs(container['Id'], stdout=True, stderr=True, stream=True):
         log_to_client(line.strip())
     new_image = docker_client.commit(container=container['Id'])
