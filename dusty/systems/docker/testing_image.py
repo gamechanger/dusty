@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-
+import logging
 import docker
 
 from ...compiler.compose import container_code_path, get_volume_mounts
@@ -19,7 +19,7 @@ def _ensure_testing_spec_base_image(docker_client, testing_spec):
         try:
             docker_client.remove_image(image=image_tag)
         except:
-            log_to_client('was not able to remove image {}'.format(image_tag))
+            logging.info('Not able to remove image {}'.format(image_tag))
         docker_client.build(path=testing_spec['build'], tag=image_tag)
         return image_tag
 
@@ -58,13 +58,15 @@ def _make_installed_requirements_image(docker_client, base_image_tag, command, i
     try:
         docker_client.remove_image(image=image_name)
     except:
-        log_to_client('was not able to remove image {}'.format(image_name))
+        logging.info('Not able to remove image {}'.format(image_name))
     container = docker_client.create_container(image=base_image_tag,
                                                command=command,
                                                volumes=create_container_volumes,
                                                host_config=docker.utils.create_host_config(binds=create_container_binds))
     docker_client.start(container=container['Id'])
-    docker_client.wait(container=container['Id'])
+    log_to_client('Starting installs to create new image:')
+    for line in docker_client.logs(container['Id'], stdout=True, stderr=True, stream=True):
+        log_to_client(line.strip())
     new_image = docker_client.commit(container=container['Id'])
     docker_client.tag(image=new_image['Id'], repository=image_name, force=True)
 
