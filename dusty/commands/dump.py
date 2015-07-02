@@ -22,6 +22,7 @@ DIAGNOSTIC_SUBPROCESS_COMMANDS = [
 
 DIAGNOSTIC_DUSTY_COMMANDS = [
     ('Dusty Version', lambda: constants.VERSION),
+    ('Dusty Binary', lambda: constants.BINARY),
     ('Daemon Warnings', daemon_warnings.pretty)
 ]
 
