@@ -75,7 +75,8 @@ class TestCommandFile(DustyTestCase):
         }
         command_file.make_up_command_files(assembled_spec)
 
-        commands1 = ['cd /gc/lib1',
+        commands1 = ['set -e',
+                     'cd /gc/lib1',
                      'lib1 command 1',
                      'lib1 command 2',
                      'cd /gc/lib2',
@@ -89,14 +90,14 @@ class TestCommandFile(DustyTestCase):
                      '}',
                      'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
                      'then mkdir -p {}'.format(constants.RUN_DIR),
-                     'touch {}'.format(constants.FIRST_RUN_FILE_PATH),
-                     'dusty_once_fn | tee {}'.format(constants.ONCE_LOG_PATH),
+                     'touch {}'.format(constants.FIRST_RUN_FILE_PATH)
+                     ] + command_file._tee_output_commands('dusty_once_fn') + [
                      'fi',
                      'dusty_always_fn () {',
                      'app1 always 1',
                      'app1 always 2',
                      '}',
-                     'dusty_always_fn | tee {}'.format(constants.ALWAYS_LOG_PATH)]
+                     ] + command_file._tee_output_commands('dusty_always_fn')
         call1 = call(commands1, '{}/app1/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
         commands2 = ['cd /gc/app1',
                      'script1 1',
@@ -204,7 +205,7 @@ class TestCommandFile(DustyTestCase):
             'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
             'then mkdir -p {}'.format(constants.RUN_DIR),
             'touch {}'.format(constants.FIRST_RUN_FILE_PATH),
-            'dusty_once_fn | tee {}'.format(constants.ONCE_LOG_PATH),
+            ] + command_file._tee_output_commands('dusty_once_fn') + [
             'fi'
         ]
         actual = command_file._get_once_commands(spec)
@@ -237,8 +238,7 @@ class TestCommandFile(DustyTestCase):
             'dusty_always_fn () {',
             'always_script.sh',
             '}',
-            'dusty_always_fn | tee {}'.format(constants.ALWAYS_LOG_PATH),
-        ]
+        ] + command_file._tee_output_commands('dusty_always_fn')
         actual = command_file._get_always_commands(spec)
         self.assertEqual(expected, actual)
 

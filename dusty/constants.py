@@ -14,8 +14,7 @@ SOCKET_LOGGER_NAME = 'socket_logger'
 RUN_DIR = '/var/run/dusty'
 SOCKET_PATH = os.path.join(RUN_DIR, 'dusty.sock')
 FIRST_RUN_FILE_PATH = os.path.join(RUN_DIR, 'docker_first_time_started')
-ONCE_LOG_PATH = "/var/log/dusty_once.log"
-ALWAYS_LOG_PATH = "/var/log/dusty_always.log"
+CONTAINER_LOG_PATH = "/var/log"
 
 CONFIG_DIR = '/etc/dusty'
 CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.yml')

@@ -15,6 +15,23 @@ def _write_commands_to_file(list_of_commands, file_location):
         for command in list_of_commands:
             f.write('{} \n'.format(command))
 
+def _tee_output_commands(command_to_tee):
+    tee_function_name = 'tee_{}'.format(command_to_tee)
+    commands = [
+        '{} () {{'.format(tee_function_name),
+        'PIPEFILE={}_pipe_file'.format(tee_function_name),
+        'rm -f $PIPEFILE',
+        'mkfifo $PIPEFILE',
+        'tee {}.log < $PIPEFILE &'.format(os.path.join(constants.CONTAINER_LOG_PATH, command_to_tee)),
+        'TEEPID=$!',
+        '{} > $PIPEFILE 2>&1'.format(command_to_tee),
+        'wait $TEEPID',
+        'rm -f $PIPEFILE',
+        '}',
+        tee_function_name
+    ]
+    return commands
+
 def _get_once_commands(app_spec):
     once_commands = app_spec['commands']['once']
     commands_with_function = []
@@ -26,7 +43,8 @@ def _get_once_commands(app_spec):
     commands_with_function.append("then mkdir -p {}".format(constants.RUN_DIR))
     commands_with_function.append("touch {}".format(constants.FIRST_RUN_FILE_PATH))
     if once_commands:
-        commands_with_function.append("dusty_once_fn | tee {}".format(constants.ONCE_LOG_PATH))
+        commands_with_function += _tee_output_commands('dusty_once_fn')
+
     commands_with_function.append("fi")
     return commands_with_function
 
@@ -37,7 +55,7 @@ def _get_always_commands(app_spec):
         commands_with_function.append('dusty_always_fn () {')
         commands_with_function += always_commands
         commands_with_function.append('}')
-        commands_with_function.append('dusty_always_fn | tee {}'.format(constants.ALWAYS_LOG_PATH))
+        commands_with_function += _tee_output_commands('dusty_always_fn')
     return commands_with_function
 
 def _compile_docker_commands(app_name, assembled_specs):
@@ -45,7 +63,8 @@ def _compile_docker_commands(app_name, assembled_specs):
     up. This command has to install any libs that the app uses, run the `always` command, and
     run the `once` command if the container is being launched for the first time """
     app_spec = assembled_specs['apps'][app_name]
-    commands = _lib_install_commands_for_app(app_name, assembled_specs)
+    commands = ['set -e']
+    commands += _lib_install_commands_for_app(app_name, assembled_specs)
     commands.append("cd {}".format(container_code_path(app_spec)))
     commands.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
     commands += _get_once_commands(app_spec)
