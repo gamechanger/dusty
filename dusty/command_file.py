@@ -16,16 +16,16 @@ def _write_commands_to_file(list_of_commands, file_location):
             f.write('{} \n'.format(command))
 
 def _tee_output_commands(command_to_tee):
-    tee_function_name = 'tee_fn_{}'.format(command_to_tee)
+    tee_function_name = 'tee_{}'.format(command_to_tee)
     commands = [
-        '{} () {'.format(tee_function_name),
+        '{} () {{'.format(tee_function_name),
         'PIPEFILE={}_pipe_file'.format(tee_function_name),
         'rm -f $PIPEFILE',
         'mkfifo $PIPEFILE',
         'tee {}.log < $PIPEFILE &'.format(os.path.join(constants.CONTAINER_LOG_PATH, command_to_tee)),
         'TEEPID=$!',
-        '{} > $PIPEFILE 2>$1'.format(command_to_tee),
-        'wait TEEPID',
+        '{} > $PIPEFILE 2>&1'.format(command_to_tee),
+        'wait $TEEPID',
         'rm -f $PIPEFILE',
         '}',
         tee_function_name
