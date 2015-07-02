@@ -27,6 +27,18 @@ def premade_app():
                                     'commands': {'always': ['sleep 999999999']}},
                        'fake_app', 'apps')
 
+def single_specs_fixture():
+    _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
+    _write('app', 'appa', {'repo': 'github.com/app/a',
+                            'commands': {
+                                'always': ['sleep 9999999']
+                            },
+                            'image': 'busybox',
+                            'mount': '/app/a',
+                            'scripts': [{'description': 'A script description',
+                                        'command': ['touch /app/a/foo'],
+                                        'name': 'example'}]})
+
 def basic_specs_fixture():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['app-a']})
     _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['app-b']})
@@ -53,34 +65,34 @@ def specs_fixture_with_depends():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
     _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['appb', 'appc']})
     _write('app', 'appa', {'repo': '/tmp/repo-app-a',
-                            'commands': {
-                                'always': ['sleep 1000']
-                            },
+                           'commands': {
+                               'always': ['sleep 1000']
+                           },
                             'image': 'busybox',
-                            'mount': '/app/a',
-                            'scripts': [{'description': 'A script description',
+                           'mount': '/app/a',
+                           'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
                                         'name': 'example'}],
-                            'depends': {
-                                'libs': ['lib-a']
-                            }})
+                           'depends': {
+                               'libs': ['lib-a']
+                           }})
     _write('app', 'appb', {'repo': '/tmp/repo-app-b',
-                            'commands': {
-                                'always': ['sleep 1000']
-                            },
+                           'commands': {
+                               'always': ['sleep 1000']
+                           },
                             'image': 'busybox',
-                            'mount': '/app/b',
-                            'scripts': [{'description': 'A script description',
+                           'mount': '/app/b',
+                           'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
                                         'name': 'example'}],
-                            'depends': {
-                                'apps': ['appa'],
-                                'libs': ['lib-b']
-                            }})
+                           'depends': {
+                               'apps': ['appa'],
+                               'libs': ['lib-b']
+                           }})
     _write('app', 'appc', {'repo': '/tmp/repo-app-c',
                            'mount': '/app/c',
                            'commands': {
-                                'always': ['sleep 1000']
+                               'always': ['sleep 1000']
                            },
                            'image': 'busybox',})
     _write('lib', 'lib-a', {'repo': '/tmp/repo-lib-a',
