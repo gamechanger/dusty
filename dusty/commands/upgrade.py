@@ -1,7 +1,8 @@
-import urllib
+import json
 import os
 import shutil
 from subprocess import check_output, check_call, CalledProcessError
+import urllib
 
 from .. import constants
 from ..daemon import close_client_connection
@@ -11,7 +12,10 @@ from ..payload import daemon_command
 
 def _get_latest_version():
     """Gets latest Dusty binary version using the GitHub api"""
-    pass
+    url = 'https://api.github.com/repos/gamechanger/dusty/releases/latest'
+    conn = urllib.urlopen(url)
+    json_data = conn.read()
+    return json.loads(json_data)['tag_name']
 
 def _get_binary_url(version):
     return 'https://github.com/gamechanger/dusty/releases/download/{}/dusty'.format(version)
