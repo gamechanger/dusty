@@ -1,7 +1,7 @@
 import urllib
 import os
 import shutil
-from subprocess import check_output, check_call
+from subprocess import check_output, check_call, CalledProcessError
 
 from .. import constants
 from ..daemon import close_client_connection
@@ -30,7 +30,10 @@ def _download_binary(version):
     os.chmod(constants.TEMP_BIN_PATH, 0755)
 
 def _test_dusty_binary(version):
-    output = check_output([constants.TEMP_BIN_PATH, '-v']).rstrip()
+    try:
+        output = check_output([constants.TEMP_BIN_PATH, '-v']).rstrip()
+    except CalledProcessError:
+        raise RuntimeError('Downloaded binary is not operating correctly; aborting upgrade')
     test_version = output.split()[-1]
     if test_version != version:
         raise RuntimeError('Version of downloaded binary {} does not match expected {}'.format(test_version, version))
