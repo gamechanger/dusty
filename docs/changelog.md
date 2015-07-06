@@ -2,6 +2,7 @@
 
 ## 0.2.1 (In Progress)
   * FIXED: `dusty setup` now works correctly with the updated client/daemon model.
+  * FIXED: `rsync` commands now run with root privileges in the boot2docker VM. This allows `dusty disk backup` to access all files persisted to the VM.
 
 ## 0.2.0 (July 6, 2015)
   * NEW: Dusty now offers a --all option when running tests.  This will run all test suites associated with an app or lib. Also, `all` is now a reserved suite_name.
