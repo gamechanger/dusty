@@ -80,7 +80,6 @@ def _get_boot2docker_vm_size():
     else:
         return int(_get_raw_input('Please input the number of megabytes to allocate to the vm: '))
 
-@daemon_command
 def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
     print "We just need to verify a few settings before we get started.\n"
     if mac_username:
@@ -111,6 +110,7 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
     payload.suppress_warnings = True
     return payload
 
+@daemon_command
 def complete_setup(config):
     for key, value in config.iteritems():
         save_config_value(key, value)
