@@ -83,7 +83,7 @@ def run_all_app_or_lib_suites(app_or_lib_name, force_recreate=False):
     for index, suite_spec in enumerate(spec['test']['suites']):
         args = [app_or_lib_name, suite_spec['name'], []]
         kwargs = {'should_exit': False, }
-        log_to_client('runing test {}'.format(suite_spec))
+        log_to_client('Running test {}'.format(suite_spec))
         if index == 0 and force_recreate:
             log_to_client('Recreating the image during the first test run')
             kwargs['force_recreate'] = True
