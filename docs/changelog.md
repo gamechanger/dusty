@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.2.1 (In Progress)
-  * BREAKING CHANGE: `all` is no longer an allowed suite.name in tests.  Setting suite's name to all will cause `dusty validate` to fail.
+  * BREAKING CHANGE: `all` is no longer an allowed suite.name in tests.  Setting a suite's name to `all` will cause `dusty validate` to fail.
 
   * FIXED: `dusty setup` now works correctly with the updated client/daemon model.
   * FIXED: `rsync` commands now run with root privileges in the boot2docker VM. This allows `dusty disk backup` to access all files persisted to the VM.
