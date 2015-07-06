@@ -53,7 +53,8 @@ class TestTestingImages(DustyTestCase):
                          '/persist/repos/gc/b': {'bind': '/gc/b', 'ro': False}}
         self.assertEquals(expected_dict, _get_create_container_binds(split_volumes))
 
-    def test_make_installed_requirements_image_1(self):
+    @patch('dusty.systems.docker.testing_image.log_to_client')
+    def test_make_installed_requirements_image_1(self, fake_log_to_client):
         mock_docker_client = Mock()
         mock_docker_client.create_container.return_value = {'Id': '1'}
         mock_docker_client.commit.return_value = {'Id': '2'}
@@ -61,16 +62,20 @@ class TestTestingImages(DustyTestCase):
         mock_docker_client.images.return_value = [{'RepoTags': [image_tag]}]
         command = 'npm install'
         image_name = 'gcweb_testing_image'
+        mock_docker_client.logs.return_value = ['installing a', 'installing b']
         _make_installed_requirements_image(mock_docker_client, image_tag, command, image_name, [])
         mock_docker_client.create_container.assert_has_calls([call(image=image_tag,
                                                                    command=command,
                                                                    volumes=[],
                                                                    host_config=docker.utils.create_host_config(binds={}))])
         mock_docker_client.start.assert_has_calls([call(container='1')])
+        mock_docker_client.logs.assert_has_calls([call('1', stdout=True, stderr=True, stream=True)])
         mock_docker_client.commit.assert_has_calls([call(container='1')])
         mock_docker_client.tag.assert_has_calls([call(image='2', repository=image_name, force=True)])
+        fake_log_to_client.assert_has_calls([call('Running commands to create new image:'),call('installing a'), call('installing b')])
 
-    def test_make_installed_requirements_image_2(self):
+    @patch('dusty.systems.docker.testing_image.log_to_client')
+    def test_make_installed_requirements_image_2(self, fake_log_to_client):
         mock_docker_client = Mock()
         mock_docker_client.create_container.return_value = {'Id': '1'}
         mock_docker_client.commit.return_value = {'Id': '2'}
@@ -78,6 +83,7 @@ class TestTestingImages(DustyTestCase):
         mock_docker_client.images.return_value = [{'RepoTags': [image_tag]}]
         command = 'npm install'
         image_name = 'gcweb_testing_image'
+        mock_docker_client.logs.return_value = ['installing a', 'installing b']
         _make_installed_requirements_image(mock_docker_client, image_tag, command, image_name, ['os/path:container/path'])
         mock_docker_client.create_container.assert_has_calls([call(image=image_tag,
                                                                    command=command,
@@ -87,9 +93,10 @@ class TestTestingImages(DustyTestCase):
                                                                                     'ro': False}
                                                                     }))])
         mock_docker_client.start.assert_has_calls([call(container='1')])
-        mock_docker_client.wait.assert_has_calls([call(container='1')])
+        mock_docker_client.logs.assert_has_calls([call('1', stdout=True, stderr=True, stream=True)])
         mock_docker_client.commit.assert_has_calls([call(container='1')])
         mock_docker_client.tag.assert_has_calls([call(image='2', repository=image_name, force=True)])
+        fake_log_to_client.assert_has_calls([call('Running commands to create new image:'),call('installing a'), call('installing b')])
 
     @patch('dusty.systems.docker.testing_image._ensure_testing_spec_base_image')
     @patch('dusty.systems.docker.testing_image._make_installed_requirements_image')
