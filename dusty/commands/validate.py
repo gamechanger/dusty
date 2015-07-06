@@ -47,7 +47,6 @@ def _validate_spec_names(specs):
 
 def _cycle_check(spec, specs, upstream):
     for dependent in spec['depends'][spec.spec_type]:
-        print dependent
         if dependent in upstream:
             raise ValidationException("Cycle found for {0} {1}.  Upstream: {2}".format(spec.type_singular, spec.name, upstream))
         else:
