@@ -62,10 +62,7 @@ def pull_repos_and_sync(app_or_lib_name, pull_repos=False):
     if pull_repos:
         _update_test_repos(app_or_lib_name)
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
-    import logging
-    logging.error(spec)
     sync_repos_by_specs([spec])
-    logging.error('here')
 
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, should_exit=True, force_recreate=False):
     client = get_docker_client()
