@@ -53,7 +53,7 @@ def ensure_valid_suite_name(app_or_lib_name, suite_name):
         raise RuntimeError('Must specify a valid suite name')
 
 @daemon_command
-def pull_repos_and_sync_commands(app_or_lib_name, pull_repos=False):
+def pull_repos_and_sync(app_or_lib_name, pull_repos=False):
     log_to_client("Ensuring virtualbox vm is running")
     initialize_docker_vm()
     expanded_specs = get_expanded_libs_specs()
@@ -61,17 +61,19 @@ def pull_repos_and_sync_commands(app_or_lib_name, pull_repos=False):
     make_test_command_files(app_or_lib_name, expanded_specs)
     if pull_repos:
         _update_test_repos(app_or_lib_name)
-
+    spec = expanded_specs.get_app_or_lib(app_or_lib_name)
+    import logging
+    logging.error(spec)
+    sync_repos_by_specs([spec])
+    logging.error('here')
 
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, should_exit=True, force_recreate=False):
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
-    sync_repos_by_specs([spec])
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
     return _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name, should_exit=should_exit)
-
 
 def run_all_app_or_lib_suites(app_or_lib_name, force_recreate=False):
     expanded_specs = get_expanded_libs_specs()
