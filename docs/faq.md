@@ -12,7 +12,7 @@ You probably just need to run `$(boot2docker shellinit)`
 
 ### How can Dusty access my private GitHub repos?
 
-The Dusty daemon, which runs as root, manages your GitHub repos by default. 
+The Dusty daemon, which runs as root, manages your GitHub repos by default.
 To get permissions to clone from GitHub, the
 Daemon will make use of your unprivileged user's SSH_AUTH_SOCK. This means that the daemon's
 behavior using git should be the same as your user's, in terms of SSH authentication.
@@ -32,6 +32,9 @@ ssh-add -K <path-of-private-key>
 ```
 This will securely save the passphrase for that key in your Keychain.
 
+### My tests are hanging at this step: `Creating test...`.  What do I do?
+Dusty tests use docker logs, which streams one line at a time.  So if you are using a test library which outputs its results on a single line (like python's nosetests) this can give the illusion that your tests are hanging when they running fine.
+
 ### Why doesn't Dusty support Linux?
 
 Dusty might be ported to Linux in the future, although we don't have concrete plans to
@@ -45,5 +48,5 @@ and other users. You can [register here](https://dusty-slackin.herokuapp.com/).
 
 ### Why is it called Dusty?
 
-Dusty is named after [Dusty Baker](https://en.wikipedia.org/wiki/Dusty_Baker), 
+Dusty is named after [Dusty Baker](https://en.wikipedia.org/wiki/Dusty_Baker),
 baseball manager and co-inventor of the [high five](https://en.wikipedia.org/wiki/High_five).
