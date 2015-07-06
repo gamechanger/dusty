@@ -4,6 +4,8 @@ import shutil
 from subprocess import check_output, check_call, CalledProcessError
 import urllib
 
+import psutil
+
 from .. import constants
 from ..daemon import close_client_connection
 from ..log import log_to_client
@@ -21,7 +23,7 @@ def _get_binary_url(version):
     return 'https://github.com/{}/releases/download/{}/{}'.format(constants.DUSTY_GITHUB_PATH, version, constants.DUSTY_BINARY_NAME)
 
 def _get_binary_location():
-    return check_output(['which', 'dusty']).rstrip()
+    return psutil.Process().exe()
 
 def _download_binary(version):
     binary_url = _get_binary_url(version)
