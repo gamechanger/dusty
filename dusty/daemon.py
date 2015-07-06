@@ -69,27 +69,25 @@ def _listen_on_socket(socket_path, suppress_warnings):
             connection, client_address = sock.accept()
             make_socket_logger(connection)
             try:
-                while True:
-                    print "data comin"
-                    data = connection.recv(1024)
-                    if not data:
-                        break
-                    payload = Payload.deserialize(data)
-                    client_version = payload['client_version']
-                    fn, args, kwargs = _get_payload_function_data(payload)
-                    suppress_warnings |= payload['suppress_warnings']
-                    logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
-                    try:
-                        if client_version != constants.VERSION:
-                            raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(constants.VERSION, client_version))
-                        _run_pre_command_functions(connection, suppress_warnings, client_version)
-                        _send_warnings_to_client(connection, suppress_warnings)
-                        fn(*args, **kwargs)
-                    except Exception as e:
-                        logging.exception("Daemon encountered exception while processing command")
-                        error_msg = e.message if e.message else str(e)
-                        _send_warnings_to_client(connection, suppress_warnings)
-                        connection.sendall('ERROR: {}\n'.format(error_msg).encode('utf-8'))
+                data = connection.recv(1024)
+                if not data:
+                    continue
+                payload = Payload.deserialize(data)
+                client_version = payload['client_version']
+                fn, args, kwargs = _get_payload_function_data(payload)
+                suppress_warnings |= payload['suppress_warnings']
+                logging.info('Received command. fn: {} args: {} kwargs: {}'.format(fn.__name__, args, kwargs))
+                try:
+                    if client_version != constants.VERSION:
+                        raise RuntimeError("Dusty daemon is running version: {}, and client is running version: {}".format(constants.VERSION, client_version))
+                    _run_pre_command_functions(connection, suppress_warnings, client_version)
+                    _send_warnings_to_client(connection, suppress_warnings)
+                    fn(*args, **kwargs)
+                except Exception as e:
+                    logging.exception("Daemon encountered exception while processing command")
+                    error_msg = e.message if e.message else str(e)
+                    _send_warnings_to_client(connection, suppress_warnings)
+                    connection.sendall('ERROR: {}\n'.format(error_msg).encode('utf-8'))
             finally:
                 close_connection()
         except KeyboardInterrupt:
