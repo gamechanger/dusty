@@ -23,7 +23,6 @@ REPOS_DIR = os.path.join(CONFIG_DIR, 'repos')
 COMPOSE_DIR = os.path.join(CONFIG_DIR, 'compose')
 COMPOSEFILE_PATH = os.path.join(COMPOSE_DIR, 'docker-compose.yml')
 COMMAND_FILES_DIR = os.path.join(CONFIG_DIR, 'commands')
-TEMP_BIN_PATH = os.path.join(CONFIG_DIR, 'test_binary')
 
 DUSTY_GITHUB_PATH = 'gamechanger/dusty'
 DUSTY_BINARY_NAME = 'dusty'

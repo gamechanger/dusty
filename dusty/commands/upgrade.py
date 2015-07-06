@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 from subprocess import check_output, check_call, CalledProcessError
+import tempfile
 import urllib
 
 import psutil
@@ -33,20 +34,22 @@ def _download_binary(version):
     if conn.getcode() >= 300:
         raise RuntimeError('Unable to retrieve Dusty binary version {} from GitHub; this version may not exist'.format(version))
     binary_data = conn.read()
-    with open(constants.TEMP_BIN_PATH, 'w') as f:
+    tmp_path = tempfile.mktemp()
+    with open(tmp_path, 'w') as f:
         f.write(binary_data)
-    os.chmod(constants.TEMP_BIN_PATH, 0755)
+    os.chmod(tmp_path, 0755)
+    return tmp_path
 
-def _test_dusty_binary(version):
+def _test_dusty_binary(binary_path, version):
     try:
-        output = check_output([constants.TEMP_BIN_PATH, '-v']).rstrip()
+        output = check_output([binary_path, '-v']).rstrip()
     except CalledProcessError:
         raise RuntimeError('Downloaded binary is not operating correctly; aborting upgrade')
     test_version = output.split()[-1]
     if test_version != version:
         raise RuntimeError('Version of downloaded binary {} does not match expected {}'.format(test_version, version))
 
-def _move_temp_binary_to_path():
+def _move_temp_binary_to_path(tmp_binary_path):
     """Moves the temporary binary to the location of the binary with the user's PATH.
     Preserves owner, group, and permissions of original binary"""
     binary_path = _get_binary_location()
@@ -54,7 +57,7 @@ def _move_temp_binary_to_path():
     permissions = st.st_mode
     owner = st.st_uid
     group = st.st_gid
-    shutil.move(constants.TEMP_BIN_PATH, binary_path)
+    shutil.move(tmp_binary_path, binary_path)
     os.chown(binary_path, owner, group)
     os.chmod(binary_path, permissions)
 
@@ -65,14 +68,14 @@ def upgrade_dusty_binary(version=None):
         return
     if version is None:
         version = _get_latest_version()
-    if version == constants.VERSION():
+    if version == constants.VERSION:
         log_to_client('You\'re already running the latest Dusty version ({})'.format(version))
         return
     else:
         log_to_client('Downloading Dusty version {}'.format(version))
-    _download_binary(version)
-    _test_dusty_binary(version)
-    _move_temp_binary_to_path()
+    tmp_binary_path = _download_binary(version)
+    _test_dusty_binary(tmp_binary_path, version)
+    _move_temp_binary_to_path(tmp_binary_path)
     log_to_client('Finished upgrade to version {} of Dusty!  The daemon will now restart'.format(version))
     close_client_connection()
     os.execvp('dusty', ['dusty', '-d'])
