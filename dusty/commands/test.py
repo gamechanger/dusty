@@ -163,9 +163,7 @@ def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command,
     client.remove_container(container=test_container_name)
 
     for service_container in previous_container_names:
-        log_to_client('Stopping service container {}'.format(service_container))
-        try:
-            client.stop(service_container, timeout=1)
-        except Exception as e:
-            log_to_client('Exception stopping service container {}: {}'.format(service_container, str(e)))
+        log_to_client('Killing service container {}'.format(service_container))
+        client.kill(service_container)
+        client.remove_container(container=service_container)
     return exit_code
