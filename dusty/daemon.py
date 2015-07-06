@@ -48,9 +48,9 @@ def _run_pre_command_functions(connection, suppress_warnings, client_version):
     check_and_load_ssh_auth()
     _refresh_warnings()
 
-def close_client_connection():
+def close_client_connection(terminator=SOCKET_TERMINATOR):
     try:
-        connection.sendall(SOCKET_TERMINATOR)
+        connection.sendall(terminator)
     finally:
         close_socket_logger()
         connection.close()
@@ -88,7 +88,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
                     error_msg = e.message if e.message else str(e)
                     _send_warnings_to_client(connection, suppress_warnings)
                     connection.sendall('ERROR: {}\n'.format(error_msg).encode('utf-8'))
-                    connection.sendall(SOCKET_ERROR_TERMINATOR)
+                    close_client_connection(SOCKET_ERROR_TERMINATOR)
                 else:
                     close_client_connection()
             except:
