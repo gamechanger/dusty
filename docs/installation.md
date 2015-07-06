@@ -3,10 +3,10 @@
 ## Requirements
 You must have the following installed in order to run Dusty:
 
- * nginx
- * Virtualbox
- * boot2docker
- * Docker Compose
+ * [nginx](http://wiki.nginx.org/Main)
+ * [Virtualbox](https://www.virtualbox.org/wiki/VirtualBox)
+ * [boot2docker](http://boot2docker.io/)
+ * [Docker Compose](https://docs.docker.com/compose/)
 
 Not all versions of these programs will work with Dusty.  Dusty
 will warn you if you have a version installed that may be too old.
