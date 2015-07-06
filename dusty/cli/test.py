@@ -6,7 +6,7 @@ Usage:
 
 Options:
   <suite_name>  Name of the test suite you would like to run
-                This can also be --all to run all suites in the spec
+                If `all` is specified, all suites in the spec will be run
   <args>        A list of arguments to be passed to the test script
   --recreate    Ensures that the testing image will be recreated
   --no-pull     Do not pull dusty managed repos from remotes.
@@ -27,7 +27,7 @@ from ..commands.test import (run_app_or_lib_tests, test_info_for_app_or_lib, pul
 
 def main(argv):
     args = docopt(__doc__, argv, options_first=True)
-    if args['<suite_name>'] == '--all':
+    if args['<suite_name>'] == 'all':
         payload0 = Payload(pull_repos_and_sync,
                            args['<app_or_lib_name>'],
                            pull_repos=not args['--no-pull'])

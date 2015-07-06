@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.1.6 (In Progress)
-  * NEW: Dusty now offers a --all option when running tests.  This will run all test suites associated with an app or lib.
+  * NEW: Dusty now offers a --all option when running tests.  This will run all test suites associated with an app or lib. Also, `all` is now a reserved suite_name.
 
   * When creating test images, logs are now streamed to the user.
 
