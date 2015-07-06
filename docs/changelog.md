@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.1.6 (In Progress)
+  * When creating test images, logs are now streamed to the user.
 
 ## 0.1.5 (July 1, 2015)
   * NEW: Using a config variable, Dusty now manages how large (in megabytes) to make your vm.  On each start of boot2docker, Dusty will adjust your vm's memory size.
