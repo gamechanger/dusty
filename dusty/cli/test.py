@@ -2,7 +2,7 @@
 If args are passed, default arguments are dropped
 
 Usage:
-  test [options] <app_or_lib_name> [<suite_name>] [<args>...]
+  test [options] <app_or_lib_name> [<suite_name>] [<args>...] [--recreate] [--no-pull]
 
 Options:
   <suite_name>  Name of the test suite you would like to run
