@@ -59,11 +59,15 @@ def _move_temp_binary_to_path():
 @daemon_command
 def upgrade_dusty_binary(version=None):
     if not constants.BINARY:
-        log_to_client("The dusty upgrade command only works when dusty is run with its binaries")
+        log_to_client('It looks like you\'re running Dusty from source. Upgrade is only available when you use the installed binary')
         return
     if version is None:
         version = _get_latest_version()
-        log_to_client('Downloading latest Dusty version: {}'.format(version))
+    if version == constants.VERSION():
+        log_to_client('You\'re already running the latest Dusty version ({})'.format(version))
+        return
+    else:
+        log_to_client('Downloading Dusty version {}'.format(version))
     _download_binary(version)
     _test_dusty_binary(version)
     _move_temp_binary_to_path()
