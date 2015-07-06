@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.2.1 (In Progress)
+## 0.2.2 (In Progress)
+
+## 0.2.1 (July 6, 2015)
   * BREAKING CHANGE: `all` is no longer an allowed suite.name in tests.  Setting a suite's name to `all` will cause `dusty validate` to fail.
 
   * FIXED: `dusty setup` now works correctly with the updated client/daemon model.
