@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.2.1 (In Progress)
+  * FIXED: `dusty setup` command works again. This has been broken since 1.5 due to the switch in how commands are passed from client to daemon.
 
 ## 0.2.0 (July 6, 2015)
   * NEW: Dusty now offers a --all option when running tests.  This will run all test suites associated with an app or lib. Also, `all` is now a reserved suite_name.
