@@ -33,7 +33,7 @@ ssh-add -K <path-of-private-key>
 This will securely save the passphrase for that key in your Keychain.
 
 ### My tests are hanging at this step: `Creating test...`.  What do I do?
-Dusty tests use docker logs (specifically docker-py's client.logs) functionality.  Docker logs only prints out one line at a time.  So if you are using a test library which outputs its results on a single line (like python's nosetests) this can give the illusion that your tests are hanging when they running fine.
+Dusty tests use docker logs, which streams one line at a time.  So if you are using a test library which outputs its results on a single line (like python's nosetests) this can give the illusion that your tests are hanging when they running fine.
 
 ### Why doesn't Dusty support Linux?
 
