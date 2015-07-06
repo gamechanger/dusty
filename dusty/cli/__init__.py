@@ -43,7 +43,7 @@ from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
 from . import (bundles, config, cp, dump, disk, logs, repos, restart, script, shell, stop,
-               sync, up, validate, version, setup, test, status)
+               sync, up, upgrade, validate, version, setup, test, status)
 from .. import constants
 
 MODULE_MAP = {
@@ -63,6 +63,7 @@ MODULE_MAP = {
     'sync': sync,
     'test': test,
     'up': up,
+    'upgrade': upgrade,
     'validate': validate,
     'version': version,
 }

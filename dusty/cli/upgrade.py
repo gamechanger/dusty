@@ -21,5 +21,5 @@ from ..commands.upgrade import upgrade_dusty_binary
 def main(argv):
     args = docopt(__doc__, argv)
     if args['<version>']:
-      return Payload(upgrade_dusty_binary, args['<version>'])
+        return Payload(upgrade_dusty_binary, args['<version>'])
     return Payload(upgrade_dusty_binary)

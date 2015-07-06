@@ -23,6 +23,8 @@ from .warnings import daemon_warnings
 from .config import refresh_config_warnings, check_and_load_ssh_auth
 from . import constants
 
+connection = None
+
 def _clean_up_existing_socket(socket_path):
     try:
         os.unlink(socket_path)
@@ -46,7 +48,15 @@ def _run_pre_command_functions(connection, suppress_warnings, client_version):
     check_and_load_ssh_auth()
     _refresh_warnings()
 
+def close_connection():
+    try:
+        connection.sendall(SOCKET_TERMINATOR)
+    finally:
+        close_socket_logger()
+        connection.close()
+
 def _listen_on_socket(socket_path, suppress_warnings):
+    global connection
     _clean_up_existing_socket(socket_path)
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.bind(socket_path)
@@ -60,6 +70,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
             make_socket_logger(connection)
             try:
                 while True:
+                    print "data comin"
                     data = connection.recv(1024)
                     if not data:
                         break
@@ -79,12 +90,8 @@ def _listen_on_socket(socket_path, suppress_warnings):
                         error_msg = e.message if e.message else str(e)
                         _send_warnings_to_client(connection, suppress_warnings)
                         connection.sendall('ERROR: {}\n'.format(error_msg).encode('utf-8'))
-                        connection.sendall(SOCKET_ERROR_TERMINATOR)
-                    else:
-                        connection.sendall(SOCKET_TERMINATOR)
             finally:
-                close_socket_logger()
-                connection.close()
+                close_connection()
         except KeyboardInterrupt:
             break
         except:
