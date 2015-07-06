@@ -23,6 +23,10 @@ class TestTestsCommands(DustyTestCase):
                       'libs': {
                         'lib-a': get_lib_dusty_schema({'test': {'suites': [{'name': 'nose', 'command': ['nosetests lib-a']}]},
                                                        'mount': '/lib-a'},
+                                                      name='lib-a'),
+                        'multi-suite-lib': get_lib_dusty_schema({'test': {'suites': [{'name': 'nose1', 'command': ['nosetests lib-a']},
+                                                                                     {'name': 'nose2', 'command': ['nosetests lib-a']}]},
+                                                       'mount': '/lib-a'},
                                                       name='lib-a')}})
 
     def test_run_app_or_lib_tests_lib_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image, fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
@@ -35,6 +39,16 @@ class TestTestsCommands(DustyTestCase):
         with self.assertRaises(KeyError):
             test.run_app_or_lib_tests('app-c', '', [])
 
+    def test_run_all_app_or_lib_suites_lib_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image, fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
+        fake_expanded_libs.return_value = self.specs
+        with self.assertRaises(KeyError):
+            test.run_all_app_or_lib_suites('lib-c')
+
+    def test_run_all_app_or_lib_suites_app_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image, fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
+        fake_expanded_libs.return_value = self.specs
+        with self.assertRaises(KeyError):
+            test.run_all_app_or_lib_suites('app-c')
+
     def test_run_app_or_lib_tests_suite_not_found(self, fake_lib_get_volumes, fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image, fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
         with self.assertRaises(RuntimeError):
@@ -42,42 +56,72 @@ class TestTestsCommands(DustyTestCase):
 
     @patch('dusty.commands.test._run_tests_with_image')
     @patch('dusty.command_file._write_commands_to_file')
-    @patch('dusty.command_file.sync_local_path_to_vm')
-    def test_run_app_or_lib_tests_lib_found(self, fake_sync, fake_write_commands, fake_run_tests, fake_lib_get_volumes,
+    @patch('dusty.commands.test.sys.exit')
+    def test_run_app_or_lib_tests_lib_found(self, fake_exit, fake_write_commands, fake_run_tests, fake_lib_get_volumes,
                                             fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
                                             fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
         fake_lib_get_volumes.return_value = ['/host/route:/container/route']
         fake_app_get_volumes.return_value = []
         fake_get_docker_client.return_value = 'docker-client'
+        fake_run_tests.return_value = 0
 
         test.run_app_or_lib_tests('lib-a', 'nose', [])
 
-        fake_repos_by_specs.assert_has_calls([call([self.specs['libs']['lib-a']])])
         fake_repos_by_specs.assert_has_calls([])
         fake_ensure_image.assert_has_calls([call('docker-client',
                                                  'lib-a',
                                                  self.specs,
                                                  force_recreate=False)])
+        fake_exit.assert_has_calls([call(0)])
 
     @patch('dusty.commands.test._run_tests_with_image')
     @patch('dusty.command_file._write_commands_to_file')
-    @patch('dusty.command_file.sync_local_path_to_vm')
-    def test_run_app_or_lib_tests_app_found(self, fake_sync, fake_write_commands, fake_run_tests, fake_lib_get_volumes,
+    @patch('dusty.commands.test.sys.exit')
+    def test_run_app_or_lib_tests_app_found(self, fake_exit, fake_write_commands, fake_run_tests, fake_lib_get_volumes,
                                             fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
                                             fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
         fake_lib_get_volumes.return_value = ['/host/route:/container/route']
         fake_app_get_volumes.return_value = []
         fake_get_docker_client.return_value = 'docker-client'
+        fake_run_tests.return_value = 1
 
         test.run_app_or_lib_tests('app-a','nose', [], force_recreate=True)
 
-        fake_repos_by_specs.assert_has_calls([call([self.specs['apps']['app-a']])])
         fake_ensure_image.assert_has_calls([call('docker-client',
                                                  'app-a',
                                                  self.specs,
                                                  force_recreate=True)])
+        fake_exit.assert_has_calls([call(1)])
+
+    @patch('dusty.commands.test.run_app_or_lib_tests')
+    @patch('dusty.commands.test.sys.exit')
+    def test_run_all_app_or_lib_suites_lib_found(self, fake_exit, fake_run_app, fake_lib_get_volumes,
+                                                 fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
+                                                 fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
+        fake_expanded_libs.return_value = self.specs
+        fake_run_app.side_effect = [0, 1]
+
+        test.run_all_app_or_lib_suites('multi-suite-lib', force_recreate=True)
+
+        fake_run_app.assert_has_calls([call('multi-suite-lib', 'nose1', [], should_exit=False, force_recreate=True),
+                                       call('multi-suite-lib', 'nose2', [], should_exit=False)])
+        fake_exit.assert_has_calls([call(1)])
+
+
+    @patch('dusty.commands.test.run_app_or_lib_tests')
+    @patch('dusty.commands.test.sys.exit')
+    def test_run_all_app_or_lib_suites_app_found(self, fake_exit, fake_run_app, fake_lib_get_volumes,
+                                                 fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
+                                                 fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
+        fake_expanded_libs.return_value = self.specs
+        fake_run_app.return_value = 0
+
+        test.run_all_app_or_lib_suites('app-a')
+
+        fake_run_app.assert_has_calls([call('app-a', 'nose', [], should_exit=False)])
+        fake_exit.assert_has_calls([call(0)])
 
     def test_construct_test_command_invalid_name_app(self, *args):
         with self.assertRaises(RuntimeError):
@@ -105,24 +149,30 @@ class TestTestsCommands(DustyTestCase):
 
     @patch('dusty.commands.test._update_test_repos')
     @patch('dusty.commands.test.make_test_command_files')
-    def test_pull_repos_and_sync_commands_1(self, fake_make, fake_update_test, fake_lib_get_volumes,
-                                            fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
-                                            fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
+    def test_pull_repos_and_sync_1(self, fake_make, fake_update_test, fake_lib_get_volumes,
+                                    fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
+                                    fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
+        fake_app_spec = Mock()
         fake_specs = Mock()
+        fake_specs.get_app_or_lib.return_value = fake_app_spec
         fake_expanded_libs.return_value = fake_specs
-        test.pull_repos_and_sync_commands('app1', pull_repos=True)
+        test.pull_repos_and_sync('app1', pull_repos=True)
 
         fake_update_test.assert_has_calls([call('app1')])
         fake_make.assert_has_calls([call('app1', fake_specs)])
+        fake_repos_by_specs.assert_has_calls([call([fake_app_spec])])
 
     @patch('dusty.commands.test._update_test_repos')
     @patch('dusty.commands.test.make_test_command_files')
-    def test_pull_repos_and_sync_commands_2(self, fake_make, fake_update_test, fake_lib_get_volumes,
-                                            fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
-                                            fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
+    def test_pull_repos_and_sync_2(self, fake_make, fake_update_test, fake_lib_get_volumes,
+                                    fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
+                                    fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
+        fake_app_spec = Mock()
         fake_specs = Mock()
+        fake_specs.get_app_or_lib.return_value = fake_app_spec
         fake_expanded_libs.return_value = fake_specs
-        test.pull_repos_and_sync_commands('app1')
+        test.pull_repos_and_sync('app1')
 
         fake_update_test.assert_has_calls([])
         fake_make.assert_has_calls([call('app1', fake_specs)])
+        fake_repos_by_specs.assert_has_calls([call([fake_app_spec])])
