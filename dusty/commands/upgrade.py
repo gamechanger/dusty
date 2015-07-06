@@ -53,6 +53,8 @@ def _move_temp_binary_to_path(tmp_binary_path):
     """Moves the temporary binary to the location of the binary with the user's PATH.
     Preserves owner, group, and permissions of original binary"""
     binary_path = _get_binary_location()
+    if not binary_path.endswith(constants.DUSTY_BINARY_NAME):
+        raise RuntimeError('Refusing to overwrite binary {}'.format(binary_path))
     st = os.stat(binary_path)
     permissions = st.st_mode
     owner = st.st_uid
