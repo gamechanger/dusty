@@ -12,13 +12,13 @@ from ..payload import daemon_command
 
 def _get_latest_version():
     """Gets latest Dusty binary version using the GitHub api"""
-    url = 'https://api.github.com/repos/gamechanger/dusty/releases/latest'
+    url = 'https://api.github.com/repos/{}/releases/latest'.format(constants.DUSTY_GITHUB_PATH)
     conn = urllib.urlopen(url)
     json_data = conn.read()
     return json.loads(json_data)['tag_name']
 
 def _get_binary_url(version):
-    return 'https://github.com/gamechanger/dusty/releases/download/{}/dusty'.format(version)
+    return 'https://github.com/{}/releases/download/{}/{}'.format(constants.DUSTY_GITHUB_PATH, version, constants.DUSTY_BINARY_NAME)
 
 def _get_binary_location():
     return check_output(['which', 'dusty']).rstrip()
