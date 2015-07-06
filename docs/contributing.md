@@ -55,8 +55,8 @@ may be listed without a prefix.
     * Add a date to the changelog for this version
     * Add a new version with `(In Progress)` after it
 
-* Cut a new release by running the `DustyRelease` Jenkins job with your new version number
-
 * Update [Installation](installation.md) to point to the binary for your new version
+
+* Cut a new release by running the `DustyRelease` Jenkins job with your new version number
 
 * Bump the version number in `dusty/constants.py` to the new, in-progress version
