@@ -27,8 +27,6 @@ from ..commands.test import (run_app_or_lib_tests, test_info_for_app_or_lib, pul
 
 def main(argv):
     args = docopt(__doc__, argv, options_first=True)
-    import logging
-    logging.error(args)
     if args['--all']:
         payload0 = Payload(pull_repos_and_sync_commands,
                            args['<app_or_lib_name>'],

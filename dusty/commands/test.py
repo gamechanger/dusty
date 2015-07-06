@@ -76,7 +76,6 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, should_exi
 def run_all_app_or_lib_suites(app_or_lib_name, force_recreate=False):
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
-    log_to_client(list(enumerate(spec['test']['suites'])))
     exit_code = 0
     for index, suite_spec in enumerate(spec['test']['suites']):
         args = [app_or_lib_name, suite_spec['name'], [], False]
