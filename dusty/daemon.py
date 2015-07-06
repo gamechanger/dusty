@@ -48,7 +48,7 @@ def _run_pre_command_functions(connection, suppress_warnings, client_version):
     check_and_load_ssh_auth()
     _refresh_warnings()
 
-def close_connection():
+def close_client_connection():
     try:
         connection.sendall(SOCKET_TERMINATOR)
     finally:
@@ -90,7 +90,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
                     connection.sendall('ERROR: {}\n'.format(error_msg).encode('utf-8'))
                     connection.sendall(SOCKET_ERROR_TERMINATOR)
             finally:
-                close_connection()
+                close_client_connection()
         except KeyboardInterrupt:
             break
         except:
