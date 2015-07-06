@@ -16,6 +16,8 @@ def _get_latest_version():
     """Gets latest Dusty binary version using the GitHub api"""
     url = 'https://api.github.com/repos/{}/releases/latest'.format(constants.DUSTY_GITHUB_PATH)
     conn = urllib.urlopen(url)
+    if conn.getcode() >= 300:
+        raise RuntimeError('GitHub api returned code {}; can\'t determine latest version.  Aborting'.format(conn.getcode()))
     json_data = conn.read()
     return json.loads(json_data)['tag_name']
 
