@@ -16,7 +16,7 @@ def _ensure_vm_dir_exists(remote_dir):
 def _rsync_command(local_path, remote_path, is_dir=True, from_local=True, exclude_git=True):
     key_path = os.path.expanduser('~{}/.ssh/id_boot2docker'.format(get_config_value(constants.CONFIG_MAC_USERNAME_KEY)))
     ssh_opts = 'ssh -p 2022 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i {}'.format(key_path)
-    command = ['rsync', '-e', ssh_opts, '-az', '--force']
+    command = ['rsync', '-e', ssh_opts, '-az', '--force', '--rsync-path', 'sudo rsync']
     if exclude_git:
         command += ['--exclude', '*/.git']
     if from_local:
