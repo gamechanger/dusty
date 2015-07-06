@@ -16,6 +16,7 @@ from ..command_file import make_test_command_files, dusty_command_file_name
 from ..source import Repo
 from ..payload import daemon_command
 
+@daemon_command
 def test_info_for_app_or_lib(app_or_lib_name):
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
@@ -61,24 +62,31 @@ def pull_repos_and_sync_commands(app_or_lib_name, pull_repos=False):
     if pull_repos:
         _update_test_repos(app_or_lib_name)
 
-def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
+
+def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, should_exit=True, force_recreate=False):
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
     sync_repos_by_specs([spec])
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
-    _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name)
+    return _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name, should_exit=should_exit)
+
 
 def run_all_app_or_lib_suites(app_or_lib_name, force_recreate=False):
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
+    log_to_client(list(enumerate(spec['test']['suites'])))
+    exit_code = 0
     for index, suite_spec in enumerate(spec['test']['suites']):
-        args = [app_or_lib_name, suite_spec['name'], []]
+        args = [app_or_lib_name, suite_spec['name'], [], False]
+        log_to_client('runing test {}'.format(suite_spec))
         if index == 0 and force_recreate:
             log_to_client('Recreating the image during the first test run')
             args.append(True)
-        run_app_or_lib_tests(*args)
+        exit_code |= run_app_or_lib_tests(*args)
+    log_to_client('TESTS {}'.format('FAILED' if exit_code != 0 else 'PASSED'))
+    sys.exit(exit_code)
 
 def _construct_test_command(spec, suite_name, test_arguments):
     suite_spec = None
@@ -136,7 +144,7 @@ def _get_suite_spec(testing_spec, suite_name):
             return suite
     raise RuntimeError('Couldn\'t find suite named {}'.format(suite_name))
 
-def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name):
+def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name, should_exit=True):
     testing_spec = expanded_specs.get_app_or_lib(app_or_lib_name)['test']
     suite_spec = _get_suite_spec(testing_spec, suite_name)
 
@@ -158,5 +166,7 @@ def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command,
         except Exception as e:
             log_to_client('Exception stopping service container {}: {}'.format(service_container, str(e)))
 
-    log_to_client('TESTS {}'.format('FAILED' if exit_code != 0 else 'PASSED'))
-    sys.exit(exit_code)
+    if should_exit:
+        log_to_client('TESTS {}'.format('FAILED' if exit_code != 0 else 'PASSED'))
+        sys.exit(exit_code)
+    return exit_code

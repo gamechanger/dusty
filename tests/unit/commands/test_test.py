@@ -94,26 +94,32 @@ class TestTestsCommands(DustyTestCase):
                                                  force_recreate=True)])
 
     @patch('dusty.commands.test.run_app_or_lib_tests')
-    def test_run_all_app_or_lib_suites_lib_found(self, fake_run_app, fake_lib_get_volumes,
+    @patch('dusty.commands.test.sys.exit')
+    def test_run_all_app_or_lib_suites_lib_found(self, fake_exit, fake_run_app, fake_lib_get_volumes,
                                                  fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
                                                  fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
+        fake_run_app.side_effect = [0, 1]
 
         test.run_all_app_or_lib_suites('multi-suite-lib', force_recreate=True)
 
-        fake_run_app.assert_has_calls([call('multi-suite-lib', 'nose1', [], True),
-                                       call('multi-suite-lib', 'nose2', [])])
+        fake_run_app.assert_has_calls([call('multi-suite-lib', 'nose1', [], False, True),
+                                       call('multi-suite-lib', 'nose2', [], False)])
+        fake_exit.assert_has_calls([call(1)])
 
 
     @patch('dusty.commands.test.run_app_or_lib_tests')
-    def test_run_all_app_or_lib_suites_app_found(self, fake_run_app, fake_lib_get_volumes,
+    @patch('dusty.commands.test.sys.exit')
+    def test_run_all_app_or_lib_suites_app_found(self, fake_exit, fake_run_app, fake_lib_get_volumes,
                                                  fake_app_get_volumes, fake_repos_by_specs, fake_ensure_image,
                                                  fake_expanded_libs, fake_get_docker_client, fake_initialize_vm):
         fake_expanded_libs.return_value = self.specs
+        fake_run_app.return_value = 0
 
         test.run_all_app_or_lib_suites('app-a')
 
-        fake_run_app.assert_has_calls([call('app-a', 'nose', [])])
+        fake_run_app.assert_has_calls([call('app-a', 'nose', [], False)])
+        fake_exit.assert_has_calls([call(0)])
 
     def test_construct_test_command_invalid_name_app(self, *args):
         with self.assertRaises(RuntimeError):
