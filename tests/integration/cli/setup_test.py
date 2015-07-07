@@ -12,9 +12,6 @@ class TestSetupCLI(DustyIntegrationTestCase):
         save_config_value(constants.CONFIG_SPECS_REPO_KEY, '')
         save_config_value(constants.CONFIG_MAC_USERNAME_KEY, 'nobody')
 
-    def tearDown(self):
-        super(TestSetupCLI, self).tearDown()
-
     @patch('dusty.commands.setup._get_recommended_vm_size')
     @patch('dusty.commands.setup._get_raw_input')
     def test_setup_defaults(self, fake_raw_input, fake_vm_size):
