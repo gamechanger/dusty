@@ -9,12 +9,12 @@ class TestSyncCLI(DustyIntegrationTestCase):
         self.run_command('up')
 
     def tearDown(self):
-        super(TestSyncCLI, self).tearDown()
         self.run_command('bundles deactivate busyboxa')
         try:
             self.run_command('stop')
         except Exception:
             pass
+        super(TestSyncCLI, self).tearDown()
 
     def test_sync_repo(self):
         self.exec_in_container('busyboxa', 'rm -rf /repo')
