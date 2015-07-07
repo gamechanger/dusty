@@ -3,11 +3,14 @@ import logging
 
 import yaml
 
-from . import _get_canonical_container_name, get_docker_env, get_docker_client, _get_dusty_containers
+from . import (_get_canonical_container_name, get_docker_env, get_docker_client,
+               _get_dusty_containers, _get_app_or_service_name_from_container,
+               _get_container_for_app_or_service)
 from ... import constants
 from ...log import log_to_client
 from ...subprocess import check_output_demoted, check_and_log_output_and_error_demoted
-from ...compiler.spec_assembler import get_expected_number_of_running_containers
+from ...compiler.spec_assembler import get_assembled_specs
+from ...compiler.compose import links_for_app_or_service
 from ...path import parent_dir
 
 def write_composefile(compose_config, compose_file_location):
@@ -47,6 +50,16 @@ def _compose_rm(compose_file_location, project_name, services):
         command += services
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
+def _check_linked_container_status(client, container, assembled_specs):
+    app_or_service_name = _get_app_or_service_name_from_container(container)
+    linked_containers = links_for_app_or_service(app_or_service_name, assembled_specs)
+    for linked_name in linked_containers:
+        if _get_dusty_containers(client, [linked_name]) == []:
+            log_to_client('No running container for {0}, which is linked to by {1}.  Cannot restart {1}'.format(
+                              linked_name, app_or_service_name))
+            return False
+    return True
+
 def _compose_restart(services):
     """Well, this is annoying. Compose 1.2 shipped with the
     restart functionality fucking broken, so we can't set a faster
@@ -61,15 +74,17 @@ def _compose_restart(services):
         log_to_client('Restarting {}'.format(_get_canonical_container_name(container)))
         client.restart(container['Id'], timeout=1)
 
+    assembled_specs = get_assembled_specs()
+    if services == []:
+        services = [spec.name for spec in assembled_specs.get_apps_and_services()]
     logging.info('Restarting service containers from list: {}'.format(services))
     client = get_docker_client()
-    dusty_containers = _get_dusty_containers(client, services)
-    expected_number_of_containers = get_expected_number_of_running_containers() if len(services) == 0 else len(services)
-    if len(dusty_containers) != expected_number_of_containers:
-        log_to_client("Not going to restart containers. Expected number of containers {} does not match {}".format(expected_number_of_containers, len(dusty_containers)))
-        raise RuntimeError("Please use `docker ps -a` to view crashed containers")
-    else:
-        for container in dusty_containers:
+    for service in services:
+        container = _get_container_for_app_or_service(client, service, include_exited=True)
+        if container is None:
+            log_to_client('No container found for {}'.format(service))
+            continue
+        if _check_linked_container_status(client, container, assembled_specs):
             _restart_container(client, container)
 
 def update_running_containers_from_spec(compose_config, recreate_containers=True):

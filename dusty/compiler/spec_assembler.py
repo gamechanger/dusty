@@ -104,12 +104,6 @@ def _get_expanded_libs_specs(specs):
     _expand_libs_in_apps(specs)
     _expand_libs_in_libs(specs)
 
-def get_expected_number_of_running_containers():
-    """ This will return the number of containers expected to be running based off of
-    your current config"""
-    assembled_specs = get_assembled_specs()
-    return len(assembled_specs['apps']) + len(assembled_specs['services'])
-
 def get_assembled_specs():
     logging.info("Spec Assembler: running...")
     specs = get_specs()

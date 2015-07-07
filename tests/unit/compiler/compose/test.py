@@ -4,11 +4,13 @@ from copy import copy
 from dusty import constants
 from dusty.compiler.compose import (get_compose_dict, _composed_app_dict,
                                     _get_ports_list, _compile_docker_command, _get_compose_volumes,
-                                    _conditional_links, get_app_volume_mounts, get_lib_volume_mounts)
+                                    _conditional_links, get_app_volume_mounts, get_lib_volume_mounts,
+                                    _links_for_app, links_for_app_or_service)
 from dusty.compiler import compose
+from dusty.schemas.base_schema_class import DustySchema
 from ..test_test_cases import all_test_configs
 from ....testcases import DustyTestCase
-from ...utils import get_app_dusty_schema, get_lib_dusty_schema
+from ...utils import get_app_dusty_schema, get_lib_dusty_schema, apply_required_keys
 
 basic_specs = {
     'apps': {
@@ -270,6 +272,53 @@ class TestComposeCompiler(DustyTestCase):
                             }}
         self.assertEqual(_conditional_links(assembled_specs, 'app-a'), ['app-b', 'ser-b'])
 
+    def test_links_for_app(self, *args):
+        assembled_specs = self.make_test_specs(apply_required_keys({'apps': {
+                                'app-a': {
+                                    'depends': {
+                                        'apps': ['app-b'],
+                                        'services': ['ser-a']
+                                    },
+                                    'conditional_links': {
+                                        'services': ['ser-b']
+                                    }
+                                },
+                                'app-b': {
+                                    'depends': {}
+                                }
+                            },
+                            'services': {
+                                'ser-a': {
+                                    'depends': {}
+                                },
+                                'ser-b': {
+                                    'depends': {}
+                                }
+                            }}))
+        self.assertEqual(_links_for_app(assembled_specs['apps']['app-a'], assembled_specs),
+                         ['ser-a', 'app-b', 'ser-b'])
+
+    def test_links_for_app_or_service(self, *args):
+        assembled_specs = self.make_test_specs(apply_required_keys({'apps': {
+                                'app-a': {
+                                    'depends': {
+                                        'apps': ['app-b'],
+                                        'services': ['ser-a']
+                                    },
+                                },
+                                'app-b': {
+                                    'depends': {}
+                                }
+                            },
+                            'services': {
+                                'ser-a': {
+                                    'depends': {},
+                                    'links': ['app-b']
+                                },
+                            }}))
+        self.assertEqual(links_for_app_or_service('ser-a', assembled_specs), ['app-b'])
+        self.assertEqual(links_for_app_or_service('app-a', assembled_specs),
+                         _links_for_app(assembled_specs['apps']['app-a'], assembled_specs))
 
 class TestComposeTestCompiler(DustyTestCase):
     def test_get_testing_compose_dict_base(self):
