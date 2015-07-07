@@ -3,6 +3,7 @@ import subprocess
 import textwrap
 from os.path import isfile, isdir
 from os import mkdir
+
 from psutil import virtual_memory
 
 from ..payload import Payload
@@ -66,21 +67,24 @@ def _get_and_configure_nginx_includes_dir():
     _get_raw_input('\n'.join(textwrap.wrap('You have a custom nginx config setup. Could not find an nginx.conf file. Please read our docs to see what is needed for the nginx config.  Once you have figured it out, please use `dusty config` command to adjust your `nginx_includes_dir`', 80)))
     return ''
 
-def _get_boot2docker_vm_size():
+def _get_recommended_vm_size(system_memory):
     # all math is done in megabytes
-    memory_megs = virtual_memory().total / 2**20
-    if memory_megs >= 16 * 2**10:
-        vm_megs = 6 * 2**10
-    elif memory_megs >= 8 * 2**10:
-        vm_megs = 4 * 2**10
+    if system_memory >= 16 * 2**10:
+        return 6 * 2**10
+    elif system_memory >= 8 * 2**10:
+        return 4 * 2**10
     else:
-        vm_megs = 2 * 2**10
+        return 2 * 2**10
+
+def _get_boot2docker_vm_size():
+    memory_megs = virtual_memory().total / 2**20
+    vm_megs = _get_recommended_vm_size(memory_megs)
     if _get_raw_input('Your system seems to have {} megabytes of memory. We would like to allocate {} to your vm. Is that ok? (y/n) '.format(memory_megs, vm_megs)).upper() == 'Y':
         return vm_megs
     else:
-        return int(_get_raw_input('Please input the number of megabytes to allocate to the vm: '))
+        return _get_raw_input('Please input the number of megabytes to allocate to the vm: ')
 
-def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None):
+def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None, boot2docker_vm_memory=None, update=True):
     print "We just need to verify a few settings before we get started.\n"
     if mac_username:
         print 'Setting mac_username to {} based on flag'.format(mac_username)
@@ -100,21 +104,27 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
     else:
         nginx_includes_dir = _get_and_configure_nginx_includes_dir()
 
-    boot2docker_vm_size = _get_boot2docker_vm_size()
+    if boot2docker_vm_memory:
+        print 'Setting boot2docker_vm_memory to {} based on flag'.format(boot2docker_vm_memory)
+    else:
+        boot2docker_vm_memory = _get_boot2docker_vm_size()
+
+    boot2docker_vm_memory = int(boot2docker_vm_memory)
 
     config_dictionary = {constants.CONFIG_MAC_USERNAME_KEY: mac_username,
                          constants.CONFIG_SPECS_REPO_KEY: specs_repo,
                          constants.CONFIG_NGINX_DIR_KEY: nginx_includes_dir,
-                         constants.CONFIG_VM_MEM_SIZE: boot2docker_vm_size}
-    payload = Payload(complete_setup, config_dictionary)
+                         constants.CONFIG_VM_MEM_SIZE: boot2docker_vm_memory}
+    payload = Payload(complete_setup, config_dictionary, update=update)
     payload.suppress_warnings = True
     return payload
 
 @daemon_command
-def complete_setup(config):
+def complete_setup(config, update=True):
     for key, value in config.iteritems():
         save_config_value(key, value)
     save_config_value(constants.CONFIG_SETUP_KEY, True)
     refresh_config_warnings()
-    update_managed_repos()
+    if update:
+        update_managed_repos()
     log_to_client('Initial setup completed. You should now be able to use Dusty!')

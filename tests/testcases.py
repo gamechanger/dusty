@@ -226,3 +226,6 @@ class DustyIntegrationTestCase(TestCase):
     def assertExecDocker(self, *args):
         self.fake_exec_docker.assert_called_with(*args)
 
+    def assertConfigValue(self, key, value):
+        config = get_config()
+        self.assertEqual(config[key], value)
