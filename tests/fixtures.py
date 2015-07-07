@@ -102,5 +102,4 @@ def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']
         _write('app', name, {'repo': '/tmp/fake-repo',
                              'mount': '/repo',
                              'image': 'busybox',
-                             'mount': '/busybox',
                              'commands': {'always': command}})
