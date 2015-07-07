@@ -4,6 +4,7 @@ import shutil
 import tempfile
 import logging
 import getpass
+import subprocess
 
 from unittest import TestCase
 from nose.tools import nottest
@@ -19,6 +20,10 @@ from dusty.schemas.base_schema_class import get_specs_from_path, DustySpecs
 from dusty.systems.docker import _exec_in_container, get_docker_client, _get_container_for_app_or_service
 from dusty.path import parent_dir
 from .fixtures import basic_specs_fixture
+
+def exec_docker_patch(*args):
+    args = ['docker'] + [a for a in args]
+    subprocess.check_output(args=args, shell=True)
 
 class TestCaptureHandler(logging.Handler):
     def __init__(self, lst):
@@ -118,7 +123,7 @@ class DustyIntegrationTestCase(TestCase):
         clear_stdout was called."""
         return sys.stdout.getvalue()[self.stdout_start:].strip()
 
-    @patch('dusty.commands.utils.exec_docker')
+    @patch('dusty.commands.utils.exec_docker', wraps=exec_docker_patch)
     @patch('sys.exit')
     def run_command(self, args, fake_exit, fake_exec_docker):
         """Run a command through the Dusty client entrypoint, e.g. simulating
