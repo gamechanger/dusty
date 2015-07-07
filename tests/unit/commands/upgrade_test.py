@@ -10,8 +10,8 @@ from dusty.commands.upgrade import _move_temp_binary_to_path
 class UpgradeTestCase(DustyTestCase):
     def setUp(self):
         super(UpgradeTestCase, self).setUp()
-        _, self.file1_path = tempfile.mkstemp(suffix='dusty')
-        _, self.file2_path = tempfile.mkstemp(suffix='dusty')
+        self.file1_path = tempfile.mkstemp(suffix='dusty')[1]
+        self.file2_path = tempfile.mkstemp(suffix='dusty')[1]
 
 
     @patch('dusty.commands.upgrade._get_binary_location')
@@ -21,9 +21,6 @@ class UpgradeTestCase(DustyTestCase):
         previous_st_mode = os.stat(self.file1_path).st_mode
         fake_get_binary_location.return_value = self.file1_path
         _move_temp_binary_to_path(self.file2_path)
-        # print self.file1_path
-        # subprocess.check_output(['ls', '-l', self.file1_path])
-        # print os.stat(self.file1_path)
         self.assertEqual(os.stat(self.file1_path).st_mode, previous_st_mode)
 
     @patch('dusty.commands.upgrade._get_binary_location')
