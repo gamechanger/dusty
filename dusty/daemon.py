@@ -49,6 +49,9 @@ def _run_pre_command_functions(connection, suppress_warnings, client_version):
     _refresh_warnings()
 
 def close_client_connection(terminator=SOCKET_TERMINATOR):
+    """This function allows downstream functions to close the connection with the client.
+    This is necessary for the upgrade command, where execvp replaces the process before
+    the main daemon loop can close the client connection"""
     try:
         connection.sendall(terminator)
     finally:
