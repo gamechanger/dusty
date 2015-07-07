@@ -20,6 +20,7 @@ Commands:
   sync       Sync repos from the local OS to the boot2docker VM
   test       Run test scripts in isolated environments
   up         Set up the Dusty environment and start activated applications
+  upgrade    Upgrade Dusty to a new version
   validate   Validates that Dusty specs have correct fields and references
   version    Print Dusty daemon's current version
 
