@@ -103,3 +103,6 @@ def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']
                              'mount': '/repo',
                              'image': 'busybox',
                              'commands': {'always': command}})
+
+def invalid_fixture():
+    _write('app', 'invalid', {'spaghetti': 'meatballs'})
