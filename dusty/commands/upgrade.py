@@ -50,7 +50,7 @@ def _test_dusty_binary(binary_path, version):
         raise RuntimeError('Version of downloaded binary {} does not match expected {}'.format(test_version, version))
 
 def _move_temp_binary_to_path(tmp_binary_path):
-    """Moves the temporary binary to the location of the binary with the user's PATH.
+    """Moves the temporary binary to the location of the binary that's currently being run.
     Preserves owner, group, and permissions of original binary"""
     binary_path = _get_binary_location()
     if not binary_path.endswith(constants.DUSTY_BINARY_NAME):
@@ -62,6 +62,7 @@ def _move_temp_binary_to_path(tmp_binary_path):
     shutil.move(tmp_binary_path, binary_path)
     os.chown(binary_path, owner, group)
     os.chmod(binary_path, permissions)
+    return binary_path
 
 @daemon_command
 def upgrade_dusty_binary(version=None):
@@ -77,7 +78,7 @@ def upgrade_dusty_binary(version=None):
         log_to_client('Downloading Dusty version {}'.format(version))
     tmp_binary_path = _download_binary(version)
     _test_dusty_binary(tmp_binary_path, version)
-    _move_temp_binary_to_path(tmp_binary_path)
+    final_binary_path = _move_temp_binary_to_path(tmp_binary_path)
     log_to_client('Finished upgrade to version {} of Dusty!  The daemon will now restart'.format(version))
     close_client_connection()
-    os.execvp('dusty', ['dusty', '-d'])
+    os.execvp(final_binary_path, [final_binary_path, '-d'])
