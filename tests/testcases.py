@@ -125,8 +125,8 @@ class DustyIntegrationTestCase(TestCase):
         return sys.stdout.getvalue()[self.stdout_start:].strip()
 
     def exec_docker_patch(self, *args):
-        args = ['/usr/local/bin/docker'] + [a for a in args]
-        self.exec_docker_process = subprocess.Popen(args=args, stdout=subprocess.PIPE, env=get_docker_env())
+        args = ['docker'] + [a for a in args]
+        self.exec_docker_process = subprocess.Popen(args=args, stdout=subprocess.PIPE, env=get_docker_env(), shell=True)
 
     @patch('sys.exit')
     def run_command(self, args, fake_exit):
