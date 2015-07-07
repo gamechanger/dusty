@@ -84,7 +84,7 @@ def _get_boot2docker_vm_size():
     else:
         return _get_raw_input('Please input the number of megabytes to allocate to the vm: ')
 
-def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None, boot2docker_vm_memory=None):
+def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None, boot2docker_vm_memory=None, update=True):
     print "We just need to verify a few settings before we get started.\n"
     if mac_username:
         print 'Setting mac_username to {} based on flag'.format(mac_username)
@@ -115,15 +115,16 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
                          constants.CONFIG_SPECS_REPO_KEY: specs_repo,
                          constants.CONFIG_NGINX_DIR_KEY: nginx_includes_dir,
                          constants.CONFIG_VM_MEM_SIZE: boot2docker_vm_memory}
-    payload = Payload(complete_setup, config_dictionary)
+    payload = Payload(complete_setup, config_dictionary, update=update)
     payload.suppress_warnings = True
     return payload
 
 @daemon_command
-def complete_setup(config):
+def complete_setup(config, update=True):
     for key, value in config.iteritems():
         save_config_value(key, value)
     save_config_value(constants.CONFIG_SETUP_KEY, True)
     refresh_config_warnings()
-    update_managed_repos()
+    if update:
+        update_managed_repos()
     log_to_client('Initial setup completed. You should now be able to use Dusty!')
