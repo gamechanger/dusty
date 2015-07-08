@@ -43,6 +43,10 @@ def _maybe_version_warning(executable, installed_version):
         daemon_warnings.warn('preflight', message)
 
 @returns_exception
+def _check_git():
+    _assert_executable_exists('git')
+
+@returns_exception
 def _check_nginx():
     _assert_executable_exists('nginx')
     installed_version = subprocess.check_output(['nginx', '-v'], stderr=subprocess.STDOUT).strip().split('/')[-1]
@@ -106,8 +110,8 @@ def _ensure_github_known_host():
             check_and_log_output_and_error(command, demote=False)
 
 def _check_executables():
-    return [check() for check in [_check_nginx, _check_rsync, _check_virtualbox, _check_boot2docker,
-              _check_docker, _check_docker_compose]]
+    return [check() for check in [_check_git, _check_nginx, _check_rsync, _check_virtualbox,
+                                  _check_boot2docker, _check_docker, _check_docker_compose]]
 
 def refresh_preflight_warnings():
     daemon_warnings.clear_namespace('preflight')
@@ -115,6 +119,7 @@ def refresh_preflight_warnings():
 
 def preflight_check():
     logging.info('Starting preflight check')
+    logging.info('Checking for required executables. PATH is {}'.format(os.getenv('PATH')))
     errors = _check_executables()
     errors.append(_assert_hosts_file_is_writable())
     str_errors = [str(e) for e in errors if e is not None]
