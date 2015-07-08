@@ -79,3 +79,13 @@ class TestRestartCLI(DustyIntegrationTestCase):
             f.write('new file!')
         self.run_command('restart appa')
         self.assertFileInContainer('appa', os.path.join('/app/a/', new_file_name))
+
+    def test_restart_dead_container(self):
+        self.run_command('stop appa')
+        self.run_command('restart appa')
+        self.assertContainerHasRestarted('appa')
+
+    def test_restart_fails_with_dead_link(self):
+        self.run_command('stop appa')
+        output = self.run_command('restart appb')
+        self.assertInSameLine(output, 'Cannot restart appb', 'appa')
