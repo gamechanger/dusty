@@ -179,7 +179,7 @@ class DustyIntegrationTestCase(TestCase):
     def exec_in_container(self, service_name, command):
         client = get_docker_client()
         container = get_container_for_app_or_service(client, service_name, raise_if_not_found=True)
-        return _exec_in_container(client, container, *command.split(' '))
+        return exec_in_container(client, container, *command.split(' '))
 
     def remove_path_in_container(self, service_name, file_path):
         self.exec_in_container(service_name, 'rm -rf {}'.format(file_path))
