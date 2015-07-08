@@ -129,7 +129,10 @@ def get_repo_of_app_or_library(app_or_library_name):
     """ This function takes an app or library name and will return the corresponding repo
     for that app or library"""
     specs = get_specs()
-    return Repo(specs.get_app_or_lib(app_or_library_name)['repo'])
+    repo_name = specs.get_app_or_lib(app_or_library_name)['repo']
+    if not repo_name:
+        return None
+    return Repo(repo_name)
 
 def get_specs_from_path(specs_path):
     return DustySpecs(specs_path)
@@ -148,7 +151,9 @@ def get_same_container_repos_from_spec(app_or_library_spec):
     """Given the spec of an app or library, returns all repos that are guaranteed
     to live in the same container"""
     repos = set()
-    repos.add(get_repo_of_app_or_library(app_or_library_spec.name))
+    app_or_lib_repo = get_repo_of_app_or_library(app_or_library_spec.name)
+    if app_or_lib_repo is not None:
+        repos.add(app_or_lib_repo)
     for dependent_name in app_or_library_spec['depends']['libs']:
         repos.add(get_repo_of_app_or_library(dependent_name))
     return repos
