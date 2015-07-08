@@ -65,10 +65,8 @@ def _get_dusty_containers(client, services, include_exited=False):
     of services. If no services are provided, attempts to
     return all containers associated with Dusty."""
     if services:
-        return [container
-                for container in client.containers(all=include_exited)
-                if any('/{}'.format(get_dusty_container_name(service)) in container.get('Names', [])
-                       for service in services)]
+        containers = [_get_container_for_app_or_service(client, service, include_exited=include_exited) for service in services]
+        return [container for container in containers if container]
     else:
         return [container
                 for container in client.containers(all=include_exited)
@@ -80,6 +78,7 @@ def _get_container_for_app_or_service(client, app_or_service_name, raise_if_not_
             return container
     if raise_if_not_found:
         raise RuntimeError('No running container found for {}'.format(app_or_service_name))
+    return None
 
 def _get_canonical_container_name(container):
     """Return the canonical container name, which should be
@@ -88,6 +87,9 @@ def _get_canonical_container_name(container):
     to which they are linked, but simply taking the shortest name
     should be sufficient to get us the shortest one."""
     return sorted(container['Names'], key=lambda name: len(name))[0][1:]
+
+def _get_app_or_service_name_from_container(container):
+    return _get_canonical_container_name(container).split('_')[1]
 
 def get_dusty_containers(app_or_service_names, include_exited=False):
     client = get_docker_client()

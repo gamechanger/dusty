@@ -57,6 +57,20 @@ def _get_build_path(app_spec):
 def _compile_docker_command(app_spec):
     return 'sh {}/{}'.format(constants.CONTAINER_COMMAND_FILES_DIR, dusty_command_file_name(app_spec.name))
 
+def links_for_app_or_service(app_or_service_name, assembled_specs):
+    spec = assembled_specs.get_app_or_service(app_or_service_name)
+    if spec.spec_type == 'services':
+        return assembled_specs['services'][spec.name].get('links', [])
+    elif spec.spec_type == 'apps':
+        return _links_for_app(spec, assembled_specs)
+    else:
+        raise RuntimeError('Invalid spec type {} to determine links for'.format(spec.spec_type))
+
+def _links_for_app(app_spec, assembled_specs):
+    return app_spec['depends']['services'] + \
+           app_spec['depends']['apps'] + \
+           _conditional_links(assembled_specs, app_spec.name)
+
 def _composed_app_dict(app_name, assembled_specs, port_specs):
     """ This function returns a dictionary of the docker-compose.yml specifications for one app """
     logging.info("Compose Compiler: Compiling dict for app {}".format(app_name))
@@ -73,9 +87,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
     compose_dict['command'] = _compile_docker_command(app_spec)
     logging.info("Compose Compiler: compiled command {}".format(compose_dict['command']))
-    compose_dict['links'] = app_spec['depends']['services'] + \
-                            app_spec['depends']['apps'] + \
-                            _conditional_links(assembled_specs, app_name)
+    compose_dict['links'] = _links_for_app(app_spec, assembled_specs)
     logging.info("Compose Compiler: links {}".format(compose_dict['links']))
     compose_dict['volumes'] = compose_dict['volumes'] + _get_compose_volumes(app_name, assembled_specs)
     logging.info("Compose Compiler: volumes {}".format(compose_dict['volumes']))

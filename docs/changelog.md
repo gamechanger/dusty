@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.2.2 (In Progress)
+ * NEW: `dusty restart` can now restart stopped containers.
 
 ## 0.2.1 (July 6, 2015)
   * BREAKING CHANGE: `all` is no longer an allowed suite.name in tests.  Setting a suite's name to `all` will cause `dusty validate` to fail.

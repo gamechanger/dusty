@@ -71,15 +71,18 @@ class TestDustySchemaClass(TestCase):
         self.assertEquals(set(['dogstoon', 1]), set(dusty_schema.values()))
 
 class TestDustySpecsClass(DustyTestCase):
-    def test_finds_app(self):
+    def test_finds_app_or_lib(self):
         specs = DustySpecs(self.temp_specs_path)
         self.assertEquals(specs.get_app_or_lib('app-a'), specs['apps']['app-a'])
-
-    def test_finds_lib(self):
-        specs = DustySpecs(self.temp_specs_path)
         self.assertEquals(specs.get_app_or_lib('lib-a'), specs['libs']['lib-a'])
 
     def test_raises_without_app_or_lib(self):
         specs = DustySpecs(self.temp_specs_path)
         with self.assertRaises(KeyError):
             specs.get_app_or_lib('non-existant-thingy')
+
+    def test_get_app_or_service(self):
+        specs = DustySpecs(self.temp_specs_path)
+        self.assertEquals(specs.get_app_or_service('app-a'), specs['apps']['app-a'])
+        self.assertEquals(specs.get_app_or_service('service-a'), specs['services']['service-a'])
+

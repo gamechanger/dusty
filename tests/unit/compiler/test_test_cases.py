@@ -116,50 +116,6 @@ class TestSpecAssemblerTestCases(DustyTestCase):
         self.assertEqual(set(['lib1', 'lib2']),
             spec_assembler._get_dependent('libs', 'app1', specs, 'apps'))
 
-class TestExpectedRunningContainers(DustyTestCase):
-    @patch('dusty.compiler.spec_assembler.get_assembled_specs')
-    def test_get_expected_number_of_running_containers_1(self, fake_get_assembled_specs):
-        specs = {'apps': {
-                    'app1': get_app_dusty_schema({'repo': '', 'image': ''}),
-                    'app2': get_app_dusty_schema({'repo': '', 'image': ''})},
-                 'libs': {
-                    'lib1': get_lib_dusty_schema({'repo': ''}),
-                    'lib2': get_lib_dusty_schema({'repo': ''})
-                 },
-                 'services': {
-                    'sev1': {},
-                    'sev2': {}
-                 },
-                 constants.CONFIG_BUNDLES_KEY: {
-                    'bun1': get_bundle_dusty_schema({'apps': []}),
-                    'bun2': get_bundle_dusty_schema({'apps': []})
-                 }}
-        fake_get_assembled_specs.return_value = specs
-        self.assertEqual(spec_assembler.get_expected_number_of_running_containers(), 4)
-
-
-    @patch('dusty.compiler.spec_assembler.get_assembled_specs')
-    def test_get_expected_number_of_running_containers_2(self, fake_get_assembled_specs):
-        specs = {'apps': {
-                    'app1': get_app_dusty_schema({'repo': '','image': ''})},
-                 'libs': {
-                    'lib1': get_lib_dusty_schema({'repo': ''}),
-                    'lib2': get_lib_dusty_schema({'repo': ''})
-                 },
-                 'services': {
-                    'sev1': get_lib_dusty_schema({'repo': ''}),
-                    'sev2': get_lib_dusty_schema({'repo': ''}),
-                    'sev3': get_lib_dusty_schema({'repo': ''})
-                 },
-                 constants.CONFIG_BUNDLES_KEY: {
-                    'bun1': get_bundle_dusty_schema({'apps': []}),
-                    'bun2': get_bundle_dusty_schema({'apps': []}),
-                    'bun1': get_bundle_dusty_schema({'apps': []}),
-                    'bun2': get_bundle_dusty_schema({'apps': []})
-                 }}
-        fake_get_assembled_specs.return_value = specs
-        self.assertEqual(spec_assembler.get_expected_number_of_running_containers(), 4)
-
 class TestSpecAssemblerGetRepoTestCases(DustyTestCase):
     def test_get_repo_of_app_or_service_app(self):
         self.assertEqual(spec_assembler.get_repo_of_app_or_library('app-a'), Repo('github.com/app/a'))
