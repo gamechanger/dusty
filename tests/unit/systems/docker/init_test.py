@@ -6,11 +6,11 @@ from mock import Mock, patch
 import yaml
 
 from dusty import constants
-from dusty.systems.docker import (get_docker_env, _get_dusty_containers, get_dusty_images, _get_container_for_app_or_service,
-                                  _get_canonical_container_name, _exec_in_container)
+from dusty.systems.docker import (get_docker_env, get_dusty_containers_with_client, get_dusty_images, get_container_for_app_or_service,
+                                  get_canonical_container_name, exec_in_container)
 
 from dusty.systems.docker.compose import write_composefile
-from dusty.systems.docker.cleanup import _get_exited_dusty_containers
+from dusty.systems.docker.cleanup import get_exited_dusty_containers
 from dusty.compiler.spec_assembler import get_specs
 from ....testcases import DustyTestCase
 
@@ -85,48 +85,48 @@ class TestComposeSystem(DustyTestCase):
         self.assertItemsEqual(result, expected)
 
     def test_get_dusty_containers_falsy(self):
-        self.assertEqual(_get_dusty_containers(self.fake_docker_client, []),
+        self.assertEqual(get_dusty_containers_with_client(self.fake_docker_client, []),
                          self.containers_return[:-1])
 
     def test_get_dusty_containers_short_name(self):
-        self.assertEqual(_get_dusty_containers(self.fake_docker_client, ['app-a']),
+        self.assertEqual(get_dusty_containers_with_client(self.fake_docker_client, ['app-a']),
                          [self.containers_return[0]])
 
     def test_get_dusty_containers_long_name(self):
-        self.assertEqual(_get_dusty_containers(self.fake_docker_client, ['app-b']),
+        self.assertEqual(get_dusty_containers_with_client(self.fake_docker_client, ['app-b']),
                          [self.containers_return[1]])
 
     def test_get_canonical_container_name(self):
-        self.assertEqual(_get_canonical_container_name(self.containers_return[1]), 'dusty_app-b_1')
+        self.assertEqual(get_canonical_container_name(self.containers_return[1]), 'dusty_app-b_1')
 
     def test_get_exited_containers(self):
-        self.assertEqual(_get_exited_dusty_containers(self.fake_docker_client), [self.containers_return[0]])
+        self.assertEqual(get_exited_dusty_containers(self.fake_docker_client), [self.containers_return[0]])
 
     def test_get_dusty_images(self):
         self.assertEqual(get_dusty_images(), set(['app/a:latest', 'app/b:latest', 'app/c:latest', 'service/a:latest']))
 
     def test_get_container_for_app_or_service(self):
-        result = _get_container_for_app_or_service(self.fake_docker_client, 'app-a')
+        result = get_container_for_app_or_service(self.fake_docker_client, 'app-a')
         self.assertIn('/dusty_app-a_1', result['Names'])
 
     def test_get_container_for_app_or_service_none_found(self):
-        result = _get_container_for_app_or_service(self.fake_docker_client, 'app-c')
+        result = get_container_for_app_or_service(self.fake_docker_client, 'app-c')
         self.assertIsNone(result)
 
     def test_get_container_for_app_or_service_none_found_with_raise(self):
         with self.assertRaises(RuntimeError):
-            _get_container_for_app_or_service(self.fake_docker_client,
+            get_container_for_app_or_service(self.fake_docker_client,
                                               'app-c',
                                               raise_if_not_found=True)
 
     def test_exec_in_container_with_args(self):
         self.fake_docker_client.exec_create.return_value = {'Id': 'exec-id'}
         fake_container = {'Id': 'container-id'}
-        _exec_in_container(self.fake_docker_client, fake_container, 'cp -r', '/tmp/a', '/tmp/b')
+        exec_in_container(self.fake_docker_client, fake_container, 'cp -r', '/tmp/a', '/tmp/b')
         self.fake_docker_client.exec_create.assert_called_once_with('container-id', 'cp -r /tmp/a /tmp/b')
 
     def test_exec_in_container_without_args(self):
         self.fake_docker_client.exec_create.return_value = {'Id': 'exec-id'}
         fake_container = {'Id': 'container-id'}
-        _exec_in_container(self.fake_docker_client, fake_container, 'ls')
+        exec_in_container(self.fake_docker_client, fake_container, 'ls')
         self.fake_docker_client.exec_create.assert_called_once_with('container-id', 'ls')
