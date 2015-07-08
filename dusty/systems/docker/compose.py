@@ -3,9 +3,9 @@ import logging
 
 import yaml
 
-from . import (_get_canonical_container_name, get_docker_env, get_docker_client,
-               _get_dusty_containers, _get_app_or_service_name_from_container,
-               _get_container_for_app_or_service)
+from . import (get_canonical_container_name, get_docker_env, get_docker_client,
+               get_dusty_containers_with_client, get_app_or_service_name_from_container,
+               get_container_for_app_or_service)
 from ... import constants
 from ...log import log_to_client
 from ...subprocess import check_output_demoted, check_and_log_output_and_error_demoted
@@ -52,10 +52,10 @@ def _compose_rm(compose_file_location, project_name, services):
 
 def _check_stopped_linked_containers(client, container, assembled_specs):
     stopped_containers = []
-    app_or_service_name = _get_app_or_service_name_from_container(container)
+    app_or_service_name = get_app_or_service_name_from_container(container)
     linked_containers = links_for_app_or_service(app_or_service_name, assembled_specs)
     for linked_name in linked_containers:
-        if _get_dusty_containers(client, [linked_name]) == []:
+        if get_dusty_containers_with_client(client, [linked_name]) == []:
             stopped_containers.append(linked_name)
     return stopped_containers
 
@@ -70,7 +70,7 @@ def _compose_restart(services):
     https://github.com/docker/compose/pull/1318"""
 
     def _restart_container(client, container):
-        log_to_client('Restarting {}'.format(_get_canonical_container_name(container)))
+        log_to_client('Restarting {}'.format(get_canonical_container_name(container)))
         client.restart(container['Id'], timeout=1)
 
     assembled_specs = get_assembled_specs()
@@ -79,7 +79,7 @@ def _compose_restart(services):
     logging.info('Restarting service containers from list: {}'.format(services))
     client = get_docker_client()
     for service in services:
-        container = _get_container_for_app_or_service(client, service, include_exited=True)
+        container = get_container_for_app_or_service(client, service, include_exited=True)
         if container is None:
             log_to_client('No container found for {}'.format(service))
             continue

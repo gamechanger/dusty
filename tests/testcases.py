@@ -17,7 +17,7 @@ from dusty.compiler.spec_assembler import get_specs_repo
 from dusty.commands.repos import override_repo
 from dusty.cli import main as client_entrypoint
 from dusty.schemas.base_schema_class import get_specs_from_path, DustySpecs
-from dusty.systems.docker import _exec_in_container, get_docker_client, _get_container_for_app_or_service, get_docker_env
+from dusty.systems.docker import exec_in_container, get_docker_client, get_container_for_app_or_service, get_docker_env
 from dusty.path import parent_dir
 from .fixtures import basic_specs_fixture
 
@@ -163,7 +163,7 @@ class DustyIntegrationTestCase(TestCase):
 
     def _container_exists_in_set(self, service_name, include_exited):
         client = get_docker_client()
-        container = _get_container_for_app_or_service(client, service_name, include_exited=include_exited)
+        container = get_container_for_app_or_service(client, service_name, include_exited=include_exited)
         return bool(container)
 
     def _image_exists(self, image_to_find):
@@ -178,8 +178,8 @@ class DustyIntegrationTestCase(TestCase):
 
     def exec_in_container(self, service_name, command):
         client = get_docker_client()
-        container = _get_container_for_app_or_service(client, service_name, raise_if_not_found=True)
-        return _exec_in_container(client, container, *command.split(' '))
+        container = get_container_for_app_or_service(client, service_name, raise_if_not_found=True)
+        return exec_in_container(client, container, *command.split(' '))
 
     def remove_path_in_container(self, service_name, file_path):
         self.exec_in_container(service_name, 'rm -rf {}'.format(file_path))
@@ -190,7 +190,7 @@ class DustyIntegrationTestCase(TestCase):
 
     def container_id(self, service_name):
         client = get_docker_client()
-        return _get_container_for_app_or_service(client, service_name, include_exited=True, raise_if_not_found=True)['Id']
+        return get_container_for_app_or_service(client, service_name, include_exited=True, raise_if_not_found=True)['Id']
 
     def inspect_container(self, service_name):
         container_id = self.container_id(service_name)

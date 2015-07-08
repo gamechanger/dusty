@@ -1,10 +1,10 @@
 import logging
 
 from ...log import log_to_client
-from . import _get_dusty_containers, get_dusty_images, get_docker_client
+from . import get_dusty_containers_with_client, get_dusty_images, get_docker_client
 
-def _get_exited_dusty_containers(client):
-    all_containers = _get_dusty_containers(client, None, include_exited=True)
+def get_exited_dusty_containers(client):
+    all_containers = get_dusty_containers_with_client(client, None, include_exited=True)
     stopped_containers = []
     for container in all_containers:
         if 'Exited' in container['Status']:
@@ -14,7 +14,7 @@ def _get_exited_dusty_containers(client):
 def remove_exited_dusty_containers():
     """Removed all dusty containers with 'Exited' in their status"""
     client = get_docker_client()
-    exited_containers = _get_exited_dusty_containers(client)
+    exited_containers = get_exited_dusty_containers(client)
     removed_containers = []
     for container in exited_containers:
         log_to_client("Removing container {}".format(container['Names'][0]))
