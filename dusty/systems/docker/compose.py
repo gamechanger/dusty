@@ -50,15 +50,14 @@ def _compose_rm(compose_file_location, project_name, services):
         command += services
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
-def _check_linked_container_status(client, container, assembled_specs):
+def _check_stopped_linked_containers(client, container, assembled_specs):
+    stopped_containers = []
     app_or_service_name = _get_app_or_service_name_from_container(container)
     linked_containers = links_for_app_or_service(app_or_service_name, assembled_specs)
     for linked_name in linked_containers:
         if _get_dusty_containers(client, [linked_name]) == []:
-            log_to_client('No running container for {0}, which is linked to by {1}.  Cannot restart {1}'.format(
-                              linked_name, app_or_service_name))
-            return False
-    return True
+            stopped_containers.append(linked_name)
+    return stopped_containers
 
 def _compose_restart(services):
     """Well, this is annoying. Compose 1.2 shipped with the
@@ -84,7 +83,11 @@ def _compose_restart(services):
         if container is None:
             log_to_client('No container found for {}'.format(service))
             continue
-        if _check_linked_container_status(client, container, assembled_specs):
+        stopped_linked_containers = _check_stopped_linked_containers(client, container, assembled_specs)
+        if stopped_linked_containers:
+            log_to_client('No running containers {0}, which are linked to by {1}.  Cannot restart {1}'.format(
+                              stopped_linked_containers, service))
+        else:
             _restart_container(client, container)
 
 def update_running_containers_from_spec(compose_config, recreate_containers=True):
