@@ -17,9 +17,9 @@ def git_error_handling():
     try:
         yield
     except git.exc.GitCommandError:
-        log_to_client('ERROR: Git command failed. If you are trying to access a private repo, '
-                      'please make sure you have added your SSH key to the SSH agent using: '
-                      'ssh-add <SSH key filepath>')
+        log_to_client('ERROR: Git command failed. If you are trying to access a remote repository '
+                      'over SSH (e.g. GitHub), please make sure you have added your SSH key to the '
+                      'SSH agent using: ssh-add <SSH key filepath>')
         raise
 
 class Repo(object):
