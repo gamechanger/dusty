@@ -93,16 +93,26 @@ def specs_fixture_with_depends():
     _write('service', 'servica', {'image': 'busybox'})
 
 
-def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']):
+def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999'], include_tests=False):
     """Fixture for use in integration tests. The local repo at
     /tmp/fake-repo should be set up before using this fixture."""
+    app_dict = {'repo': '/tmp/fake-repo',
+                'mount': '/repo',
+                'image': 'busybox',
+                'commands': {'always': command}}
+    if include_tests:
+        app_dict['test'] = {'image': 'python',
+                            'once': ['pip install nose'],
+                            'suites': [{'name': 'test1',
+                                        'command': ['nosetests'],
+                                        'default_args': '.'},
+                                        {'name': 'test2',
+                                        'command': ['nosetests'],
+                                        'default_args': '.'}]}
     for bundle in range(num_bundles):
         name = 'busybox{}'.format(_num_to_alpha(bundle))
         _write('bundle', name, {'description': 'Busybox bundle', 'apps': [name]})
-        _write('app', name, {'repo': '/tmp/fake-repo',
-                             'mount': '/repo',
-                             'image': 'busybox',
-                             'commands': {'always': command}})
+        _write('app', name, app_dict)
 
 def invalid_fixture():
     _write('app', 'invalid', {'spaghetti': 'meatballs'})
