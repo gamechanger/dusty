@@ -206,6 +206,11 @@ class DustyIntegrationTestCase(TestCase):
         client = get_docker_client()
         return client.inspect_container(container_id)
 
+    def remove_container(self, service_name):
+        container_id = self.container_id(service_name)
+        client = get_docker_client()
+        client.remove_container(container_id, force=True)
+
     def assertInSameLine(self, string, *values):
         self.assertTrue(self._in_same_line(string, *values))
 
