@@ -91,13 +91,14 @@ class DustyIntegrationTestCase(TestCase):
         self.fake_local_repo_location = '/tmp/fake-repo'
         self._set_up_fake_local_repo('/tmp/fake-repo')
         self._clear_stdout()
-        self.exec_docker_process = None
+        self.exec_docker_processes = []
 
     def tearDown(self):
-        try:
-            os.kill(self.exec_docker_process.pid)
-        except:
-            pass
+        for exec_docker_process in self.exec_docker_processes:
+            try:
+                os.kill(exec_docker_process.pid)
+            except:
+                pass
         shutil.rmtree(self.overridden_specs_path)
         if os.path.exists(constants.REPOS_DIR):
             shutil.rmtree(constants.REPOS_DIR)
@@ -126,7 +127,7 @@ class DustyIntegrationTestCase(TestCase):
 
     def exec_docker_patch(self, *args):
         args = ['docker'] + [a for a in args]
-        self.exec_docker_process = subprocess.Popen(args=args, stdout=subprocess.PIPE, env=get_docker_env(), shell=True)
+        self.exec_docker_processes.append(subprocess.Popen(args=args, stdout=subprocess.PIPE, env=get_docker_env(), shell=True))
 
     @patch('sys.exit')
     def run_command(self, args, fake_exit):
