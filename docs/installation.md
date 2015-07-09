@@ -12,6 +12,11 @@ Not all versions of these programs will work with Dusty.  Dusty
 will warn you if you have a version installed that may be too old.
 We recommend brew-installing the latest versions of each of these
 programs:
+
+## WARNING
+The most recent version of VirtualBox, [VirtualBox 5.0](https://www.virtualbox.org/wiki/Changelog), is [not compatible](https://github.com/gamechanger/dusty/issues/383) with the current version of boot2docker.
+Please install <strong>VirtualBox 4.X</strong> in order to run Dusty.
+
 ```
 brew update
 which nginx || brew install nginx
