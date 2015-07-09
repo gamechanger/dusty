@@ -1,4 +1,4 @@
-from os import path
+import os
 from shutil import rmtree
 from subprocess import check_call
 from tempfile import mkdtemp
@@ -16,21 +16,28 @@ class TestReposCLI(DustyIntegrationTestCase):
         super(TestReposCLI, self).setUp()
         busybox_single_app_bundle_fixture(num_bundles=1)
         self.run_command('bundles activate busyboxa')
+
         self.temp_repos_dir = mkdtemp()
+        self.fake_override_dir = mkdtemp()
+        self.fake_from_dir = mkdtemp()
+
+        os.chmod(self.temp_repos_dir, 0777)
+        os.chmod(self.fake_override_dir, 0777)
+        os.chmod(self.fake_from_dir, 0777)
+
         self.old_repos_dir = constants.REPOS_DIR
         constants.REPOS_DIR = self.temp_repos_dir
-        self.fake_override_repo_location = path.join(mkdtemp(), 'fake-repo')
+        self.fake_override_repo_location = os.path.join(self.fake_override_dir, 'fake-repo')
         self._set_up_fake_local_repo(path=self.fake_override_repo_location)
-        self.fake_from_dir = mkdtemp()
-        self.fake_from_repo_location = path.join(self.fake_from_dir, 'fake-repo')
+        self.fake_from_repo_location = os.path.join(self.fake_from_dir, 'fake-repo')
         self._set_up_fake_local_repo(path=self.fake_from_repo_location)
 
     def tearDown(self):
         self.run_command('bundles deactivate busyboxa')
         constants.REPOS_DIR = self.old_repos_dir
-        rmtree(self.fake_override_repo_location)
-        rmtree(self.fake_from_dir)
         rmtree(self.temp_repos_dir)
+        rmtree(self.fake_override_dir)
+        rmtree(self.fake_from_dir)
         super(TestReposCLI, self).tearDown()
 
     def test_repos_list(self):
@@ -62,11 +69,11 @@ class TestReposCLI(DustyIntegrationTestCase):
 
     def test_repos_update(self):
         git_repo = git.Repo(self.fake_override_repo_location)
-        target_file = path.join(self.fake_override_repo_location, 'car')
+        target_file = os.path.join(self.fake_override_repo_location, 'car')
         check_call(['touch', target_file])
-        self.assertFalse(path.isfile(path.join(constants.REPOS_DIR, target_file[1:])))
+        self.assertFalse(os.path.isfile(os.path.join(constants.REPOS_DIR, target_file[1:])))
         self.run_command('repos override fake-repo {}'.format(self.fake_override_repo_location))
         git_repo.index.add([target_file])
         git_repo.index.commit('Second commit')
         self.run_command('repos update')
-        self.assertTrue(path.isfile(path.join(constants.REPOS_DIR, target_file)))
+        self.assertTrue(os.path.isfile(os.path.join(constants.REPOS_DIR, target_file)))

@@ -9,9 +9,9 @@ class TestCpCLI(DustyIntegrationTestCase):
         super(TestCpCLI, self).setUp()
         busybox_single_app_bundle_fixture(num_bundles=2)
         self.run_command('bundles activate busyboxa busyboxb')
-
         self.file_paths = []
         self.temp_dir = tempfile.mkdtemp()
+        os.chmod(self.temp_dir, 0777)
         for file_num in range(1, 3):
             file_path = os.path.join(self.temp_dir, 'file{}.txt'.format(file_num))
             self.file_paths.append(file_path)
