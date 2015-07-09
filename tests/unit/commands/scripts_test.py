@@ -1,7 +1,7 @@
 from mock import patch
 
 from ...testcases import DustyTestCase
-from dusty.commands.script import script_info_for_app, execute_script
+from dusty.commands.scripts import script_info_for_app, execute_script
 
 class TestScriptCommands(DustyTestCase):
     def test_script_info_for_app_nonexistent_app(self):
@@ -33,17 +33,17 @@ class TestScriptCommands(DustyTestCase):
     @patch('dusty.commands.utils.exec_docker')
     def test_execute_script_valid_input(self, fake_exec_docker):
         execute_script('app-a', 'example')
-        fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', 'sh', '/command_files/dusty_command_file_app-a_script_example.sh')
+        fake_exec_docker.assert_called_once_with('exec', '-i', 'dusty_app-a_1', 'sh', '/command_files/dusty_command_file_app-a_script_example.sh')
 
     @patch('dusty.commands.utils.exec_docker')
     def test_execute_script_valid_input_one_arg(self, fake_exec_docker):
         execute_script('app-a', 'example', ['.'])
-        fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', 'sh', '/command_files/dusty_command_file_app-a_script_example.sh', '.')
+        fake_exec_docker.assert_called_once_with('exec', '-i', 'dusty_app-a_1', 'sh', '/command_files/dusty_command_file_app-a_script_example.sh', '.')
 
     @patch('dusty.commands.utils.exec_docker')
     def test_execute_script_valid_input_three_args(self, fake_exec_docker):
         execute_script('app-a', 'example', ['.', './', '..'])
-        fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', 'sh', '/command_files/dusty_command_file_app-a_script_example.sh', '.', './', '..')
+        fake_exec_docker.assert_called_once_with('exec', '-i', 'dusty_app-a_1', 'sh', '/command_files/dusty_command_file_app-a_script_example.sh', '.', './', '..')
 
     @patch('dusty.commands.utils.exec_docker')
     def test_execute_script_valid_input_not_accept_arguments(self, fake_exec_docker):

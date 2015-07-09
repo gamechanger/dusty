@@ -11,9 +11,9 @@ class TestShellCommands(DustyTestCase):
     @patch('dusty.commands.utils.exec_docker')
     def test_execute_script_valid_app(self, fake_exec_docker):
         execute_shell('app-a')
-        fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_app-a_1', '/bin/bash')
+        fake_exec_docker.assert_called_once_with('exec', '-i', 'dusty_app-a_1', '/bin/bash')
 
     @patch('dusty.commands.utils.exec_docker')
     def test_execute_script_valid_service(self, fake_exec_docker):
         execute_shell('service-a')
-        fake_exec_docker.assert_called_once_with('exec', '-ti', 'dusty_service-a_1', '/bin/bash')
+        fake_exec_docker.assert_called_once_with('exec', '-i', 'dusty_service-a_1', '/bin/bash')

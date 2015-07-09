@@ -9,7 +9,6 @@ Options:
 """
 
 import os
-import atexit
 import logging
 import socket
 

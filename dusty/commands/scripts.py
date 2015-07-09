@@ -1,4 +1,5 @@
 import textwrap
+
 from prettytable import PrettyTable
 
 from ..log import log_to_client
@@ -38,6 +39,6 @@ def execute_script(app_name, script_name, script_arguments=[]):
         raise KeyError('No script found named {} in specs for app {}'.format(script_name, app_name))
 
     command_file = '{}/{}'.format(constants.CONTAINER_COMMAND_FILES_DIR, dusty_command_file_name(app_specs.name, script_name=script_name))
-
     container_name = get_dusty_container_name(app_name)
-    utils.exec_docker('exec', '-ti', container_name, 'sh', command_file, *script_arguments)
+    exec_options = utils.exec_docker_options()
+    utils.exec_docker('exec', exec_options, container_name, 'sh', command_file, *script_arguments)
