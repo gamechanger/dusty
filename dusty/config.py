@@ -98,10 +98,10 @@ def _load_ssh_auth_pre_yosemite():
         daemon_warnings.warn('ssh', 'No running ssh-agent found linked to SSH_AUTH_SOCK')
 
 def _set_ssh_auth_sock(ssh_auth_sock):
+    daemon_warnings.clear_namespace('ssh')
     if ssh_auth_sock:
         logging.info("Setting SSH_AUTH_SOCK to {}".format(ssh_auth_sock))
         os.environ['SSH_AUTH_SOCK'] = ssh_auth_sock
-        daemon_warnings.clear_namespace('ssh')
     else:
         daemon_warnings.warn('ssh', 'SSH_AUTH_SOCK not determined; git operations may fail')
 
