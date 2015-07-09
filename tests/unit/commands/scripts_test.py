@@ -1,7 +1,7 @@
 from mock import patch
 
 from ...testcases import DustyTestCase
-from dusty.commands.script import script_info_for_app, execute_script
+from dusty.commands.scripts import script_info_for_app, execute_script
 
 class TestScriptCommands(DustyTestCase):
     def test_script_info_for_app_nonexistent_app(self):

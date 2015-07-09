@@ -17,7 +17,7 @@ Examples:
 from docopt import docopt
 
 from ..payload import Payload
-from ..commands.script import script_info_for_app, execute_script
+from ..commands.scripts import script_info_for_app, execute_script
 
 def main(argv):
     args = docopt(__doc__, argv)
