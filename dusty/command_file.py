@@ -22,11 +22,8 @@ def _tee_output_commands(command_to_tee):
         'PIPEFILE={}_pipe_file'.format(tee_function_name),
         'rm -f $PIPEFILE',
         'mkfifo $PIPEFILE',
-        'tee {}.log < $PIPEFILE &'.format(os.path.join(constants.CONTAINER_LOG_PATH, command_to_tee)),
-        'TEEPID=$!',
-        '{} > $PIPEFILE 2>&1'.format(command_to_tee),
-        'wait $TEEPID',
-        'rm -f $PIPEFILE',
+        '(tee {}.log < $PIPEFILE || true; rm -f $PIPEFILE) &'.format(os.path.join(constants.CONTAINER_LOG_PATH, command_to_tee)),
+        '{} 2>&1 > $PIPEFILE'.format(command_to_tee),
         '}',
         tee_function_name
     ]
@@ -55,7 +52,7 @@ def _get_always_commands(app_spec):
         commands_with_function.append('dusty_always_fn () {')
         commands_with_function += always_commands
         commands_with_function.append('}')
-        commands_with_function += _tee_output_commands('dusty_always_fn')
+        commands_with_function.append('dusty_always_fn')
     return commands_with_function
 
 def _compile_docker_commands(app_name, assembled_specs):
