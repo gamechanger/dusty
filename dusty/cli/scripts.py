@@ -20,7 +20,7 @@ from ..payload import Payload
 from ..commands.scripts import script_info_for_app, execute_script
 
 def main(argv):
-    args = docopt(__doc__, argv)
+    args = docopt(__doc__, argv, options_first=True)
     if not args['<script_name>']:
         return Payload(script_info_for_app, args['<app_name>'])
     else:
