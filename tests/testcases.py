@@ -20,6 +20,7 @@ from dusty.schemas.base_schema_class import get_specs_from_path, DustySpecs
 from dusty.systems.docker import exec_in_container, get_docker_client, get_container_for_app_or_service, get_docker_env
 from dusty.path import parent_dir
 from .fixtures import basic_specs_fixture
+from dusty.log import client_logger, DustyClientTestingSocketHandler
 
 class TestCaptureHandler(logging.Handler):
     def __init__(self, lst):
@@ -80,6 +81,8 @@ class DustyIntegrationTestCase(TestCase):
             raise RuntimeError('You must set the env var DUSTY_ALLOW_INTEGRATION_TESTS to run integration tests. '
                                'This may affect your local config, do not run integration tests on your actual '
                                "machine unless you know what you're doing!")
+        self.handler = DustyClientTestingSocketHandler()
+        client_logger.addHandler(self.handler)
         self.previous_config = get_config()
         self._clear_stdout()
         self.overridden_specs_path = tempfile.mkdtemp()
@@ -106,6 +109,8 @@ class DustyIntegrationTestCase(TestCase):
             shutil.rmtree(constants.COMPOSE_DIR)
         shutil.rmtree('/tmp/fake-repo')
         save_config(self.previous_config)
+        self.handler.log_to_client_output = ''
+        client_logger.removeHandler(self.handler)
 
     def _clear_stdout(self):
         self.stdout_start = len(sys.stdout.getvalue())
