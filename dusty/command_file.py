@@ -23,7 +23,7 @@ def _tee_output_commands(command_to_tee):
         'rm -f $PIPEFILE',
         'mkfifo $PIPEFILE',
         '(tee {}.log < $PIPEFILE || true; rm -f $PIPEFILE) &'.format(os.path.join(constants.CONTAINER_LOG_PATH, command_to_tee)),
-        '{} > $PIPEFILE 2>&1'.format(command_to_tee),
+        '{} 2>&1 > $PIPEFILE'.format(command_to_tee),
         '}',
         tee_function_name
     ]
