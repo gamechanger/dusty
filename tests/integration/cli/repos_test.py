@@ -35,9 +35,9 @@ class TestReposCLI(DustyIntegrationTestCase):
     def tearDown(self):
         self.run_command('bundles deactivate busyboxa')
         constants.REPOS_DIR = self.old_repos_dir
-        rmtree(self.fake_override_repo_location)
-        rmtree(self.fake_from_dir)
         rmtree(self.temp_repos_dir)
+        rmtree(self.fake_override_dir)
+        rmtree(self.fake_from_dir)
         super(TestReposCLI, self).tearDown()
 
     def test_repos_list(self):
