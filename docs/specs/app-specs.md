@@ -139,7 +139,7 @@ The `always` script must run the application's main process.
 Generally, you will want to do expensive setup operations like installs inside `once`, then start your
 application inside of `always`.
 
-The output of these commands is logged inside the app's container at `/var/log/dusty_always.log` and `/var/log/dusty_once.log`.
+The output of the once command is logged inside the app's container at `/var/log/dusty_once_fn.log`.
 
 ## scripts
 
