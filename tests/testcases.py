@@ -89,7 +89,10 @@ class DustyIntegrationTestCase(TestCase):
         write_default_config()
         save_config_value(constants.CONFIG_SETUP_KEY, True)
         save_config_value(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/dusty-example-specs')
-        save_config_value(constants.CONFIG_MAC_USERNAME_KEY, self.current_user)
+
+        self.tests_user = os.getenv('DUSTY_INTEGRATION_TESTS_USER', self.current_user)
+        save_config_value(constants.CONFIG_MAC_USERNAME_KEY, self.tests_user)
+
         override_repo(get_specs_repo().remote_path, self.overridden_specs_path)
         self.fake_local_repo_location = '/tmp/fake-repo'
         self._set_up_fake_local_repo('/tmp/fake-repo')

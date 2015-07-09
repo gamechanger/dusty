@@ -9,7 +9,7 @@ class TestConfigCLI(DustyIntegrationTestCase):
         result = self.run_command('config list')
         self.assertInSameLine(result, 'Key', 'Description', 'Value')
         self.assertInSameLine(result, 'bundles', '[]')
-        self.assertInSameLine(result, 'mac_username', self.current_user)
+        self.assertInSameLine(result, 'mac_username', self.tests_user)
         self.assertInSameLine(result, 'setup_has_run', 'True')
 
     def test_config_listvalues_returns(self):
