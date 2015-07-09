@@ -14,6 +14,16 @@ class DustySocketHandler(logging.Handler):
         msg = self.format(record)
         self.connection_socket.sendall("{}\n".format(msg.encode('utf-8').strip()))
 
+class DustyClientTestingSocketHandler(logging.Handler):
+    def __init__(self):
+        super(DustyClientTestingSocketHandler, self).__init__()
+        self.log_to_client_output = ''
+
+    def emit(self, record):
+        msg = self.format(record)
+        self.log_to_client_output += '{}\n'.format(msg.encode('utf-8').strip())
+
+client_logger = logging.getLogger(SOCKET_LOGGER_NAME)
 
 def configure_logging():
     logging.basicConfig(stream=sys.stdout,
@@ -29,8 +39,7 @@ def make_socket_logger(connection_socket):
     logger.addHandler(handler)
 
 def log_to_client(message):
-    logger = logging.getLogger(SOCKET_LOGGER_NAME)
-    logger.info(message)
+    client_logger.info(message)
 
 def close_socket_logger():
     global handler
