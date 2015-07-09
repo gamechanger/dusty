@@ -2,7 +2,8 @@ from schemer import ValidationException
 
 from ...testcases import DustyTestCase
 from ..utils import apply_required_keys
-from dusty.commands.validate import (_validate_app_references, _validate_cycle_free)
+from dusty.commands.validate import (_validate_app_references, _validate_cycle_free,
+                                     _check_name_overlap)
 from dusty import constants
 
 class ValidatorTest(DustyTestCase):
@@ -109,3 +110,34 @@ class ValidatorTest(DustyTestCase):
         specs = self.make_test_specs(specs)
         with self.assertRaises(ValidationException):
             _validate_cycle_free(specs)
+
+    def test_app_lib_unique_detection(self):
+        specs = {'apps': {
+                    'overlap': {
+                    },
+                },
+                'libs': {
+                    'overlap': {
+                    },
+                }
+        }
+        apply_required_keys(specs)
+        specs = self.make_test_specs(specs)
+        with self.assertRaises(ValidationException):
+            _check_name_overlap(specs)
+
+
+    def test_app_service_unique_detection(self):
+        specs = {'apps': {
+                    'overlap': {
+                    },
+                },
+                'services': {
+                    'overlap': {
+                    },
+                }
+        }
+        apply_required_keys(specs)
+        specs = self.make_test_specs(specs)
+        with self.assertRaises(ValidationException):
+            _check_name_overlap(specs)

@@ -37,7 +37,22 @@ def _validate_lib_references(lib, specs):
     if not_present:
         raise ValidationException('Libs {} are not present in your specs'.format(', '.join(not_present)))
 
+def _check_name_overlap(specs):
+    apps = set(specs['apps'].keys())
+    libs = set(specs['libs'].keys())
+    services = set(specs['services'].keys())
+    app_service_overlap = apps.intersection(services)
+    if app_service_overlap:
+        raise ValidationException('Apps and services cannot share names: {}'.format(app_service_overlap))
+    app_lib_overlap = apps.intersection(libs)
+    if app_lib_overlap:
+        raise ValidationException('Apps and libs cannot share names: {}'.format(app_lib_overlap))
+    service_lib_overlap = services.intersection(libs)
+    if service_lib_overlap:
+        raise ValidationException('Services and libs cannot share names: {}'.format(service_lib_overlap))
+
 def _validate_spec_names(specs):
+    _check_name_overlap(specs)
     for app in specs['apps'].values():
         _validate_app_references(app, specs)
     for bundle in specs['bundles'].values():
