@@ -22,11 +22,8 @@ def _tee_output_commands(command_to_tee):
         'PIPEFILE={}_pipe_file'.format(tee_function_name),
         'rm -f $PIPEFILE',
         'mkfifo $PIPEFILE',
-        'tee {}.log < $PIPEFILE &'.format(os.path.join(constants.CONTAINER_LOG_PATH, command_to_tee)),
-        'TEEPID=$!',
+        '(tee {}.log < $PIPEFILE || true; rm -f $PIPEFILE) &'.format(os.path.join(constants.CONTAINER_LOG_PATH, command_to_tee)),
         '{} > $PIPEFILE 2>&1'.format(command_to_tee),
-        'wait $TEEPID',
-        'rm -f $PIPEFILE',
         '}',
         tee_function_name
     ]
