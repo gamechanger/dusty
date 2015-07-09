@@ -2,6 +2,7 @@
 
 ## 0.2.2 (In Progress)
  * NEW: `dusty restart` can now restart stopped containers.
+ * NEW: `dusty upgrade` command.  This command will upgrade Dusty's version by replacing the Dusty binary
 
  * FIXED: Containers will no longer block running commands that are backgrounded in the `once` script.
 
