@@ -47,6 +47,9 @@ def _check_name_overlap(specs):
     app_lib_overlap = apps.intersection(libs)
     if app_lib_overlap:
         raise ValidationException('Apps and libs cannot share names: {}'.format(app_lib_overlap))
+    service_lib_overlap = services.intersection(libs)
+    if service_lib_overlap:
+        raise ValidationException('Services and libs cannot share names: {}'.format(service_lib_overlap))
 
 def _validate_spec_names(specs):
     _check_name_overlap(specs)
