@@ -52,7 +52,7 @@ def _get_always_commands(app_spec):
         commands_with_function.append('dusty_always_fn () {')
         commands_with_function += always_commands
         commands_with_function.append('}')
-        commands_with_function += _tee_output_commands('dusty_always_fn')
+        commands_with_function.append('dusty_always_fn')
     return commands_with_function
 
 def _compile_docker_commands(app_name, assembled_specs):
