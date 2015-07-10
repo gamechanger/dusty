@@ -104,6 +104,20 @@ def specs_fixture_with_depends():
                             }})
     _write('service', 'servica', {'image': 'busybox'})
 
+def fixture_with_commands(once_fail=False, always_fail=False):
+    once_commands = ['touch /once_test_file', 'echo "once ran" | tee -a /once_test_file']
+    always_commands = ['touch /always_test_file', 'echo "always ran" | tee -a /always_test_file', 'sleep 999999']
+    if once_fail:
+        once_commands = ['stdbuf -i0 -o0 -e0 echo "once starting"', 'random-command', 'echo "once ran"']
+    if always_fail:
+        always_commands = ['echo "always starting"', 'random-command', 'echo "always ran"']
+    _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
+    _write('app', 'appa', {'commands': {
+                                'once': once_commands,
+                                'always': always_commands
+                            },
+                            'image': 'python',
+                          })
 
 def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']):
     """Fixture for use in integration tests. The local repo at

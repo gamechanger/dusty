@@ -136,7 +136,7 @@ class DustyIntegrationTestCase(TestCase):
     def exec_docker_patch(self, *args):
         docker_executable = subprocess.check_output('which docker', shell=True).rstrip('\n')
         args = [docker_executable] + [a for a in args]
-        self.exec_docker_processes.append(subprocess.Popen(args=args, stdout=subprocess.PIPE, env=get_docker_env()))
+        self.exec_docker_processes.append(subprocess.Popen(args=args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=get_docker_env()))
 
     @patch('sys.exit')
     def run_command(self, args, fake_exit):
@@ -205,6 +205,11 @@ class DustyIntegrationTestCase(TestCase):
         container_id = self.container_id(service_name)
         client = get_docker_client()
         return client.inspect_container(container_id)
+
+    def remove_container(self, service_name):
+        container_id = self.container_id(service_name)
+        client = get_docker_client()
+        client.remove_container(container_id, force=True)
 
     def assertInSameLine(self, string, *values):
         self.assertTrue(self._in_same_line(string, *values))
