@@ -31,14 +31,14 @@ class TestCommandFile(DustyIntegrationTestCase):
 
     def test_once_to_stdout(self):
         self.run_command('up')
-        output = self.run_command('logs appa')
-        print output
+        self.run_command('logs appa')
+        output = self.exec_docker_processes[0].stdout.read()
         self.assertTrue('once ran' in output)
 
     def test_always_to_stdout(self):
         self.run_command('up')
-        output = self.run_command('logs appa')
-        print output
+        self.run_command('logs appa')
+        output = self.exec_docker_processes[0].stdout.read()
         self.assertTrue('always ran' in output)
 
     def test_once_output_is_logged(self):
@@ -48,8 +48,8 @@ class TestCommandFile(DustyIntegrationTestCase):
     def test_once_stops_on_error(self):
         fixture_with_commands(once_fail=True)
         self.run_command('up')
-        output = self.run_command('logs appa')
-        print output
+        self.run_command('logs appa')
+        output = self.exec_docker_processes[0].stdout.read()
         self.assertTrue('once starting' in output)
         self.assertInSameLine(output, 'random-command', 'not found')
         self.assertFalse('once ran' in output)
@@ -58,8 +58,8 @@ class TestCommandFile(DustyIntegrationTestCase):
     def test_always_stops_on_error(self):
         fixture_with_commands(always_fail=True)
         self.run_command('up')
-        output = self.run_command('logs appa')
-        print output
+        self.run_command('logs appa')
+        output = self.exec_docker_processes[0].stdout.read()
         self.assertTrue('once ran' in output)
         self.assertTrue('always starting' in output)
         self.assertInSameLine(output, 'random-command', 'not found')
