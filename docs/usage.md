@@ -343,6 +343,26 @@ and Docker Compose
  * Sync repos from your mac to boot2docker
  * Re-create and launch your docker containers
 
+#### upgrade
+```
+Upgrade Dusty's binaries
+
+Upgrades Dusty to the specified version.  If no version is
+specified, this will upgrade to the latest version.  This command
+only works if Dusty is being run as a binary (as opposed to running
+from source).
+
+Usage:
+  upgrade [<version>]
+
+Options:
+  <version>     If provided, this version of Dusty will be downloaded
+                and used (defaults to use the most recent version)
+```
+This command downloads the binary from GitHub, replacing whatever binary is being used
+to run the Dusty daemon.  The daemon then makes a call to `exec` to run the new binary.
+
+
 #### validate
 ```
 Validates specs to ensure that they're consistent with specifications
