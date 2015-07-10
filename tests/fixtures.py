@@ -35,9 +35,19 @@ def single_specs_fixture():
                             },
                             'image': 'busybox',
                             'mount': '/app/a',
-                            'scripts': [{'description': 'A script description',
-                                        'command': ['touch /app/a/foo'],
-                                        'name': 'example'}]})
+                            'scripts': [
+                                {'description': 'A script description',
+                                 'command': ['touch /app/a/foo'],
+                                 'name': 'example'},
+                                {'description': 'A rm script',
+                                 'command': ['rm'],
+                                 'name': 'example_rm'},
+                                {'description': 'An ls script',
+                                 'command': ['ls'],
+                                 'name': 'example_ls'},
+                                {'description': 'A touch script',
+                                 'command': ['touch'],
+                                 'name': 'example_touch'}]})
 
 def basic_specs_fixture():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['app-a']})

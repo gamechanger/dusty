@@ -35,3 +35,19 @@ class TestScriptsCLI(DustyIntegrationTestCase):
         self.run_command('scripts appa example')
         self.assertFileInContainer('appa', '/app/a/foo')
         self.exec_in_container('appa', 'rm /app/a/foo')
+
+    def test_with_arg(self):
+        self.run_command('scripts appa example')
+        self.assertFileInContainer('appa', '/app/a/foo')
+        self.run_command('scripts appa example_rm /app/a/foo')
+        self.assertFileNotInContainer('appa', '/app/a/foo')
+
+    def test_with_flag(self):
+        self.run_command('scripts appa example_ls')
+        self.run_command('scripts appa example_ls -l')
+        self.assertTrue(len(self.exec_docker_processes[0].stdout.read()) < len(self.exec_docker_processes[1].stdout.read()))
+
+    def test_with_flag_and_option(self):
+        self.assertFileNotInContainer('appa', '/app/a/foo')
+        self.run_command('scripts appa example_touch -c /app/a/foo')
+        self.assertFileNotInContainer('appa', '/app/a/foo')
