@@ -139,7 +139,7 @@ class DustyIntegrationTestCase(TestCase):
         self.exec_docker_processes.append(subprocess.Popen(args=args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=get_docker_env()))
 
     @patch('sys.exit')
-    def run_command(self, args, fake_exit):
+    def run_command(self, args, fake_exit, raise_on_error=True):
         """Run a command through the Dusty client entrypoint, e.g. simulating
         the Dusty CLI as close as possible without having to call a subprocess.
         This command raises if the command fails, otherwise it returns the
@@ -150,7 +150,7 @@ class DustyIntegrationTestCase(TestCase):
             client_entrypoint()
             for call in fake_exit.mock_calls:
                 name, args, kwargs = call
-                if len(args) == 1 and args[0] > 0:
+                if len(args) == 1 and args[0] > 0 and raise_on_error:
                     self._clear_stdout()
                     raise CommandError('Command {} returned with exit code: {}'.format(' '.join(sys.argv), args[0]))
             result = self.stdout
