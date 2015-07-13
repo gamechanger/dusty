@@ -30,9 +30,9 @@ ssh-add -K
   -or-
 ssh-add -K <path-of-private-key>
 ```
-ssh-add adds private key identities to the authentication agent, ssh-agent. This will allow Dusty
-to pull repos using your saved ssh credentials. `<path-of-private-key>` should point at the ssh file setup
-to talk to your remote git repository (Github for instance).
+`ssh-add` adds private key identities to the authentication agent, `ssh-agent`. This will allow Dusty
+to pull repos using your saved SSH credentials. `<path-of-private-key>` should point at the SSH file set up
+to talk to your remote git repository (GitHub for instance).
 
 ## Dusty Installation
 
