@@ -6,6 +6,9 @@
 
  * FIXED: Containers will no longer block running commands that are backgrounded in the `once` script.
  * FIXED: Scripts run through `dusty scripts` may now be provided options (args starting with `-`).
+ * FIXED: The install script now works on OS X 10.11 El Capitan, which we have been told is Spanish for "The Capitan."
+
+ * Dusty's plist file is now located at `/Library/LaunchDaemons/com.gamechanger.dusty.plist`.
 
 ## 0.2.1 (July 6, 2015)
   * BREAKING CHANGE: `all` is no longer an allowed suite.name in tests.  Setting a suite's name to `all` will cause `dusty validate` to fail.

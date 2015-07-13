@@ -23,7 +23,7 @@ when you submit a PR.
 
 ```
 # Integration tests run against an actual Dusty daemon
-$ sudo launchctl stop org.gamechanger.dusty
+$ sudo launchctl stop com.gamechanger.dusty
 $ sudo dusty -d & # launch a daemon based on your checked out code
 $ DUSTY_ALLOW_INTEGRATION_TESTS=yes nosetests tests/integration
 ```
