@@ -17,14 +17,24 @@ programs:
 The most recent version of VirtualBox, [VirtualBox 5.0](https://www.virtualbox.org/wiki/Changelog), is [not compatible](https://github.com/gamechanger/dusty/issues/383) with the current version of boot2docker.
 Please install <strong>VirtualBox 4.X</strong> in order to run Dusty.
 
+## Pre-Dusty Install
+
 ```
 brew update
 which nginx || brew install nginx
 which boot2docker || brew install boot2docker
 which docker-compose || brew install docker-compose
 ```
+```
+ssh-add -K
+  -or-
+ssh-add -K <path-of-private-key>
+```
+`ssh-add` adds private key identities to the authentication agent, `ssh-agent`. This will allow Dusty
+to pull repos using your saved SSH credentials. `<path-of-private-key>` should point at the SSH file set up
+to talk to your remote git repository (GitHub for instance).
 
-## Installation
+## Dusty Installation
 
 To download and install Dusty, run:
 ```
