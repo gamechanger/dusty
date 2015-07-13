@@ -8,7 +8,7 @@ import urllib
 import psutil
 
 from .. import constants
-from ..daemon import close_client_connection
+from ..daemon import close_client_connection, clean_up_socket
 from ..log import log_to_client
 from ..payload import daemon_command
 
@@ -81,4 +81,5 @@ def upgrade_dusty_binary(version=None):
     final_binary_path = _move_temp_binary_to_path(tmp_binary_path)
     log_to_client('Finished upgrade to version {} of Dusty!  The daemon will now restart'.format(version))
     close_client_connection()
+    clean_up_socket()
     os.execvp(final_binary_path, [final_binary_path, '-d'])
