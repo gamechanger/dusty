@@ -123,7 +123,7 @@ class TestSetupCommands(DustyTestCase):
     def test_get_and_configure_nginx_includes_dir_usr_no(self, fake_get_contents, fake_isfile, fake_get_raw_input, fake_setup_nginx):
         fake_isfile.side_effect = self.factory_file_side_effect('/usr/local/etc/nginx/nginx.conf')
         fake_get_contents.return_value = ['servers/*;']
-        fake_get_raw_input.return_value = ''
+        fake_get_raw_input.return_value = 'n'
         result = _get_and_configure_nginx_includes_dir()
         self.assertEqual(result, '')
 
@@ -318,3 +318,8 @@ class TestSetupCommands(DustyTestCase):
         self.assertEqual(_get_boot2docker_vm_size(), 1)
         fake_get_raw_input.assert_has_calls([call('Your system seems to have 6144 megabytes of memory. We would like to allocate 2048 to your vm. Is that ok? (y/n) '),
                                              call('Please input the number of megabytes to allocate to the vm: ')])
+    @patch('dusty.commands.setup._get_raw_input')
+    def test_enter_is_accepted_as_yes(self, fake_get_raw_input):
+        fake_get_raw_input.return_value = ''
+        setup_dusty_config()
+

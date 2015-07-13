@@ -22,7 +22,7 @@ def _get_raw_input(string):
 def _get_mac_username():
     _pretty_print_key_info(constants.CONFIG_MAC_USERNAME_KEY)
     proposed_mac_username = subprocess.check_output(['id', '-un']).strip()
-    if _get_raw_input("Is {} the username under which you'll primarily use Dusty? (y/n): ".format(proposed_mac_username)).upper() == 'Y':
+    if _get_raw_input("Is {} the username under which you'll primarily use Dusty? (y/n): ".format(proposed_mac_username)).upper() != 'N':
         return proposed_mac_username
     else:
         return _get_raw_input('Enter your actual mac_username: ')
@@ -60,7 +60,7 @@ def _get_and_configure_nginx_includes_dir():
                 if line.startswith('include'):
                     include_folder = line.replace('include ', '').replace('/*;', '').replace('\n', '').strip()
                     return '{}/{}'.format(nginx_conf_location, include_folder)
-            if _get_raw_input('\n'.join(textwrap.wrap('You have non standard nginx config setup. Can we add "include servers/*;" to the end of your nginx config file ({})? If you select no, your nginx forwarding will not work. (y/n) '.format(file_location), 80))).upper() == 'Y':
+            if _get_raw_input('\n'.join(textwrap.wrap('You have non standard nginx config setup. Can we add "include servers/*;" to the end of your nginx config file ({})? If you select no, your nginx forwarding will not work. (y/n) '.format(file_location), 80))).upper() != 'N':
                 return _setup_nginx_config(nginx_conf_location)
             else:
                 return ''
@@ -79,7 +79,7 @@ def _get_recommended_vm_size(system_memory):
 def _get_boot2docker_vm_size():
     memory_megs = virtual_memory().total / 2**20
     vm_megs = _get_recommended_vm_size(memory_megs)
-    if _get_raw_input('Your system seems to have {} megabytes of memory. We would like to allocate {} to your vm. Is that ok? (y/n) '.format(memory_megs, vm_megs)).upper() == 'Y':
+    if _get_raw_input('Your system seems to have {} megabytes of memory. We would like to allocate {} to your vm. Is that ok? (y/n) '.format(memory_megs, vm_megs)).upper() != 'N':
         return vm_megs
     else:
         return _get_raw_input('Please input the number of megabytes to allocate to the vm: ')
