@@ -6,7 +6,7 @@ from mock import patch, call
 
 from dusty.config import get_config_value
 from dusty.commands.bundles import activate_bundle
-from dusty.commands.repos import (list_repos, override_repo, manage_repo,
+from dusty.commands.repos import (list_repos, override_repo, manage_repo, manage_all_repos,
                                   override_repos_from_directory, update_managed_repos)
 from dusty.compiler.spec_assembler import get_specs_repo
 from ...testcases import DustyTestCase
@@ -64,6 +64,15 @@ class TestReposCommands(DustyTestCase):
         manage_repo('github.com/app/a')
         self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY),
                               {get_specs_repo().remote_path: self.temp_specs_path})
+
+    def test_override_then_manage_all(self):
+        override_repo('github.com/app/a', self.temp_specs_path)
+        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY),
+                              {get_specs_repo().remote_path: self.temp_specs_path,
+                               'github.com/app/a': self.temp_specs_path})
+        manage_all_repos()
+        self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY),
+                              {})
 
     def test_override_repos_from_directory(self):
         override_repos_from_directory(self.temp_repos_path)
