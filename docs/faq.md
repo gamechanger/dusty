@@ -22,15 +22,11 @@ able to clone your private GitHub repos, you need to configure your standard use
 your `mac_username` is set to), to be able to clone repositories without any prompt for
 confirmation or password.
 
-See [this GitHub help article](https://help.github.com/articles/generating-ssh-keys/)
-for some info about setting up GitHub ssh keys.
-
-Since the daemon has no way to accept a password via user input, if your key requires a
-passphrase, you should run
 ```
 ssh-add -K <path-of-private-key>
 ```
-This will securely save the passphrase for that key in your Keychain.
+ssh-add adds private key identities to the authentication agent, ssh-agent. This will allow Dusty
+to pull repos using your `mac_username`'s ssh credentials.
 
 ### My tests are hanging at this step: `Creating test...`.  What do I do?
 Dusty tests use docker logs, which streams one line at a time.  So if you are using a test library which outputs its results on a single line (like python's nosetests) this can give the illusion that your tests are hanging when they running fine.
