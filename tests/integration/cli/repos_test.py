@@ -7,7 +7,7 @@ import git
 
 from dusty import constants
 from dusty.log import log_to_client
-from ...fixtures import busybox_single_app_bundle_fixture
+from ...fixtures import busybox_single_app_bundle_fixture, single_specs_fixture
 from ...testcases import DustyIntegrationTestCase
 
 
@@ -15,7 +15,6 @@ class TestReposCLI(DustyIntegrationTestCase):
     def setUp(self):
         super(TestReposCLI, self).setUp()
         busybox_single_app_bundle_fixture(num_bundles=1)
-        self.run_command('bundles activate busyboxa')
 
         self.temp_repos_dir = mkdtemp()
         self.fake_override_dir = mkdtemp()
@@ -31,9 +30,9 @@ class TestReposCLI(DustyIntegrationTestCase):
         self._set_up_fake_local_repo(path=self.fake_override_repo_location)
         self.fake_from_repo_location = os.path.join(self.fake_from_dir, 'fake-repo')
         self._set_up_fake_local_repo(path=self.fake_from_repo_location)
+        single_specs_fixture()
 
     def tearDown(self):
-        self.run_command('bundles deactivate busyboxa')
         constants.REPOS_DIR = self.old_repos_dir
         rmtree(self.temp_repos_dir)
         rmtree(self.fake_override_dir)
@@ -60,6 +59,24 @@ class TestReposCLI(DustyIntegrationTestCase):
         result = self.run_command('repos manage fake-repo')
         self.assertNotInSameLine(result, 'fake-repo', self.fake_override_repo_location)
         self.assertInSameLine(result, 'fake-repo', self.fake_local_repo_location)
+
+    def test_repos_manage_all_with_one(self):
+        self.run_command('repos override fake-repo {}'.format(self.fake_override_repo_location))
+        self.assertInSameLine(result, self.fake_override_repo_location, 'fake-repo')
+        self.run_command('repos manage --all')
+        result = self.run_command('repos list')
+        self.assertNotInSameLine(result, self.fake_override_repo_location, 'fake-repo')
+
+
+    def test_repos_manage_all_with_multiple(self):
+        self.run_command('repos override fake-repo {}'.format(self.fake_override_repo_location))
+        self.run_command('repos override github.com/app/a {}'.format(self.fake_from_repo_location))
+        self.assertInSameLine(result, self.fake_override_repo_location, 'fake-repo')
+        self.assertInSameLine(result, self.fake_override_from_location, 'github.com/app/a')
+        self.run_command('repos manage --all')
+        result = self.run_command('repos list')
+        self.assertNotInSameLine(result, self.fake_override_repo_location, 'fake-repo')
+        self.assertNotInSameLine(result, self.fake_from_repo_location, 'github.com/app/a')
 
     def test_repos_from(self):
         self.run_command('repos from {}'.format(self.fake_from_dir))

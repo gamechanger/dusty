@@ -9,7 +9,7 @@ is useful for actively developing apps and libs that depend on that
 repo. To override a repo, use the `override` or `from` commands.
 
 Usage:
-  repos from [--all] <source_path>
+  repos from <source_path>
   repos list
   repos manage (--all | <repo_name>)
   repos override <repo_name> <source_path>
@@ -18,7 +18,7 @@ Usage:
 Commands:
   from        Override all repos from a given directory
   list        Show state of all repos referenced in specs
-  manage      Tell Dusty to manage a repo, removing any overrides
+  manage      Tell Dusty to manage a repo or all repos, removing any overrides
   override    Override a repo with a local copy that you manage
   update      Pull latest master on Dusty-managed repos
 """
