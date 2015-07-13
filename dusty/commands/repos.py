@@ -35,6 +35,8 @@ def _manage_repo(repo_name):
         del config[repo.remote_path]
         save_config_value(constants.CONFIG_REPO_OVERRIDES_KEY, config)
         log_to_client('Will manage repo {} with Dusty-managed copy of source'.format(repo.remote_path))
+    else:
+        log_to_client('No overriden repos found by name {}'.format(repo_name))
 
 
 @daemon_command
@@ -44,7 +46,8 @@ def manage_repo(repo_name):
 @daemon_command
 def manage_all_repos():
     for repo in get_all_repos():
-        _manage_repo(repo.remote_path)
+        if repo.remote_path in get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY).keys():
+            _manage_repo(repo.remote_path)
 
 @daemon_command
 def override_repos_from_directory(source_path):

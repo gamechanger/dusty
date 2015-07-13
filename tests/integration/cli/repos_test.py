@@ -62,6 +62,7 @@ class TestReposCLI(DustyIntegrationTestCase):
 
     def test_repos_manage_all_with_one(self):
         self.run_command('repos override fake-repo {}'.format(self.fake_override_repo_location))
+        result = self.run_command('repos list')
         self.assertInSameLine(result, self.fake_override_repo_location, 'fake-repo')
         self.run_command('repos manage --all')
         result = self.run_command('repos list')
@@ -71,8 +72,9 @@ class TestReposCLI(DustyIntegrationTestCase):
     def test_repos_manage_all_with_multiple(self):
         self.run_command('repos override fake-repo {}'.format(self.fake_override_repo_location))
         self.run_command('repos override github.com/app/a {}'.format(self.fake_from_repo_location))
+        result = self.run_command('repos list')
         self.assertInSameLine(result, self.fake_override_repo_location, 'fake-repo')
-        self.assertInSameLine(result, self.fake_override_from_location, 'github.com/app/a')
+        self.assertInSameLine(result, self.fake_from_repo_location, 'github.com/app/a')
         self.run_command('repos manage --all')
         result = self.run_command('repos list')
         self.assertNotInSameLine(result, self.fake_override_repo_location, 'fake-repo')

@@ -21,6 +21,9 @@ Commands:
   manage      Tell Dusty to manage a repo or all repos, removing any overrides
   override    Override a repo with a local copy that you manage
   update      Pull latest master on Dusty-managed repos
+
+Options:
+  --all       When provided to manage, dusty will manage all currently overridden repos
 """
 
 from docopt import docopt
