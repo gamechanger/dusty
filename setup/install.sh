@@ -3,8 +3,9 @@ set -e
 # This is set by Jenkins during release
 release=
 LEGACY_INSTALL_ROOT=/System/Library/LaunchDaemons
+LEGACY_PLIST_NAME=org.gamechanger.dusty.plist
 INSTALL_ROOT=/Library/LaunchDaemons
-PLIST_NAME=org.gamechanger.dusty.plist
+PLIST_NAME=com.gamechanger.dusty.plist
 
 function bold_echo {
     echo -e "\033[1m$1\033[0m"
@@ -24,8 +25,8 @@ bold_echo "Loading dusty daemon"
 sudo launchctl load $INSTALL_ROOT/$PLIST_NAME
 
 # Clean up install from legacy install directory if it exists
-if [ -f $LEGACY_INSTALL_ROOT/$PLIST_NAME ]; then
+if [ -f $LEGACY_INSTALL_ROOT/$LEGACY_PLIST_NAME ]; then
     echo "Removing legacy install plist in $LEGACY_INSTALL_ROOT"
-    sudo launchctl unload $LEGACY_INSTALL_ROOT/$PLIST_NAME
-    sudo rm $LEGACY_INSTALL_ROOT/$PLIST_NAME
+    sudo launchctl unload $LEGACY_INSTALL_ROOT/$LEGACY_PLIST_NAME
+    sudo rm $LEGACY_INSTALL_ROOT/$LEGACY_PLIST_NAME
 fi
