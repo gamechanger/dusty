@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.2.2 (In Progress)
+## 0.2.3 (In Progress)
+
+## 0.2.2 (July 14, 2015)
  * NEW: `dusty repos manage` can now accept an `--all` flag, to have Dusty manage all overridden repos
  * NEW: `dusty restart` can now restart stopped containers.
  * NEW: `dusty upgrade` command.  This command will upgrade Dusty's version by replacing the Dusty binary
