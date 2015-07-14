@@ -24,6 +24,9 @@ from . import constants
 
 connection = None
 
+def clean_up_socket():
+    _clean_up_existing_socket(SOCKET_PATH)
+
 def _clean_up_existing_socket(socket_path):
     try:
         os.unlink(socket_path)
