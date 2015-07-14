@@ -44,17 +44,18 @@ class TestUpgrade(DustyIntegrationTestCase):
 
     def test_upgrade_source_fails(self):
         self.run_daemon_source()
-        output = ''
         output = self.run_command('upgrade')
         self.assertTrue('It looks like you\'re running Dusty from source' in output)
-        output = self.run_command('version')
-        self.assertInSameLine(output, 'daemon', 'version', constants.VERSION)
+        self.assertBinaryVersionUnchanged()
 
     def test_upgrade_bad_name_fails(self):
         shutil.copy('dist/dusty', 'dist/python')
         self.run_daemon_binary(path='./dist/python')
-        output = ''
         with self.assertRaises(self.CommandError):
-            output = self.run_command('upgrade')
+            self.run_command('upgrade')
+        self.assertBinaryVersionUnchanged()
+
+    def assertBinaryVersionUnchanged(self):
         output = self.run_command('version')
         self.assertInSameLine(output, 'daemon', 'version', constants.VERSION)
+
