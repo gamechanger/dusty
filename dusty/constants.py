@@ -1,6 +1,6 @@
 import os
 
-VERSION = '0.2.3'
+VERSION = '0.3.0'
 BINARY = False # overridden by PyInstaller when we build a binary
 
 EXAMPLE_SPECS_REPO = 'github.com/gamechanger/dusty-example-specs'
