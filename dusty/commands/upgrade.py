@@ -46,6 +46,9 @@ def _test_dusty_binary(binary_path, version):
     except CalledProcessError:
         raise RuntimeError('Downloaded binary is not operating correctly; aborting upgrade')
     test_version = output.split()[-1]
+    if 'RC' in version:
+        log_to_client('Release candidate requested, skipping version check')
+        return
     if test_version != version:
         raise RuntimeError('Version of downloaded binary {} does not match expected {}'.format(test_version, version))
 
