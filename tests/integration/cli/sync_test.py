@@ -23,3 +23,9 @@ class TestSyncCLI(DustyIntegrationTestCase):
         self.assertFileContentsInContainer('busyboxa',
                                            '/repo/README.md',
                                            '# fake-repo')
+
+    def test_sync_repo_is_destructive(self):
+        self.exec_in_container('busyboxa', 'touch /repo/testfile')
+        self.assertFileInContainer('busyboxa', '/repo/testfile')
+        self.run_command('sync fake-repo')
+        self.assertFileNotInContainer('busyboxa', '/repo/testfile')
