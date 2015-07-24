@@ -80,19 +80,22 @@ def get_docker_vm_ip():
     ip = check_output_demoted(['boot2docker', 'ip']).rstrip()
     return ip
 
-def _format_df_line(line):
-    split_line = line.split()
-    usage_pct = split_line[4]
-    total = split_line[1]
-    used = split_line[2]
-    free = split_line[3]
-    formatted_usage = "Usage: {}\n".format(usage_pct)
-    formatted_usage += "Total Size: {}\n".format(total)
-    formatted_usage += "Used: {}\n".format(used)
-    formatted_usage += "Free: {}".format(free)
+def _parse_df_output(df_line):
+    split_line = df_line.split()
+    return {'total': split_line[1],
+            'used': split_line[2],
+            'free': split_line[3],
+            'usage_pct': split_line[4]}
+
+def _format_df_dict(df_dict):
+    formatted_usage = "Usage: {}\n".format(df_dict['usage_pct'])
+    formatted_usage += "Total Size: {}\n".format(df_dict['total'])
+    formatted_usage += "Used: {}\n".format(df_dict['used'])
+    formatted_usage += "Free: {}".format(df_dict['free'])
     return formatted_usage
 
-def get_docker_vm_disk_info():
+def get_docker_vm_disk_info(as_dict=False):
     df_output = check_output_demoted(['boot2docker', 'ssh', 'df', '-h', '|', 'grep', '/dev/sda1'])
-    output_lines = df_output.split('\n')
-    return _format_df_line(output_lines[0])
+    df_line = df_output.split('\n')[0]
+    df_dict = _parse_df_output(df_line)
+    return df_dict if as_dict else _format_df_dict(df_dict)

@@ -11,6 +11,7 @@ from .. import constants
 from ..command_file import make_up_command_files
 from ..source import Repo
 from ..payload import daemon_command
+from ..warnings import daemon_warnings
 
 @daemon_command
 def start_local_env(recreate_containers=True, pull_repos=True):
@@ -35,6 +36,13 @@ def start_local_env(recreate_containers=True, pull_repos=True):
         except CalledProcessError as e:
             log_to_client("WARNING: docker-compose stop failed")
             log_to_client(str(e))
+
+    daemon_warnings.clear_namespace('disk')
+    df_info = virtualbox.get_docker_vm_disk_info(as_dict=True)
+    if 'M' in df_info['free'] or 'K' in df_info['free']:
+        warning_msg = 'VM is low on disk. Available disk: {}'.format(df_info['free'])
+        daemon_warnings.warn('disk', warning_msg)
+        log_to_client(warning_msg)
 
     log_to_client("Compiling together the assembled specs")
     active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
