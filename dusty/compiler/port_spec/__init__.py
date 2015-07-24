@@ -10,7 +10,6 @@ def _docker_compose_port_spec(host_forwarding_spec, host_port):
 
 def _nginx_port_spec(host_forwarding_spec, port, boot2docker_ip):
     return {'proxied_port': str(port),
-            'boot2docker_ip': boot2docker_ip,
             'host_address': host_forwarding_spec['host_name'],
             'host_port': str(host_forwarding_spec['host_port'])}
 
