@@ -10,7 +10,11 @@ from ...log import log_to_client
 
 def _ensure_rsync_is_installed():
     logging.info('Installing rsync inside the Docker VM')
-    check_and_log_output_and_error_demoted(['boot2docker', 'ssh', 'tce-load -wi rsync'])
+    # We're running tce-load twice as a hack to get around the fact that, for
+    # completely unknown reasons, tce-load will return with an exit code of 1 after
+    # initial install even if it works just fine. Subsequent install attempts will
+    # be no-ops with a return code of 0.
+    check_and_log_output_and_error_demoted(['boot2docker', 'ssh', 'tce-load -wi rsync || tce-load -wi rsync'])
 
 def _ensure_persist_dir_is_linked():
     logging.info('Linking {} to VBox disk (if it is not already linked)'.format(constants.VM_PERSIST_DIR))
