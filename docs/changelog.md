@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.3.0 (In Progress)
+## 0.3.1 (In Progress)
+
+## 0.3.0 (July 24, 2015)
  * BREAKING CHANGE: All rsync commands which write data to the VM (sync and disk restore) now remove any files present in the destination directory but not in the source directory. This should make it easier to reason about what is on disk on the VM side of sync. However, files written into source directories at runtime will now be deleted by sync operations.
  * NEW: `dusty upgrade` can now be used to upgrade to a release candidate
 
