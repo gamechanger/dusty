@@ -1,5 +1,3 @@
-from ...systems.virtualbox import get_docker_vm_ip
-
 class ReusedHostFullAddress(Exception):
     pass
 
@@ -42,7 +40,6 @@ def get_port_spec_document(expanded_active_specs, boot2docker_ip):
     """ Given a dictionary containing the expanded dusty DAG specs this function will
     return a dictionary containing the port mappings needed by downstream methods.  Currently
     this includes docker_compose, virtualbox, nginx and hosts_file."""
-    vm_ip = get_docker_vm_ip()
     forwarding_port = 65000
     port_spec = {'docker_compose':{}, 'nginx':[], 'hosts_file':[]}
     host_full_addresses = set()
@@ -62,6 +59,6 @@ def get_port_spec_document(expanded_active_specs, boot2docker_ip):
             port_spec['docker_compose'][app_name].append(_docker_compose_port_spec(host_forwarding_spec, forwarding_port))
             port_spec['nginx'].append(_nginx_port_spec(host_forwarding_spec, forwarding_port, boot2docker_ip))
 
-            add_host_names(host_forwarding_spec, vm_ip, port_spec, host_names)
+            add_host_names(host_forwarding_spec, boot2docker_ip, port_spec, host_names)
             forwarding_port += 1
     return port_spec
