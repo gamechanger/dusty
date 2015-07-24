@@ -3,7 +3,6 @@
 ## Requirements
 You must have the following installed in order to run Dusty:
 
- * [nginx](http://wiki.nginx.org/Main)
  * [Virtualbox](https://www.virtualbox.org/wiki/VirtualBox)
  * [boot2docker](http://boot2docker.io/)
  * [Docker Compose](https://docs.docker.com/compose/)
@@ -21,7 +20,6 @@ Please install <strong>VirtualBox 4.X</strong> in order to run Dusty.
 
 ```
 brew update
-which nginx || brew install nginx
 which boot2docker || brew install boot2docker
 which docker-compose || brew install docker-compose
 ```

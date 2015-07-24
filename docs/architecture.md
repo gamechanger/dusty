@@ -3,7 +3,7 @@
 ## Client / Daemon Structure
 
 * Dusty uses a client/daemon structure.
-* The daemon (`dusty -d`) runs with root permissions to modify the hosts file (/etc/hosts) and use nginx. By default the daemon runs automatically using a plist.
+* The daemon (`dusty -d`) runs with root permissions to modify the hosts file (/etc/hosts). By default, the daemon runs automatically via a plist and launchd.
 * A client sends the daemon commands over a unix socket. The client is run on the command line.
 
 ## System Components
@@ -11,7 +11,6 @@
 Dusty leverages several programs and system components:
 
  * /etc/hosts file
- * [nginx](http://wiki.nginx.org/Main)
  * [Docker](https://www.docker.com/)
  * [boot2docker](http://boot2docker.io/) and [Virtualbox](https://www.virtualbox.org/wiki/VirtualBox)
  * [Docker Compose](https://docs.docker.com/compose/)
@@ -28,7 +27,6 @@ The compile step uses the Dusty specs to do the following:
 
 During the run step Dusty does the following:
 
- * Tells nginx to reload its config
  * Ensures that the boot2docker VM (linux) is running
  * Syncs code from your mac to your boot2docker VM using rsync
  * Uses Docker Compose to launch your apps and services
@@ -41,19 +39,19 @@ Your hosts file (`/etc/hosts`) is modified by Dusty so that you can use Dusty-sp
 local host names.  An example addition to your hostfile:
 ```
 # BEGIN section for Dusty
-127.0.0.1 local.example-app.com
+192.168.1.5 local.example-app.com
 # END section for Dusty
 ```
-This allows `local.example-app.com` to be handled by nginx.
+This points `local.example-app.com` to your boot2docker VM, where the request is then handled
+by the containerized nginx which Dusty manages inside the VM.
 
 ### nginx
 
-Dusty writes a `dusty.conf` nginx configuration file. This is placed in the directory included by your `nginx.conf` file (e.g. `/usr/local/etc/nginx/servers/`).
+Dusty runs a containerized nginx which is used to route requests from your boot2docker VM to
+the appropriate application container. The config for this nginx instance is stored at
+`/persist/dustyNginx/dustyNginx.conf` inside the boot2docker VM.
 
-nginx is used to route requests on your localhost to your boot2docker VM. This is done using the IP of the VM.
-The port specified on your mac is mapped to an intermediate port on your VM (starting at 65000).
-
-An example `dusty.conf` is:
+An example `dustyNginx.conf` is:
 ```
 http {
      server {
