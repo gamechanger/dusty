@@ -34,14 +34,6 @@ def _assert_executable_exists(executable_name):
     except subprocess.CalledProcessError, OSError:
         raise PreflightException('Executable not found: {}'.format(executable_name))
 
-def _maybe_version_warning(executable, installed_version):
-    if installed_version != constants.SYSTEM_DEPENDENCY_VERSIONS[executable]:
-        message = 'Your {} version ({}) deviates from the supported version ({}).'.format(executable,
-                                                                                          installed_version,
-                                                                                          constants.SYSTEM_DEPENDENCY_VERSIONS[executable])
-        warnings.warn(message)
-        daemon_warnings.warn('preflight', message)
-
 @returns_exception
 def _check_git():
     _assert_executable_exists('git')
@@ -53,26 +45,18 @@ def _check_rsync():
 @returns_exception
 def _check_virtualbox():
     _assert_executable_exists('VBoxManage')
-    installed_version = subprocess.check_output(['VBoxManage', '-v']).split('r')[0]
-    _maybe_version_warning('virtualbox', installed_version)
 
 @returns_exception
 def _check_boot2docker():
     _assert_executable_exists('boot2docker')
-    installed_version = subprocess.check_output(['boot2docker', 'version']).splitlines()[0].split(':')[1].split('v')[-1]
-    _maybe_version_warning('boot2docker', installed_version)
 
 @returns_exception
 def _check_docker():
     _assert_executable_exists('docker')
-    installed_version = subprocess.check_output(['docker', '-v']).split(',')[0].split(' ')[-1]
-    _maybe_version_warning('docker', installed_version)
 
 @returns_exception
 def _check_docker_compose():
     _assert_executable_exists('docker-compose')
-    installed_version = subprocess.check_output(['docker-compose', '--version']).split('\n')[0].split()[-1].strip()
-    _maybe_version_warning('docker-compose', installed_version)
 
 @returns_exception
 def _assert_hosts_file_is_writable():

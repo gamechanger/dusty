@@ -48,13 +48,6 @@ HOSTS_PATH = '/etc/hosts'
 
 VIRTUALBOX_RULE_PREFIX = 'dusty'
 
-SYSTEM_DEPENDENCY_VERSIONS = {
-    'virtualbox': '4.3.26',
-    'boot2docker': '1.7.1',
-    'docker': '1.7.1',
-    'docker-compose': '1.3.1'
-}
-
 CONFIG_BUNDLES_KEY = 'bundles'
 CONFIG_REPO_OVERRIDES_KEY = 'repo_overrides'
 CONFIG_MAC_USERNAME_KEY = 'mac_username'
