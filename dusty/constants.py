@@ -8,8 +8,6 @@ EXAMPLE_SPECS_REPO = 'github.com/gamechanger/dusty-example-specs'
 SOCKET_TERMINATOR = '\0\0'
 SOCKET_ERROR_TERMINATOR = '\0\1'
 
-LOCALHOST = "127.0.0.1"
-
 SOCKET_LOGGER_NAME = 'socket_logger'
 
 RUN_DIR = '/var/run/dusty'
