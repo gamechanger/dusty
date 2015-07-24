@@ -50,8 +50,8 @@ VIRTUALBOX_RULE_PREFIX = 'dusty'
 
 SYSTEM_DEPENDENCY_VERSIONS = {
     'virtualbox': '4.3.26',
-    'boot2docker': '1.7.0',
-    'docker': '1.7.0',
+    'boot2docker': '1.7.1',
+    'docker': '1.7.1',
     'docker-compose': '1.3.1'
 }
 
