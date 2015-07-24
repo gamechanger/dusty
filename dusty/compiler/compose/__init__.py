@@ -10,10 +10,23 @@ from ... import constants
 from ...command_file import dusty_command_file_name
 from .common import container_code_path, get_volume_mounts, get_app_volume_mounts, get_lib_volume_mounts
 
+def _compose_dict_for_nginx(port_specs):
+    """Return a dictionary containing the Compose spec required to run
+    Dusty's nginx container used for host forwarding."""
+    spec = {'image': constants.NGINX_IMAGE,
+            'volumes': ['{}:{}'.format(constants.NGINX_CONFIG_DIR_IN_VM, constants.NGINX_CONFIG_DIR_IN_CONTAINER)],
+            'command': 'nginx -g "daemon off;"'}
+    all_host_ports = set([nginx_spec['host_port'] for nginx_spec in port_specs['nginx']])
+    if all_host_ports:
+        spec['ports'] = []
+        for port in all_host_ports:
+            spec['ports'].append('{0}:{0}'.format(port))
+    return {'nginx': spec}
+
 def get_compose_dict(assembled_specs, port_specs):
     """ This function returns a dictionary representation of a docker-compose.yml file, based on assembled_specs from
     the spec_assembler, and port_specs from the port_spec compiler """
-    compose_dict = {}
+    compose_dict = _compose_dict_for_nginx(port_specs)
     for app_name in assembled_specs['apps'].keys():
         compose_dict[app_name] = _composed_app_dict(app_name, assembled_specs, port_specs)
     for service_spec in assembled_specs['services'].values():

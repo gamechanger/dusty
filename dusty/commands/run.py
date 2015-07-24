@@ -51,7 +51,7 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     hosts.update_hosts_file_from_port_spec(port_spec)
     log_to_client("Syncing local repos to the VM")
     rsync.sync_repos(active_repos)
-    log_to_client("Saving nginx config and ensure nginx is running")
+    log_to_client("Saving updated nginx config to the VM")
     nginx.update_nginx_from_config(nginx_config)
     log_to_client("Saving Docker Compose config and starting all containers")
     compose.update_running_containers_from_spec(compose_config, recreate_containers=recreate_containers)

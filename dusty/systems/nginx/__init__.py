@@ -22,4 +22,4 @@ def update_nginx_from_config(nginx_config):
     logging.info('Updating nginx with new Dusty config')
     temp_path = tempfile.mkstemp()[1]
     _write_nginx_config(nginx_config, temp_path)
-    sync_local_path_to_vm(temp_path, '/persist/dustyNginx/nginx.conf')
+    sync_local_path_to_vm(temp_path, os.path.join(constants.NGINX_CONFIG_DIR_IN_VM, 'dustyNginx.conf'))

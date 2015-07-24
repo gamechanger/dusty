@@ -25,13 +25,16 @@ COMMAND_FILES_DIR = os.path.join(CONFIG_DIR, 'commands')
 DUSTY_GITHUB_PATH = 'gamechanger/dusty'
 DUSTY_BINARY_NAME = 'dusty'
 
-NGINX_MAX_FILE_SIZE = "500M"
-
 VM_IP_FROM_DOCKER = '172.17.42.1'
 
 VM_PERSIST_DIR = '/persist'
 VM_REPOS_DIR = os.path.join(VM_PERSIST_DIR, 'repos')
 LOCAL_BACKUP_DIR = 'dusty-backup'
+
+NGINX_CONFIG_DIR_IN_VM = os.path.join(VM_PERSIST_DIR, 'dustyNginx')
+NGINX_CONFIG_DIR_IN_CONTAINER = '/etc/nginx/conf.d'
+NGINX_MAX_FILE_SIZE = "500M"
+NGINX_IMAGE = "nginx:1.9.3"
 
 VM_CP_DIR = '/cp'
 CONTAINER_CP_DIR = '/cp'

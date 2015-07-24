@@ -16,7 +16,7 @@ class TestPortSpecCompiler(DustyTestCase):
                                             'host_port': '8001'}]}
 
     def test_get_nginx_configuration_spec_1(self):
-        expected_output = cleanse("""http {
+        expected_output = cleanse("""
             server {
                 client_max_body_size 500M;
                 listen 80;
@@ -30,13 +30,12 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_pass http://172.17.42.1:80;
                 }
             }
-        }
         """)
         output = cleanse(get_nginx_configuration_spec(self.port_spec_dict_1))
         self.assertEqual(output, expected_output)
 
     def test_get_nginx_configuration_spec_2(self):
-        expected_output = cleanse("""http {
+        expected_output = cleanse("""
             server {
                 client_max_body_size 500M;
                 listen 8001;
@@ -50,7 +49,6 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_pass http://172.17.42.1:8000;
                 }
             }
-        }
         """)
         output = cleanse(get_nginx_configuration_spec(self.port_spec_dict_2))
         self.assertEqual(output, expected_output)
@@ -63,7 +61,7 @@ class TestPortSpecCompiler(DustyTestCase):
                                 'host_address': 'local.gc.com',
                                 'host_port': '80'}]}
 
-        expected_output = cleanse("""http {
+        expected_output = cleanse("""
             server {
                 client_max_body_size 500M;
                 listen 8001;
@@ -90,7 +88,6 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_pass http://172.17.42.1:80;
                 }
             }
-        }
         """)
         output = cleanse(get_nginx_configuration_spec(port_spec))
         self.assertEqual(output, expected_output)
