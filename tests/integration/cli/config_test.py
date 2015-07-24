@@ -25,6 +25,6 @@ class TestConfigCLI(DustyIntegrationTestCase):
             self.run_command('config set bacon-level extreme')
 
     def test_config_set_works_with_valid_input(self):
-        self.run_command('config set nginx_includes_dir /var/nginx')
+        self.run_command('config set vm_memory_size 3000')
         result = yaml.load(self.run_command('config listvalues'))
-        self.assertEqual(result['nginx_includes_dir'], '/var/nginx')
+        self.assertEqual(result['vm_memory_size'], '3000')

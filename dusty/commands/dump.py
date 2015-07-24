@@ -7,7 +7,6 @@ from ..warnings import daemon_warnings
 from ..payload import daemon_command
 
 DIAGNOSTIC_SUBPROCESS_COMMANDS = [
-    ['nginx', '-v'],
     ['which', 'rsync'],
     ['VBoxManage', '-v'],
     ['boot2docker', 'version'],

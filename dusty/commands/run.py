@@ -35,6 +35,7 @@ def start_local_env(recreate_containers=True, pull_repos=True):
         except CalledProcessError as e:
             log_to_client("WARNING: docker-compose stop failed")
             log_to_client(str(e))
+
     log_to_client("Compiling together the assembled specs")
     active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
     log_to_client("Compiling the port specs")
@@ -50,9 +51,9 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     hosts.update_hosts_file_from_port_spec(port_spec)
     log_to_client("Syncing local repos to the VM")
     rsync.sync_repos(active_repos)
-    log_to_client("Saving nginx config and ensure nginx is running")
+    log_to_client("Saving updated nginx config to the VM")
     nginx.update_nginx_from_config(nginx_config)
-    log_to_client("Saving docker-compose config and starting all containers")
+    log_to_client("Saving Docker Compose config and starting all containers")
     compose.update_running_containers_from_spec(compose_config, recreate_containers=recreate_containers)
 
     log_to_client("Your local environment is now started!")

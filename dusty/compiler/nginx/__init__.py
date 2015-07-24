@@ -1,7 +1,7 @@
-from ...constants import NGINX_MAX_FILE_SIZE
+from ...constants import NGINX_MAX_FILE_SIZE, VM_IP_FROM_DOCKER
 
 def _nginx_proxy_string(port_spec):
-    return "proxy_pass http://{}:{};".format(port_spec['boot2docker_ip'], port_spec['proxied_port'])
+    return "proxy_pass http://{}:{};".format(VM_IP_FROM_DOCKER, port_spec['proxied_port'])
 
 def _nginx_location_spec(port_spec):
     """This will output the nginx location config string for speicfic port spec """
@@ -39,8 +39,7 @@ def get_nginx_configuration_spec(port_spec_dict):
     """This function will take in a port spec as specified by the port_spec compiler and
     will output an nginx web proxy config string. This string can then be written to a file
     and used running nginx """
-    nginx_string_spec = "http { \n"
+    nginx_string_spec = ""
     for port_spec in port_spec_dict['nginx']:
         nginx_string_spec += _nginx_server_spec(port_spec)
-    nginx_string_spec += "}\n"
     return nginx_string_spec

@@ -47,12 +47,6 @@ def _check_git():
     _assert_executable_exists('git')
 
 @returns_exception
-def _check_nginx():
-    _assert_executable_exists('nginx')
-    installed_version = subprocess.check_output(['nginx', '-v'], stderr=subprocess.STDOUT).strip().split('/')[-1]
-    _maybe_version_warning('nginx', installed_version)
-
-@returns_exception
 def _check_rsync():
     _assert_executable_exists('rsync')
 
@@ -110,7 +104,7 @@ def _ensure_github_known_host():
             check_and_log_output_and_error(command, demote=False)
 
 def _check_executables():
-    return [check() for check in [_check_git, _check_nginx, _check_rsync, _check_virtualbox,
+    return [check() for check in [_check_git, _check_rsync, _check_virtualbox,
                                   _check_boot2docker, _check_docker, _check_docker_compose]]
 
 def refresh_preflight_warnings():

@@ -9,9 +9,6 @@ Options:
                                          will own all Docker-related processes.
   --default_specs_repo=<specs_repo>      Repo where your Dusty specs are located. Dusty manages this
                                          repo for you just like other repos.
-  --nginx_includes_dir=<nginx_dir>       Directory in which Dusty will write its nginx config. Your
-                                         nginx master config should source files from this directory
-                                         using an `includes` directive.
   --boot2docker_vm_memory=<memory_mb>    Memory to assign to boot2docker VM, in megabytes
   --no-update                            Skip pulling managed repos at conclusion of setup
 """
@@ -24,6 +21,5 @@ def main(argv):
     args = docopt(__doc__, argv)
     return setup_dusty_config(mac_username=args['--mac_username'],
                               specs_repo=args['--default_specs_repo'],
-                              nginx_includes_dir=args['--nginx_includes_dir'],
                               boot2docker_vm_memory=args['--boot2docker_vm_memory'],
                               update=not args['--no-update'])

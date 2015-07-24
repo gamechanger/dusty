@@ -1,6 +1,8 @@
+from mock import patch
+
 from ....testcases import DustyTestCase
 from dusty.compiler.port_spec import (_docker_compose_port_spec, _nginx_port_spec,
-                                      _hosts_file_port_spec, get_port_spec_document, LOCALHOST,
+                                      _hosts_file_port_spec, get_port_spec_document,
                                       ReusedHostFullAddress, ReusedContainerPort)
 
 class TestPortSpecCompiler(DustyTestCase):
@@ -22,25 +24,23 @@ class TestPortSpecCompiler(DustyTestCase):
     def test_nginx_port_spec_1(self):
         self.assertEqual(_nginx_port_spec(self.test_host_forwarding_spec_1, '65000', '192.168.5.10'),
             {'proxied_port': '65000',
-             'boot2docker_ip': '192.168.5.10',
              'host_address': 'local.gc.com',
              'host_port': '80'})
 
     def test_nginx_port_spec_2(self):
         self.assertEqual(_nginx_port_spec(self.test_host_forwarding_spec_2, '65001', '192.168.5.10'),
             {'proxied_port': '65001',
-             'boot2docker_ip': '192.168.5.10',
              'host_address': 'local.alex.com',
              'host_port': '8001'})
 
     def test_hosts_file_port_spec_1(self):
-        self.assertEqual(_hosts_file_port_spec(self.test_host_forwarding_spec_1),
-            {'forwarded_ip': LOCALHOST,
+        self.assertEqual(_hosts_file_port_spec('1.1.1.1', self.test_host_forwarding_spec_1),
+            {'forwarded_ip': '1.1.1.1',
             'host_address': 'local.gc.com'})
 
     def test_hosts_file_port_spec_2(self):
-        self.assertEqual(_hosts_file_port_spec(self.test_host_forwarding_spec_2),
-            {'forwarded_ip': LOCALHOST,
+        self.assertEqual(_hosts_file_port_spec('1.1.1.1', self.test_host_forwarding_spec_2),
+            {'forwarded_ip': '1.1.1.1',
              'host_address': 'local.alex.com'})
 
     def test_get_port_spec_document_1_app(self):
@@ -52,10 +52,9 @@ class TestPortSpecCompiler(DustyTestCase):
         correct_port_spec = {'docker_compose':{'gcweb':[{'in_container_port': '80',
                                                         'mapped_host_port': '65000'}]},
                              'nginx':[{'proxied_port': '65000',
-                                       'boot2docker_ip': '192.168.5.10',
                                        'host_address': 'local.gc.com',
                                        'host_port': '80'}],
-                             'hosts_file':[{'forwarded_ip': LOCALHOST,
+                             'hosts_file':[{'forwarded_ip': '192.168.5.10',
                                             'host_address': 'local.gc.com'}]}
         self.assertEqual(get_port_spec_document(expanded_spec, '192.168.5.10'), correct_port_spec)
 
@@ -74,16 +73,14 @@ class TestPortSpecCompiler(DustyTestCase):
                                                'gcapi':[{'in_container_port': '8001',
                                                         'mapped_host_port': '65000'}]},
                              'nginx':[{'proxied_port': '65000',
-                                       'boot2docker_ip': '192.168.5.10',
                                        'host_address': 'local.gcapi.com',
                                        'host_port': '8000'},
                                       {'proxied_port': '65001',
-                                       'boot2docker_ip': '192.168.5.10',
                                        'host_address': 'local.gc.com',
                                        'host_port': '80'}],
-                             'hosts_file':[{'forwarded_ip': LOCALHOST,
+                             'hosts_file':[{'forwarded_ip': '192.168.5.10',
                                             'host_address': 'local.gcapi.com'},
-                                          {'forwarded_ip': LOCALHOST,
+                                          {'forwarded_ip': '192.168.5.10',
                                             'host_address': 'local.gc.com'}]}
         self.assertEqual(get_port_spec_document(expanded_spec, '192.168.5.10'), correct_port_spec)
 
@@ -103,13 +100,11 @@ class TestPortSpecCompiler(DustyTestCase):
                                                         'mapped_host_port': '65000'}]},
                              'nginx':[{'proxied_port': '65000',
                                        'host_address': 'local.gc.com',
-                                       'boot2docker_ip': '192.168.5.10',
                                        'host_port': '8000'},
                                       {'proxied_port': '65001',
-                                       'boot2docker_ip': '192.168.5.10',
                                        'host_address': 'local.gc.com',
                                        'host_port': '80'}],
-                             'hosts_file':[{'forwarded_ip': LOCALHOST,
+                             'hosts_file':[{'forwarded_ip': '192.168.5.10',
                                             'host_address': 'local.gc.com'}]}
         self.maxDiff = None
         self.assertEqual(get_port_spec_document(expanded_spec, '192.168.5.10'), correct_port_spec)
@@ -163,19 +158,16 @@ class TestPortSpecCompiler(DustyTestCase):
                                                'gcapi':[{'in_container_port': '82',
                                                         'mapped_host_port': '65000'}]},
                              'nginx':[{'proxied_port': '65000',
-                                       'boot2docker_ip': '192.168.5.10',
                                        'host_address': 'local.gcapi.com',
                                        'host_port': '82'},
                                       {'proxied_port': '65001',
-                                       'boot2docker_ip': '192.168.5.10',
                                        'host_address': 'local.gc.com',
                                        'host_port': '80'},
                                       {'proxied_port': '65002',
-                                       'boot2docker_ip': '192.168.5.10',
                                        'host_address': 'local.gc.com',
                                        'host_port': '81'}],
-                             'hosts_file':[{'forwarded_ip': LOCALHOST,
+                             'hosts_file':[{'forwarded_ip': '192.168.5.10',
                                             'host_address': 'local.gcapi.com'},
-                                           {'forwarded_ip': LOCALHOST,
+                                           {'forwarded_ip': '192.168.5.10',
                                             'host_address': 'local.gc.com'}]}
         self.assertEqual(get_port_spec_document(expanded_spec, '192.168.5.10'), correct_port_spec)

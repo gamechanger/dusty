@@ -1,34 +1,17 @@
 import os
 import logging
 import subprocess
+import tempfile
 
 from ... import constants
 from ...config import get_config_value
+from ..rsync import sync_local_path_to_vm
 
-def _start_nginx():
-    """Start a new nginx master process. This should not be called
-    if nginx is already running. In that case, use _stop_nginx first"""
-    logging.info('Starting nginx')
-    subprocess.check_call(['nginx'])
-
-def _reload_nginx_config():
-    """Relaod the config for the nginx master process."""
-    logging.info('Reloading nginx config')
-    subprocess.check_call(['nginx', '-s', 'reload'])
-
-def _ensure_nginx_running_with_latest_config():
-    """Start nginx if it is not already running, or restart the
-    process if it is already running."""
-    try:
-        _reload_nginx_config()
-    except:
-        _start_nginx()
-
-def _write_nginx_config(nginx_config):
+def _write_nginx_config(nginx_config, path):
     """Writes the config file from the Dusty Nginx compiler
     to the Nginx includes directory, which should be included
     in the main nginx.conf."""
-    with open(os.path.join(get_config_value(constants.CONFIG_NGINX_DIR_KEY), 'dusty.conf'), 'w') as f:
+    with open(path, 'w') as f:
         f.write(nginx_config)
 
 def update_nginx_from_config(nginx_config):
@@ -37,5 +20,6 @@ def update_nginx_from_config(nginx_config):
     or tell it to reload its config to pick up what we've
     just written."""
     logging.info('Updating nginx with new Dusty config')
-    _write_nginx_config(nginx_config)
-    _ensure_nginx_running_with_latest_config()
+    temp_path = tempfile.mkstemp()[1]
+    _write_nginx_config(nginx_config, temp_path)
+    sync_local_path_to_vm(temp_path, os.path.join(constants.NGINX_CONFIG_DIR_IN_VM, 'dustyNginx.conf'))
