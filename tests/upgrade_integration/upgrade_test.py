@@ -52,7 +52,7 @@ class TestUpgrade(DustyIntegrationTestCase):
         shutil.copy('dist/dusty', 'dist/python')
         self.run_daemon_binary(path='./dist/python')
         with self.assertRaises(self.CommandError):
-            self.run_command('upgrade')
+            self.run_command('upgrade 0.2.2')
         self.assertBinaryVersionUnchanged()
 
     def assertBinaryVersionUnchanged(self):
