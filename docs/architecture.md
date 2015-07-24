@@ -75,13 +75,13 @@ linux virtual machine.  The docker client is run on OSX using the daemon's expos
 
 #### Rsync
 
-
 Containers started by Dusty need to access code living on your mac.
 One way to do this is to use a Virtualbox shared folder. However, [the performance of shared
 folders is very poor](http://mitchellh.com/comparing-filesystem-performance-in-virtual-machines).  As an alternative, we use rsync to move files from your mac to the VM.
 
 Rsync is an open source utility that provides incremental file transfer.  In order to work, rysnc needs to be installed on both the source and destination machine. This means we need to install rysnc on our boot2docker virtual machine.  We are then able to quickly sync changed files from your local mac repos to your VM's copy of these repos. This sync happens on `up`, `restart`, and `test`.
 
+When Dusty rsyncs, any files in the destination (typically the VM) which are not present in the source (typically your Mac) are deleted. This helps to keep the two folders consistent between the filesystems.
 
 #### Persistent Data
 
