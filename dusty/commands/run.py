@@ -53,7 +53,7 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     rsync.sync_repos(active_repos)
     log_to_client("Saving nginx config and ensure nginx is running")
     nginx.update_nginx_from_config(nginx_config)
-    log_to_client("Saving docker-compose config and starting all containers")
+    log_to_client("Saving Docker Compose config and starting all containers")
     compose.update_running_containers_from_spec(compose_config, recreate_containers=recreate_containers)
 
     log_to_client("Your local environment is now started!")

@@ -46,20 +46,16 @@ HOSTS_PATH = '/etc/hosts'
 VIRTUALBOX_RULE_PREFIX = 'dusty'
 
 SYSTEM_DEPENDENCY_VERSIONS = {
-    'nginx': '1.8.0',
     'virtualbox': '4.3.26',
     'boot2docker': '1.7.0',
     'docker': '1.7.0',
     'docker-compose': '1.3.1'
 }
 
-NGINX_CONFIG_FILE_LOCATIONS = ['/usr/local/nginx/conf', '/etc/nginx', '/usr/local/etc/nginx']
-
 CONFIG_BUNDLES_KEY = 'bundles'
 CONFIG_REPO_OVERRIDES_KEY = 'repo_overrides'
 CONFIG_MAC_USERNAME_KEY = 'mac_username'
 CONFIG_SPECS_REPO_KEY = 'specs_repo'
-CONFIG_NGINX_DIR_KEY = 'nginx_includes_dir'
 CONFIG_SETUP_KEY = 'setup_has_run'
 CONFIG_VM_MEM_SIZE = 'vm_memory_size'
 
@@ -68,9 +64,8 @@ CONFIG_SETTINGS = {
     CONFIG_REPO_OVERRIDES_KEY: 'All known repos for which Dusty will use your specified override instead of its own managed copy of the repository. You should override repos which you are actively developing so that Dusty uses your development version inside containers.',
     CONFIG_MAC_USERNAME_KEY: 'The user on the host OS who will own and be able to access the boot2docker VM. Dusty runs all VirtualBox, boot2docker, Docker, and Docker Compose commands as this user.',
     CONFIG_SPECS_REPO_KEY: 'This repository is used for storing the specs used by Dusty.  It is managed the same way as other repos',
-    CONFIG_NGINX_DIR_KEY: 'This is the location that your nginx config will import extra files from.  Dusty\'s nginx config will be stored here',
     CONFIG_SETUP_KEY: 'Key indicating if you have run the required command `dusty setup`',
     CONFIG_VM_MEM_SIZE: 'Specifies how much memory (in megabytes) you want your boot2docker vm to have'
 }
 
-WARN_ON_MISSING_CONFIG_KEYS = [CONFIG_MAC_USERNAME_KEY, CONFIG_SPECS_REPO_KEY, CONFIG_NGINX_DIR_KEY, CONFIG_VM_MEM_SIZE]
+WARN_ON_MISSING_CONFIG_KEYS = [CONFIG_MAC_USERNAME_KEY, CONFIG_SPECS_REPO_KEY, CONFIG_VM_MEM_SIZE]

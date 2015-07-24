@@ -48,30 +48,6 @@ def _append_to_file(file_location, new_line):
     with open(file_location, 'a') as f:
         f.write(new_line)
 
-def _setup_nginx_config(nginx_conf_location):
-    include_path = '{}/servers'.format(nginx_conf_location)
-    if not isdir(include_path):
-        mkdir(include_path)
-    _append_to_file('{}/nginx.conf'.format(nginx_conf_location), '\ninclude servers/*;\n')
-    return include_path
-
-def _get_and_configure_nginx_includes_dir():
-    for nginx_conf_location in constants.NGINX_CONFIG_FILE_LOCATIONS:
-        file_location = '{}/nginx.conf'.format(nginx_conf_location)
-        if isfile(file_location):
-            contents = _get_contents_of_file(file_location)
-            for line in contents:
-                if line.startswith('include'):
-                    include_folder = line.replace('include ', '').replace('/*;', '').replace('\n', '').strip()
-                    return '{}/{}'.format(nginx_conf_location, include_folder)
-            response = _get_raw_input('\n'.join(textwrap.wrap('You have non standard nginx config setup. Can we add "include servers/*;" to the end of your nginx config file ({})? If you select no, your nginx forwarding will not work. (y/n) '.format(file_location), 80)))
-            if _is_yes_response(response):
-                return _setup_nginx_config(nginx_conf_location)
-            else:
-                return ''
-    _get_raw_input('\n'.join(textwrap.wrap('You have a custom nginx config setup. Could not find an nginx.conf file. Please read our docs to see what is needed for the nginx config.  Once you have figured it out, please use `dusty config` command to adjust your `nginx_includes_dir`', 80)))
-    return ''
-
 def _get_recommended_vm_size(system_memory):
     # all math is done in megabytes
     if system_memory >= 16 * 2**10:
@@ -90,7 +66,7 @@ def _get_boot2docker_vm_size():
     else:
         return _get_raw_input('Please input the number of megabytes to allocate to the vm: ')
 
-def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=None, boot2docker_vm_memory=None, update=True):
+def setup_dusty_config(mac_username=None, specs_repo=None, boot2docker_vm_memory=None, update=True):
     print "We just need to verify a few settings before we get started.\n"
     if mac_username:
         print 'Setting mac_username to {} based on flag'.format(mac_username)
@@ -105,11 +81,6 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
         specs_repo = _get_specs_repo()
     print ''
 
-    if nginx_includes_dir:
-        print 'Setting nginx_includes_dir to {} based on flag'.format(nginx_includes_dir)
-    else:
-        nginx_includes_dir = _get_and_configure_nginx_includes_dir()
-
     if boot2docker_vm_memory:
         print 'Setting boot2docker_vm_memory to {} based on flag'.format(boot2docker_vm_memory)
     else:
@@ -119,7 +90,6 @@ def setup_dusty_config(mac_username=None, specs_repo=None, nginx_includes_dir=No
 
     config_dictionary = {constants.CONFIG_MAC_USERNAME_KEY: mac_username,
                          constants.CONFIG_SPECS_REPO_KEY: specs_repo,
-                         constants.CONFIG_NGINX_DIR_KEY: nginx_includes_dir,
                          constants.CONFIG_VM_MEM_SIZE: boot2docker_vm_memory}
     payload = Payload(complete_setup, config_dictionary, update=update)
     payload.suppress_warnings = True
