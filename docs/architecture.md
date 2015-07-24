@@ -61,7 +61,7 @@ http {
          listen 80;
          server_name local.example-app.com;
          location / {
-             proxy_pass http://192.168.56.103:65000;
+             proxy_pass http://172.17.42.1:65000;
          }
      }
 }
