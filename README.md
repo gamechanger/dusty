@@ -9,7 +9,7 @@ Docker-powered development environments
 
 # Installation
 
-See [Installation](https://dusty.readthedocs.org/en/latest/installation/).
+See the Installation section of our docs for the [stable](https://dusty.readthedocs.org/en/stable/installation/) or [latest](https://dusty.readthedocs.org/en/latest/installation/) releases.
 
 # What is Dusty?
 
