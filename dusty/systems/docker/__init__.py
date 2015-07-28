@@ -91,6 +91,6 @@ def get_canonical_container_name(container):
 def get_app_or_service_name_from_container(container):
     return get_canonical_container_name(container).split('_')[1]
 
-def get_dusty_containers(app_or_service_names, include_exited=False):
-    client = get_docker_client()
+def get_dusty_containers(app_or_service_names, include_exited=False, client=None):
+    client = get_docker_client() if client is None else client
     return get_dusty_containers_with_client(client, app_or_service_names, include_exited=include_exited)
