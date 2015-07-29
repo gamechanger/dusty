@@ -32,6 +32,8 @@ mount: /my-app
 
 `mount` must be provided if `repo` is provided.
 
+All Dusty commands (once and always) are started in the `mount` directory.  You might need to change to or copy from another directory.
+
 ## depends
 
 ```
