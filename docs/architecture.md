@@ -4,7 +4,7 @@
 
 * Dusty uses a client/daemon structure.
 * The daemon (`dusty -d`) runs with root permissions to modify the hosts file (/etc/hosts). By default, the daemon runs automatically via a plist and launchd.
-* A client sends the daemon commands over a Unix socket, which defaults to /var/run/dusty/dusty.sock. The path to this socket may be customized by setting the `DUSTY_SOCKET_PATH` environment variable for both the daemon and the client.
+* A client sends the daemon commands over a Unix socket, which defaults to `/var/run/dusty/dusty.sock`. The path to this socket may be customized by setting the `DUSTY_SOCKET_PATH` environment variable for both the daemon and the client.
 
 ## System Components
 
