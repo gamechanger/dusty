@@ -6,6 +6,8 @@
  * NEW: Dusty will use HTTPS to clone public repos which explicitly specify in their URL to use HTTPS
  * NEW: `dusty logs` now supports a `-t` option to show timestamps on the logging output
 
+ * FIXED: `dusty upgrade` will now successfully upgrade Dusty from a RC version in all cases
+
  * `dusty status` now shows the status of Dusty's nginx container and has received some performance improvements
 
 ## 0.3.0 (July 24, 2015)
