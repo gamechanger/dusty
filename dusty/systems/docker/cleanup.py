@@ -19,7 +19,7 @@ def remove_exited_dusty_containers():
     for container in exited_containers:
         log_to_client("Removing container {}".format(container['Names'][0]))
         try:
-            client.remove_container(container['Id'])
+            client.remove_container(container['Id'], v=True)
             removed_containers.append(container)
         except Exception as e:
             log_to_client(e.message or str(e))

@@ -160,10 +160,10 @@ def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command,
     for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
         log_to_client(line.strip())
     exit_code = client.wait(test_container_name)
-    client.remove_container(container=test_container_name)
+    client.remove_container(container=test_container_name, v=True)
 
     for service_container in previous_container_names:
         log_to_client('Killing service container {}'.format(service_container))
         client.kill(service_container)
-        client.remove_container(container=service_container)
+        client.remove_container(container=service_container, v=True)
     return exit_code
