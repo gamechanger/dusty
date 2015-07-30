@@ -75,7 +75,11 @@ class Repo(object):
 
     @property
     def managed_path(self):
-        return os.path.join(constants.REPOS_DIR, self.remote_path.lstrip('/'))
+        local_folder = self.remote_path
+        if ':' in local_folder:
+            local_folder = local_folder.split(':')[1]
+        local_folder = local_folder.lstrip('/')
+        return os.path.join(constants.REPOS_DIR, local_folder)
 
     @property
     def is_overridden(self):
