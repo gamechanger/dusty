@@ -108,6 +108,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
     if port_list:
         compose_dict['ports'] = port_list
     logging.info("Compose Compiler: ports {}".format(port_list))
+    compose_dict['user'] = 'root'
     return compose_dict
 
 def _composed_service_dict(service_spec):
