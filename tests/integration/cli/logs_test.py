@@ -31,3 +31,7 @@ class TestLogsCLI(DustyIntegrationTestCase):
     def test_logs_with_lines(self):
         self.run_command('logs --tail=10 busyboxa')
         self.assertExecDocker('logs', '--tail=10', self.container_id('busyboxa'))
+
+    def test_logs_with_timestamps(self):
+        self.run_command('logs -t busyboxa')
+        self.assertExecDocker('logs', '-t', self.container_id('busyboxa'))
