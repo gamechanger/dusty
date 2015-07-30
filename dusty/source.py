@@ -60,7 +60,7 @@ class Repo(object):
 
     @property
     def is_local_repo(self):
-        return self.remote_path.startswith('/')
+        return self.remote_path.startswith('/') or self.remote_path.startswith('file:///')
 
     @property
     def is_http_repo(self):
@@ -96,7 +96,10 @@ class Repo(object):
 
     def assemble_remote_path(self):
         if self.is_local_repo:
-            return 'file:///{}'.format(self.remote_path)
+            if self.remote_path.startswith('file:///'):
+                return self.remote_path
+            else:
+                return 'file:///{}'.format(self.remote_path)
         elif self.is_http_repo:
             if self.remote_path.endswith('.git'):
                 return self.remote_path
