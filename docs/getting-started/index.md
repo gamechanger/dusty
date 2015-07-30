@@ -40,13 +40,13 @@ running anything.
 Run `dusty repos list`. You should see:
 
 ```
-+--------------------------------------------+---------------------+----------------+
-|                 Full Name                  |      Short Name     | Local Override |
-+--------------------------------------------+---------------------+----------------+
-| github.com/gamechanger/dusty-example-specs | dusty-example-specs |                |
-| github.com/gamechanger/dusty-flask-example | dusty-flask-example |                |
-+--------------------------------------------+---------------------+----------------+
-```
++--------------------------------------------------------+---------------------+-------------------------+
+|                       Full Name                        |      Short Name     |      Local Override     |
++--------------------------------------------------------+---------------------+-------------------------+
+| https://github.com/gamechanger/dusty-example-specs.git | dusty-example-specs |                         |
+| https://github.com/gamechanger/dusty-flask-example.git | dusty-flask-example |                         |
+|      https://github.com/gamechanger/watchdog.git       |       watchdog      |                         |
++--------------------------------------------------------+---------------------+-------------------------+```
 
 These are all the repos referenced in the apps and libraries in the example specs. By
 default, Dusty will check out its own copy of these repos and mount them inside of
