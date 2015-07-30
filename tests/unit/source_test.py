@@ -55,6 +55,15 @@ class TestSource(DustyTestCase):
         self.assertEqual(Repo('github.com/app/a').managed_path, '/etc/dusty/repos/github.com/app/a')
         self.assertEqual(Repo('/gc/repos/dusty').managed_path, '/etc/dusty/repos/gc/repos/dusty')
 
+    def test_managed_path_http(self):
+        self.assertEqual(Repo('http://github.com/app/a').managed_path, '/etc/dusty/repos/github.com/app/a')
+
+    def test_managed_path_file(self):
+        self.assertEqual(Repo('file:///github.com/app/a').managed_path, '/etc/dusty/repos/github.com/app/a')
+
+    def test_managed_path_ssh(self):
+        self.assertEqual(Repo('ssh://git@github.com/app/a').managed_path, '/etc/dusty/repos/git@github.com/app/a')
+
     def test_override_path(self):
         override_repo('github.com/app/a', self.temp_dir)
         self.assertEqual(Repo('github.com/app/a').override_path, self.temp_dir)
