@@ -20,7 +20,7 @@ def git_error_handling():
         log_to_client('ERROR: Git command failed. If you are trying to access a remote repository '
                       'over SSH (e.g. GitHub), please make sure you have added your SSH key to the '
                       'SSH agent using: ssh-add <SSH key filepath>.  If you specified to clone the repo '
-                      'using http, the repo must be public; private repo access is only supported with '
+                      'using HTTP, the repo must be public; private repo access is only supported with '
                       'ssh')
         raise
 

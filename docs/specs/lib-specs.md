@@ -10,7 +10,7 @@ the container's state clean.
 ```
 repo: github.com/my-org/my-app
   -or-
-repo: http://github.com/my-org/my-app.git
+repo: https://github.com/my-org/my-app.git
   -or-
 repo: /Users/myuser/my-app
 ```
@@ -20,8 +20,8 @@ repo for you and will keep its local copy up to date. Once a repo is defined in 
 it can be controlled using the `dusty repos` command.
 
 Repos can be specified using either a URL or an absolute path to a Git repo on your local filesystem.
-If a repo URL starts with http, http will be used to clone the repo.  Note that this will only work
-with public repositories.  By default, ssh is used to clone repos.
+If a repo URL starts with `https`, HTTPS will be used to clone the repo.  Note that this will only work
+with public repositories.  By default, SSH is used to clone repos.
 
 `repo` is required in lib specs.
 
