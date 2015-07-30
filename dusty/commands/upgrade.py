@@ -74,7 +74,7 @@ def upgrade_dusty_binary(version=None):
         return
     if version is None:
         version = _get_latest_version()
-    if version == constants.VERSION:
+    if not constants.PRERELEASE and version == constants.VERSION:
         log_to_client('You\'re already running the latest Dusty version ({})'.format(version))
         return
     else:

@@ -2,6 +2,7 @@ import os
 
 VERSION = '0.4.0'
 BINARY = False # overridden by PyInstaller when we build a binary
+PRERELEASE = False # overridden by PyInstaller when we build a prerelease binary
 
 EXAMPLE_SPECS_REPO = 'github.com/gamechanger/dusty-example-specs'
 
