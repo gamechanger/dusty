@@ -18,11 +18,13 @@ class TestUpCLI(DustyIntegrationTestCase):
     def test_basic_up_recreate(self):
         run_output = self.run_command('up')
         run_output = self.run_command('up')
-        self.assertIn('Recreating dusty_busyboxb_1', run_output)
-        self.assertIn('Recreating dusty_busyboxa_1', run_output)
+        self.assertIn('Removing dusty_busyboxb_1', run_output)
+        self.assertIn('Removing dusty_busyboxa_1', run_output)
+        self.assertIn('Creating dusty_busyboxb_1', run_output)
+        self.assertIn('Creating dusty_busyboxa_1', run_output)
         run_output = self.run_command('up --no-recreate')
-        self.assertNotIn('Recreating dusty_busyboxb_1', run_output)
-        self.assertNotIn('Recreating dusty_busyboxa_1', run_output)
+        self.assertNotIn('Creating dusty_busyboxb_1', run_output)
+        self.assertNotIn('Creating dusty_busyboxa_1', run_output)
 
     def test_basic_up_no_pull(self):
         run_output = self.run_command('up')
