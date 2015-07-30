@@ -13,6 +13,8 @@ def _write_commands_to_file(list_of_commands, file_location):
         os.makedirs(file_location_parent)
     with open(file_location, 'w+') as f:
         for command in list_of_commands:
+            import logging
+            logging.error(command)
             f.write('{} \n'.format(command))
 
 def _tee_output_commands(command_to_tee):
@@ -62,8 +64,9 @@ def _compile_docker_commands(app_name, assembled_specs):
     app_spec = assembled_specs['apps'][app_name]
     commands = ['set -e']
     commands += _lib_install_commands_for_app(app_name, assembled_specs)
-    commands.append("cd {}".format(container_code_path(app_spec)))
-    commands.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
+    if app_spec['mount']:
+        commands.append("cd {}".format(container_code_path(app_spec)))
+        commands.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
     commands += _get_once_commands(app_spec)
     commands += _get_always_commands(app_spec)
     return commands
