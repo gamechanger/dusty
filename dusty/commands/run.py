@@ -32,7 +32,7 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     # Stop will fail if we've never written a Composefile before
     if os.path.exists(constants.COMPOSEFILE_PATH):
         try:
-            stop_apps_or_services()
+            stop_apps_or_services(rm_containers=recreate_containers)
         except CalledProcessError as e:
             log_to_client("WARNING: docker-compose stop failed")
             log_to_client(str(e))
