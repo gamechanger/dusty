@@ -13,8 +13,6 @@ def _write_commands_to_file(list_of_commands, file_location):
         os.makedirs(file_location_parent)
     with open(file_location, 'w+') as f:
         for command in list_of_commands:
-            import logging
-            logging.error(command)
             f.write('{} \n'.format(command))
 
 def _tee_output_commands(command_to_tee):
