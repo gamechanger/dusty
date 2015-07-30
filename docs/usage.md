@@ -138,10 +138,11 @@ Tail out Docker logs for a container running a Dusty application
 or service.
 
 Usage:
-  logs [-f] [--tail=NUM] <service>
+  logs [-f] [-t] [--tail=NUM] <service>
 
 Options:
   -f          follow log output
+  -t          show timestamps
   --tail=NUM  show NUM lines from end of file
 ```
 This is just a wrapper around the `docker logs` command.
