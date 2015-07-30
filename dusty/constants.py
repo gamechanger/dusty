@@ -11,7 +11,7 @@ SOCKET_ERROR_TERMINATOR = '\0\1'
 SOCKET_LOGGER_NAME = 'socket_logger'
 
 RUN_DIR = '/var/run/dusty'
-SOCKET_PATH = os.path.join(RUN_DIR, 'dusty.sock')
+SOCKET_PATH = os.getenv('DUSTY_SOCKET_PATH', os.path.join(RUN_DIR, 'dusty.sock'))
 FIRST_RUN_FILE_PATH = os.path.join(RUN_DIR, 'docker_first_time_started')
 CONTAINER_LOG_PATH = "/var/log"
 
