@@ -94,6 +94,20 @@ class Repo(object):
     def vm_path(self):
         return os.path.join(constants.VM_REPOS_DIR, self.remote_path.lstrip('/'))
 
+    def assemble_remote_path(self):
+        if self.is_local_repo:
+            return 'file:///{}'.format(self.remote_path)
+        elif self.is_http_repo:
+            if self.remote_path.endswith('.git'):
+                return self.remote_path
+            else:
+                return self.remote_path + '.git'
+        else:
+            if self.remote_path.startswith('ssh://'):
+                return self.remote_path
+            else:
+                return 'ssh://{}@{}'.format(constants.GIT_USER, self.remote_path)
+
     def ensure_local_repo(self):
         """Given a Dusty repo object, clone the remote into Dusty's local repos
         directory if it does not already exist."""
@@ -107,12 +121,7 @@ class Repo(object):
         if not os.path.exists(repo_path_parent):
             os.makedirs(repo_path_parent)
         with git_error_handling():
-            if self.is_local_repo:
-                git.Repo.clone_from('file:///{}'.format(self.remote_path), self.managed_path)
-            elif self.is_http_repo:
-                git.Repo.clone_from(self.remote_path, self.managed_path)
-            else:
-                git.Repo.clone_from('ssh://{}@{}'.format(constants.GIT_USER, self.remote_path), self.managed_path)
+            git.Repo.clone_from(self.assemble_remote_path(), self.managed_path)
 
     def update_local_repo(self):
         """Given a remote path (e.g. github.com/gamechanger/gclib), pull the latest
