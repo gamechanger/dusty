@@ -2,6 +2,7 @@
 
 ## 0.4.0 (In Progress)
  * NEW: Dusty no longer requires nginx to be installed on your Mac! Dusty now runs a containerized nginx inside Docker instead. All other functionality around host forwarding is unchanged.
+ * `dusty status` now shows the status of Dusty's nginx container and has received some performance improvements
 
 ## 0.3.0 (July 24, 2015)
  * BREAKING CHANGE: All rsync commands which write data to the VM (sync and disk restore) now remove any files present in the destination directory but not in the source directory. This should make it easier to reason about what is on disk on the VM side of sync. However, files written into source directories at runtime will now be deleted by sync operations.
