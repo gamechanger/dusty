@@ -110,6 +110,27 @@ class TestSource(DustyTestCase):
         fake_clone_from.assert_called_with('https://gc/repos/c.git', temp_dir)
 
     @patch('git.Repo.clone_from')
+    def test_ensure_accepts_ssh_prefix_remote_path(self, fake_clone_from):
+        temp_dir = os.path.join(self.temp_dir, 'd')
+        self.MockableRepo.managed_path = property(lambda repo: temp_dir)
+        self.MockableRepo('ssh://git@github.com/repos/c.git').ensure_local_repo()
+        fake_clone_from.assert_called_with('ssh://git@github.com/repos/c.git', temp_dir)
+
+    @patch('git.Repo.clone_from')
+    def test_ensure_accepts_file_prefix_remote_path(self, fake_clone_from):
+        temp_dir = os.path.join(self.temp_dir, 'd')
+        self.MockableRepo.managed_path = property(lambda repo: temp_dir)
+        self.MockableRepo('file:///gc/repos/c.git').ensure_local_repo()
+        fake_clone_from.assert_called_with('file:///gc/repos/c.git', temp_dir)
+
+    @patch('git.Repo.clone_from')
+    def test_ensure_accpets_without_git_suffix(self, fake_clone_from):
+        temp_dir = os.path.join(self.temp_dir, 'd')
+        self.MockableRepo.managed_path = property(lambda repo: temp_dir)
+        self.MockableRepo('https://gc/repos/c').ensure_local_repo()
+        fake_clone_from.assert_called_with('https://gc/repos/c.git', temp_dir)
+
+    @patch('git.Repo.clone_from')
     def test_ensure_local_repo_when_repo_exist(self, fake_clone_from):
         self.MockableRepo.managed_path = property(lambda repo: self.temp_dir)
         self.MockableRepo('github.com/app/a').ensure_local_repo()
