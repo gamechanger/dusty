@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.4.0 (In Progress)
- * BREAKING CHANGE: Dusty now cleans up volumes when removing containers
+ * BREAKING CHANGE: Dusty now removes data volumes when removing containers. Containers needing to persist data should use volume mounts inside of `/persist` in the boot2docker VM.
 
  * NEW: Dusty no longer requires nginx to be installed on your Mac! Dusty now runs a containerized nginx inside Docker instead. All other functionality around host forwarding is unchanged.
  * NEW: Dusty's socket location can now be customized via the `DUSTY_SOCKET_PATH` environment variable
@@ -9,6 +9,7 @@
  * NEW: `dusty logs` now supports a `-t` option to show timestamps on the logging output
 
  * FIXED: `dusty upgrade` will now successfully upgrade Dusty from a RC version in all cases
+ * FIXED: Images with an `ENTRYPOINT` defined now work correctly when used as the basis for a Dusty app
 
  * `dusty status` now shows the status of Dusty's nginx container and has received some performance improvements
 
