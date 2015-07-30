@@ -35,3 +35,11 @@ class TestLogsCommands(DustyTestCase):
         tail_container_logs('app-a', follow=True, lines=4)
         fake_get_containers.assert_called_once_with(['app-a'], include_exited=True)
         fake_exec_docker.assert_called_once_with('logs', '-f', '--tail=4', 'container-id')
+
+    @patch('dusty.commands.utils.exec_docker')
+    @patch('dusty.commands.logs.get_dusty_containers')
+    def test_tail_container_logs_with_timestamps(self, fake_get_containers, fake_exec_docker):
+        fake_get_containers.return_value = [{'Id': 'container-id'}]
+        tail_container_logs('app-a', timestamps=True)
+        fake_get_containers.assert_called_once_with(['app-a'], include_exited=True)
+        fake_exec_docker.assert_called_once_with('logs', '-t', 'container-id')
