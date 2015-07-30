@@ -45,7 +45,7 @@ def _compose_stop(compose_file_location, project_name, services):
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
 def _compose_rm(compose_file_location, project_name, services):
-    command = _compose_base_command(['rm', '-f'], compose_file_location, project_name)
+    command = _compose_base_command(['rm', '-v', '-f'], compose_file_location, project_name)
     if services:
         command += services
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
