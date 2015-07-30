@@ -47,8 +47,16 @@ def save_config_value(key, value):
         verify_mac_username(value)
         save_config(current_config)
         check_and_load_ssh_auth()
+    elif key == constants.CONFIG_REPO_OVERRIDES_KEY:
+        verify_overrides_without_colons(current_config)
+        save_config(current_config)
     else:
         save_config(current_config)
+
+def verify_overrides_without_colons(current_config):
+    for local_path in current_config[constants.CONFIG_REPO_OVERRIDES_KEY].itervalues():
+        if ':' in local_path:
+            raise RuntimeError('Local repo override path {} contains ":".  Please select a path without a colon'.format(local_path))
 
 def refresh_config_warnings():
     daemon_warnings.clear_namespace('config')
