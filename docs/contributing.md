@@ -13,19 +13,17 @@ Unit tests are pretty simple:
 $ nosetests tests/unit
 ```
 
-Integration tests must be run on OS X and are a bit trickier. Be aware
-that integration tests may alter or delete existing Dusty information
-on your system, including but not limited to your config, Dusty-managed
-repos, and boot2docker VM.
+Integration tests are also provided which test against an actual running
+Dusty daemon. A script is provided to help run these inside the `tests`
+folder.
 
-The recommended approach is to let the Jenkins server run these for you
-when you submit a PR.
+**WARNING**: Integration tests may alter or delete existing Dusty
+information on your system, including but not limited to your config,
+Dusty-managed repos, active containers, and boot2docker VM.
 
 ```
-# Integration tests run against an actual Dusty daemon
-$ sudo launchctl stop com.gamechanger.dusty
-$ sudo dusty -d & # launch a daemon based on your checked out code
-$ DUSTY_ALLOW_INTEGRATION_TESTS=yes nosetests tests/integration
+$ ./tests/run_integration_tests.sh # run all tests
+$ ./tests/run_integration_tests.sh cli/bundles_test.py # run specific modules inside tests/integration
 ```
 
 ## Building Docs
