@@ -10,6 +10,8 @@ def get_app_dusty_schema(doc, name=None):
         doc['mount'] = '/repo'
     if 'mount' in doc and 'repo' not in doc:
         doc['repo'] = '/repo'
+    if 'commands' not in doc:
+        doc['commands'] = {'always': ['sleep 1']}
     return DustySchema(app_schema, doc, name, 'apps')
 
 def get_lib_dusty_schema(doc, name=None):

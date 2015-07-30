@@ -15,12 +15,14 @@ class TestRysnc(DustyTestCase):
             'apps': {
                 'app-a': {
                     'repo': 'github.com/app/a',
+                    'commands': {'always': ['sleep 10']},
                     'depends': {
                         'apps': ['app-b'],
                         'libs': ['lib-a', 'lib-b']
                     }
                 },
                 'app-b': {
+                    'commands': {'always': ['sleep 10']},
                     'depends': {
                         'apps': [],
                         'libs': []
@@ -50,6 +52,7 @@ class TestRysnc(DustyTestCase):
             'apps': {
                 'app-a': {
                     'repo': 'github.com/app/a',
+                    'commands': {'always': ['sleep 10']},
                     'depends': {
                         'libs': ['lib-a', 'lib-b']
                     }
@@ -75,6 +78,7 @@ class TestRysnc(DustyTestCase):
         specs = {
             'apps': {
                 'app-a': {
+                    'commands': {'always': ['sleep 10']},
                     'repo': 'github.com/app/a',
                     'depends': {
                         'apps': ['app-b'],
