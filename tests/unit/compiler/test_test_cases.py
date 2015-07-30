@@ -167,6 +167,10 @@ class TestGetExpandedLibSpecs(DustyTestCase):
         expected_expanded_specs = {
                 'apps': {
                     'app1': {
+                        'commands': {
+                            'always': ['sleep 1'],
+                            'once': []
+                        },
                         'depends': {
                             'libs': set(['lib1', 'lib2', 'lib3']),
                             'apps': ['app2'],
@@ -176,6 +180,10 @@ class TestGetExpandedLibSpecs(DustyTestCase):
                         'image': ''
                     },
                     'app2': {
+                        'commands': {
+                            'always': ['sleep 1'],
+                            'once': []
+                        },
                         'repo': '',
                         'image': ''
                     }
@@ -209,16 +217,33 @@ class TestGetDependentRepos(DustyTestCase):
     @patch('dusty.compiler.spec_assembler.get_specs')
     def test_get_same_container_repos_app(self, fake_get_specs):
         fake_get_specs.return_value = self.make_test_specs(apply_required_keys(
-                                      {'apps': {'app1':
-                                                    {'depends': {'apps': ['app2', 'app3'],
+                                      {'apps': {'app1': {
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
+                                                    'depends': {'apps': ['app2', 'app3'],
                                                                  'libs': ['lib1']},
-                                                     'repo': '/gc/app1'},
-                                                'app2':
-                                                    {'depends': {'apps': ['app4'],
-                                                     'libs': []},
-                                                     'repo': '/gc/app2'},
-                                                'app3': {'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app3'},
-                                                'app4': {'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app4'}},
+                                                    'repo': '/gc/app1'},
+                                                'app2': {
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
+                                                    'depends': {'apps': ['app4'],
+                                                    'libs': []},
+                                                    'repo': '/gc/app2'
+                                                },
+                                                'app3': {
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
+                                                    'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app3'
+                                                },
+                                                'app4': {
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
+                                                    'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app4'}
+                                                },
                                        'libs': {'lib1': {'depends': {'libs': ['lib2']}, 'repo': '/gc/lib1'},
                                                 'lib2': {'depends': {'libs': []}, 'repo': '/gc/lib2'}}}))
 
@@ -227,36 +252,76 @@ class TestGetDependentRepos(DustyTestCase):
 
     @patch('dusty.compiler.spec_assembler.get_specs')
     def test_get_same_container_repos_app_without_repo(self, fake_get_specs):
-        fake_get_specs.return_value = self.make_test_specs(apply_required_keys(
-                                      {'apps': {'app1':
-                                                    {'depends': {'apps': ['app2', 'app3'],
+        fake_get_specs.return_value = self.make_test_specs(apply_required_keys({
+                                            'apps': {
+                                                'app1': {
+                                                    'depends': {'apps': ['app2', 'app3'],
                                                                  'libs': ['lib1']},
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
                                                 },
-                                                'app2':
-                                                    {'depends': {'apps': ['app4'],
-                                                     'libs': []},
-                                                     'repo': '/gc/app2'},
-                                                'app3': {'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app3'},
-                                                'app4': {'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app4'}},
-                                       'libs': {'lib1': {'depends': {'libs': ['lib2']}, 'repo': '/gc/lib1'},
-                                                'lib2': {'depends': {'libs': []}, 'repo': '/gc/lib2'}}}))
+                                                'app2': {
+                                                    'depends': {'apps': ['app4'],
+                                                    'libs': []},
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
+                                                    'repo': '/gc/app2'
+                                                },
+                                                'app3': {
+                                                    'depends': {'apps': [], 'libs': []},
+                                                    'repo': '/gc/app3',
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
+                                                },
+                                                'app4': {
+                                                    'depends': {'apps': [], 'libs': []},
+                                                    'repo': '/gc/app4',
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
+                                                }
+                                            },
+                                           'libs': {'lib1': {'depends': {'libs': ['lib2']}, 'repo': '/gc/lib1'},
+                                                    'lib2': {'depends': {'libs': []}, 'repo': '/gc/lib2'}}}))
 
         self.assertEquals(set(spec_assembler.get_same_container_repos('app1')),
                           set([Repo('/gc/lib1'), Repo('/gc/lib2')]))
 
     @patch('dusty.compiler.spec_assembler.get_specs')
     def test_get_same_container_repos_lib(self, fake_get_specs):
-        fake_get_specs.return_value = self.make_test_specs(apply_required_keys(
-                                      {'apps': {'app1':
+        fake_get_specs.return_value = self.make_test_specs(apply_required_keys({
+                                        'apps': {'app1':
                                                     {'depends': {'apps': ['app2', 'app3'],
                                                                  'libs': ['lib1']},
-                                                     'repo': '/gc/app1'},
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
+                                                    'repo': '/gc/app1'},
                                                 'app2':
                                                     {'depends': {'apps': ['app4'],
                                                      'libs': []},
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
                                                      'repo': '/gc/app2'},
-                                                'app3': {'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app3'},
-                                                'app4': {'depends': {'apps': [], 'libs': []}, 'repo': '/gc/app4'}},
+                                                'app3': {
+                                                    'depends': {'apps': [], 'libs': []},
+                                                    'repo': '/gc/app3',
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
+                                                },
+                                                'app4': {
+                                                    'depends': {'apps': [], 'libs': []},
+                                                    'repo': '/gc/app4',
+                                                    'commands': {
+                                                        'always': ['sleep 10']
+                                                    },
+                                                }
+                                        },
                                        'libs': {'lib1': {'depends': {'libs': ['lib2']}, 'repo': '/gc/lib1'},
                                                 'lib2': {'depends': {'libs': []}, 'repo': '/gc/lib2'}}}))
 

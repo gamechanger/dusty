@@ -150,6 +150,7 @@ class TestCommandFile(DustyTestCase):
     def test_make_test_command_files_1(self, fake_sync, fake_get_specs, fake_write_commands_to_file):
         fake_get_specs.return_value = {
             'apps': {'app1': get_app_dusty_schema({'repo': '/gc/app1',
+                              'commands': {'always': ['sleep 10']},
                               'mount': '/gc/app1',
                               'test': {'once': ['app1 test command 1', 'app1 test command 2'],
                                        'suites': [{'name': 'suite1', 'command': ['suite1 command1', 'suite1 command2']},
@@ -189,6 +190,7 @@ class TestCommandFile(DustyTestCase):
     def test_make_test_command_files_2(self, fake_sync, fake_get_specs, fake_write_commands_to_file):
         fake_get_specs.return_value = {
             'apps': {'app1': get_app_dusty_schema({'repo': '/gc/app1',
+                              'commands': {'always': ['sleep 1']},
                               'mount': '/gc/app1',
                               'test': {'once': ['app1 test command 1', 'app1 test command 2'],
                                        'suites': [{'name': 'suite1', 'command': ['suite1 command1', 'suite1 command2']},

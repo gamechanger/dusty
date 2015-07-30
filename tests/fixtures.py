@@ -53,18 +53,27 @@ def basic_specs_fixture():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['app-a']})
     _write('bundle', 'bundle-b', {'description': 'Bundle B', 'apps': ['app-b']})
     _write('app', 'app-a', {'repo': 'github.com/app/a',
+                            'commands': {
+                                'always': ['sleep 10']
+                            },
                             'image': 'app/a',
                             'mount': '/app/a',
                             'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
                                         'name': 'example'}]})
     _write('app', 'app-b', {'repo': 'github.com/app/b',
+                            'commands': {
+                                'always': ['sleep 10']
+                            },
                             'image': 'app/b',
                             'mount': '/app/b',
                             'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
                                         'name': 'example'}]})
     _write('app', 'app-c', {'repo': '/gc/repos/c',
+                            'commands': {
+                                'always': ['sleep 10']
+                            },
                             'image': 'app/c',
                             'mount': '/app/c',})
     _write('lib', 'lib-a', {'repo': 'github.com/lib/a',
