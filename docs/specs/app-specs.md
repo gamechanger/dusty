@@ -147,6 +147,9 @@ application inside of `always`.
 
 The output of the once command is logged inside the app's container at `/var/log/dusty_once_fn.log`.
 
+These commands are always run as root in-container; this is done by setting the `user` key to `root` in
+the compiled Docker Compose file.
+
 ## scripts
 
 ```

@@ -10,6 +10,7 @@
 
  * FIXED: `dusty upgrade` will now successfully upgrade Dusty from a RC version in all cases
 
+ * All apps are now run as root in-container, via `user: root` in Docker Compose
  * `dusty status` now shows the status of Dusty's nginx container and has received some performance improvements
 
 ## 0.3.0 (July 24, 2015)
