@@ -68,7 +68,10 @@ class Repo(object):
 
     @property
     def short_name(self):
-        return self.remote_path.split('/')[-1]
+        short_name = self.remote_path.split('/')[-1]
+        if short_name.endswith('.git'):
+            short_name = short_name[:-4]
+        return short_name
 
     @property
     def managed_path(self):

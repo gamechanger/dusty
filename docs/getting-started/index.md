@@ -14,7 +14,7 @@ this repo, you can either run `dusty setup` and leave the specs repo
 field blank when prompted, or you can run the following:
 
 ```
-> dusty config set specs_repo github.com/gamechanger/dusty-example-specs
+> dusty config set specs_repo https://github.com/gamechanger/dusty-example-specs.git
 > dusty repos update
 ```
 
@@ -58,7 +58,7 @@ let us investigate what's inside of them, as well as make changes on the fly.
 
 ```
 > cd ~
-> git clone git@github.com:gamechanger/dusty-example-specs
+> git clone https://github.com:gamechanger/dusty-example-specs.git
 Cloning into 'dusty-example-specs'...
 ```
 

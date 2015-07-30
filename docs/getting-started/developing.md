@@ -14,7 +14,7 @@ changes. Let's check out a copy of the `hello-world` Flask app.
 
 ```
 > cd ~
-> git clone git@github.com:gamechanger/dusty-flask-example
+> git clone https://github.com:gamechanger/dusty-flask-example.git
 Cloning into 'dusty-flask-example'...
 ```
 
