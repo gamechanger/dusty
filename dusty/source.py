@@ -19,7 +19,9 @@ def git_error_handling():
     except git.exc.GitCommandError:
         log_to_client('ERROR: Git command failed. If you are trying to access a remote repository '
                       'over SSH (e.g. GitHub), please make sure you have added your SSH key to the '
-                      'SSH agent using: ssh-add <SSH key filepath>')
+                      'SSH agent using: ssh-add <SSH key filepath>.  If you specified to clone the repo '
+                      'using HTTP, the repo must be public; private repo access is only supported with '
+                      'ssh')
         raise
 
 class Repo(object):
@@ -61,8 +63,15 @@ class Repo(object):
         return self.remote_path.startswith('/')
 
     @property
+    def is_http_repo(self):
+        return self.remote_path.startswith('http')
+
+    @property
     def short_name(self):
-        return self.remote_path.split('/')[-1]
+        short_name = self.remote_path.split('/')[-1]
+        if short_name.endswith('.git'):
+            short_name = short_name[:-4]
+        return short_name
 
     @property
     def managed_path(self):
@@ -100,6 +109,8 @@ class Repo(object):
         with git_error_handling():
             if self.is_local_repo:
                 git.Repo.clone_from('file:///{}'.format(self.remote_path), self.managed_path)
+            elif self.is_http_repo:
+                git.Repo.clone_from(self.remote_path, self.managed_path)
             else:
                 git.Repo.clone_from('ssh://{}@{}'.format(constants.GIT_USER, self.remote_path), self.managed_path)
 

@@ -14,7 +14,7 @@ changes. Let's check out a copy of the `hello-world` Flask app.
 
 ```
 > cd ~
-> git clone git@github.com:gamechanger/dusty-flask-example
+> git clone https://github.com:gamechanger/dusty-flask-example.git
 Cloning into 'dusty-flask-example'...
 ```
 
@@ -23,23 +23,24 @@ out a copy, we can tell Dusty to use it by issuing a repo override command.
 
 ```
 > dusty repos list
-+--------------------------------------------+---------------------+----------------+
-|                 Full Name                  |      Short Name     | Local Override |
-+--------------------------------------------+---------------------+----------------+
-| github.com/gamechanger/dusty-example-specs | dusty-example-specs |                |
-| github.com/gamechanger/dusty-flask-example | dusty-flask-example |                |
-+--------------------------------------------+---------------------+----------------+
-
++--------------------------------------------------------+---------------------+-------------------------+
+|                       Full Name                        |      Short Name     |      Local Override     |
++--------------------------------------------------------+---------------------+-------------------------+
+| https://github.com/gamechanger/dusty-example-specs.git | dusty-example-specs |                         |
+| https://github.com/gamechanger/dusty-flask-example.git | dusty-flask-example |                         |
+|      https://github.com/gamechanger/watchdog.git       |       watchdog      |                         |
++--------------------------------------------------------+---------------------+-------------------------+
 > dusty repos override dusty-flask-example ~/dusty-flask-example
 Locally overriding repo github.com/gamechanger/dusty-flask-example to use source at ~/dusty-flask-example
 
 > dusty repos list
-+--------------------------------------------+---------------------+-----------------------+
-|                 Full Name                  |      Short Name     |     Local Override    |
-+--------------------------------------------+---------------------+-----------------------+
-| github.com/gamechanger/dusty-example-specs | dusty-example-specs |                       |
-| github.com/gamechanger/dusty-flask-example | dusty-flask-example | ~/dusty-flask-example |
-+--------------------------------------------+---------------------+-----------------------+
++--------------------------------------------------------+---------------------+-------------------------+
+|                       Full Name                        |      Short Name     |      Local Override     |
++--------------------------------------------------------+---------------------+-------------------------+
+| https://github.com/gamechanger/dusty-example-specs.git | dusty-example-specs |                         |
+| https://github.com/gamechanger/dusty-flask-example.git | dusty-flask-example |  ~/dusty-flask-example  |
+|      https://github.com/gamechanger/watchdog.git       |       watchdog      |                         |
++--------------------------------------------------------+---------------------+-------------------------+
 ```
 
 Once the override is in place, Dusty will take care of mounting our local copy inside any

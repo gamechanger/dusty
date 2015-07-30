@@ -3,6 +3,7 @@
 ## 0.4.0 (In Progress)
  * NEW: Dusty no longer requires nginx to be installed on your Mac! Dusty now runs a containerized nginx inside Docker instead. All other functionality around host forwarding is unchanged.
  * NEW: Dusty's socket location can now be customized via the `DUSTY_SOCKET_PATH` environment variable
+ * NEW: Dusty will use HTTPS to clone public repos which explicitly specify in their URL to use HTTPS
 
  * `dusty status` now shows the status of Dusty's nginx container and has received some performance improvements
 
