@@ -113,6 +113,38 @@ class TestCommandFile(DustyTestCase):
         fake_sync.assert_has_calls([call('{}'.format(constants.COMMAND_FILES_DIR), '{}'.format(constants.VM_COMMAND_FILES_DIR))])
 
     @patch('dusty.command_file._write_commands_to_file')
+    @patch('dusty.command_file.sync_local_path_to_vm')
+    def test_make_up_command_files_no_mount(self, fake_sync, fake_write_commands_to_file):
+        assembled_spec = {
+            'apps': {'app1': get_app_dusty_schema({
+                              'commands': {
+                                'once': ['app1 once 1', 'app1 once 2 &'],
+                                'always': ['app1 always 1', 'app1 always 2']
+                              }})}}
+        command_file.make_up_command_files(assembled_spec)
+
+        commands1 = ['set -e',
+                     'dusty_once_fn () {',
+                     'app1 once 1',
+                     'app1 once 2 &',
+                     '}',
+                     'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
+                     'then mkdir -p {}'.format(constants.RUN_DIR),
+                     'touch {}'.format(constants.FIRST_RUN_FILE_PATH)
+                     ] + command_file._tee_output_commands('dusty_once_fn') + [
+                     'fi',
+                     'dusty_always_fn () {',
+                     'app1 always 1',
+                     'app1 always 2',
+                     '}',
+                     'dusty_always_fn']
+        call1 = call(commands1, '{}/app1/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
+
+        fake_write_commands_to_file.assert_has_calls([call1])
+
+        fake_sync.assert_has_calls([call('{}'.format(constants.COMMAND_FILES_DIR), '{}'.format(constants.VM_COMMAND_FILES_DIR))])
+
+    @patch('dusty.command_file._write_commands_to_file')
     @patch('dusty.schemas.base_schema_class.get_specs_from_path')
     @patch('dusty.command_file.sync_local_path_to_vm')
     def test_make_test_command_files_1(self, fake_sync, fake_get_specs, fake_write_commands_to_file):
