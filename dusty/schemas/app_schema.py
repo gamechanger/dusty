@@ -60,7 +60,7 @@ app_schema = Schema({
     'image': {'type': basestring},
     'build': {'type': basestring},
     'mount': {'type': basestring, 'default': str},
-    'commands': {'type': commands_schema, 'default': dict},
+    'commands': {'type': commands_schema, 'required': True},
     'scripts': {'type': Array(script_schema), 'default': list},
     'compose': {'type': dusty_app_compose_schema, 'default': dict},
     'test': {'type': test_schema, 'default': dict}
