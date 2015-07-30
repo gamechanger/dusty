@@ -169,7 +169,8 @@ class TestComposeCompiler(DustyTestCase):
             'ports': [
                 '8000:1',
                 '8005:90'
-            ]
+            ],
+            'user': 'root'
         }
         retured_config = _composed_app_dict('app1', basic_specs, basic_port_specs)
         self.assertEqual(expected_app_config, retured_config)

@@ -88,8 +88,7 @@ class TestCommandFile(DustyTestCase):
                      'app1 once 1',
                      'app1 once 2 &',
                      '}',
-                     'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
-                     'then mkdir -p {}'.format(constants.RUN_DIR),
+                     'if [ ! -f {} ]; then'.format(constants.FIRST_RUN_FILE_PATH),
                      'touch {}'.format(constants.FIRST_RUN_FILE_PATH)
                      ] + command_file._tee_output_commands('dusty_once_fn') + [
                      'fi',
@@ -128,8 +127,7 @@ class TestCommandFile(DustyTestCase):
                      'app1 once 1',
                      'app1 once 2 &',
                      '}',
-                     'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
-                     'then mkdir -p {}'.format(constants.RUN_DIR),
+                     'if [ ! -f {} ]; then'.format(constants.FIRST_RUN_FILE_PATH),
                      'touch {}'.format(constants.FIRST_RUN_FILE_PATH)
                      ] + command_file._tee_output_commands('dusty_once_fn') + [
                      'fi',
@@ -236,8 +234,7 @@ class TestCommandFile(DustyTestCase):
             'dusty_once_fn () {',
             'once_script.sh',
             '}',
-            'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
-            'then mkdir -p {}'.format(constants.RUN_DIR),
+            'if [ ! -f {} ]; then'.format(constants.FIRST_RUN_FILE_PATH),
             'touch {}'.format(constants.FIRST_RUN_FILE_PATH),
             ] + command_file._tee_output_commands('dusty_once_fn') + [
             'fi'
@@ -252,8 +249,7 @@ class TestCommandFile(DustyTestCase):
             }
         }
         expected = [
-            'if [ ! -f {} ]'.format(constants.FIRST_RUN_FILE_PATH),
-            'then mkdir -p {}'.format(constants.RUN_DIR),
+            'if [ ! -f {} ]; then'.format(constants.FIRST_RUN_FILE_PATH),
             'touch {}'.format(constants.FIRST_RUN_FILE_PATH),
             'fi'
         ]
