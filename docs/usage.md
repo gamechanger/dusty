@@ -115,7 +115,8 @@ Commands:
 ```
 Inspect, cleanup_containers, and cleanup_images are used to manage the disk usage of Dusty's docker
 images and containers.  These can end up taking up a lot of space on boot2docker's virtual disk,
-which is 20G max (dynamically allocated by Virtualbox).
+which is 20G max (dynamically allocated by Virtualbox).  Cleanup_containers uses the `-v` flag with
+`docker rm` to avoid dangling volumes.
 
 Backup and restore are usefull for saving persistent data.  You may want to save the data and
 send it to someone else, or save your data after recreating your boot2docker VM.
@@ -273,6 +274,9 @@ Options:
   --rm  remove containers
 ```
 
+When used with the `--rm` flag, the `-v` flag is passed to `docker-compose rm` to avoid dangling
+volumes.
+
 #### sync
 ```
 Sync repos from the local filesystem to the boot2docker VM.
@@ -336,7 +340,7 @@ that `dusty up` takes are:
  * Pull your Dusty-managed repos
  * Assemble your specs, based on active bundles, into configuration for your hosts file, nginx,
 and Docker Compose
- * Stops running Dusty containers
+ * Stops running Dusty containers, and removes them.  The `-v` flag of `docker-compose rm` is used, to avoid dangling volumes
  * Sync repos from your mac to boot2docker
  * Re-create and launch your docker containers
 
