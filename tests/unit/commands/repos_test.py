@@ -56,6 +56,17 @@ class TestReposCommands(DustyTestCase):
                               {get_specs_repo().remote_path: self.temp_specs_path,
                                'github.com/app/a': self.temp_specs_path})
 
+    def test_override_repo_colon(self):
+        bad_path = os.path.join(self.temp_specs_path, 'colon:path')
+        os.makedirs(bad_path)
+        with self.assertRaises(RuntimeError):
+            override_repo('github.com/app/a', bad_path)
+        list_repos()
+        self._assert_listed_repos(self.last_client_output,
+                                  [['github.com/app/a', False],
+                                   ['github.com/app/b', False]],
+                                  offset=1)
+
     def test_override_then_manage_repo(self):
         override_repo('github.com/app/a', self.temp_specs_path)
         self.assertItemsEqual(get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY),
