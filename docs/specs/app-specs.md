@@ -175,7 +175,9 @@ compose:
 ```
 
 Dusty uses Docker Compose to create and manage containers. The `compose` key allows you to
-override any of the values passed through to Docker Compose at runtime.
+override almost any of the values passed through to Docker Compose at runtime.
+
+Dusty reserves the following keys for itself and specifying them here will have no effect: `COMMAND`, `ENTRYPOINT`
 
 For more information on what you can override through this key, please see
 the [Docker Compose specification](https://docs.docker.com/compose/yml/).
