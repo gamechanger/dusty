@@ -297,12 +297,14 @@ Allow you to run tests in an isolated container for an app or a lib.
 If args are passed, default arguments are dropped
 
 Usage:
-  test <app_or_lib_name> [<suite_name>] [<args>...] [--recreate]
+  test [options] <app_or_lib_name> [<suite_name>] [<args>...]
 
 Options:
   <suite_name>  Name of the test suite you would like to run
+                If `all` is specified, all suites in the spec will be run
   <args>        A list of arguments to be passed to the test script
   --recreate    Ensures that the testing image will be recreated
+  --no-pull     Do not pull dusty managed repos from remotes.
 
 Examples:
   To call test suite frontend with default arguments:
