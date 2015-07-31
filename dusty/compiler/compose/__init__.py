@@ -98,6 +98,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
         compose_dict['build'] = _get_build_path(app_spec)
     else:
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
+    compose_dict['entrypoint'] = []
     compose_dict['command'] = _compile_docker_command(app_spec)
     logging.info("Compose Compiler: compiled command {}".format(compose_dict['command']))
     compose_dict['links'] = _links_for_app(app_spec, assembled_specs)
