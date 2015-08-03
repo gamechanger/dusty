@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.4.0 (In Progress)
+## 0.4.1 (In Progress)
+
+## 0.4.0 (August 3, 2015)
 
 * **Breaking**
     * Dusty now removes data volumes when removing containers. Containers needing to persist data should use volume mounts inside of `/persist` in the boot2docker VM.
