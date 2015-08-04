@@ -37,15 +37,12 @@ $ mkdocs serve
 
 ## Maintaining the Changelog
 
-User-facing changes should be documented in the Changelog as they are merged. The following
-types of changes should be prefixed with the appropriate change type:
+User-facing changes should be documented in the Changelog as they are merged. Changes are segmented
+into one of three types:
 
-* BREAKING CHANGE: Changes to the existing Dusty CLI, specs, or runtime environment which are not backwards-compatible
-* NEW: A new user-facing feature, or something that enables a workflow that wasn't possible before.
-* FIXED: Noteworthy, user-facing bug fixes.
-
-Any changes which do not meet any of these definitions but do affect the user experience
-may be listed without a prefix.
+* **Breaking**: Changes to the existing Dusty CLI, specs, or runtime environment which are not backwards-compatible
+* **New**: A new user-facing feature, or something that enables a workflow that wasn't possible before.
+* **Misc**: Anything else! Typically bug fixes or notable changes to implementation details.
 
 ## Release Checklist
 
