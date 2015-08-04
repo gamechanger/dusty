@@ -58,3 +58,5 @@ may be listed without a prefix.
 * Cut a new release by running the `DustyRelease` Jenkins job with your new version number
 
 * Bump the version number in `dusty/constants.py` to the new, in-progress version
+
+* Go update the release on GitHub to include the new version's notes from the changelog
