@@ -3,8 +3,8 @@ import tempfile
 import textwrap
 
 import dusty.constants
-from dusty.systems.hosts import (_remove_current_dusty_config, _dusty_hosts_config,
-                                update_hosts_file_from_port_spec, _read_hosts)
+from dusty.systems.hosts import _dusty_hosts_config, update_hosts_file_from_port_spec
+from dusty.systems import config_file
 from ....testcases import DustyTestCase
 
 class TestHostsSystem(DustyTestCase):
@@ -21,7 +21,6 @@ class TestHostsSystem(DustyTestCase):
         127.0.0.2 local-api.gc.com
         # END section for Dusty
         """)
-        self.non_spec_starter = "127.0.0.1 some-host.local.com\n"
 
     def tearDown(self):
         super(TestHostsSystem, self).tearDown()
@@ -32,14 +31,6 @@ class TestHostsSystem(DustyTestCase):
         result = _dusty_hosts_config(self.test_spec)
         self.assertEqual(result, self.spec_output)
 
-    def test_remove_current_dusty_config_from_blank(self):
-        result = _remove_current_dusty_config(self.spec_output)
-        self.assertEqual(result, "")
-
-    def test_remove_current_dusty_config_from_starting(self):
-        result = _remove_current_dusty_config(self.non_spec_starter + self.spec_output)
-        self.assertEqual(result, self.non_spec_starter)
-
     def test_update_hosts_file_from_port_spec(self):
         update_hosts_file_from_port_spec({'hosts_file': self.test_spec})
-        self.assertEqual(_read_hosts(dusty.constants.HOSTS_PATH), self.spec_output)
+        self.assertEqual(config_file.read(dusty.constants.HOSTS_PATH), self.spec_output)

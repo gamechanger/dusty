@@ -1,10 +1,15 @@
 import os
+import re
 
 VERSION = '0.4.0'
 BINARY = False # overridden by PyInstaller when we build a binary
 PRERELEASE = False # overridden by PyInstaller when we build a prerelease binary
 
 EXAMPLE_SPECS_REPO = 'github.com/gamechanger/dusty-example-specs'
+
+DUSTY_CONFIG_BEGIN = '# BEGIN section for Dusty\n'
+DUSTY_CONFIG_END = '# END section for Dusty\n'
+DUSTY_CONFIG_REGEX = re.compile('\\{}.*\\{}'.format(DUSTY_CONFIG_BEGIN, DUSTY_CONFIG_END), flags=re.DOTALL | re.MULTILINE)
 
 SOCKET_TERMINATOR = '\0\0'
 SOCKET_ERROR_TERMINATOR = '\0\1'
