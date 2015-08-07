@@ -4,12 +4,13 @@ import textwrap
 from prettytable import PrettyTable
 
 from .. import constants
-from ..compiler.spec_assembler import get_expanded_libs_specs, get_specs_repo, get_same_container_repos
+from ..compiler.spec_assembler import (get_expanded_libs_specs, get_specs_repo,
+    get_same_container_repos, get_same_container_repos_from_spec)
 from ..compiler.compose import get_volume_mounts, get_testing_compose_dict, container_code_path
 from ..systems.docker.testing_image import ensure_test_image, test_image_name
 from ..systems.docker import get_docker_client
 from ..systems.docker.compose import write_composefile, compose_up
-from ..systems.rsync import sync_repos_by_specs
+from ..systems import nfs
 from ..systems.virtualbox import initialize_docker_vm
 from ..log import log_to_client
 from ..command_file import make_test_command_files, dusty_command_file_name
@@ -61,7 +62,8 @@ def pull_repos_and_sync(app_or_lib_name, pull_repos=False):
     if pull_repos:
         _update_test_repos(app_or_lib_name)
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
-    sync_repos_by_specs([spec])
+    log_to_client('Checking NFS mounts')
+    nfs.update_nfs_with_repos(get_same_container_repos_from_spec(spec))
 
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, should_exit=True, force_recreate=False):
     client = get_docker_client()
