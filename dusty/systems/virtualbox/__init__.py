@@ -1,7 +1,11 @@
+from __future__ import absolute_import
+
 import os
 import re
 import logging
 import textwrap
+import time
+from subprocess import CalledProcessError
 
 from ... import constants
 from ...config import get_config_value
@@ -43,7 +47,14 @@ def _start_docker_vm():
 def _stop_docker_vm():
     """Stop the boot2docker VM if it is not already stopped."""
     logging.info('Stopping the boot2docker VM')
-    check_call_demoted(['boot2docker', 'stop'], redirect_stderr=True)
+    try:
+        # This has a hard-coded limit of 10 seconds, after which it will fail
+        # In practice it seems pretty easy to exceed 10 seconds
+        check_call_demoted(['boot2docker', 'stop'], redirect_stderr=True)
+    except subprocess.CalledProcessError:
+        time.sleep(5)
+        # So we give it a second shot
+        check_call_demoted(['boot2docker', 'stop'], redirect_stderr=True)
 
 def _get_vm_config():
     return check_output_demoted(['VBoxManage', 'showvminfo', '--machinereadable', 'boot2docker-vm']).splitlines()
