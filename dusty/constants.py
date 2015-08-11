@@ -28,6 +28,7 @@ DUSTY_GITHUB_PATH = 'gamechanger/dusty'
 DUSTY_BINARY_NAME = 'dusty'
 
 VM_IP_FROM_DOCKER = '172.17.42.1'
+VM_NIC_TYPE = 'Am79C973'
 
 VM_PERSIST_DIR = '/persist'
 VM_REPOS_DIR = os.path.join(VM_PERSIST_DIR, 'repos')
