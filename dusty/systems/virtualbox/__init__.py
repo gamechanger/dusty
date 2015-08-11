@@ -51,7 +51,7 @@ def _stop_docker_vm():
         # This has a hard-coded limit of 10 seconds, after which it will fail
         # In practice it seems pretty easy to exceed 10 seconds
         check_call_demoted(['boot2docker', 'stop'], redirect_stderr=True)
-    except subprocess.CalledProcessError:
+    except CalledProcessError:
         time.sleep(5)
         # So we give it a second shot
         check_call_demoted(['boot2docker', 'stop'], redirect_stderr=True)
