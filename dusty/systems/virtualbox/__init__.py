@@ -1,7 +1,11 @@
+from __future__ import absolute_import
+
 import os
 import re
 import logging
 import textwrap
+import time
+from subprocess import CalledProcessError
 
 from ... import constants
 from ...config import get_config_value
@@ -40,8 +44,47 @@ def _start_docker_vm():
     call_demoted(['VBoxManage', 'modifyvm', 'boot2docker-vm', '--memory', '{}'.format(memory_size)])
     check_call_demoted(['boot2docker', 'start'], redirect_stderr=True)
 
+def _stop_docker_vm():
+    """Stop the boot2docker VM if it is not already stopped."""
+    logging.info('Stopping the boot2docker VM')
+    try:
+        # This has a hard-coded limit of 10 seconds, after which it will fail
+        # In practice it seems pretty easy to exceed 10 seconds
+        check_call_demoted(['boot2docker', 'stop'], redirect_stderr=True)
+    except CalledProcessError:
+        time.sleep(5)
+        # So we give it a second shot
+        check_call_demoted(['boot2docker', 'stop'], redirect_stderr=True)
+
+def _get_vm_config():
+    return check_output_demoted(['VBoxManage', 'showvminfo', '--machinereadable', 'boot2docker-vm']).splitlines()
+
+def _vm_is_using_virtio():
+    """Return boolean of whether the boot2docker VM has virtio configured on any of its
+    network interfaces."""
+    for line in _get_vm_config():
+        if 'nictype' in line and 'virtio' in line:
+            return True
+    return False
+
+def _apply_virtio_networking_fix():
+    """Modify all boot2docker VM network interfaces to use the preferred VM NIC type (generally
+    in place of virtio)."""
+    for idx, _ in enumerate(filter(lambda line: 'nictype' in line, _get_vm_config())):
+        logging.info('Setting VM NIC #{} to {}'.format(idx + 1, constants.VM_NIC_TYPE))
+        check_call_demoted(['VBoxManage', 'modifyvm', 'boot2docker-vm', '--nictype{}'.format(idx + 1), constants.VM_NIC_TYPE])
+
 def ensure_docker_vm_is_started():
     _init_docker_vm()
+    # The default boot2docker config using multiple vCPUs and virtio networking
+    # is known to have massive network performance degradation. We detect virtio
+    # networking config and change it to PCnet-FAST III if needed.
+    # See https://github.com/boot2docker/boot2docker/issues/1022
+    if _vm_is_using_virtio():
+        log_to_client('Stopping boot2docker VM to apply fix for virtio networking')
+        log_to_client('For more info, please see https://github.com/boot2docker/boot2docker/issues/1022')
+        _stop_docker_vm()
+        _apply_virtio_networking_fix()
     _start_docker_vm()
 
 def _apply_1_7_cert_hack():
