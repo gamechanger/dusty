@@ -10,7 +10,7 @@ DIAGNOSTIC_SUBPROCESS_COMMANDS = [
     ['which', 'rsync'],
     ['VBoxManage', '-v'],
     ['boot2docker', 'version'],
-    ['boot2docker', 'ssh', 'df', '-h'],
+    ['boot2docker', 'ssh', 'df', '-h', '/dev/sda1'],
     ['docker', '-v'],
     ['docker-compose', '--version'],
     ['cat', constants.HOSTS_PATH],
