@@ -5,12 +5,8 @@ from ... import constants
 
 
 def read(filepath):
-    try:
-        with open(filepath, 'r') as f:
-            return f.read()
-    except IOError:
-        logging.info('Unable to read file {}'.format(filepath))
-        return ''
+    with open(filepath, 'r') as f:
+        return f.read()
 
 def write(filepath, contents):
     with open(filepath, 'w') as f:
