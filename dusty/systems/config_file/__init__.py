@@ -1,3 +1,6 @@
+import logging
+import re
+
 from ... import constants
 
 
@@ -21,3 +24,10 @@ def create_config_section(contents):
     config += contents
     config += constants.DUSTY_CONFIG_END
     return config
+
+def get_dusty_config_section(file_contents):
+    m = constants.DUSTY_CONFIG_GROUP_REGEX.match(file_contents)
+    if not m:
+        return ''
+    return m.group('dusty_config')
+

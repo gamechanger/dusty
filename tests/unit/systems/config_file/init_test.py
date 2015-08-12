@@ -34,3 +34,9 @@ class TestConfigFileSystem(DustyTestCase):
         dusty_config = config_file.create_config_section(contents)
         stripped_config = config_file.remove_current_dusty_config(dusty_config)
         self.assertEqual(stripped_config, "")
+
+    def test_get_dusty_config_section(self):
+        dusty_contents = 'dusty contents!!\n'
+        dusty_config = config_file.create_config_section(dusty_contents)
+        file_contents = "leading stuff\n{}trailin_stuff".format(dusty_config)
+        self.assertEqual(config_file.get_dusty_config_section(file_contents), dusty_contents)
