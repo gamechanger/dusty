@@ -105,7 +105,7 @@ class DustySpecs(BaseMutable):
             return self._document['apps'][app_or_lib_name]
         elif app_or_lib_name in self._document['libs']:
             return self._document['libs'][app_or_lib_name]
-        raise KeyError('did not find app or service with name {}'.format(app_or_lib_name))
+        raise KeyError('did not find app or library with name {}'.format(app_or_lib_name))
 
     def get_app_or_service(self, app_or_service_name):
         if app_or_service_name in self._document['apps']:
