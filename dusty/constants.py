@@ -10,6 +10,7 @@ EXAMPLE_SPECS_REPO = 'github.com/gamechanger/dusty-example-specs'
 DUSTY_CONFIG_BEGIN = '# BEGIN section for Dusty\n'
 DUSTY_CONFIG_END = '# END section for Dusty\n'
 DUSTY_CONFIG_REGEX = re.compile('\\{}.*\\{}'.format(DUSTY_CONFIG_BEGIN, DUSTY_CONFIG_END), flags=re.DOTALL | re.MULTILINE)
+DUSTY_CONFIG_GROUP_REGEX = re.compile('.*\\{}(?P<dusty_config>.*)\\{}.*'.format(DUSTY_CONFIG_BEGIN, DUSTY_CONFIG_END), flags=re.DOTALL | re.MULTILINE)
 
 SOCKET_TERMINATOR = '\0\0'
 SOCKET_ERROR_TERMINATOR = '\0\1'

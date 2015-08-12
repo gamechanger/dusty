@@ -1,9 +1,16 @@
+import logging
+import re
+
 from ... import constants
 
 
 def read(filepath):
-    with open(filepath, 'r') as f:
-        return f.read()
+    try:
+        with open(filepath, 'r') as f:
+            return f.read()
+    except IOError:
+        logging.info('Unable to read file {}'.format(filepath))
+        return ''
 
 def write(filepath, contents):
     with open(filepath, 'w') as f:
@@ -21,3 +28,10 @@ def create_config_section(contents):
     config += contents
     config += constants.DUSTY_CONFIG_END
     return config
+
+def get_dusty_config_section(file_contents):
+    m = constants.DUSTY_CONFIG_GROUP_REGEX.match(file_contents)
+    if not m:
+        return ''
+    return m.group('dusty_config')
+
