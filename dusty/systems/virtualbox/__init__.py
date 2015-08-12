@@ -138,7 +138,7 @@ def _format_df_dict(df_dict):
     return formatted_usage
 
 def get_docker_vm_disk_info(as_dict=False):
-    df_output = check_output_demoted(['boot2docker', 'ssh', 'df', '-h', '|', 'grep', '/dev/sda1'])
+    df_output = check_output_demoted(['boot2docker', 'ssh', 'df', '-h', '/mnt/sda1' '|', 'grep', '/dev/sda1'])
     df_line = df_output.split('\n')[0]
     df_dict = _parse_df_output(df_line)
     return df_dict if as_dict else _format_df_dict(df_dict)
