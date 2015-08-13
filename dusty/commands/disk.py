@@ -13,7 +13,6 @@ from ..payload import daemon_command
 
 @daemon_command
 def cleanup_inactive_containers():
-    log_to_client("Ensuring virtualbox VM is running")
     ensure_docker_vm_is_started()
     log_to_client("Cleaning up exited containers:")
     containers = remove_exited_dusty_containers()
@@ -21,7 +20,6 @@ def cleanup_inactive_containers():
 
 @daemon_command
 def cleanup_images():
-    log_to_client("Ensuring virtualbox VM is running")
     ensure_docker_vm_is_started()
     log_to_client("Cleaning up docker images without containers:")
     images = remove_images()
@@ -29,7 +27,6 @@ def cleanup_images():
 
 @daemon_command
 def inspect_vm_disk():
-    log_to_client("Ensuring virtualbox VM is running")
     ensure_docker_vm_is_started()
     log_to_client("Boot2Docker VM Disk Usage:")
     log_to_client(get_docker_vm_disk_info())
@@ -45,7 +42,6 @@ def _ensure_backup_dir_exists(destination_path):
 def backup(path):
     destination_path = _full_destination_dir(path)
     _ensure_backup_dir_exists(destination_path)
-    log_to_client("Ensuring virtualbox VM is running")
     ensure_docker_vm_is_started()
     log_to_client("Syncing data from your VM to {}...".format(destination_path))
     sync_local_path_from_vm(destination_path, constants.VM_PERSIST_DIR)
@@ -56,7 +52,6 @@ def restore(source_path):
     if not os.path.exists(source_path):
         log_to_client("Can't find backup data to restore at {}".format(source_path))
         return
-    log_to_client("Ensuring virtualbox VM is running")
     ensure_docker_vm_is_started()
     log_to_client("Restoring your backup last modified at {}".format(dir_modified_time(source_path)))
     sync_local_path_to_vm(source_path, constants.VM_PERSIST_DIR)

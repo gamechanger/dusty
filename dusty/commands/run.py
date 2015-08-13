@@ -25,7 +25,6 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     if not assembled_spec[constants.CONFIG_BUNDLES_KEY]:
         raise RuntimeError('No bundles are activated. Use `dusty bundles` to activate bundles before running `dusty up`.')
 
-    log_to_client("Ensuring virtualbox vm is running")
     virtualbox.initialize_docker_vm()
     docker_ip = virtualbox.get_docker_vm_ip()
 

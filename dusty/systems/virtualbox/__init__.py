@@ -40,8 +40,6 @@ def _init_docker_vm():
 def _start_docker_vm():
     """Start the boot2docker VM if it is not already running."""
     logging.info('Making sure the boot2docker VM is started')
-    memory_size = int(get_config_value(constants.CONFIG_VM_MEM_SIZE))
-    call_demoted(['VBoxManage', 'modifyvm', 'boot2docker-vm', '--memory', '{}'.format(memory_size)])
     check_call_demoted(['boot2docker', 'start'], redirect_stderr=True)
 
 def _stop_docker_vm():
@@ -67,24 +65,41 @@ def _vm_is_using_virtio():
             return True
     return False
 
+def _vm_has_less_memory_than_requested(configured_memory):
+    """Return boolean of whether the boot2docker VM has less memory assigned to it
+    than the requested value in Dusty's config."""
+    for line in _get_vm_config():
+        if line.startswith('memory'):
+            current_memory = int(line.split('=')[1])
+            return current_memory < configured_memory
+    raise ValueError('Error parsing boot2docker VM config, memory value not found')
+
 def _apply_virtio_networking_fix():
-    """Modify all boot2docker VM network interfaces to use the preferred VM NIC type (generally
-    in place of virtio)."""
+    """The default boot2docker config using multiple vCPUs and virtio networking
+    is known to have massive network performance degradation. We detect virtio
+    networking config and change it to PCnet-FAST III if needed. We do this by
+    modifying all boot2docker VM network interfaces to use the preferred VM NIC
+    type. See https://github.com/boot2docker/boot2docker/issues/1022"""
     for idx, _ in enumerate(filter(lambda line: 'nictype' in line, _get_vm_config())):
         logging.info('Setting VM NIC #{} to {}'.format(idx + 1, constants.VM_NIC_TYPE))
         check_call_demoted(['VBoxManage', 'modifyvm', 'boot2docker-vm', '--nictype{}'.format(idx + 1), constants.VM_NIC_TYPE])
 
 def ensure_docker_vm_is_started():
+    log_to_client("Ensuring boot2docker VM is configured properly and running")
     _init_docker_vm()
-    # The default boot2docker config using multiple vCPUs and virtio networking
-    # is known to have massive network performance degradation. We detect virtio
-    # networking config and change it to PCnet-FAST III if needed.
-    # See https://github.com/boot2docker/boot2docker/issues/1022
-    if _vm_is_using_virtio():
-        log_to_client('Stopping boot2docker VM to apply fix for virtio networking')
-        log_to_client('For more info, please see https://github.com/boot2docker/boot2docker/issues/1022')
+    using_virtio = _vm_is_using_virtio()
+    configured_memory = int(get_config_value(constants.CONFIG_VM_MEM_SIZE))
+    has_low_memory = _vm_has_less_memory_than_requested(configured_memory)
+    if any([using_virtio, has_low_memory]):
+        log_to_client('Stopping boot2docker VM to apply configuration changes')
         _stop_docker_vm()
+    if using_virtio:
+        log_to_client('Applying fix for virtio networking')
+        log_to_client('For more info, please see https://github.com/boot2docker/boot2docker/issues/1022')
         _apply_virtio_networking_fix()
+    if has_low_memory:
+        log_to_client('Increasing VM memory to desired value of {} MB. You can change this through `dusty config`.'.format(configured_memory))
+        call_demoted(['VBoxManage', 'modifyvm', 'boot2docker-vm', '--memory', '{}'.format(configured_memory)])
     _start_docker_vm()
 
 def _apply_1_7_cert_hack():

@@ -54,7 +54,6 @@ def ensure_valid_suite_name(app_or_lib_name, suite_name):
 
 @daemon_command
 def pull_repos_and_sync(app_or_lib_name, pull_repos=False):
-    log_to_client("Ensuring virtualbox vm is running")
     initialize_docker_vm()
     expanded_specs = get_expanded_libs_specs()
     log_to_client('Syncing test command files to virtual machine')
