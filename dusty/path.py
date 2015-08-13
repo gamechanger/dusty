@@ -1,8 +1,10 @@
 from __future__ import absolute_import
 
 import os
+import shutil
 import subprocess
 import time
+import tempfile
 
 from . import constants
 from .config import get_config_value
@@ -25,3 +27,10 @@ def dir_modified_time(path):
 def set_mac_user_ownership(path):
     command = "chown -R {} {}".format(get_config_value(constants.CONFIG_MAC_USERNAME_KEY), path).split()
     subprocess.check_call(command)
+
+def case_insensitive_rename(src, dst):
+    """A hack to allow us to rename paths in a case-insensitive filesystem like HFS."""
+    temp_dir = tempfile.mkdtemp()
+    shutil.rmtree(temp_dir)
+    shutil.move(src, temp_dir)
+    shutil.move(temp_dir, dst)

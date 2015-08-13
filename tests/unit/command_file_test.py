@@ -97,15 +97,15 @@ class TestCommandFile(DustyTestCase):
                      'app1 always 2',
                      '}',
                      'dusty_always_fn']
-        call1 = call(commands1, '{}/app1/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
+        call1 = call(commands1, 'app1', '{}/app1/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
         commands2 = ['cd /gc/app1',
                      'script1 1',
                      'script1 2 $@']
-        call2 = call(commands2, '{}/app1/dusty_command_file_app1_script_script1.sh'.format(constants.COMMAND_FILES_DIR))
+        call2 = call(commands2, 'app1', '{}/app1/dusty_command_file_app1_script_script1.sh'.format(constants.COMMAND_FILES_DIR))
         commands3 = ['cd /gc/app1',
                      'script2 1',
                      'script2 2 $@']
-        call3 = call(commands3, '{}/app1/dusty_command_file_app1_script_script2.sh'.format(constants.COMMAND_FILES_DIR))
+        call3 = call(commands3, 'app1', '{}/app1/dusty_command_file_app1_script_script2.sh'.format(constants.COMMAND_FILES_DIR))
 
         fake_write_commands_to_file.assert_has_calls([call1, call2, call3])
 
@@ -136,7 +136,7 @@ class TestCommandFile(DustyTestCase):
                      'app1 always 2',
                      '}',
                      'dusty_always_fn']
-        call1 = call(commands1, '{}/app1/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
+        call1 = call(commands1, 'app1', '{}/app1/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
 
         fake_write_commands_to_file.assert_has_calls([call1])
 
@@ -168,15 +168,15 @@ class TestCommandFile(DustyTestCase):
         commands1 = ['cd /gc/app1',
                      'app1 test command 1',
                      'app1 test command 2']
-        call1 = call(commands1, '{}/app1/test/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
+        call1 = call(commands1, 'app1', '{}/app1/test/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
         commands2 = ['cd /gc/app1',
                      'suite1 command1',
                      'suite1 command2 $@']
-        call2 = call(commands2, '{}/app1/test/dusty_command_file_app1_test_suite1.sh'.format(constants.COMMAND_FILES_DIR))
+        call2 = call(commands2, 'app1', '{}/app1/test/dusty_command_file_app1_test_suite1.sh'.format(constants.COMMAND_FILES_DIR))
         commands3 = ['cd /gc/app1',
                      'suite2 command1',
                      'suite2 command2 $@']
-        call3 = call(commands3, '{}/app1/test/dusty_command_file_app1_test_suite2.sh'.format(constants.COMMAND_FILES_DIR))
+        call3 = call(commands3, 'app1', '{}/app1/test/dusty_command_file_app1_test_suite2.sh'.format(constants.COMMAND_FILES_DIR))
 
         fake_write_commands_to_file.assert_has_calls([call1, call2, call3])
 
@@ -208,15 +208,15 @@ class TestCommandFile(DustyTestCase):
         commands1 = ['cd /gc/lib1',
                      'lib1 test command 1',
                      'lib1 test command 2']
-        call1 = call(commands1, '{}/lib1/test/dusty_command_file_lib1.sh'.format(constants.COMMAND_FILES_DIR))
+        call1 = call(commands1, 'lib1', '{}/lib1/test/dusty_command_file_lib1.sh'.format(constants.COMMAND_FILES_DIR))
         commands2 = ['cd /gc/lib1',
                      'suite3 command1',
                      'suite3 command2 $@']
-        call2 = call(commands2, '{}/lib1/test/dusty_command_file_lib1_test_suite3.sh'.format(constants.COMMAND_FILES_DIR))
+        call2 = call(commands2, 'lib1', '{}/lib1/test/dusty_command_file_lib1_test_suite3.sh'.format(constants.COMMAND_FILES_DIR))
         commands3 = ['cd /gc/lib1',
                      'suite4 command1',
                      'suite4 command2 $@']
-        call3 = call(commands3, '{}/lib1/test/dusty_command_file_lib1_test_suite4.sh'.format(constants.COMMAND_FILES_DIR))
+        call3 = call(commands3, 'lib1', '{}/lib1/test/dusty_command_file_lib1_test_suite4.sh'.format(constants.COMMAND_FILES_DIR))
 
         fake_write_commands_to_file.assert_has_calls([call1, call2, call3])
 

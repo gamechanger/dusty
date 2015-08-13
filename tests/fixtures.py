@@ -17,7 +17,10 @@ def _write(spec_type, name, spec_doc):
         os.makedirs(spec_type_path)
     except OSError:
         pass
-    with open(os.path.join(spec_type_path, '{}.yml'.format(name)), 'w') as f:
+    spec_path = os.path.join(spec_type_path, '{}.yml'.format(name))
+    if os.path.exists(spec_path):
+        os.remove(spec_path)
+    with open(spec_path, 'w') as f:
         f.write(yaml.dump(spec_doc, default_flow_style=False))
 
 def premade_app():
@@ -138,9 +141,12 @@ def fixture_with_commands(once_fail=False, always_fail=False):
                             'image': 'python',
                           })
 
-def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']):
+def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999'], app_name_transformer=None):
     """Fixture for use in integration tests. The local repo at
-    /tmp/fake-repo should be set up before using this fixture."""
+    /tmp/fake-repo should be set up before using this fixture. Optionally takes in
+    a name transformer function which is applied to the default names of the apps."""
+    if app_name_transformer is None:
+        app_name_transformer = lambda x: x
     app_dict = {'repo': '/tmp/fake-repo',
                 'mount': '/repo',
                 'image': 'busybox',
@@ -157,9 +163,10 @@ def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']
                                         'command': ['ls'],
                                         'default_args': '.'}]}}
     for bundle in range(num_bundles):
-        name = 'busybox{}'.format(_num_to_alpha(bundle))
-        _write('bundle', name, {'description': 'Busybox bundle', 'apps': [name]})
-        _write('app', name, app_dict)
+        app_name = app_name_transformer('busybox{}'.format(_num_to_alpha(bundle)))
+        bundle_name = 'busybox{}'.format(_num_to_alpha(bundle))
+        _write('bundle', bundle_name, {'description': 'Busybox bundle', 'apps': [app_name]})
+        _write('app', app_name, app_dict)
 
 def invalid_fixture():
     _write('app', 'invalid', {'spaghetti': 'meatballs'})
