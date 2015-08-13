@@ -1,3 +1,4 @@
+import time
 import subprocess
 
 from ...testcases import DustyIntegrationTestCase
@@ -8,6 +9,13 @@ class TestUpCLI(DustyIntegrationTestCase):
         super(TestUpCLI, self).setUp()
         busybox_single_app_bundle_fixture(num_bundles=2)
         self.run_command('bundles activate busyboxa busyboxb')
+
+    def tearDown(self):
+        try:
+            self.run_command('stop')
+        except Exception:
+            pass
+        super(TestUpCLI, self).tearDown()
 
     def test_basic_up_command(self):
         run_output = self.run_command('up')
@@ -31,3 +39,13 @@ class TestUpCLI(DustyIntegrationTestCase):
         self.assertIn('Updating managed copy of /tmp/fake-repo', run_output)
         run_output = self.run_command('up --no-pull')
         self.assertNotIn('Updating managed copy of /tmp/fake-repo', run_output)
+
+    # Regression test for https://github.com/gamechanger/dusty/issues/475
+    # Concerning commands failing after changing capitalization of specs on
+    # case-insensitive host filesystems (like HFS on Mac)
+    def test_up_after_app_rename(self):
+        self.run_command('up')
+        busybox_single_app_bundle_fixture(num_bundles=2, app_name_transformer=lambda x: x.upper())
+        self.run_command('up')
+        time.sleep(1)
+        self.assertContainerRunning('BUSYBOXA')

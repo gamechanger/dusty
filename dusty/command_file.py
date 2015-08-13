@@ -5,12 +5,22 @@ from .source import Repo
 from .compiler.compose.common import container_code_path
 from .systems.docker.common import spec_for_service
 from .systems.rsync import sync_local_path_to_vm
-from .path import parent_dir
+from .path import case_insensitive_rename, parent_dir
 
-def _write_commands_to_file(list_of_commands, file_location):
-    file_location_parent = parent_dir(file_location)
-    if not os.path.exists(file_location_parent):
+def _write_commands_to_file(list_of_commands, app_name, file_location):
+    file_location_parent = '{}/{}'.format(constants.COMMAND_FILES_DIR, app_name)
+    if os.path.exists(file_location_parent):
+        # This looks insane but it's necessary to handle case-insensitive host filesystems
+        # like HFS on Mac. The filesystems in our VM are case-sensitive, so we need to make
+        # sure the case-sensitive representation is consistent.
+        case_insensitive_rename(file_location_parent, file_location_parent)
+    else:
         os.makedirs(file_location_parent)
+    if not os.path.exists(parent_dir(file_location)):
+        os.makedirs(parent_dir(file_location))
+    # We need to do this for similar reasons of case-insensitivity
+    if os.path.exists(file_location):
+        os.remove(file_location)
     with open(file_location, 'w+') as f:
         for command in list_of_commands:
             f.write('{} \n'.format(command))
@@ -118,27 +128,27 @@ def _write_up_command(app_name, assembled_specs):
     commands = _compile_docker_commands(app_name, assembled_specs)
     command_file_name = dusty_command_file_name(app_name)
     local_path = '{}/{}/{}'.format(constants.COMMAND_FILES_DIR, app_name, command_file_name)
-    _write_commands_to_file(commands, local_path)
+    _write_commands_to_file(commands, app_name, local_path)
 
 def _write_up_script_command(app_name, app_spec, script_spec):
     commands = ["cd {}".format(container_code_path(app_spec))] + script_spec['command']
     commands[-1] = '{} $@'.format(commands[-1])
     command_file_name = dusty_command_file_name(app_name, script_name=script_spec['name'])
     local_path = '{}/{}/{}'.format(constants.COMMAND_FILES_DIR, app_name, command_file_name)
-    _write_commands_to_file(commands, local_path)
+    _write_commands_to_file(commands, app_name, local_path)
 
 def _write_test_command(app_or_lib_spec, expanded_specs):
     commands = _get_test_image_setup_commands(app_or_lib_spec.name, expanded_specs, app_or_lib_spec['test'])
     command_file_name = dusty_command_file_name(app_or_lib_spec.name)
     local_path = '{}/{}/test/{}'.format(constants.COMMAND_FILES_DIR, app_or_lib_spec.name, command_file_name)
-    _write_commands_to_file(commands, local_path)
+    _write_commands_to_file(commands, app_or_lib_spec.name, local_path)
 
 def _write_test_suite_command(app_or_lib_spec, suite_spec):
     commands = ["cd {}".format(container_code_path(app_or_lib_spec))] + suite_spec['command']
     commands[-1] = '{} $@'.format(commands[-1])
     command_file_name = dusty_command_file_name(app_or_lib_spec.name, test_name=suite_spec['name'])
     local_path = '{}/{}/test/{}'.format(constants.COMMAND_FILES_DIR, app_or_lib_spec.name, command_file_name)
-    _write_commands_to_file(commands, local_path)
+    _write_commands_to_file(commands, app_or_lib_spec.name, local_path)
 
 def make_up_command_files(assembled_specs):
     for app_name in assembled_specs['apps'].keys():
