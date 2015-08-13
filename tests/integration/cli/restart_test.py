@@ -64,14 +64,6 @@ class TestRestartCLI(DustyIntegrationTestCase):
         self.assertContainerHasRestarted('appb')
         self.assertContainerNotRestarted('appc')
 
-    def test_restart_nosync(self):
-        new_file_name = 'nosync_file'
-        repo = Repo.resolve(get_all_repos(include_specs_repo=False), 'repo-app-a')
-        with open(os.path.join(repo.local_path, new_file_name), 'w+') as f:
-            f.write('new file!')
-        self.run_command('restart --no-sync appa')
-        self.assertFileNotInContainer('appa', os.path.join('/app/a/', new_file_name))
-
     def test_restart_sync(self):
         new_file_name = 'sync_file'
         repo = Repo.resolve(get_all_repos(include_specs_repo=False), 'repo-app-a')
