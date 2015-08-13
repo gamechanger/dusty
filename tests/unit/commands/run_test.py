@@ -36,57 +36,57 @@ class TestRunCommands(DustyTestCase):
         }))
 
     @patch('dusty.commands.run.docker.compose.restart_running_services')
-    @patch('dusty.commands.run.rsync')
+    @patch('dusty.commands.run.nfs')
+    @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.commands.run.spec_assembler.get_assembled_specs')
-    def test_restart_apps_or_services_with_arguments_no_sync(self,fake_get_assembled_specs, fake_rsync, fake_restart):
+    def test_restart_apps_or_services_with_arguments_1(self, fake_get_assembled_specs, fake_get_specs, fake_nfs, fake_restart):
         fake_get_assembled_specs.return_value = self.specs
-        restart_apps_or_services(['app-a', 'app-b'], sync=False)
-        self.assertFalse(fake_rsync.sync_repos_by_app_name.called)
-
-    @patch('dusty.commands.run.docker.compose.restart_running_services')
-    @patch('dusty.commands.run.rsync')
-    @patch('dusty.commands.run.spec_assembler.get_assembled_specs')
-    def test_restart_apps_or_services_with_arguments_1(self,fake_get_assembled_specs, fake_rsync, fake_restart):
-        fake_get_assembled_specs.return_value = self.specs
+        fake_get_specs.return_value = self.specs
         restart_apps_or_services(['app-a', 'app-b'])
-        fake_rsync.sync_repos_by_specs.assert_has_calls([call([self.specs['apps'][name] for name in ['app-a', 'app-b']])])
+        fake_nfs.update_nfs_with_repos.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/app/b'),
+            Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
 
     @patch('dusty.commands.run.docker.compose.restart_running_services')
-    @patch('dusty.commands.run.rsync')
+    @patch('dusty.commands.run.nfs')
+    @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.commands.run.spec_assembler.get_assembled_specs')
-    def test_restart_apps_or_services_with_arguments_2(self,fake_get_assembled_specs, fake_rsync, fake_restart):
+    def test_restart_apps_or_services_with_arguments_2(self, fake_get_assembled_specs, fake_get_specs, fake_nfs, fake_restart):
         fake_get_assembled_specs.return_value = self.specs
+        fake_get_specs.return_value = self.specs
         restart_apps_or_services(['app-a', 'app-b', 'ser-a'])
-        fake_rsync.sync_repos_by_specs.assert_has_calls([call([self.specs['apps'][name] for name in ['app-a', 'app-b']])])
+        fake_nfs.update_nfs_with_repos.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/app/b'),
+            Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
 
     @patch('dusty.commands.run.docker.compose.restart_running_services')
-    @patch('dusty.commands.run.rsync')
+    @patch('dusty.commands.run.nfs')
+    @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.commands.run.spec_assembler.get_assembled_specs')
-    def test_restart_apps_or_services_with_arguments_3(self,fake_get_assembled_specs, fake_rsync, fake_restart):
+    def test_restart_apps_or_services_with_arguments_3(self, fake_get_assembled_specs, fake_get_specs, fake_nfs, fake_restart):
         fake_get_assembled_specs.return_value = self.specs
+        fake_get_specs.return_value = self.specs
         restart_apps_or_services(['app-a', 'ser-a'])
-        fake_rsync.sync_repos_by_specs.assert_has_calls([call([self.specs['apps'][name] for name in ['app-a']])])
+        fake_nfs.update_nfs_with_repos.assert_has_calls([call(set([Repo('github.com/app/a'),
+            Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
 
     @patch('dusty.commands.run.docker.compose.restart_running_services')
-    @patch('dusty.commands.run.rsync')
+    @patch('dusty.commands.run.nfs')
     @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.compiler.spec_assembler.get_assembled_specs')
-    def test_restart_apps_or_services_without_arguments_1(self,fake_get_assembled_specs, fake_get_specs, fake_rsync, fake_restart):
+    def test_restart_apps_or_services_without_arguments_1(self, fake_get_assembled_specs, fake_get_specs, fake_nfs, fake_restart):
         fake_get_assembled_specs.return_value = self.specs
         fake_get_specs.return_value = self.specs
         restart_apps_or_services()
-        fake_rsync.sync_repos.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/app/b'),
+        fake_nfs.update_nfs_with_repos.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/app/b'),
                                                           Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
 
     @patch('dusty.commands.run.docker.compose.restart_running_services')
-    @patch('dusty.commands.run.rsync')
+    @patch('dusty.commands.run.nfs')
     @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.compiler.spec_assembler.get_assembled_specs')
-    def test_restart_apps_or_services_without_arguments_no_sync(self,fake_get_assembled_specs, fake_get_specs, fake_rsync, fake_restart):
+    def test_restart_apps_or_services_without_arguments_no_sync(self, fake_get_assembled_specs, fake_get_specs, fake_nfs, fake_restart):
         fake_get_assembled_specs.return_value = self.specs
         fake_get_specs.return_value = self.specs
         restart_apps_or_services(sync=False)
-        self.assertFalse(fake_rsync.sync_repos.called)
 
     @patch('dusty.commands.run.restart_apps_or_services')
     @patch('dusty.commands.run.spec_assembler.get_specs')

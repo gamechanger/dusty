@@ -41,13 +41,19 @@ def call_demoted(shell_args, env=None, redirect_stderr=False):
     kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
     return run_subprocess(subprocess.call, shell_args, demote=True, env=env, **kwargs)
 
-def check_call_demoted(shell_args, env=None, redirect_stderr=False):
+def check_call(shell_args, demote=True, env=None, redirect_stderr=False):
     kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
-    return run_subprocess(subprocess.check_call, shell_args, demote=True, env=env, **kwargs)
+    return run_subprocess(subprocess.check_call, shell_args, demote=demote, env=env, **kwargs)
+
+def check_call_demoted(shell_args, env=None, redirect_stderr=False):
+    return check_call(shell_args, demote=True, env=env, redirect_stderr=redirect_stderr)
+
+def check_output(shell_args, demote=True, env=None, redirect_stderr=False):
+    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
+    return run_subprocess(subprocess.check_output, shell_args, demote=demote, env=env, **kwargs)
 
 def check_output_demoted(shell_args, env=None, redirect_stderr=False):
-    kwargs = {} if not redirect_stderr else {'stderr': subprocess.STDOUT}
-    return run_subprocess(subprocess.check_output, shell_args, demote=True, env=env, **kwargs)
+    return check_output(shell_args, env=env, redirect_stderr=redirect_stderr, demote=True)
 
 def check_and_log_output_and_error_demoted(shell_args, env=None, strip_newlines=False):
     return check_and_log_output_and_error(shell_args, demote=True, env=env, strip_newlines=strip_newlines)

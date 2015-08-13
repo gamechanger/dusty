@@ -3,7 +3,7 @@ from subprocess import CalledProcessError
 
 from ..compiler import (compose as compose_compiler, nginx as nginx_compiler,
                         port_spec as port_spec_compiler, spec_assembler)
-from ..systems import docker, hosts, nginx, virtualbox, rsync
+from ..systems import docker, hosts, nginx, virtualbox, nfs
 from ..systems.docker import compose
 from ..log import log_to_client
 from .repos import update_managed_repos
@@ -56,8 +56,8 @@ def start_local_env(recreate_containers=True, pull_repos=True):
 
     log_to_client("Saving port forwarding to hosts file")
     hosts.update_hosts_file_from_port_spec(port_spec)
-    log_to_client("Syncing local repos to the VM")
-    rsync.sync_repos(active_repos)
+    log_to_client("Configuring NFS")
+    nfs.configure_nfs()
     log_to_client("Saving updated nginx config to the VM")
     nginx.update_nginx_from_config(nginx_config)
     log_to_client("Saving Docker Compose config and starting all containers")
@@ -92,10 +92,13 @@ def restart_apps_or_services(app_or_service_names=None, sync=True):
         if app_or_service_names:
             specs = spec_assembler.get_assembled_specs()
             specs_list = [specs['apps'][app_name] for app_name in app_or_service_names if app_name in specs['apps']]
-            rsync.sync_repos_by_specs(specs_list)
+            repos = set()
+            for spec in specs_list:
+                if spec['repo']:
+                    repos = repos.union(spec_assembler.get_same_container_repos_from_spec(spec))
+            nfs.update_nfs_with_repos(repos)
         else:
-            rsync.sync_repos(spec_assembler.get_all_repos(active_only=True, include_specs_repo=False))
-
+            nfs.update_nfs_with_repos(spec_assembler.get_all_repos(active_only=True, include_specs_repo=False))
     compose.restart_running_services(app_or_service_names)
 
 @daemon_command
