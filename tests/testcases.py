@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import os
 import sys
 import shutil
@@ -18,7 +20,9 @@ from dusty.commands.repos import override_repo
 from dusty.cli import main as client_entrypoint
 from dusty.schemas.base_schema_class import get_specs_from_path, DustySpecs
 from dusty.systems.docker import exec_in_container, get_docker_client, get_container_for_app_or_service, get_docker_env
+from dusty.systems.nfs import client as nfs_client
 from dusty.path import parent_dir
+from dusty.subprocess import call_demoted
 from .fixtures import basic_specs_fixture
 from dusty.log import client_logger, DustyClientTestingSocketHandler
 
@@ -106,14 +110,15 @@ class DustyIntegrationTestCase(TestCase):
             except:
                 pass
         shutil.rmtree(self.overridden_specs_path)
-        if os.path.exists(constants.REPOS_DIR):
-            shutil.rmtree(constants.REPOS_DIR)
+        # if os.path.exists(constants.REPOS_DIR):
+        #     shutil.rmtree(constants.REPOS_DIR)
         if os.path.exists(constants.COMPOSE_DIR):
             shutil.rmtree(constants.COMPOSE_DIR)
         shutil.rmtree('/tmp/fake-repo')
         save_config(self.previous_config)
         self.handler.log_to_client_output = ''
         client_logger.removeHandler(self.handler)
+        nfs_client.unmount_all_repos()
 
     def _clear_stdout(self):
         self.stdout_start = len(sys.stdout.getvalue())
