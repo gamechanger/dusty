@@ -157,3 +157,28 @@ def get_docker_vm_disk_info(as_dict=False):
     df_line = df_output.split('\n')[0]
     df_dict = _parse_df_output(df_line)
     return df_dict if as_dict else _format_df_dict(df_dict)
+
+def get_vm_hostonly_adapter():
+    config_lines = _get_vm_config()
+    for line in config_lines:
+        if line.startswith('hostonlyadapter'):
+            return line.split('=')[1].strip('"').rstrip('"')
+
+def _get_hostonly_config():
+    return check_output_demoted(['VBoxManage', 'list', 'hostonlyifs']).splitlines()
+
+def get_host_ip():
+    adapter = get_vm_hostonly_adapter()
+    host_only_config = _get_hostonly_config()
+
+    in_adapter_block = False
+    for line in host_only_config:
+        if line.startswith('Name'):
+            if adapter in line:
+                in_adapter_block = True
+            else:
+                in_adapter_block = False
+        if in_adapter_block:
+            if line.startswith('IPAddress'):
+                return line.split()[1]
+    raise RuntimeError('Host IP in host only network not found')
