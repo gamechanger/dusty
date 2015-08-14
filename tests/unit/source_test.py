@@ -77,8 +77,8 @@ class TestSource(DustyTestCase):
         self.assertEqual(repo.local_path, self.temp_dir)
 
     def test_vm_path(self):
-        self.assertEqual(Repo('github.com/app/a').vm_path, '/persist/repos/github.com/app/a')
-        self.assertEqual(Repo('/gc/repos/c').vm_path, '/persist/repos/gc/repos/c')
+        self.assertEqual(Repo('github.com/app/a').vm_path, '/dusty_repos/github.com/app/a')
+        self.assertEqual(Repo('/gc/repos/c').vm_path, '/dusty_repos/gc/repos/c')
 
     def test_repo_is_overridden_true(self):
         override_repo('github.com/app/a', self.temp_dir)
