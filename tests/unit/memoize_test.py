@@ -8,7 +8,7 @@ class TestMemoize(DustyTestCase):
         super(TestMemoize, self).setUp()
         self.counter = 0
         @memoized
-        def memoized_fn():
+        def memoized_fn(kw1=None, kw2=None):
             self.counter += 1
             return self.counter
         self.memoized_fn = memoized_fn
@@ -28,3 +28,8 @@ class TestMemoize(DustyTestCase):
         reset_memoize_cache()
         self.memoized_fn()
         self.assertEqual(self.counter, 2)
+
+    def test_kwargs_order(self):
+        self.memoized_fn(kw1=1, kw2=2)
+        self.memoized_fn(kw2=2, kw1=1)
+        self.assertEqual(self.counter, 1)
