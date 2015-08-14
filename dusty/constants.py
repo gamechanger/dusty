@@ -37,7 +37,7 @@ VM_IP_FROM_DOCKER = '172.17.42.1'
 VM_NIC_TYPE = 'Am79C973'
 
 VM_PERSIST_DIR = '/persist'
-VM_REPOS_DIR = os.path.join(VM_PERSIST_DIR, 'repos')
+VM_REPOS_DIR = '/dusty_repos'
 LOCAL_BACKUP_DIR = 'dusty-backup'
 
 NGINX_CONFIG_DIR_IN_VM = os.path.join(VM_PERSIST_DIR, 'dustyNginx')
