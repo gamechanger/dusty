@@ -7,6 +7,7 @@ import tempfile
 import logging
 import getpass
 import subprocess
+import time
 
 from unittest import TestCase
 from nose.tools import nottest
@@ -220,6 +221,19 @@ class DustyIntegrationTestCase(TestCase):
         container_id = self.container_id(service_name)
         client = get_docker_client()
         client.remove_container(container_id, force=True)
+
+    @staticmethod
+    def retriable_assertion(backoff, max_retries):
+        def retriable_fn_wrapper(fn):
+            def retriable_fn(*args, **kwargs):
+                for i in range(0, max_retries):
+                    try:
+                        return fn(*args, **kwargs)
+                    except AssertionError:
+                        print 'Retriable assertion failure {}'.format(i + 1)
+                    time.sleep(backoff)
+            return retriable_fn
+        return retriable_fn_wrapper
 
     def assertInSameLine(self, string, *values):
         self.assertTrue(self._in_same_line(string, *values))

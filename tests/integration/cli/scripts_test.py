@@ -30,17 +30,25 @@ class TestScriptsCLI(DustyIntegrationTestCase):
         rmtree(self.fake_repo_location)
         super(TestScriptsCLI, self).tearDown()
 
+    @DustyIntegrationTestCase.retriable_assertion(.1, 5)
+    def assertFileInContainerRetriable(self, service_name, file_path):
+        self.assertFileInContainer(service_name, file_path)
+
+    @DustyIntegrationTestCase.retriable_assertion(.1, 5)
+    def assertFileNotInContainerRetriable(self, service_name, file_path):
+        self.assertFileNotInContainer(service_name, file_path)
+
     def test_basic(self):
         self.assertFileNotInContainer('appa', '/app/a/foo')
         self.run_command('scripts appa example')
-        self.assertFileInContainer('appa', '/app/a/foo')
+        self.assertFileInContainerRetriable('appa', '/app/a/foo')
         self.exec_in_container('appa', 'rm /app/a/foo')
 
     def test_with_arg(self):
         self.run_command('scripts appa example')
-        self.assertFileInContainer('appa', '/app/a/foo')
+        self.assertFileInContainerRetriable('appa', '/app/a/foo')
         self.run_command('scripts appa example_rm /app/a/foo')
-        self.assertFileNotInContainer('appa', '/app/a/foo')
+        self.assertFileNotInContainerRetriable('appa', '/app/a/foo')
 
     def test_with_flag(self):
         self.run_command('scripts appa example_ls')
