@@ -5,6 +5,7 @@ from subprocess import CalledProcessError
 import time
 
 from ... import constants
+from ..virtualbox import get_host_ip
 from ...log import log_to_client
 from ...subprocess import call_demoted, check_call_demoted, check_output_demoted, check_output_demoted
 from ...compiler.spec_assembler import get_all_repos
@@ -69,12 +70,9 @@ def _run_mount_command(repo):
 
 def _nfs_mount_args_string(repo):
     mount_string = '-t nfs {} '.format(_nfs_options_string())
-    mount_string += '{}:{} '.format(_host_ip(), repo.local_path)
+    mount_string += '{}:{} '.format(get_host_ip(), repo.local_path)
     mount_string += repo.vm_path
     return mount_string
 
 def _nfs_options_string():
     return '-o async,udp,noatime'
-
-def _host_ip():
-    return '192.168.59.3'

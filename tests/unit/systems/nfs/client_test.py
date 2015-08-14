@@ -1,10 +1,12 @@
-from mock import Mock
+from mock import Mock, patch
 
 from dusty.systems.nfs import client
 from ....testcases import DustyTestCase
 
 class TestNFSClient(DustyTestCase):
-    def test_mount_args_string(self):
+    @patch('dusty.systems.nfs.client.get_host_ip')
+    def test_mount_args_string(self, fake_get_host_ip):
+        fake_get_host_ip.return_value = '192.168.59.3'
         fake_repo = Mock()
         fake_repo.local_path = '/repo/local/path'
         fake_repo.vm_path = '/persist/repos/remote/path'
