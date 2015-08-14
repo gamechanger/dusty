@@ -15,6 +15,10 @@ class TestCommandFile(DustyIntegrationTestCase):
         self.remove_container('appa')
         super(TestCommandFile, self).tearDown()
 
+    @DustyIntegrationTestCase.retriable_assertion(.1, 8)
+    def assertContainerIsNotRunningRetriable(self, service_name):
+        self.assertContainerIsNotRunning(service_name)
+
     def test_once_is_run_once(self):
         self.run_command('up')
         self.assertFileInContainer('appa', '/once_test_file')
@@ -53,7 +57,7 @@ class TestCommandFile(DustyIntegrationTestCase):
         self.assertTrue('once starting' in output)
         self.assertInSameLine(output, 'random-command', 'not found')
         self.assertFalse('once ran' in output)
-        self.assertContainerIsNotRunning('appa')
+        self.assertContainerIsNotRunningRetriable('appa')
 
     def test_always_stops_on_error(self):
         fixture_with_commands(always_fail=True)

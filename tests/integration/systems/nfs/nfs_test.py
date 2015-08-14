@@ -13,8 +13,6 @@ from dusty.subprocess import check_and_log_output_and_error
 from ....testcases import DustyIntegrationTestCase
 from ....fixtures import single_specs_fixture
 
-NFS_SLEEP = .3
-
 class TestNFS(DustyIntegrationTestCase):
     def setUp(self):
         super(TestNFS, self).setUp()
@@ -37,6 +35,17 @@ class TestNFS(DustyIntegrationTestCase):
 
         super(TestNFS, self).tearDown()
 
+    @DustyIntegrationTestCase.retriable_assertion(.1, 5)
+    def assertLocalFileExists(self, local_path):
+        self.assertTrue(os.path.isfile(local_path))
+
+    @DustyIntegrationTestCase.retriable_assertion(.1, 5)
+    def assertLocalFileStat(self, local_path, uid, gid):
+        self.assertTrue(os.path.isfile(local_path))
+        stat = os.stat(local_path)
+        self.assertEqual(stat.st_uid, uid)
+        self.assertEqual(stat.st_gid, gid)
+
     def test_managed_repo_mount(self):
         local_dir = Repo('github.com/app/a').managed_path
         if not os.path.exists(local_dir):
@@ -44,16 +53,14 @@ class TestNFS(DustyIntegrationTestCase):
         self.run_command('bundles activate bundle-a')
         self.run_command('up --no-pull')
         self.run_command('scripts appa example')
-        time.sleep(NFS_SLEEP)
-        self.assertTrue(os.path.isfile(os.path.join(local_dir, 'foo')))
+        self.assertLocalFileExists(os.path.join(local_dir, 'foo'))
 
     def test_overridden_repo_mount(self):
         self.run_command('bundles activate bundle-a')
         self.run_command('repos override a {}'.format(self.fake_override_repo_location))
         self.run_command('up --no-pull')
         self.run_command('scripts appa example')
-        time.sleep(NFS_SLEEP)
-        self.assertTrue(os.path.isfile(os.path.join(self.fake_override_repo_location, 'foo')))
+        self.assertLocalFileExists(os.path.join(self.fake_override_repo_location, 'foo'))
 
     def test_root_file_ownership(self):
         os.chown(self.fake_override_repo_location, 0, 0)
@@ -61,10 +68,7 @@ class TestNFS(DustyIntegrationTestCase):
         self.run_command('bundles activate bundle-a')
         self.run_command('up --no-pull')
         self.run_command('scripts appa example')
-        time.sleep(NFS_SLEEP)
-        stat = os.stat(os.path.join(self.fake_override_repo_location, 'foo'))
-        self.assertEqual(stat.st_uid, 0)
-        self.assertEqual(stat.st_gid, 0)
+        self.assertLocalFileStat(os.path.join(self.fake_override_repo_location, 'foo'), 0, 0)
 
     def test_user_file_ownership(self):
         os.chown(self.fake_override_repo_location, 501, 20)
@@ -72,10 +76,7 @@ class TestNFS(DustyIntegrationTestCase):
         self.run_command('bundles activate bundle-a')
         self.run_command('up --no-pull')
         self.run_command('scripts appa example')
-        time.sleep(NFS_SLEEP)
-        stat = os.stat(os.path.join(self.fake_override_repo_location, 'foo'))
-        self.assertEqual(stat.st_uid, 501)
-        self.assertEqual(stat.st_gid, 20)
+        self.assertLocalFileStat(os.path.join(self.fake_override_repo_location, 'foo'), 501, 20)
 
     def test_mount_repo_waits_for_restart(self):
         server.add_exports_for_repos([Repo('github.com/app/a')])
