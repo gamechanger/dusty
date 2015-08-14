@@ -17,7 +17,6 @@ Commands:
   shell      Open a shell inside a running container
   status     Show info on activated apps, services and libs
   stop       Stop Dusty-managed containers
-  sync       Sync repos from the local OS to the boot2docker VM
   test       Run test scripts in isolated environments
   up         Set up the Dusty environment and start activated applications
   upgrade    Upgrade Dusty to a new version
@@ -44,7 +43,7 @@ from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
 from . import (bundles, config, cp, dump, disk, logs, repos, restart, scripts, shell, stop,
-               sync, up, upgrade, validate, version, setup, test, status)
+               up, upgrade, validate, version, setup, test, status)
 from .. import constants
 
 MODULE_MAP = {
@@ -61,7 +60,6 @@ MODULE_MAP = {
     'shell': shell,
     'status': status,
     'stop': stop,
-    'sync': sync,
     'test': test,
     'up': up,
     'upgrade': upgrade,

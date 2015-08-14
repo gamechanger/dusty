@@ -47,20 +47,3 @@ def sync_local_path_from_vm(local_path, remote_path, demote=False, is_dir=True):
     command = _rsync_command(local_path, remote_path, is_dir=is_dir, from_local=False)
     logging.debug('Executing rsync command: {}'.format(' '.join(command)))
     check_call(command) if not demote else check_and_log_output_and_error_demoted(command)
-
-def sync_repos(repos):
-    logging.info('Syncing repos over rsync')
-    for repo in repos:
-        repo_type = 'overridden' if repo.is_overridden else 'Dusty-managed'
-        log_to_client('Syncing {} repo {} to remote at {}'.format(repo_type, repo.remote_path, repo.vm_path))
-        sync_local_path_to_vm(repo.local_path, repo.vm_path)
-
-def sync_repos_by_specs(specs_list):
-    """
-    Takes a list of app or lib specs (class DustySchema), and syncs the repos
-    for those specs
-    """
-    repos = set()
-    for spec in specs_list:
-        repos = repos.union(get_same_container_repos_from_spec(spec))
-    sync_repos(repos)

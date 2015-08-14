@@ -80,7 +80,7 @@ def stop_apps_or_services(app_or_service_names=None, rm_containers=False):
         compose.rm_containers(app_or_service_names)
 
 @daemon_command
-def restart_apps_or_services(app_or_service_names=None, sync=True):
+def restart_apps_or_services(app_or_service_names=None):
     """Restart any containers associated with Dusty, or associated with
     the provided app_or_service_names."""
     if app_or_service_names:
@@ -88,21 +88,20 @@ def restart_apps_or_services(app_or_service_names=None, sync=True):
     else:
         log_to_client("Restarting all active containers associated with Dusty")
 
-    if sync:
-        if app_or_service_names:
-            specs = spec_assembler.get_assembled_specs()
-            specs_list = [specs['apps'][app_name] for app_name in app_or_service_names if app_name in specs['apps']]
-            repos = set()
-            for spec in specs_list:
-                if spec['repo']:
-                    repos = repos.union(spec_assembler.get_same_container_repos_from_spec(spec))
-            nfs.update_nfs_with_repos(repos)
-        else:
-            nfs.update_nfs_with_repos(spec_assembler.get_all_repos(active_only=True, include_specs_repo=False))
+    if app_or_service_names:
+        specs = spec_assembler.get_assembled_specs()
+        specs_list = [specs['apps'][app_name] for app_name in app_or_service_names if app_name in specs['apps']]
+        repos = set()
+        for spec in specs_list:
+            if spec['repo']:
+                repos = repos.union(spec_assembler.get_same_container_repos_from_spec(spec))
+        nfs.update_nfs_with_repos(repos)
+    else:
+        nfs.update_nfs_with_repos(spec_assembler.get_all_repos(active_only=True, include_specs_repo=False))
     compose.restart_running_services(app_or_service_names)
 
 @daemon_command
-def restart_apps_by_repo(repo_names, sync=True):
+def restart_apps_by_repo(repo_names):
     all_repos = spec_assembler.get_all_repos()
     resolved_repos = set([Repo.resolve(all_repos, repo_name) for repo_name in repo_names])
     specs = spec_assembler.get_assembled_specs()
@@ -110,4 +109,4 @@ def restart_apps_by_repo(repo_names, sync=True):
     for app_spec in specs['apps'].itervalues():
         if spec_assembler.get_same_container_repos_from_spec(app_spec).intersection(resolved_repos):
             apps_with_repos.add(app_spec.name)
-    restart_apps_or_services(apps_with_repos, sync=sync)
+    restart_apps_or_services(apps_with_repos)
