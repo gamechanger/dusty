@@ -25,6 +25,7 @@ from dusty.path import parent_dir
 from dusty.subprocess import call_demoted
 from .fixtures import basic_specs_fixture
 from dusty.log import client_logger, DustyClientTestingSocketHandler
+from dusty.memoize import reset_memoize_cache
 
 class TestCaptureHandler(logging.Handler):
     def __init__(self, lst):
@@ -49,12 +50,14 @@ class DustyTestCase(TestCase):
         self.client_output = []
         self.capture_handler = TestCaptureHandler(self.client_output)
         logging.getLogger(constants.SOCKET_LOGGER_NAME).addHandler(self.capture_handler)
+        reset_memoize_cache()
 
     def tearDown(self):
         os.remove(self.temp_config_path)
         shutil.rmtree(self.temp_specs_path)
         shutil.rmtree(self.temp_repos_path)
         logging.getLogger(constants.SOCKET_LOGGER_NAME).removeHandler(self.capture_handler)
+        reset_memoize_cache()
 
     @nottest
     @patch('dusty.schemas.base_schema_class.get_specs_from_path')
@@ -102,6 +105,7 @@ class DustyIntegrationTestCase(TestCase):
         self._set_up_fake_local_repo('/tmp/fake-repo')
         self._clear_stdout()
         self.exec_docker_processes = []
+        reset_memoize_cache()
 
     def tearDown(self):
         for exec_docker_process in self.exec_docker_processes:
@@ -119,6 +123,7 @@ class DustyIntegrationTestCase(TestCase):
         self.handler.log_to_client_output = ''
         client_logger.removeHandler(self.handler)
         nfs_client.unmount_all_repos()
+        reset_memoize_cache()
 
     def _clear_stdout(self):
         self.stdout_start = len(sys.stdout.getvalue())

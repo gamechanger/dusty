@@ -21,7 +21,7 @@ class Payload(object):
         self.fn(*self.args, **self.kwargs)
 
     def serialize(self):
-        fn_key = _function_key(self.fn)
+        fn_key = function_key(self.fn)
         if fn_key not in _daemon_command_mapping:
             raise RuntimeError('Function key {} not found; you may need to decorate your function'.format(fn_key))
         doc = {'fn_key': fn_key, 'client_version': self.client_version, 'suppress_warnings': self.suppress_warnings,
@@ -34,11 +34,11 @@ class Payload(object):
 
 _daemon_command_mapping = {}
 
-def _function_key(fn):
+def function_key(fn):
     return '{}.{}'.format(fn.__module__, fn.__name__)
 
 def daemon_command(fn):
-    key = _function_key(fn)
+    key = function_key(fn)
     if key in _daemon_command_mapping and _daemon_command_mapping[key] != fn:
         raise RuntimeError("Function mapping key collision: {}. Name one of the functions something else".format(key))
     _daemon_command_mapping[key] = fn

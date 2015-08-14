@@ -18,6 +18,7 @@ from .preflight import preflight_check, refresh_preflight_warnings
 from .log import configure_logging, make_socket_logger, close_socket_logger
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .payload import Payload, get_payload_function
+from .memoize import reset_memoize_cache
 from .warnings import daemon_warnings
 from .config import refresh_config_warnings, check_and_load_ssh_auth
 from . import constants
@@ -96,6 +97,8 @@ def _listen_on_socket(socket_path, suppress_warnings):
                     close_client_connection(SOCKET_ERROR_TERMINATOR)
                 else:
                     close_client_connection()
+                finally:
+                    reset_memoize_cache()
             except:
                 close_client_connection()
         except KeyboardInterrupt:

@@ -2,6 +2,7 @@ import logging
 
 from ..config import get_config_value
 from .. import constants
+from ..memoize import memoized
 from ..source import Repo
 from ..schemas.app_schema import app_schema
 from ..schemas.bundle_schema import bundle_schema
@@ -104,6 +105,7 @@ def _get_expanded_libs_specs(specs):
     _expand_libs_in_apps(specs)
     _expand_libs_in_libs(specs)
 
+@memoized
 def get_assembled_specs():
     logging.info("Spec Assembler: running...")
     specs = get_specs()
@@ -121,6 +123,7 @@ def get_specs_repo():
 def get_specs_path():
     return get_specs_repo().local_path
 
+@memoized
 def get_specs():
     specs_path = get_specs_path()
     return get_specs_from_path(specs_path)
