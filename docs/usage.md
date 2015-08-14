@@ -181,15 +181,13 @@ Restart containers associated with Dusty apps or services.
 
 Upon restart, an app container will execute the command specified
 in its `commands.always` spec key. Restarting app containers will
-also perform a sync of any local repos needed inside the container
-prior to restarting.
+also perform a NFS mount of repos needed for restarted containers,
+using your current repo override settings.
 
 Usage:
-  restart ( --repos <repos>... | [<services>...] ) [--no-sync]
+  restart ( --repos <repos>... | [<services>...] )
 
 Options:
-  --no-sync         If provided, Dusty will not sync repos used by
-                    services being restarted prior to the restart.
   --repos <repos>   If provided, Dusty will restart any containers
                     that are using the repos specified.
   <services>        If provided, Dusty will only restart the given
@@ -197,7 +195,7 @@ Options:
                     services are restarted.
 ```
 Restarts active containers associated with Dusty.  The following actions are performed:
-* Sync repositories on your mac to boot2docker (using rsync)
+* Mount with NFS the repos required for apps that are restarted
 * Use the `docker restart` command for each active container
 * Since containers are not recreated, specified `once` commands will not be run
 
@@ -278,19 +276,6 @@ Options:
 When used with the `--rm` flag, the `-v` flag is passed to `docker-compose rm` to avoid dangling
 volumes.
 
-#### sync
-```
-Sync repos from the local filesystem to the boot2docker VM.
-
-Sync uses rsync under the hood to quickly sync files between
-your local filesystem and the boot2docker VM. Sync will use
-either the Dusty-managed version of a repo or your overridden
-version, depending on the current repo settings.
-
-Usage:
-  sync <repos>...
-```
-
 #### test
 ```
 Allow you to run tests in an isolated container for an app or a lib.
@@ -344,7 +329,7 @@ that `dusty up` takes are:
  * Assemble your specs, based on active bundles, into configuration for your hosts file, nginx,
 and Docker Compose
  * Stops running Dusty containers, and removes them.  The `-v` flag of `docker-compose rm` is used, to avoid dangling volumes
- * Sync repos from your mac to boot2docker
+ * Mount with NFS repos that are needed for activated containers
  * Re-create and launch your docker containers
 
 #### upgrade

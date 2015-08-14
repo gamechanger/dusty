@@ -79,15 +79,6 @@ class TestRunCommands(DustyTestCase):
         fake_nfs.update_nfs_with_repos.assert_has_calls([call(set([Repo('github.com/app/a'), Repo('github.com/app/b'),
                                                           Repo('github.com/lib/a'), Repo('github.com/lib/b')]))])
 
-    @patch('dusty.commands.run.docker.compose.restart_running_services')
-    @patch('dusty.commands.run.nfs')
-    @patch('dusty.commands.run.spec_assembler.get_specs')
-    @patch('dusty.compiler.spec_assembler.get_assembled_specs')
-    def test_restart_apps_or_services_without_arguments_no_sync(self, fake_get_assembled_specs, fake_get_specs, fake_nfs, fake_restart):
-        fake_get_assembled_specs.return_value = self.specs
-        fake_get_specs.return_value = self.specs
-        restart_apps_or_services(sync=False)
-
     @patch('dusty.commands.run.restart_apps_or_services')
     @patch('dusty.commands.run.spec_assembler.get_specs')
     @patch('dusty.compiler.spec_assembler.get_assembled_specs')
@@ -95,7 +86,7 @@ class TestRunCommands(DustyTestCase):
         fake_get_assembled_specs.return_value = self.specs
         fake_get_specs.return_value = self.specs
         restart_apps_by_repo(['github.com/lib/b'])
-        fake_restart.assert_has_calls([call(set(['app-a']), sync=True)])
+        fake_restart.assert_has_calls([call(set(['app-a']))])
 
     @patch('dusty.commands.run.restart_apps_or_services')
     @patch('dusty.commands.run.spec_assembler.get_specs')
@@ -104,7 +95,7 @@ class TestRunCommands(DustyTestCase):
         fake_get_assembled_specs.return_value = self.specs
         fake_get_specs.return_value = self.specs
         restart_apps_by_repo(['github.com/app/b'])
-        fake_restart.assert_has_calls([call(set(['app-b']), sync=True)])
+        fake_restart.assert_has_calls([call(set(['app-b']))])
 
     @patch('dusty.commands.run.restart_apps_or_services')
     @patch('dusty.commands.run.spec_assembler.get_specs')
@@ -113,5 +104,5 @@ class TestRunCommands(DustyTestCase):
         fake_get_assembled_specs.return_value = self.specs
         fake_get_specs.return_value = self.specs
         restart_apps_by_repo(['github.com/lib/b', 'github.com/app/b'])
-        fake_restart.assert_has_calls([call(set(['app-a', 'app-b']), sync=True)])
+        fake_restart.assert_has_calls([call(set(['app-a', 'app-b']))])
 
