@@ -15,10 +15,9 @@ def mount_active_repos():
 
 def remount_repos(repos):
     _start_nfs_client()
-    host_ip = get_host_ip()
     for i, repo in enumerate(repos):
         _unmount_repo(repo)
-        _mount_repo(repo, host_ip, wait_for_server=(i==0))
+        _mount_repo(repo, wait_for_server=(i==0))
 
 def unmount_all_repos():
     mounts = check_output_demoted(['boot2docker', 'ssh', 'mount | {{ grep {} || true; }}'.format(constants.VM_REPOS_DIR)])
@@ -39,7 +38,7 @@ def _unmount_repo(repo):
 def _unmount_vm_dir(vm_dir):
     call_demoted(['boot2docker', 'ssh', 'sudo umount -l {}'.format(vm_dir)])
 
-def _mount_repo(repo, host_ip, wait_for_server=False):
+def _mount_repo(repo, wait_for_server=False):
     """
     This function will create the VM directory where a repo will be mounted, if it
     doesn't exist.  If wait_for_server is set, it will wait up to 10 seconds for
@@ -51,7 +50,7 @@ def _mount_repo(repo, host_ip, wait_for_server=False):
     if wait_for_server:
         for i in range(0,10):
             try:
-                _run_mount_command(repo, host_ip)
+                _run_mount_command(repo)
                 return
             except CalledProcessError as e:
                 if 'Connection refused' in e.output:
@@ -63,15 +62,15 @@ def _mount_repo(repo, host_ip, wait_for_server=False):
         log_to_client('Failed to mount repo {}'.format(repo.short_name))
         raise RuntimeError('Unable to mount repo with NFS')
     else:
-        _run_mount_command(repo, host_ip)
+        _run_mount_command(repo)
 
-def _run_mount_command(repo, host_ip):
+def _run_mount_command(repo):
     # Check output is used here so that if it raises an error, the output can be parsed
-    return check_output_demoted(['boot2docker', 'ssh', 'sudo mount {}'.format(_nfs_mount_args_string(repo, host_ip))], redirect_stderr=True)
+    return check_output_demoted(['boot2docker', 'ssh', 'sudo mount {}'.format(_nfs_mount_args_string(repo))], redirect_stderr=True)
 
-def _nfs_mount_args_string(repo, host_ip):
+def _nfs_mount_args_string(repo):
     mount_string = '-t nfs {} '.format(_nfs_options_string())
-    mount_string += '{}:{} '.format(host_ip, repo.local_path)
+    mount_string += '{}:{} '.format(get_host_ip(), repo.local_path)
     mount_string += repo.vm_path
     return mount_string
 

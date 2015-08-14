@@ -9,7 +9,6 @@ import time
 from dusty import constants
 from dusty.source import Repo
 from dusty.systems.nfs import client, server
-from dusty.systems.virtualbox import get_host_ip
 from dusty.subprocess import check_and_log_output_and_error
 from ....testcases import DustyIntegrationTestCase
 from ....fixtures import single_specs_fixture
@@ -81,7 +80,7 @@ class TestNFS(DustyIntegrationTestCase):
     def test_mount_repo_waits_for_restart(self):
         server.add_exports_for_repos([Repo('github.com/app/a')])
         check_and_log_output_and_error(['nfsd', 'restart'], demote=False)
-        client._mount_repo(Repo('github.com/app/a'), get_host_ip(), wait_for_server=True)
+        client._mount_repo(Repo('github.com/app/a'), wait_for_server=True)
         # no errors mean it worked
         client._unmount_repo(Repo('github.com/app/a'))
 
@@ -89,7 +88,7 @@ class TestNFS(DustyIntegrationTestCase):
         server.add_exports_for_repos([Repo('github.com/app/a')])
         check_and_log_output_and_error(['nfsd', 'restart'], demote=False)
         with self.assertRaises(CalledProcessError):
-            client._mount_repo(Repo('github.com/app/a'), get_host_ip(), wait_for_server=False)
+            client._mount_repo(Repo('github.com/app/a'), wait_for_server=False)
 
     def test_invalid_exports_logged(self):
         with open(constants.EXPORTS_PATH, 'w') as f:

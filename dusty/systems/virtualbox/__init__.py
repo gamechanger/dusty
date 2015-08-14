@@ -8,6 +8,7 @@ import time
 from subprocess import CalledProcessError
 
 from ... import constants
+from ...memoize import memoized
 from ...config import get_config_value
 from ...subprocess import check_and_log_output_and_error_demoted, check_output_demoted, check_call_demoted, call_demoted
 from ...log import log_to_client
@@ -167,6 +168,7 @@ def get_vm_hostonly_adapter():
 def _get_hostonly_config():
     return check_output_demoted(['VBoxManage', 'list', 'hostonlyifs']).splitlines()
 
+@memoized
 def get_host_ip():
     adapter = get_vm_hostonly_adapter()
     host_only_config = _get_hostonly_config()
