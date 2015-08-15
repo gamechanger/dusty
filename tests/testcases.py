@@ -231,6 +231,8 @@ class DustyIntegrationTestCase(TestCase):
                         return fn(*args, **kwargs)
                     except AssertionError:
                         print 'Retriable assertion failure {}'.format(i + 1)
+                        if i == max_retries:
+                            raise
                     time.sleep(backoff)
             return retriable_fn
         return retriable_fn_wrapper
