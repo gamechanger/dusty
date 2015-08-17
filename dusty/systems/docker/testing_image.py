@@ -41,8 +41,11 @@ def _get_create_container_binds(split_volumes):
     return binds_dict
 
 def _ensure_image_exists(docker_client, image_name):
+    full_image_name = image_name
+    if ':' not in image_name:
+        full_image_name = '{}:latest'.format(image_name)
     for image in docker_client.images():
-        if any(image_name in tag for tag in image['RepoTags']):
+        if full_image_name in image['RepoTags']:
             break
     else:
         split = image_name.split(':')
