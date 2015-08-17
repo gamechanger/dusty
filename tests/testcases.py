@@ -192,6 +192,7 @@ class DustyIntegrationTestCase(TestCase):
         return any(image_to_find in image['RepoTags'] for image in all_images)
 
     def _file_exists_in_container(self, service_name, file_path):
+        call_demoted(['boot2docker', 'ssh', 'sync']) # flush any outstanding writes
         file_exists_str = self.exec_in_container(service_name,
             'sh -c \'[ -f {} ] && echo "yes" || echo "no"\''.format(file_path)).rstrip()
         return file_exists_str == 'yes'
