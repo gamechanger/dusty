@@ -2,6 +2,10 @@
 
 ## 0.4.1 (In Progress)
 
+* **Breaking**
+    * Dusty now uses NFS instead of rsync to get repository code from your host Mac to running containers.
+    * The `sync` commands no longer exist, due to the move to NFS.
+    * The `restart` command no longer takes a `--no-sync` flag, due to the move to NFS.
 * **New**
     * Dusty now attempts to fix a known problem with boot2docker networking, resulting in up to a 10x improvement in network performance. See [this boot2docker issue](https://github.com/boot2docker/boot2docker/issues/1022) for more information.
 
