@@ -96,3 +96,17 @@ class TestReposCLI(DustyIntegrationTestCase):
         self.run_command('bundles activate busyboxa')
         self.run_command('repos update')
         self.assertTrue(os.path.isfile(os.path.join(constants.REPOS_DIR, target_file.strip('/'))))
+
+    def test_repos_update_failure(self):
+        git_repo = git.Repo(self.fake_source_repo_location)
+        remote_file = os.path.join(self.fake_source_repo_location, 'bus')
+        local_conflict = os.path.join(constants.REPOS_DIR, remote_file.strip('/'))
+        self.run_command('bundles activate busyboxa')
+        output = self.run_command('repos update')
+        check_call(['touch', remote_file])
+        check_call(['touch', local_conflict])
+        git_repo.index.add([remote_file])
+        git_repo.index.commit('Second commit')
+        self.run_command('bundles activate busyboxa')
+        output = self.run_command('repos update')
+        self.assertInSameLine(output, 'WARNING', 'fake-repo', 'local conflicts')
