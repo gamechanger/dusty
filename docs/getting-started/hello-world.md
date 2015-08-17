@@ -11,12 +11,15 @@ The first step to running any bundle is to activate it:
 > dusty bundles activate hello-world
 Activated bundles hello-world
 > dusty bundles list
-+-------------+--------------------------------------------------------+------------+
-|     Name    |                      Description                       | Activated? |
-+-------------+--------------------------------------------------------+------------+
-|  fileserver |      A simple fileserver to demonstrate dusty cp       |            |
-| hello-world | Hello world! Two running copies of a simple Flask app. |            |
-+-------------+--------------------------------------------------------+------------+
++------------------+-------------------------------------------------------------------+------------+
+|       Name       |                            Description                            | Activated? |
++------------------+-------------------------------------------------------------------+------------+
+|    fileserver    |            A simple fileserver to demonstrate dusty cp            |            |
+|   hello-world    |       Hello world! Two running copies of a simple Flask app.      |     X      |
+| ipython-notebook |  Runs an iPython Notebook at local.ipython.com. Password is dusty |            |
+|  mongo-cluster   | Run a Mongo replica set by using container network daisy-chaining |            |
+|     watchdog     |  Launches an example watchdog app, demonstrating libs and scripts |            |
++------------------+-------------------------------------------------------------------+------------+
 ```
 
 Once the bundle is activated, you can use `dusty status` to see what apps, services, and
