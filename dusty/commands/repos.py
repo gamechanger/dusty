@@ -23,6 +23,8 @@ def override_repo(repo_name, source_path):
     repo = Repo.resolve(get_all_repos(), repo_name)
     if not os.path.exists(source_path):
         raise OSError('Source path {} does not exist'.format(source_path))
+    if not os.path.isdir(source_path):
+        raise OSError('Source path {} is a file not a directory; please select a directory'.format(source_path))
     config = get_config_value(constants.CONFIG_REPO_OVERRIDES_KEY)
     config[repo.remote_path] = source_path
     save_config_value(constants.CONFIG_REPO_OVERRIDES_KEY, config)
