@@ -96,11 +96,11 @@ class TestReposCommands(DustyTestCase):
     def test_update_managed_repos(self, fake_update_local_repo):
         activate_bundle(['bundle-a'])
         update_managed_repos()
-        fake_update_local_repo.assert_has_calls([call()])
+        fake_update_local_repo.assert_has_calls([call(force=False)])
 
     @patch('dusty.source.Repo.update_local_repo')
     def test_update_managed_repos_for_both(self, fake_update_local_repo):
         activate_bundle(['bundle-a'])
         activate_bundle(['bundle-b'])
         update_managed_repos()
-        fake_update_local_repo.assert_has_calls([call(), call()])
+        fake_update_local_repo.assert_has_calls([call(force=False), call(force=False)])

@@ -130,7 +130,21 @@ class Repo(object):
         with git_error_handling():
             git.Repo.clone_from(self.assemble_remote_path(), self.managed_path)
 
-    def update_local_repo(self):
+    def get_latest_commit(self):
+        repo = git.Repo(self.managed_path)
+        for ref in repo.refs:
+            if ref.path == 'refs/remotes/origin/master':
+                return ref.commit
+        return repo.remote().fetch()[0].commit
+
+    def local_is_up_to_date(self):
+        self.ensure_local_repo()
+        repo = git.Repo(self.managed_path)
+        local_commit = repo.commit()
+        latest_commit = self.get_latest_commit()
+        return local_commit.hexsha == latest_commit.hexsha
+
+    def update_local_repo(self, force=False):
         """Given a remote path (e.g. github.com/gamechanger/gclib), pull the latest
         commits from master to bring the local copy up to date."""
         self.ensure_local_repo()
@@ -140,3 +154,12 @@ class Repo(object):
         managed_repo = git.Repo(self.managed_path)
         with git_error_handling():
             managed_repo.remote().pull('master')
+        if not self.local_is_up_to_date():
+            if force:
+                with git_error_handling():
+                    managed_repo.git.reset('--hard', 'origin/master')
+            else:
+                log_to_client('WARNING: couldn\'t update {} because of local conflicts. '
+                              'A container may have modified files in the repos\'s directory. '
+                              'Your code generally shouldn\'t be manipulating the contents of your repo folder - '
+                              'please fix this and run `dusty up`'.format(self.managed_path))

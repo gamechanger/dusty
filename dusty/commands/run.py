@@ -20,7 +20,7 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     systems will in turn launch the services needed to make the
     local environment go."""
     if pull_repos:
-        update_managed_repos()
+        update_managed_repos(force=True)
     assembled_spec = spec_assembler.get_assembled_specs()
     if not assembled_spec[constants.CONFIG_BUNDLES_KEY]:
         raise RuntimeError('No bundles are activated. Use `dusty bundles` to activate bundles before running `dusty up`.')

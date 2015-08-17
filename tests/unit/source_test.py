@@ -146,11 +146,14 @@ class TestSource(DustyTestCase):
         self.assertFalse(fake_clone_from.called)
 
     @patch('git.Repo')
+    @patch('dusty.source.Repo.local_is_up_to_date')
     @patch('dusty.source.Repo.ensure_local_repo')
-    def test_update_local_repo(self, fake_local_repo, fake_repo):
+    def test_update_local_repo(self, fake_local_repo, fake_local_up_to_date, fake_repo):
         repo_mock = Mock()
+        fake_local_up_to_date = Mock()
         pull_mock = Mock()
         repo_mock.remote.return_value = pull_mock
+        fake_local_up_to_date.return_value = True
         fake_repo.return_value = repo_mock
         Repo('github.com/app/a').update_local_repo()
         pull_mock.pull.assert_called_once_with('master')
