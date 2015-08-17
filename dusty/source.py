@@ -75,11 +75,7 @@ class Repo(object):
 
     @property
     def managed_path(self):
-        local_folder = self.remote_path
-        if ':' in local_folder:
-            local_folder = local_folder.split(':')[1]
-        local_folder = local_folder.lstrip('/')
-        return os.path.join(constants.REPOS_DIR, local_folder)
+        return os.path.join(constants.REPOS_DIR, self.rel_path)
 
     @property
     def is_overridden(self):
@@ -96,7 +92,15 @@ class Repo(object):
 
     @property
     def vm_path(self):
-        return os.path.join(constants.VM_REPOS_DIR, self.remote_path.lstrip('/'))
+        return os.path.join(constants.VM_REPOS_DIR, self.rel_path)
+
+    @property
+    def rel_path(self):
+        local_folder = self.remote_path
+        if ':' in local_folder:
+            local_folder = local_folder.split(':')[1]
+        local_folder = local_folder.lstrip('/')
+        return local_folder
 
     def assemble_remote_path(self):
         if self.is_local_repo:
