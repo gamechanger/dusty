@@ -1,5 +1,7 @@
 import datetime
 import os
+from subprocess import check_call
+from tempfile import mkdtemp
 import time
 
 import dateutil.parser
@@ -81,3 +83,13 @@ class TestRestartCLI(DustyIntegrationTestCase):
         self.run_command('stop appa')
         output = self.run_command('restart appb')
         self.assertInSameLine(output, 'Cannot restart appb', 'appa')
+
+    def test_restart_with_repo_swap(self):
+        repo_override_dir = mkdtemp()
+        extra_file = 'train'
+        extra_file_path = os.path.join(repo_override_dir, extra_file)
+        check_call(['touch', extra_file_path])
+        self.run_command('repos override repo-app-a {}'.format(repo_override_dir))
+        self.run_command('restart appa')
+        extra_file_container_path = os.path.join('/app/a', extra_file)
+        self.assertFileInContainer('appa', extra_file_container_path)
