@@ -147,7 +147,7 @@ def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']
     a name transformer function which is applied to the default names of the apps."""
     if app_name_transformer is None:
         app_name_transformer = lambda x: x
-    app_dict = {'repo': '/tmp/fake-repo',
+    app_dict = {'repo': 'file:///tmp/fake-repo',
                 'mount': '/repo',
                 'image': 'busybox',
                 'commands': {'always': command},
