@@ -28,7 +28,7 @@ def cleanup_images():
 @daemon_command
 def inspect_vm_disk():
     ensure_docker_vm_is_started()
-    log_to_client("Boot2Docker VM Disk Usage:")
+    log_to_client("Dusty VM Disk Usage:")
     log_to_client(get_docker_vm_disk_info())
 
 def _full_destination_dir(destination_path):

@@ -9,13 +9,13 @@ from ..payload import daemon_command
 DIAGNOSTIC_SUBPROCESS_COMMANDS = [
     ['which', 'rsync'],
     ['VBoxManage', '-v'],
-    ['boot2docker', 'version'],
-    ['boot2docker', 'ssh', 'df', '-h', '/dev/sda1'],
+    ['docker-machine', 'version'],
+    ['docker-machine', 'ssh', constants.VM_MACHINE_NAME, 'df', '-h', '/dev/sda1'],
     ['docker', '-v'],
     ['docker-compose', '--version'],
     ['cat', constants.HOSTS_PATH],
     ['cat', constants.CONFIG_PATH],
-    ['VBoxManage', 'showvminfo', 'boot2docker-vm'],
+    ['VBoxManage', 'showvminfo', constants.VM_MACHINE_NAME],
     ['ssh-add', '-l']
 ]
 

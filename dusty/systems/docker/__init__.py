@@ -3,6 +3,7 @@ import os
 import docker
 import logging
 
+from ... import constants
 from ...log import log_to_client
 from ...memoize import memoized
 from ...subprocess import check_output_demoted
@@ -35,11 +36,12 @@ def _get_set_envs():
 def get_docker_env():
     env = _get_set_envs()
     if len(env.keys()) < 3:
-        output = check_output_demoted(['boot2docker', 'shellinit'], redirect_stderr=True)
+        output = check_output_demoted(['docker-machine', 'env', constants.VM_MACHINE_NAME], redirect_stderr=True)
         for line in output.splitlines():
             if not line.strip().startswith('export'):
                 continue
             k, v = line.strip().split()[1].split('=')
+            v = v.replace('"', '')
             env[k] = v
     return env
 

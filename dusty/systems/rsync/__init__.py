@@ -8,30 +8,34 @@ from ...subprocess import check_call_demoted, check_and_log_output_and_error_dem
 from ...source import Repo
 from ...path import parent_dir
 from ...log import log_to_client
-from dusty.compiler.spec_assembler import get_same_container_repos_from_spec
+from ...compiler.spec_assembler import get_same_container_repos_from_spec
+from ...systems.virtualbox import get_docker_vm_ip
 
 def _ensure_vm_dir_exists(remote_dir):
-    check_call_demoted(['boot2docker', 'ssh', 'sudo mkdir -p {0}; sudo chown -R docker {0}'.format(remote_dir)])
+    check_call_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
+                        'sudo mkdir -p {0}; sudo chown -R docker {0}'.format(remote_dir)])
 
 def _rsync_command(local_path, remote_path, is_dir=True, from_local=True, exclude_git=True):
-    key_path = os.path.expanduser('~{}/.ssh/id_boot2docker'.format(get_config_value(constants.CONFIG_MAC_USERNAME_KEY)))
-    ssh_opts = 'ssh -p 2022 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i {}'.format(key_path)
+    key_format_string = '~{}/.docker/machine/machines/{}/id_rsa'
+    key_path = os.path.expanduser(key_format_string.format(get_config_value(constants.CONFIG_MAC_USERNAME_KEY),
+                                                           constants.VM_MACHINE_NAME))
+    ssh_opts = 'ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i {}'.format(key_path)
     command = ['rsync', '-e', ssh_opts, '-az', '--del', '--force', '--rsync-path', 'sudo rsync']
     if exclude_git:
         command += ['--exclude', '*/.git']
     if from_local:
-        path_args = ['{}{}'.format(local_path, '/' if is_dir else ''), 'docker@localhost:{}'.format(remote_path)]
+        path_args = ['{}{}'.format(local_path, '/' if is_dir else ''), 'docker@{}:{}'.format(get_docker_vm_ip(), remote_path)]
     else:
-        path_args = ['docker@localhost:{}{}'.format(remote_path, '/' if is_dir else ''), local_path]
+        path_args = ['docker@{}:{}{}'.format(get_docker_vm_ip(), remote_path, '/' if is_dir else ''), local_path]
     command += path_args
     return command
 
 def vm_path_is_directory(remote_path):
-    """A weak check of whether a path in the boot2docker VM is a directory.
+    """A weak check of whether a path in the Dusty VM is a directory.
     This function returns False on any process error, so False may indicate
     other failures such as the path not actually existing."""
     try:
-        check_call_demoted(['boot2docker', 'ssh', 'test -d {}'.format(remote_path)])
+        check_call_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME, 'test -d {}'.format(remote_path)])
     except CalledProcessError:
         return False
     return True

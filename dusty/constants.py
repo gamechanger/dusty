@@ -33,6 +33,7 @@ COMMAND_FILES_DIR = os.path.join(CONFIG_DIR, 'commands')
 DUSTY_GITHUB_PATH = 'gamechanger/dusty'
 DUSTY_BINARY_NAME = 'dusty'
 
+VM_MACHINE_NAME = 'dusty'
 VM_IP_FROM_DOCKER = '172.17.42.1'
 VM_NIC_TYPE = 'Am79C973'
 
