@@ -58,7 +58,7 @@ def override_repos_from_directory(source_path):
             override_repo(repo.remote_path, repo_path)
 
 @daemon_command
-def update_managed_repos():
+def update_managed_repos(force=False):
     """For any active, managed repos, update the Dusty-managed
     copy to bring it up to date with the latest master."""
     log_to_client('Pulling latest updates for all active managed repos:')
@@ -70,4 +70,4 @@ def update_managed_repos():
     for repo in get_all_repos(active_only=True, include_specs_repo=False):
         if not repo.is_overridden:
             log_to_client('Updating managed copy of {}'.format(repo.remote_path))
-            repo.update_local_repo()
+            repo.update_local_repo(force=force)
