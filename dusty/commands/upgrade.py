@@ -83,6 +83,7 @@ def upgrade_dusty_binary(version=None):
     _test_dusty_binary(tmp_binary_path, version)
     final_binary_path = _move_temp_binary_to_path(tmp_binary_path)
     log_to_client('Finished upgrade to version {} of Dusty!  The daemon will now restart'.format(version))
+    log_to_client('You may need to run `dusty up` to fully complete the upgrade')
     close_client_connection()
     clean_up_socket()
     os.execvp(final_binary_path, [final_binary_path, '-d'])
