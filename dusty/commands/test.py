@@ -7,7 +7,7 @@ from .. import constants
 from ..compiler.spec_assembler import (get_expanded_libs_specs, get_specs_repo,
     get_same_container_repos, get_same_container_repos_from_spec)
 from ..compiler.compose import get_volume_mounts, get_testing_compose_dict, container_code_path
-from ..systems.docker.testing_image import ensure_test_image, test_image_name
+from ..systems.docker.testing_image import ensure_test_image, test_image_name, ImageCreationError
 from ..systems.docker import get_docker_client
 from ..systems.docker.compose import write_composefile, compose_up
 from ..systems import nfs
@@ -70,7 +70,11 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, should_exi
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
     test_command = _construct_test_command(spec, suite_name, test_arguments)
-    ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
+    try:
+        ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
+    except ImageCreationError as e:
+        log_to_client('Failed to create test container with error {}'.format(e.code))
+        sys.exit(e.code)
     exit_code = _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name)
     if should_exit:
         log_to_client('TESTS {}'.format('FAILED' if exit_code != 0 else 'PASSED'))

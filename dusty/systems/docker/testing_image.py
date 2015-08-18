@@ -8,6 +8,12 @@ from ...command_file import dusty_command_file_name, lib_install_commands_for_ap
 from .common import spec_for_service
 from ... import constants
 
+class ImageCreationError(Exception):
+    def __init__(self, code):
+        self.code = code
+        message = 'Run exited with code {}'.format(code)
+        super(ImageCreationError, self).__init__(message)
+
 def _ensure_testing_spec_base_image(docker_client, testing_spec):
     log_to_client('Getting the base image for the new image')
     if 'image' in testing_spec:
@@ -70,6 +76,9 @@ def _make_installed_requirements_image(docker_client, base_image_tag, command, i
     log_to_client('Running commands to create new image:')
     for line in docker_client.logs(container['Id'], stdout=True, stderr=True, stream=True):
         log_to_client(line.strip())
+    exit_code = docker_client.wait(container['Id'])
+    if exit_code:
+        raise ImageCreationError(exit_code)
     new_image = docker_client.commit(container=container['Id'])
     docker_client.tag(image=new_image['Id'], repository=image_name, force=True)
 

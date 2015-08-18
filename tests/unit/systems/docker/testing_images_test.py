@@ -63,6 +63,7 @@ class TestTestingImages(DustyTestCase):
         command = 'npm install'
         image_name = 'gcweb_testing_image'
         mock_docker_client.logs.return_value = ['installing a', 'installing b']
+        mock_docker_client.wait.return_value = 0
         _make_installed_requirements_image(mock_docker_client, image_tag, command, image_name, [])
         mock_docker_client.create_container.assert_has_calls([call(image=image_tag,
                                                                    command=command,
@@ -84,6 +85,7 @@ class TestTestingImages(DustyTestCase):
         command = 'npm install'
         image_name = 'gcweb_testing_image'
         mock_docker_client.logs.return_value = ['installing a', 'installing b']
+        mock_docker_client.wait.return_value = 0
         _make_installed_requirements_image(mock_docker_client, image_tag, command, image_name, ['os/path:container/path'])
         mock_docker_client.create_container.assert_has_calls([call(image=image_tag,
                                                                    command=command,
