@@ -34,3 +34,8 @@ def move_file_inside_container(app_or_service_name, source_path, dest_path):
 
     _create_dir_in_container(client, container, parent_dir(dest_path))
     _move_in_container(client, container, source_path, dest_path)
+
+def container_path_exists(app_or_service_name, path):
+    client = get_docker_client()
+    container = get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=True)
+    return exec_in_container(client, container, 'sh -c \'[ -e {} ] && echo "yes" || echo "no"\''.format(path)).rstrip() == "yes"

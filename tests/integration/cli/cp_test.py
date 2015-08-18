@@ -89,3 +89,11 @@ class TestCpCLI(DustyIntegrationTestCase):
         self.run_command('cp busyboxa:/output busyboxb:/output')
         self.assertFileContentsInContainer('busyboxb', '/output/file1.txt', '1')
         self.assertFileContentsInContainer('busyboxb', '/output/file2.txt', '2')
+
+    def test_no_local_file(self):
+        output = self.run_command('cp {} busyboxa:/new-folder/file1.txt'.format('ghost-file'), raise_on_error=False)
+        self.assertInSameLine(output, 'ghost-file', 'does not exist')
+
+    def test_no_remote_file(self):
+        output = self.run_command('cp busyboxa:{} /local-path'.format('/ghost-file'), raise_on_error=False)
+        self.assertInSameLine(output, 'ghost-file', 'does not exist', 'busyboxa')
