@@ -19,7 +19,7 @@ def _ensure_rsync_is_installed():
     # completely unknown reasons, tce-load will return with an exit code of 1 after
     # initial install even if it works just fine. Subsequent install attempts will
     # be no-ops with a return code of 0.
-    check_and_log_output_and_error_demoted(['boot2docker', 'ssh', 'which rsync || tce-load -wi rsync || tce-load -wi rsync'])
+    check_call_demoted(['boot2docker', 'ssh', 'which rsync || tce-load -wi rsync || tce-load -wi rsync'])
 
 def _ensure_persist_dir_is_linked():
     logging.info('Linking {} to VBox disk (if it is not already linked)'.format(constants.VM_PERSIST_DIR))
@@ -86,7 +86,6 @@ def _apply_virtio_networking_fix():
         check_call_demoted(['VBoxManage', 'modifyvm', 'boot2docker-vm', '--nictype{}'.format(idx + 1), constants.VM_NIC_TYPE])
 
 def ensure_docker_vm_is_started():
-    log_to_client("Ensuring boot2docker VM is configured properly and running")
     _init_docker_vm()
     using_virtio = _vm_is_using_virtio()
     configured_memory = int(get_config_value(constants.CONFIG_VM_MEM_SIZE))

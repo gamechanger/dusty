@@ -14,7 +14,6 @@ from ...compiler.compose import links_for_app_or_service
 from ...path import parent_dir
 
 def write_composefile(compose_config, compose_file_location):
-    logging.info('Writing new Composefile')
     compose_dir_location = parent_dir(compose_file_location)
     if not os.path.exists(compose_dir_location):
         os.makedirs(compose_dir_location)
@@ -22,7 +21,6 @@ def write_composefile(compose_config, compose_file_location):
         f.write(yaml.dump(compose_config, default_flow_style=False))
 
 def _compose_base_command(core_command, compose_file_location, project_name):
-    logging.info('Running docker-compose {}'.format(core_command))
     command = ['docker-compose']
     if compose_file_location is not None:
         command += ['-f', compose_file_location]
@@ -31,12 +29,12 @@ def _compose_base_command(core_command, compose_file_location, project_name):
     command += core_command
     return command
 
-def compose_up(compose_file_location, project_name, recreate_containers=True):
+def compose_up(compose_file_location, project_name, recreate_containers=True, quiet=False):
     command = _compose_base_command(['up', '-d', '--allow-insecure-ssl'], compose_file_location, project_name)
     if not recreate_containers:
         command.append('--no-recreate')
     # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
-    check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True)
+    check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True, quiet_on_success=quiet)
 
 def _compose_stop(compose_file_location, project_name, services):
     command = _compose_base_command(['stop', '-t', '1'], compose_file_location, project_name)
