@@ -79,7 +79,8 @@ def _compile_docker_commands(app_name, assembled_specs):
     return commands
 
 def _get_test_image_setup_commands(app_or_lib_name, expanded_specs, testing_spec):
-    commands = lib_install_commands_for_app_or_lib(app_or_lib_name, expanded_specs)
+    commands = ['set -e']
+    commands += lib_install_commands_for_app_or_lib(app_or_lib_name, expanded_specs)
     commands += ['cd {}'.format(container_code_path(spec_for_service(app_or_lib_name, expanded_specs)))]
     commands += testing_spec['once']
     return commands

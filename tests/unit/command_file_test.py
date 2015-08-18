@@ -165,7 +165,8 @@ class TestCommandFile(DustyTestCase):
         assembled_spec = get_expanded_libs_specs()
         command_file.make_test_command_files('app1', assembled_spec)
 
-        commands1 = ['cd /gc/app1',
+        commands1 = ['set -e',
+                     'cd /gc/app1',
                      'app1 test command 1',
                      'app1 test command 2']
         call1 = call(commands1, 'app1', '{}/app1/test/dusty_command_file_app1.sh'.format(constants.COMMAND_FILES_DIR))
@@ -205,7 +206,8 @@ class TestCommandFile(DustyTestCase):
         assembled_spec = get_expanded_libs_specs()
         command_file.make_test_command_files('lib1', assembled_spec)
 
-        commands1 = ['cd /gc/lib1',
+        commands1 = ['set -e',
+                     'cd /gc/lib1',
                      'lib1 test command 1',
                      'lib1 test command 2']
         call1 = call(commands1, 'lib1', '{}/lib1/test/dusty_command_file_lib1.sh'.format(constants.COMMAND_FILES_DIR))
