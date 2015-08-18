@@ -57,12 +57,10 @@ def ensure_valid_suite_name(app_or_lib_name, suite_name):
 def pull_repos_and_sync(app_or_lib_name, pull_repos=False):
     initialize_docker_vm()
     expanded_specs = get_expanded_libs_specs()
-    log_to_client('Syncing test command files to virtual machine')
     make_test_command_files(app_or_lib_name, expanded_specs)
     if pull_repos:
         _update_test_repos(app_or_lib_name)
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
-    log_to_client('Checking NFS mounts')
     nfs.update_nfs_with_repos(get_same_container_repos_from_spec(spec))
 
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, should_exit=True, force_recreate=False):
@@ -126,9 +124,8 @@ def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
 
         composefile_path = _test_composefile_path(service_name)
         write_composefile(service_compose_config, composefile_path)
-        log_to_client('Compose config {}: \n {}'.format(service_name, service_compose_config))
 
-        compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name))
+        compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name), quiet=True)
         previous_container_names.append("{}_{}_1".format(_compose_project_name(app_or_lib_name, suite_name), service_name))
     return previous_container_names
 
@@ -143,7 +140,7 @@ def _app_or_lib_compose_up(test_suite_compose_spec, app_or_lib_name, app_or_lib_
     composefile_path = _test_composefile_path(app_or_lib_name)
     compose_config = get_testing_compose_dict(app_or_lib_name, test_suite_compose_spec, **kwargs)
     write_composefile(compose_config, composefile_path)
-    compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name))
+    compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name), quiet=True)
     return '{}_{}_1'.format(_compose_project_name(app_or_lib_name, suite_name), app_or_lib_name)
 
 def _get_suite_spec(testing_spec, suite_name):

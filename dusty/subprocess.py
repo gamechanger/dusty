@@ -55,17 +55,20 @@ def check_output(shell_args, demote=True, env=None, redirect_stderr=False):
 def check_output_demoted(shell_args, env=None, redirect_stderr=False):
     return check_output(shell_args, env=env, redirect_stderr=redirect_stderr, demote=True)
 
-def check_and_log_output_and_error_demoted(shell_args, env=None, strip_newlines=False):
-    return check_and_log_output_and_error(shell_args, demote=True, env=env, strip_newlines=strip_newlines)
+def check_and_log_output_and_error_demoted(shell_args, env=None, strip_newlines=False, quiet_on_success=False):
+    return check_and_log_output_and_error(shell_args, demote=True, env=env, strip_newlines=strip_newlines, quiet_on_success=quiet_on_success)
 
-def check_and_log_output_and_error(shell_args, demote=True, env=None, strip_newlines=False):
+def check_and_log_output_and_error(shell_args, demote=True, env=None, strip_newlines=False, quiet_on_success=False):
     total_output = ""
     process = run_subprocess(subprocess.Popen, shell_args, demote=demote, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     for output in iter(process.stdout.readline, ''):
         if not strip_newlines or output.strip('\n') != '':
             total_output += output
-            log_to_client(output.strip())
+            if not quiet_on_success:
+                log_to_client(output.strip())
     return_code = process.wait()
     if return_code != 0:
+        if quiet_on_success:
+            log_to_client(total_output)
         raise subprocess.CalledProcessError(return_code, ' '.join(shell_args))
     return total_output
