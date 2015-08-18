@@ -14,7 +14,7 @@ Dusty leverages several programs and system components:
  * [Docker](https://www.docker.com/)
  * [boot2docker](http://boot2docker.io/) and [Virtualbox](https://www.virtualbox.org/wiki/VirtualBox)
  * [Docker Compose](https://docs.docker.com/compose/)
- * [rsync](https://rsync.samba.org/)
+ * [Network File System](https://en.wikipedia.org/wiki/Network_File_System)
 
 ### Overview
 
@@ -28,7 +28,7 @@ The compile step uses the Dusty specs to do the following:
 During the run step Dusty does the following:
 
  * Ensures that the boot2docker VM (linux) is running
- * Syncs code from your mac to your boot2docker VM using rsync
+ * Uses NFS to mount repos on your local machine to the VM
  * Uses Docker Compose to launch your apps and services
 
 ![Architecture](assets/architecture.png)
@@ -71,15 +71,20 @@ Docker can be used on OSX via the boot2docker virtual machine (managed by Virtua
 The Docker containers and Docker daemon are actually running on this
 linux virtual machine.  The docker client is run on OSX using the daemon's exposed socket.
 
-#### Rsync
+#### NFS
 
-Containers started by Dusty need to access code living on your mac.
+Containers started by Dusty need to access code living on your Mac.
 One way to do this is to use a Virtualbox shared folder. However, [the performance of shared
-folders is very poor](http://mitchellh.com/comparing-filesystem-performance-in-virtual-machines).  As an alternative, we use rsync to move files from your mac to the VM.
+folders is very poor](http://mitchellh.com/comparing-filesystem-performance-in-virtual-machines).
+As an alternative, we use NFS to allow your host and VM to access the same folders.
 
-Rsync is an open source utility that provides incremental file transfer.  In order to work, rysnc needs to be installed on both the source and destination machine. This means we need to install rysnc on our boot2docker virtual machine.  We are then able to quickly sync changed files from your local mac repos to your VM's copy of these repos. This sync happens on `up`, `restart`, and `test`.
+In our NFS setup, your host Mac acts as a server, and the boot2docker VM acts as a client.
+The server makes available folders which need to be shared (folders containing both managed and
+overridden repositories).  The client VM can then mount these folders as needed, and can even
+setup container volumes to mount from these folders.
 
-When Dusty rsyncs, any files in the destination (typically the VM) which are not present in the source (typically your Mac) are deleted. This helps to keep the two folders consistent between the filesystems.
+With this setup, code changes you make on your Mac are reflected quickly and automatically
+in containers. This is similar to, but more performant than Virtualbox shared folders.
 
 #### Persistent Data
 
