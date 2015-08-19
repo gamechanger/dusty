@@ -1,0 +1,9 @@
+repo:  github.com/gamechanger/simpleapp
+image: docker.gamechanger.io/simpleapp
+mount: /simpleapp
+commands:
+  always:
+    - run-script.sh
+compose:
+  environment:
+    gcenv: local

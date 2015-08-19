@@ -1,0 +1,25 @@
+bundles:
+    simple:
+        apps:
+            - simpleapp
+        services:
+            - bundle-specified-service
+apps:
+    simpleapp:
+        image: docker.gamechanger.io/simpleapp
+        commands:
+          always:
+            - run-script.sh
+          once: []
+        compose:
+          environment:
+            gcenv: local
+          volumes: []
+        depends:
+            apps: []
+            libs: []
+            services: []
+libs: {}
+services:
+    bundle-specified-service:
+        image: someimage

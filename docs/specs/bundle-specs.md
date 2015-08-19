@@ -28,3 +28,18 @@ apps:
 The list of apps to be run by `dusty up` if this bundle is activated.
 These apps are used as entrypoints into the dependency graph defined by
 your app and service specs.
+
+Each bundle must specify at least one app (in `apps`) or service (in `services`).
+
+## services
+
+```
+services:
+  - postgres
+```
+
+A list of services which will be run by `dusty up` if this bundle is activated.
+Services specified here will be launched in addition to services
+that specified apps depend on.
+
+Each bundle must specify at least one app (in `apps`) or service (in `services`).
