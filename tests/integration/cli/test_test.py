@@ -11,7 +11,7 @@ class TestTestCLI(DustyIntegrationTestCase):
 
     def test_basic_test_run(self):
         self.run_command('test --recreate busyboxa test1')
-        self.assertEqual(self.handler.log_to_client_output.count('TESTS PASSED'), 1)
+        self.assertEqual(self.handler.log_to_client_output.count('TESTS test1 PASSED'), 1)
         self.assertEqual(self.handler.log_to_client_output.count('OK'), 1)
         self.assertEqual(self.handler.log_to_client_output.count('Running commands to create new image:'), 1)
 
@@ -38,6 +38,6 @@ class TestTestCLI(DustyIntegrationTestCase):
         self.assertEqual(self.handler.log_to_client_output.count('Running commands to create new image:'), 1)
         self.handler.log_to_client_output = ''
         self.run_command('test busyboxa test1')
-        self.assertEqual(self.handler.log_to_client_output.count('TESTS PASSED'), 1)
+        self.assertEqual(self.handler.log_to_client_output.count('TESTS test1 PASSED'), 1)
         self.assertEqual(self.handler.log_to_client_output.count('OK'), 1)
         self.assertEqual(self.handler.log_to_client_output.count('Running commands to create new image:'), 0)
