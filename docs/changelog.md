@@ -8,7 +8,7 @@
     * The `restart` command no longer takes a `--no-sync` flag, due to the move to NFS.
 * **New**
     * Dusty now attempts to fix a known problem with boot2docker networking, resulting in up to a 10x improvement in network performance. See [this boot2docker issue](https://github.com/boot2docker/boot2docker/issues/1022) for more information.
-    * Dusty bundles can now specify services, just as they specify apps
+    * Bundles can now specify services, just as they specify apps.
 * **Misc**
     * `test.once` commands that fail now cause the entire test run to fail immediately.
     * When running all test suites, a tabular summary of test results is now printed at the end of the run

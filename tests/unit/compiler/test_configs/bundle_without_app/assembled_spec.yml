@@ -2,6 +2,9 @@ bundles:
     simple:
         apps:
             - simpleapp
+    serviceonly:
+        services:
+            - bundle-specified-service
 apps:
     simpleapp:
         image: docker.gamechanger.io/simpleapp
@@ -18,4 +21,6 @@ apps:
             libs: []
             services: []
 libs: {}
-services: {}
+services:
+    bundle-specified-service:
+        image: someimage
