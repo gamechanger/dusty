@@ -22,6 +22,7 @@ from dusty.cli import main as client_entrypoint
 from dusty.schemas.base_schema_class import get_specs_from_path, DustySpecs
 from dusty.systems.docker import exec_in_container, get_docker_client, get_container_for_app_or_service, get_docker_env
 from dusty.systems.nfs import client as nfs_client
+from dusty.systems.nfs import server as nfs_server
 from dusty.path import parent_dir
 from dusty.subprocess import call_demoted
 from .fixtures import basic_specs_fixture
@@ -128,6 +129,7 @@ class DustyIntegrationTestCase(TestCase):
         client_logger.removeHandler(self.handler)
         nfs_client.unmount_all_repos()
         reset_memoize_cache()
+        nfs_server._write_exports_config(set())
 
     def _clear_stdout(self):
         self.stdout_start = len(sys.stdout.getvalue())
