@@ -102,6 +102,9 @@ def ensure_docker_vm_is_started():
         call_demoted(['VBoxManage', 'modifyvm', 'boot2docker-vm', '--memory', '{}'.format(configured_memory)])
     _start_docker_vm()
 
+def docker_vm_is_running():
+    return 'running' == check_output_demoted(['boot2docker', 'status']).rstrip()
+
 def _apply_1_7_cert_hack():
     """boot2docker 1.7 has been a total disaster. One of the upgrade problems is that
     the certificates used for TLS to the Docker client become invalid. There's some sort

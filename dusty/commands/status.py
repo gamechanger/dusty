@@ -5,6 +5,7 @@ from prettytable import PrettyTable
 from ..compiler.spec_assembler import get_assembled_specs
 from ..log import log_to_client
 from ..systems.docker import get_dusty_containers, get_docker_client
+from ..systems.virtualbox import docker_vm_is_running
 from ..payload import daemon_command
 
 def _has_active_container(client, spec_type, service_name):
@@ -14,6 +15,9 @@ def _has_active_container(client, spec_type, service_name):
 
 @daemon_command
 def get_dusty_status():
+    if not docker_vm_is_running():
+        log_to_client('boot2docker VM is powered off.  You can start it with `boot2docker up` or `dusty up`')
+        return
     client = get_docker_client()
     assembled_specs = get_assembled_specs()
     table = PrettyTable(["Name", "Type", "Has Active Container"])
