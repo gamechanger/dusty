@@ -1,2 +1,4 @@
 apps:
     - simpleapp
+services:
+    - bundle-specified-service
