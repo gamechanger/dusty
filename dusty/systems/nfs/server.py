@@ -19,11 +19,10 @@ def configure_nfs_server():
     exports that are needed for currently active repos, and restart
     the nfs server
     """
-    vm_ip = get_docker_vm_ip()
     repos_for_export = get_all_repos(active_only=True, include_specs_repo=False)
 
     current_exports = _get_current_exports()
-    needed_exports = _get_exports_for_repos(repos_for_export, vm_ip)
+    needed_exports = _get_exports_for_repos(repos_for_export)
 
     _ensure_managed_repos_dir_exists()
 
@@ -40,9 +39,8 @@ def add_exports_for_repos(repos):
     This function will add needed entries to /etc/exports.  It will not remove any
     entries from the file.  It will then restart the server if necessary
     """
-    vm_ip = get_docker_vm_ip()
     current_exports = _get_current_exports()
-    needed_exports = _get_exports_for_repos(repos, vm_ip)
+    needed_exports = _get_exports_for_repos(repos)
 
     if not needed_exports.difference(current_exports):
         if not _server_is_running():
@@ -60,12 +58,12 @@ def _ensure_managed_repos_dir_exists():
     if not os.path.exists(constants.REPOS_DIR):
         os.makedirs(constants.REPOS_DIR)
 
-def _get_exports_for_repos(repos, vm_ip):
-    config_set = set([_export_for_dusty_managed(vm_ip)])
+def _get_exports_for_repos(repos):
+    config_set = set([_export_for_dusty_managed()])
     for repo in repos:
         if not repo.is_overridden:
             continue
-        config_set.add(_export_for_repo(repo, vm_ip))
+        config_set.add(_export_for_repo(repo))
     return config_set
 
 def _write_exports_config(exports_set):
@@ -75,11 +73,11 @@ def _write_exports_config(exports_set):
     current_config += config_file.create_config_section(exports_config)
     config_file.write(constants.EXPORTS_PATH, current_config)
 
-def _export_for_dusty_managed(vm_ip):
-    return '{} {} -alldirs -maproot=0:0\n'.format(os.path.realpath(constants.REPOS_DIR), vm_ip)
+def _export_for_dusty_managed():
+    return '{} {} -alldirs -maproot=0:0\n'.format(os.path.realpath(constants.REPOS_DIR), get_docker_vm_ip())
 
-def _export_for_repo(repo, vm_ip):
-    return '{} {} -alldirs -maproot={}\n'.format(os.path.realpath(repo.local_path), vm_ip, _maproot_for_repo(repo))
+def _export_for_repo(repo):
+    return '{} {} -alldirs -maproot={}\n'.format(os.path.realpath(repo.local_path), get_docker_vm_ip(), _maproot_for_repo(repo))
 
 def _maproot_for_repo(repo):
     stat = os.stat(repo.local_path)
