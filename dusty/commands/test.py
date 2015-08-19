@@ -1,6 +1,8 @@
 import os
 import sys
 import textwrap
+import time
+
 from prettytable import PrettyTable
 
 from .. import constants
@@ -75,22 +77,31 @@ def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, should_exi
         sys.exit(e.code)
     exit_code = _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name)
     if should_exit:
-        log_to_client('TESTS {}'.format('FAILED' if exit_code != 0 else 'PASSED'))
+        log_to_client('TESTS {} {}'.format(suite_name, 'FAILED' if exit_code != 0 else 'PASSED'))
         sys.exit(exit_code)
     return exit_code
 
 def run_all_app_or_lib_suites(app_or_lib_name, force_recreate=False):
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
+
+    summary_table = PrettyTable(['Suite', 'Description', 'Result', 'Time (s)'])
     exit_code = 0
+
     for index, suite_spec in enumerate(spec['test']['suites']):
         args = [app_or_lib_name, suite_spec['name'], []]
         kwargs = {'should_exit': False, }
-        log_to_client('Running test {}'.format(suite_spec))
+        log_to_client('Running test {}'.format(suite_spec['name']))
         if index == 0 and force_recreate:
             log_to_client('Recreating the image during the first test run')
             kwargs['force_recreate'] = True
-        exit_code |= run_app_or_lib_tests(*args, **kwargs)
+        start_time = time.time()
+        test_result = run_app_or_lib_tests(*args, **kwargs)
+        result_str = 'FAIL' if test_result else 'PASS'
+        elapsed_time = "{0:.1f}".format(time.time() - start_time)
+        summary_table.add_row([suite_spec['name'], suite_spec['description'], result_str, elapsed_time])
+        exit_code |= test_result
+    log_to_client(summary_table.get_string())
     log_to_client('TESTS {}'.format('FAILED' if exit_code != 0 else 'PASSED'))
     sys.exit(exit_code)
 
