@@ -9,35 +9,35 @@ class TestStatusCommands(DustyTestCase):
     @patch('dusty.commands.status.get_dusty_containers')
     def test_has_active_container_lib_active(self, fake_get_dusty_containers):
         fake_get_dusty_containers.return_value = ['some_container']
-        self.assertEquals(False, _has_active_container(None, 'lib', 'lib-a'))
+        self.assertEquals(False, _has_active_container('lib', 'lib-a'))
 
     @patch('dusty.commands.status.get_dusty_containers')
     def test_has_active_container_lib_inactive(self, fake_get_dusty_containers):
         fake_get_dusty_containers.return_value = []
-        self.assertEquals(False, _has_active_container(None, 'lib', 'lib-a'))
+        self.assertEquals(False, _has_active_container('lib', 'lib-a'))
 
     @patch('dusty.commands.status.get_dusty_containers')
     def test_has_active_container_app_active(self, fake_get_dusty_containers):
         fake_get_dusty_containers.return_value = ['some_container']
-        self.assertEquals(True, _has_active_container(None, 'app', 'app-a'))
+        self.assertEquals(True, _has_active_container('app', 'app-a'))
 
     @patch('dusty.commands.status.get_dusty_containers')
     def test_has_active_container_app_inactive(self, fake_get_dusty_containers):
         fake_get_dusty_containers.return_value = []
-        self.assertEquals(False, _has_active_container(None, 'app', 'app-a'))
+        self.assertEquals(False, _has_active_container('app', 'app-a'))
 
     @patch('dusty.commands.status.get_dusty_containers')
     def test_has_active_container_service_active(self, fake_get_dusty_containers):
         fake_get_dusty_containers.return_value = ['some_container']
-        self.assertEquals(True, _has_active_container(None, 'service', 'service-a'))
+        self.assertEquals(True, _has_active_container('service', 'service-a'))
 
     @patch('dusty.commands.status.get_dusty_containers')
     def test_has_active_container_service_inactive(self, fake_get_dusty_containers):
         fake_get_dusty_containers.return_value = []
-        self.assertEquals(False, _has_active_container(None, 'service', 'service-a'))
+        self.assertEquals(False, _has_active_container('service', 'service-a'))
 
     @patch('dusty.commands.status.docker_vm_is_running')
-    @patch('dusty.commands.status.get_docker_client')
+    @patch('dusty.systems.docker.get_docker_client')
     @patch('dusty.commands.status.PrettyTable')
     @patch('dusty.commands.status.get_dusty_containers')
     @patch('dusty.schemas.base_schema_class.get_specs_from_path')
@@ -70,7 +70,7 @@ class TestStatusCommands(DustyTestCase):
         self.assertEquals(len(call_args_list), 7)
 
     @patch('dusty.commands.status.docker_vm_is_running')
-    @patch('dusty.commands.status.get_docker_client')
+    @patch('dusty.systems.docker.get_docker_client')
     @patch('dusty.commands.status.PrettyTable')
     @patch('dusty.commands.status.get_dusty_containers')
     @patch('dusty.schemas.base_schema_class.get_specs_from_path')

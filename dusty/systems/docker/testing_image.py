@@ -6,6 +6,7 @@ from ...compiler.compose import container_code_path, get_volume_mounts
 from ...log import log_to_client
 from ...command_file import dusty_command_file_name, lib_install_commands_for_app_or_lib
 from .common import spec_for_service
+from . import get_docker_client
 from ... import constants
 
 class ImageCreationError(Exception):
@@ -14,8 +15,9 @@ class ImageCreationError(Exception):
         message = 'Run exited with code {}'.format(code)
         super(ImageCreationError, self).__init__(message)
 
-def _ensure_testing_spec_base_image(docker_client, testing_spec):
+def _ensure_testing_spec_base_image(testing_spec):
     log_to_client('Getting the base image for the new image')
+    docker_client = get_docker_client()
     if 'image' in testing_spec:
         log_to_client('Base image is {}'.format(testing_spec['image']))
         return testing_spec['image']
@@ -46,7 +48,8 @@ def _get_create_container_binds(split_volumes):
         binds_dict[volume_dict['host_location']] =  {'bind': volume_dict['container_location'], 'ro': False}
     return binds_dict
 
-def _ensure_image_exists(docker_client, image_name):
+def _ensure_image_exists(image_name):
+    docker_client = get_docker_client()
     full_image_name = image_name
     if ':' not in image_name:
         full_image_name = '{}:latest'.format(image_name)
@@ -58,12 +61,13 @@ def _ensure_image_exists(docker_client, image_name):
         repo, tag = split[0], 'latest' if len(split) == 1 else split[1]
         docker_client.pull(repo, tag, insecure_registry=True)
 
-def _make_installed_requirements_image(docker_client, base_image_tag, command, image_name, volumes):
+def _make_installed_requirements_image(base_image_tag, command, image_name, volumes):
+    docker_client = get_docker_client()
     split_volumes = _get_split_volumes(volumes)
     create_container_volumes = _get_create_container_volumes(split_volumes)
     create_container_binds = _get_create_container_binds(split_volumes)
 
-    _ensure_image_exists(docker_client, base_image_tag)
+    _ensure_image_exists(base_image_tag)
     try:
         docker_client.remove_image(image=image_name)
     except:
@@ -91,15 +95,17 @@ def test_image_name(app_or_lib_name):
 def _get_test_image_setup_command(app_or_lib_name, app_or_lib_spec):
     return 'sh {}/{}'.format(constants.CONTAINER_COMMAND_FILES_DIR, dusty_command_file_name(app_or_lib_name))
 
-def _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs):
+def _make_installed_testing_image(app_or_lib_name, expanded_specs):
+    docker_client = get_docker_client()
     image_name = test_image_name(app_or_lib_name)
     testing_spec = _testing_spec(app_or_lib_name, expanded_specs)
-    base_image_tag = _ensure_testing_spec_base_image(docker_client, testing_spec)
+    base_image_tag = _ensure_testing_spec_base_image(testing_spec)
     image_setup_command = _get_test_image_setup_command(app_or_lib_name, spec_for_service(app_or_lib_name, expanded_specs))
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs, test=True)
-    _make_installed_requirements_image(docker_client, base_image_tag, image_setup_command, image_name, volumes)
+    _make_installed_requirements_image(base_image_tag, image_setup_command, image_name, volumes)
 
-def ensure_test_image(docker_client, app_or_lib_name, expanded_specs, force_recreate=False):
+def ensure_test_image(app_or_lib_name, expanded_specs, force_recreate=False):
+    docker_client = get_docker_client()
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs)
     images = docker_client.images()
     image_name = test_image_name(app_or_lib_name)
@@ -110,5 +116,5 @@ def ensure_test_image(docker_client, app_or_lib_name, expanded_specs, force_recr
             break
     if force_recreate or not image_exists:
         log_to_client('Creating a new image named {}, with installed dependencies for the app or lib'.format(image_name))
-        _make_installed_testing_image(docker_client, app_or_lib_name, expanded_specs)
+        _make_installed_testing_image(app_or_lib_name, expanded_specs)
         log_to_client('Image is now created')

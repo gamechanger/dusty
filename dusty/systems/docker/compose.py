@@ -4,7 +4,7 @@ import logging
 import yaml
 
 from . import (get_canonical_container_name, get_docker_env, get_docker_client,
-               get_dusty_containers_with_client, get_app_or_service_name_from_container,
+               get_dusty_containers, get_app_or_service_name_from_container,
                get_container_for_app_or_service)
 from ... import constants
 from ...log import log_to_client
@@ -48,12 +48,12 @@ def _compose_rm(compose_file_location, project_name, services):
         command += services
     check_and_log_output_and_error_demoted(command, env=get_docker_env())
 
-def _check_stopped_linked_containers(client, container, assembled_specs):
+def _check_stopped_linked_containers(container, assembled_specs):
     stopped_containers = []
     app_or_service_name = get_app_or_service_name_from_container(container)
     linked_containers = links_for_app_or_service(app_or_service_name, assembled_specs)
     for linked_name in linked_containers:
-        if get_dusty_containers_with_client(client, [linked_name]) == []:
+        if get_dusty_containers([linked_name]) == []:
             stopped_containers.append(linked_name)
     return stopped_containers
 
@@ -77,11 +77,11 @@ def _compose_restart(services):
     logging.info('Restarting service containers from list: {}'.format(services))
     client = get_docker_client()
     for service in services:
-        container = get_container_for_app_or_service(client, service, include_exited=True)
+        container = get_container_for_app_or_service(service, include_exited=True)
         if container is None:
             log_to_client('No container found for {}'.format(service))
             continue
-        stopped_linked_containers = _check_stopped_linked_containers(client, container, assembled_specs)
+        stopped_linked_containers = _check_stopped_linked_containers(container, assembled_specs)
         if stopped_linked_containers:
             log_to_client('No running containers {0}, which are linked to by {1}.  Cannot restart {1}'.format(
                               stopped_linked_containers, service))
