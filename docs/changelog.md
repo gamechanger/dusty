@@ -12,6 +12,7 @@
 * **Misc**
     * `test.once` commands that fail now cause the entire test run to fail immediately.
     * When running all test suites, a tabular summary of test results is now printed at the end of the run
+    * Repos specified with `https:` or `file:` now are successfully mounted to containers by Docker Compose
 
 ## 0.4.0 (August 3, 2015)
 
