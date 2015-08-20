@@ -49,7 +49,11 @@ def _init_docker_vm():
     """Initialize the Dusty VM if it does not already exist."""
     if not _dusty_vm_exists():
         logging.info('Initializing new Dusty VM with Docker Machine')
-        check_call_demoted(['docker-machine', 'create', '--driver', 'virtualbox', constants.VM_MACHINE_NAME], redirect_stderr=True)
+        machine_options = ['--driver', 'virtualbox',
+                           '--virtualbox-cpu-count', '-1',
+                           '--virtualbox-memory', get_config_value(constants.CONFIG_VM_MEM_SIZE)]
+        check_call_demoted(['docker-machine', 'create'] + machine_options + [constants.VM_MACHINE_NAME],
+                           redirect_stderr=True)
 
 def _start_docker_vm():
     """Start the Dusty VM if it is not already running."""
