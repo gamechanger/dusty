@@ -58,4 +58,3 @@ class TestUpgrade(DustyIntegrationTestCase):
     def assertBinaryVersionUnchanged(self):
         output = self.run_command('version')
         self.assertInSameLine(output, 'daemon', 'version', constants.VERSION)
-

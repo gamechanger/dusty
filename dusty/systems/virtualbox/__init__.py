@@ -65,7 +65,7 @@ def _get_vm_config():
     return check_output_demoted(['VBoxManage', 'showvminfo', '--machinereadable', constants.VM_MACHINE_NAME]).splitlines()
 
 def docker_vm_is_running():
-    return check_output_demoted(['boot2docker', 'status']).strip() == 'running'
+    return check_output_demoted(['docker-machine', 'status', constants.VM_MACHINE_NAME]).strip().lower() == 'running'
 
 def ensure_docker_vm_is_started():
     _init_docker_vm()

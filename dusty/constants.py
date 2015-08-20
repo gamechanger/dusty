@@ -70,10 +70,10 @@ CONFIG_VM_MEM_SIZE = 'vm_memory_size'
 CONFIG_SETTINGS = {
     CONFIG_BUNDLES_KEY: 'All currently activated bundles. These are the bundles that Dusty will set up for you when you run "dusty up".',
     CONFIG_REPO_OVERRIDES_KEY: 'All known repos for which Dusty will use your specified override instead of its own managed copy of the repository. You should override repos which you are actively developing so that Dusty uses your development version inside containers.',
-    CONFIG_MAC_USERNAME_KEY: 'The user on the host OS who will own and be able to access the boot2docker VM. Dusty runs all VirtualBox, boot2docker, Docker, and Docker Compose commands as this user.',
+    CONFIG_MAC_USERNAME_KEY: 'The user on the host OS who will own and be able to access the Docker VM. Dusty runs all VirtualBox, Docker, Docker Machine, and Docker Compose commands as this user.',
     CONFIG_SPECS_REPO_KEY: 'This repository is used for storing the specs used by Dusty.  It is managed the same way as other repos',
     CONFIG_SETUP_KEY: 'Key indicating if you have run the required command `dusty setup`',
-    CONFIG_VM_MEM_SIZE: 'Specifies how much memory (in megabytes) you want your boot2docker vm to have'
+    CONFIG_VM_MEM_SIZE: 'Specifies how much memory (in megabytes) you want your Docker VM to have'
 }
 
 WARN_ON_MISSING_CONFIG_KEYS = [CONFIG_MAC_USERNAME_KEY, CONFIG_SPECS_REPO_KEY, CONFIG_VM_MEM_SIZE]
