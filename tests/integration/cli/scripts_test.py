@@ -33,13 +33,16 @@ class TestScriptsCLI(DustyIntegrationTestCase):
     def test_basic(self):
         self.assertFileNotInContainer('appa', '/app/a/foo')
         self.run_command('scripts appa example')
+        self.wait_for_exec_docker(timeout=1)
         self.assertFileInContainer('appa', '/app/a/foo')
         self.exec_in_container('appa', 'rm /app/a/foo')
 
     def test_with_arg(self):
         self.run_command('scripts appa example')
+        self.wait_for_exec_docker(timeout=1)
         self.assertFileInContainer('appa', '/app/a/foo')
         self.run_command('scripts appa example_rm /app/a/foo')
+        self.wait_for_exec_docker(timeout=1)
         self.assertFileNotInContainer('appa', '/app/a/foo')
 
     def test_with_flag(self):
@@ -50,4 +53,5 @@ class TestScriptsCLI(DustyIntegrationTestCase):
     def test_with_flag_and_option(self):
         self.assertFileNotInContainer('appa', '/app/a/foo')
         self.run_command('scripts appa example_touch -c /app/a/foo')
+        self.wait_for_exec_docker(timeout=1)
         self.assertFileNotInContainer('appa', '/app/a/foo')
