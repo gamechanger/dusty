@@ -97,7 +97,7 @@ using a `docker exec mv` command.
 
 #### disk
 ```
-Basic tools for managing disk usage in the boot2docker VM
+Basic tools for managing disk usage in the Docker VM
 
 Usage:
   disk inspect
@@ -110,16 +110,16 @@ Commands:
   inspect             Prints VM disk usage information
   cleanup_containers  Cleans docker containers that have exited
   cleanup_images      Removes docker images that can be removed without the --force flag
-  backup              Backs up the /persist directory on your boot2docker to your local file system
+  backup              Backs up the /persist directory on your Docker VM to your local file system
   restore             Restores a backed up /persist directory
 ```
 Inspect, cleanup_containers, and cleanup_images are used to manage the disk usage of Dusty's docker
-images and containers.  These can end up taking up a lot of space on boot2docker's virtual disk,
-which is 20G max (dynamically allocated by Virtualbox).  Cleanup_containers uses the `-v` flag with
+images and containers.  These can end up taking up a lot of space on the Docker VM's virtual disk,
+which is 20G max (dynamically allocated by VirtualBox).  Cleanup_containers uses the `-v` flag with
 `docker rm` to avoid dangling volumes.
 
 Backup and restore are usefull for saving persistent data.  You may want to save the data and
-send it to someone else, or save your data after recreating your boot2docker VM.
+send it to someone else, or save your data after recreating your Docker VM.
 
 #### dump
 ```
@@ -307,7 +307,7 @@ Fully initialize all components of the Dusty system.
 
 Up compiles your specs (subject to your activated bundles),
 configures local port forwarding through your hosts file and
-nginx, initializes your boot2docker VM and prepares it for
+nginx, initializes your Docker VM and prepares it for
 use by Dusty, and starts any containers specified by your
 currently activated bundles.
 
@@ -324,7 +324,7 @@ Launches active bundles, and all apps and services that they depend on.  This co
 optimized to successfully launch your system from any state, and not for speed.  The steps
 that `dusty up` takes are:
 
- * Ensure your boot2docker VM is up
+ * Ensure your Docker VM is up
  * Pull your Dusty-managed repos
  * Assemble your specs, based on active bundles, into configuration for your hosts file, nginx,
 and Docker Compose

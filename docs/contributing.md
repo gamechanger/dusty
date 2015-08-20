@@ -19,7 +19,7 @@ folder.
 
 **WARNING**: Integration tests may alter or delete existing Dusty
 information on your system, including but not limited to your config,
-Dusty-managed repos, active containers, and boot2docker VM.
+Dusty-managed repos, active containers, and Docker VM.
 
 ```
 $ ./tests/run_integration_tests.sh # run all tests
