@@ -7,6 +7,7 @@ import tempfile
 import logging
 import getpass
 import subprocess
+import threading
 import time
 
 from unittest import TestCase
@@ -119,8 +120,6 @@ class DustyIntegrationTestCase(TestCase):
             except:
                 pass
         shutil.rmtree(self.overridden_specs_path)
-        # if os.path.exists(constants.REPOS_DIR):
-        #     shutil.rmtree(constants.REPOS_DIR)
         if os.path.exists(constants.COMPOSE_DIR):
             shutil.rmtree(constants.COMPOSE_DIR)
         shutil.rmtree('/tmp/fake-repo')
@@ -176,6 +175,17 @@ class DustyIntegrationTestCase(TestCase):
             result = self.stdout
             self._clear_stdout()
             return result
+
+    def wait_for_exec_docker(self, timeout=3):
+        def wait_for_processes():
+            for p in self.exec_docker_processes:
+                if p.poll() is None:
+                    p.communicate()
+        thread = threading.Thread(target=wait_for_processes)
+        thread.start()
+        thread.join(timeout)
+        if thread.isAlive():
+            raise RuntimeError('Exec docker processes didn\'t complete before timeout of {}s'.format(timeout))
 
     def _set_up_fake_local_repo(self, path='/tmp/fake-repo'):
         repo = git.Repo.init(path)
