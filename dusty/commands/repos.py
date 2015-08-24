@@ -8,6 +8,7 @@ from ..source import Repo
 from ..log import log_to_client
 from .. import constants
 from ..payload import daemon_command
+from ..parallel import parallel_task_queue
 
 @daemon_command
 def list_repos():
@@ -69,7 +70,8 @@ def update_managed_repos(force=False):
     if not specs_repo.is_overridden:
         log_to_client('Updating managed copy of specs-repo before loading specs')
         specs_repo.update_local_repo()
-    for repo in get_all_repos(active_only=True, include_specs_repo=False):
-        if not repo.is_overridden:
-            log_to_client('Updating managed copy of {}'.format(repo.remote_path))
-            repo.update_local_repo(force=force)
+    with parallel_task_queue() as queue:
+        log_to_client('Updating managed repos')
+        for repo in get_all_repos(active_only=True, include_specs_repo=False):
+            if not repo.is_overridden:
+                repo.update_local_repo_async(queue, force=force)

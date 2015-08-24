@@ -18,6 +18,7 @@ from ..log import log_to_client
 from ..command_file import make_test_command_files, dusty_command_file_name
 from ..source import Repo
 from ..payload import daemon_command
+from ..parallel import parallel_task_queue
 
 @daemon_command
 def test_info_for_app_or_lib(app_or_lib_name):
@@ -39,9 +40,10 @@ def _update_test_repos(app_or_lib_name):
     if not specs_repo.is_overridden:
         log_to_client('Updating managed copy of specs-repo before loading specs')
         specs_repo.update_local_repo()
-    for repo in get_same_container_repos(app_or_lib_name):
-        if not repo.is_overridden:
-            repo.update_local_repo()
+    with parallel_task_queue() as queue:
+        for repo in get_same_container_repos(app_or_lib_name):
+            if not repo.is_overridden:
+                repo.update_local_repo_async(queue)
 
 @daemon_command
 def ensure_valid_suite_name(app_or_lib_name, suite_name):

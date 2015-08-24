@@ -2,8 +2,10 @@ import sys
 import logging
 import logging.handlers
 from .constants import SOCKET_PATH, SOCKET_LOGGER_NAME
+from threading import RLock
 
 handler = None
+log_to_client_lock = RLock()
 
 class DustySocketHandler(logging.Handler):
     def __init__(self, connection_socket):
@@ -39,7 +41,8 @@ def make_socket_logger(connection_socket):
     logger.addHandler(handler)
 
 def log_to_client(message):
-    client_logger.info(message)
+    with log_to_client_lock:
+        client_logger.info(message)
 
 def close_socket_logger():
     global handler
