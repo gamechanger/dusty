@@ -102,9 +102,8 @@ class Repo(object):
             local_folder = parsed.hostname + parsed.path
         else:
             local_folder = parsed.path
-        end_of_path = local_folder.split('/')[-1]
-        if '.' in end_of_path:
-            local_folder = local_folder.replace(end_of_path, end_of_path.split('.')[0])
+        if local_folder.endswith('.git'):
+            local_folder = local_folder[:-4]
         return local_folder.lstrip('/')
 
     def assemble_remote_path(self):
