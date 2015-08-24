@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.1 (In Progress)
+## 0.5.0 (In Progress)
 
 * **Breaking**
     * Dusty now uses NFS instead of rsync to get repository code from your host Mac to running containers.
@@ -13,6 +13,7 @@
     * `test.once` commands that fail now cause the entire test run to fail immediately.
     * When running all test suites, a tabular summary of test results is now printed at the end of the run
     * Repos specified with `https:` or `file:` now are successfully mounted to containers by Docker Compose
+    * Fixed various issues with using fully specified `ssh://user@host:port/path` URLs for repos
 
 ## 0.4.0 (August 3, 2015)
 
