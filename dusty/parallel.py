@@ -13,7 +13,7 @@ class TaskQueue(Queue, object):
     function calls. Concurrency is limited by `pool_size`."""
     def __init__(self, pool_size):
         super(TaskQueue, self).__init__()
-        self.pool = multiprocessing.pool.ThreadPool(pool_size)
+        self.pool_size = pool_size
         self.errors = []
 
     def enqueue_task(self, fn, *args, **kwargs):
@@ -26,6 +26,7 @@ class TaskQueue(Queue, object):
             self.errors.append(e.message)
 
     def execute(self):
+        self.pool = multiprocessing.pool.ThreadPool(self.pool_size)
         while not self.empty():
             fn, args, kwargs = self.get()
             self.pool.apply_async(self._task_executor, args=(fn, args, kwargs))
