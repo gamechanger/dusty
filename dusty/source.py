@@ -4,6 +4,7 @@ repositories managed by Dusty itself."""
 import os
 import logging
 from contextlib import contextmanager
+import urlparse
 
 import git
 
@@ -96,11 +97,15 @@ class Repo(object):
 
     @property
     def rel_path(self):
-        local_folder = self.remote_path
-        if ':' in local_folder:
-            local_folder = local_folder.split(':')[1]
-        local_folder = local_folder.lstrip('/')
-        return local_folder
+        parsed = urlparse.urlparse(self.remote_path.lstrip('/'))
+        if parsed.hostname:
+            local_folder = parsed.hostname + parsed.path
+        else:
+            local_folder = parsed.path
+        end_of_path = local_folder.split('/')[-1]
+        if '.' in end_of_path:
+            local_folder = local_folder.replace(end_of_path, end_of_path.split('.')[0])
+        return local_folder.lstrip('/')
 
     def assemble_remote_path(self):
         if self.is_local_repo:
