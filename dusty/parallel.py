@@ -2,6 +2,7 @@
 
 import threading
 import multiprocessing
+import multiprocessing.pool
 from contextlib import contextmanager
 from Queue import Queue
 
@@ -12,9 +13,8 @@ class TaskQueue(Queue, object):
     function calls. Concurrency is limited by `pool_size`."""
     def __init__(self, pool_size):
         super(TaskQueue, self).__init__()
-        self.threads = []
+        self.pool = multiprocessing.pool.ThreadPool(pool_size)
         self.errors = []
-        self.pool_semaphore = threading.Semaphore(pool_size)
 
     def enqueue_task(self, fn, *args, **kwargs):
         self.put((fn, args, kwargs))
@@ -24,21 +24,13 @@ class TaskQueue(Queue, object):
             fn(*args, **kwargs)
         except Exception as e:
             self.errors.append(e.message)
-        finally:
-            self.pool_semaphore.release()
 
     def execute(self):
         while not self.empty():
-            self.pool_semaphore.acquire()
             fn, args, kwargs = self.get()
-            thread = threading.Thread(target=self._task_executor,
-                                            args=(fn, args, kwargs))
-            self.threads.append(thread)
-            thread.daemon = True
-            thread.start()
-
-        for thread in self.threads:
-            thread.join()
+            self.pool.apply_async(self._task_executor, args=(fn, args, kwargs))
+        self.pool.close()
+        self.pool.join()
 
         if self.errors:
             for error in self.errors:
