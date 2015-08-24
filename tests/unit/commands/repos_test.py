@@ -2,7 +2,7 @@ import os
 import tempfile
 import shutil
 
-from mock import patch, call
+from mock import patch, call, ANY
 
 from dusty.config import get_config_value
 from dusty.commands.bundles import activate_bundle
@@ -92,15 +92,15 @@ class TestReposCommands(DustyTestCase):
                                'github.com/app/b': os.path.join(self.temp_repos_path, 'b'),
                                'github.com/lib/a': os.path.join(self.temp_repos_path, 'a')})
 
-    @patch('dusty.source.Repo.update_local_repo')
-    def test_update_managed_repos(self, fake_update_local_repo):
+    @patch('dusty.source.Repo.update_local_repo_async')
+    def test_update_managed_repos(self, fake_update_local_repo_async):
         activate_bundle(['bundle-a'])
         update_managed_repos()
-        fake_update_local_repo.assert_has_calls([call(force=False)])
+        fake_update_local_repo_async.assert_has_calls([call(ANY, force=False)])
 
-    @patch('dusty.source.Repo.update_local_repo')
-    def test_update_managed_repos_for_both(self, fake_update_local_repo):
+    @patch('dusty.source.Repo.update_local_repo_async')
+    def test_update_managed_repos_for_both(self, fake_update_local_repo_async):
         activate_bundle(['bundle-a'])
         activate_bundle(['bundle-b'])
         update_managed_repos()
-        fake_update_local_repo.assert_has_calls([call(force=False), call(force=False)])
+        fake_update_local_repo_async.assert_has_calls([call(ANY, force=False), call(ANY, force=False)])
