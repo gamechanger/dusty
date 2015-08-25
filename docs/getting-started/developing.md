@@ -65,19 +65,19 @@ to restart the app with our new code. To do this, we issue a `dusty restart` com
 ```
 > dusty restart flaskone
 Restarting the following apps or services: flaskone
-Syncing overridden repo github.com/gamechanger/dusty-flask-example to remote at /persist/repos/github.com/gamechanger/dusty-flask-example
 Restarting dusty_flaskone_1
 ```
 
-What just happened here? Dusty synced our local copy to the boot2docker VM, which made our changed
-code available to use by our applications. It then restarted the `flaskone` application so that
+What just happened here? Dusty switched the NFS mount from its internal managed copy of
+`dusty-flask-example` to the one at `~/dusty-flask-example` as part of the restart command.
+This made our changed code available inside the container.
+It then restarted the `flaskone` application so that
 it'd pick up the new code. Let's refresh `local.flaskone.com` now and see our changes.
 
 ![Howdy!](../assets/howdy.png)
 
 That's all there is to it! Just remember to `dusty restart` whenever you want to update your
-running applications with any new code. You can also sync over your changed code without
-restarting the app by using `dusty sync`.
+running applications with any new code.
 
 ## Running Tests
 
