@@ -135,6 +135,7 @@ def initialize_docker_vm():
     _ensure_persist_dir_is_linked()
     _ensure_cp_dir_exists()
 
+@memoized
 def get_docker_vm_ip():
     """Checks boot2docker's IP, assuming that the VM is started"""
     logging.info("Checking boot2docker's ip")
