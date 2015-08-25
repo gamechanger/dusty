@@ -7,8 +7,12 @@ from ...source import Repo
 from ..spec_assembler import get_assembled_specs
 from ...path import vm_cp_path
 from ... import constants
+from ...config import get_env_config
 from ...command_file import dusty_command_file_name
 from .common import container_code_path, get_volume_mounts, get_app_volume_mounts, get_lib_volume_mounts
+
+def env_overrides_for_app_or_service(app_or_service_name):
+    return get_env_config().get(app_or_service_name, {})
 
 def _compose_dict_for_nginx(port_specs):
     """Return a dictionary containing the Compose spec required to run
@@ -84,11 +88,19 @@ def _links_for_app(app_spec, assembled_specs):
            app_spec['depends']['apps'] + \
            _conditional_links(assembled_specs, app_spec.name)
 
+def _apply_env_overrides(env_overrides, compose_dict):
+    if env_overrides:
+        if 'environment' not in compose_dict:
+            compose_dict['environment'] = {}
+        for var, value in env_overrides.iteritems():
+            compose_dict['environment'][var] = value
+
 def _composed_app_dict(app_name, assembled_specs, port_specs):
     """ This function returns a dictionary of the docker-compose.yml specifications for one app """
     logging.info("Compose Compiler: Compiling dict for app {}".format(app_name))
     app_spec = assembled_specs['apps'][app_name]
     compose_dict = app_spec["compose"]
+    _apply_env_overrides(env_overrides_for_app_or_service(app_name), compose_dict)
     if 'image' in app_spec and 'build' in app_spec:
         raise RuntimeError("image and build are both specified in the spec for {}".format(app_name))
     elif 'image' in app_spec:
@@ -117,6 +129,7 @@ def _composed_service_dict(service_spec):
     for one service. Currently, this is just the Dusty service spec with
     an additional volume mount to support Dusty's cp functionality."""
     compose_dict = service_spec.plain_dict()
+    _apply_env_overrides(env_overrides_for_app_or_service(service_spec.name), compose_dict)
     compose_dict.setdefault('volumes', []).append(_get_cp_volume_mount(service_spec.name))
     return compose_dict
 

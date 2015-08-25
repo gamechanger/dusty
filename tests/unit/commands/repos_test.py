@@ -1,5 +1,4 @@
 import os
-import tempfile
 import shutil
 
 from mock import patch, call, ANY

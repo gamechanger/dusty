@@ -16,6 +16,7 @@ class TestManageConfigCommands(DustyTestCase):
         self.old_config_settings = dusty.constants.CONFIG_SETTINGS
         dusty.constants.CONFIG_SETTINGS = {k: '' for k in [constants.CONFIG_BUNDLES_KEY, constants.CONFIG_REPO_OVERRIDES_KEY, constants.CONFIG_SPECS_REPO_KEY, 'docker_user']}
         self.expected_config = {constants.CONFIG_BUNDLES_KEY: [],
+                                constants.CONFIG_ENV_KEY: {},
                                 constants.CONFIG_REPO_OVERRIDES_KEY: {get_specs_repo(): self.temp_specs_path},
                                 constants.CONFIG_SPECS_REPO_KEY: 'github.com/org/dusty-specs',
                                 constants.CONFIG_SETUP_KEY: False,
@@ -38,6 +39,7 @@ class TestManageConfigCommands(DustyTestCase):
         list_config_values()
         self.assertItemsEqual(json.loads(self.last_client_output.replace('\'', '\"').replace('False', 'false').replace('True', 'true')),
                               {constants.CONFIG_BUNDLES_KEY: [],
+                               constants.CONFIG_ENV_KEY: {},
                                constants.CONFIG_REPO_OVERRIDES_KEY: {get_specs_repo(): self.temp_specs_path},
                                'docker_user': '~/here',
                                constants.CONFIG_SPECS_REPO_KEY: 'github.com/org/dusty-specs',

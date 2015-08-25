@@ -7,6 +7,7 @@
     * The setup override flag `--boot2docker_vm_memory` has been renamed to `--vm_memory`
 * **New**
     * Managed repos are now updated in parallel during `dusty up` and `dusty test`.
+    * New command `dusty env` can set environment variable overrides per app or service. These variables can also be read from a file, as with Docker Compose's `env_file` key.
 * **Misc**
     * Dusty now uses the name `dustyInternalNginx` for its own nginx container, to make naming conflicts less likely.
 
