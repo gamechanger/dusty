@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.5.0 (In Progress)
+## 0.6.0 (In Progress)
+
+## 0.5.0 (August 25, 2015)
 
 * **Breaking**
     * Dusty now uses NFS instead of rsync to get repository code from your host Mac to running containers.
