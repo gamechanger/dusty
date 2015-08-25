@@ -7,6 +7,7 @@ from ..log import log_to_client
 from ..systems.docker import get_dusty_containers
 from ..systems.virtualbox import docker_vm_is_running
 from ..payload import daemon_command
+from .. import constants
 
 def _has_active_container(spec_type, service_name):
     if spec_type == 'lib':
@@ -22,7 +23,7 @@ def get_dusty_status():
     table = PrettyTable(["Name", "Type", "Has Active Container"])
     logging.error(assembled_specs._document)
     # Check for Dusty's special nginx container (used for host forwarding)
-    table.add_row(['nginx', '', 'X' if get_dusty_containers(['nginx']) != [] else ''])
+    table.add_row([constants.DUSTY_NGINX_NAME, '', 'X' if get_dusty_containers([constants.DUSTY_NGINX_NAME]) != [] else ''])
     for spec in assembled_specs.get_apps_libs_and_services():
         spec_type = spec.type_singular
         service_name = spec.name

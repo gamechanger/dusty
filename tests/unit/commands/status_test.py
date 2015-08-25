@@ -66,7 +66,7 @@ class TestStatusCommands(DustyTestCase):
         self.assertTrue(call(['ser1', 'service', 'X']) in call_args_list)
         self.assertTrue(call(['ser2', 'service', 'X']) in call_args_list)
         self.assertTrue(call(['ser3', 'service', 'X']) in call_args_list)
-        self.assertTrue(call(['nginx', '', 'X']) in call_args_list)
+        self.assertTrue(call(['dustyInternalNginx', '', 'X']) in call_args_list)
         self.assertEquals(len(call_args_list), 7)
 
     @patch('dusty.commands.status.docker_vm_is_running')
@@ -99,5 +99,5 @@ class TestStatusCommands(DustyTestCase):
         self.assertTrue(call(['ser1', 'service', '']) in call_args_list)
         self.assertTrue(call(['ser2', 'service', '']) in call_args_list)
         self.assertTrue(call(['ser3', 'service', '']) in call_args_list)
-        self.assertTrue(call(['nginx', '', '']) in call_args_list)
+        self.assertTrue(call(['dustyInternalNginx', '', '']) in call_args_list)
         self.assertEquals(len(call_args_list), 7)
