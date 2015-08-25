@@ -14,7 +14,6 @@ class TestSource(DustyTestCase):
     def setUp(self):
         super(TestSource, self).setUp()
         self.temp_dir = tempfile.mkdtemp()
-
         self.MockableRepo = type("MockableRepo", (Repo, object), {})
 
     def tearDown(self):
@@ -62,7 +61,25 @@ class TestSource(DustyTestCase):
         self.assertEqual(Repo('file:///github.com/app/a').managed_path, '/etc/dusty/repos/github.com/app/a')
 
     def test_managed_path_ssh(self):
-        self.assertEqual(Repo('ssh://git@github.com/app/a').managed_path, '/etc/dusty/repos/git@github.com/app/a')
+        self.assertEqual(Repo('ssh://git@github.com/app/a').managed_path, '/etc/dusty/repos/github.com/app/a')
+
+    def test_rel_path(self):
+        self.assertEqual(Repo('github.com/app/a').rel_path, 'github.com/app/a')
+        self.assertEqual(Repo('github.com/app/a.js').rel_path, 'github.com/app/a.js')
+        self.assertEqual(Repo('/gc/repos/dusty').rel_path, 'gc/repos/dusty')
+
+    def test_rel_path_http(self):
+        self.assertEqual(Repo('http://github.com/app/a').rel_path, 'github.com/app/a')
+
+    def test_rel_path_file(self):
+        self.assertEqual(Repo('file:///github.com/app/a.git').rel_path, 'github.com/app/a')
+        self.assertEqual(Repo('file:///github.com/app/a.js.git').rel_path, 'github.com/app/a.js')
+
+    def test_rel_path_ssh(self):
+        self.assertEqual(Repo('ssh://git@github.com/app/a.git').rel_path, 'github.com/app/a')
+        self.assertEqual(Repo('ssh://user@github.com:2222/app/a').rel_path, 'github.com/app/a')
+        self.assertEqual(Repo('ssh://user@github.com:2222/app/a.js').rel_path, 'github.com/app/a.js')
+        self.assertEqual(Repo('ssh://user@github.com:2222/app/a.js.git').rel_path, 'github.com/app/a.js')
 
     def test_override_path(self):
         override_repo('github.com/app/a', self.temp_dir)
