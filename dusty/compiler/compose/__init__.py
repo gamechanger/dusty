@@ -21,7 +21,7 @@ def _compose_dict_for_nginx(port_specs):
         spec['ports'] = []
         for port in all_host_ports:
             spec['ports'].append('{0}:{0}'.format(port))
-    return {'nginx': spec}
+    return {constants.DUSTY_NGINX_NAME: spec}
 
 def get_compose_dict(assembled_specs, port_specs):
     """ This function returns a dictionary representation of a docker-compose.yml file, based on assembled_specs from

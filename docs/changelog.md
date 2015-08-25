@@ -4,6 +4,8 @@
 
 * **New**
     * Managed repos are now updated in parallel during `dusty up` and `dusty test`.
+* **Misc**
+    * Dusty now uses the name `dustyInternalNginx` for its own nginx container, to make naming conflicts less likely.
 
 ## 0.5.0 (August 25, 2015)
 
