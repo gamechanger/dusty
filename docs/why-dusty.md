@@ -40,14 +40,14 @@ others. Define each container once, then tell Dusty what you want to run. It'll 
 ## OS X Support
 
 Dusty delivers the power and flexibility of Docker to OS X. Here are the biggest improvements we've made
-to running vanilla `boot2docker` on your Mac:
+to running vanilla Docker Machine on your Mac:
 
 * **Port Forwarding**: Dusty uses nginx to rig up host name and port forwarding all the way from your Mac
 into a running container. You define the host name, host port, and container port in the container's spec,
 then Dusty does the rest at runtime.
 * **rsync**: Dusty uses [rsync](https://rsync.samba.org/) for all file transfer operations between your Mac
-and the `boot2docker` VM. This is [unbelievably fast](http://mitchellh.com/comparing-filesystem-performance-in-virtual-machines)
-compared to VirtualBox Shared Folders, which `boot2docker` uses out of the box.
+and the Docker Machine VM. This is [unbelievably fast](http://mitchellh.com/comparing-filesystem-performance-in-virtual-machines)
+compared to VirtualBox Shared Folders, which Docker Machine uses out of the box.
 * **File Transfers**: Dusty provides the `dusty cp` command to copy files between your local filesystem and
 containers. This can even copy files directly between two running containers.
 

@@ -47,8 +47,8 @@ def _check_virtualbox():
     _assert_executable_exists('VBoxManage')
 
 @returns_exception
-def _check_boot2docker():
-    _assert_executable_exists('boot2docker')
+def _check_docker_machine():
+    _assert_executable_exists('docker-machine')
 
 @returns_exception
 def _check_docker():
@@ -89,7 +89,7 @@ def _ensure_github_known_host():
 
 def _check_executables():
     return [check() for check in [_check_git, _check_rsync, _check_virtualbox,
-                                  _check_boot2docker, _check_docker, _check_docker_compose]]
+                                  _check_docker_machine, _check_docker, _check_docker_compose]]
 
 def refresh_preflight_warnings():
     daemon_warnings.clear_namespace('preflight')

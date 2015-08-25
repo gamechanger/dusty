@@ -48,10 +48,10 @@ class TestComposeSystem(DustyTestCase):
         fake_config_value.return_value = 'root'
         fake_check_output.return_value = """    export DOCKER_TLS_VERIFY=1
         export DOCKER_HOST=tcp://192.168.59.103:2376
-        export DOCKER_CERT_PATH=/Users/root/.boot2docker/certs/boot2docker-vm"""
+        export DOCKER_CERT_PATH=/Users/root/.docker/machine/machines/dusty/cert.pem"""
         expected = {'DOCKER_TLS_VERIFY': '1',
                     'DOCKER_HOST': 'tcp://192.168.59.103:2376',
-                    'DOCKER_CERT_PATH': '/Users/root/.boot2docker/certs/boot2docker-vm'}
+                    'DOCKER_CERT_PATH': '/Users/root/.docker/machine/machines/dusty/cert.pem'}
         result = get_docker_env()
         self.assertItemsEqual(result, expected)
 
@@ -59,13 +59,13 @@ class TestComposeSystem(DustyTestCase):
     @patch('dusty.systems.docker.check_output_demoted')
     @patch.dict('dusty.systems.docker.os.environ', {'DOCKER_TLS_VERIFY': '1',
                                                     'DOCKER_HOST': 'tcp://192.168.59.103:2376',
-                                                    'DOCKER_CERT_PATH': '/Users/root/.boot2docker/certs/boot2docker-vm'})
+                                                    'DOCKER_CERT_PATH': '/Users/root/.docker/machine/machines/dusty/cert.pem'})
     def test_get_docker_env_2(self, fake_check_output, fake_config_value):
         fake_config_value.return_value = 'root'
         fake_check_output.return_value = """Variables are already set"""
         expected = {'DOCKER_TLS_VERIFY': '1',
                     'DOCKER_HOST': 'tcp://192.168.59.103:2376',
-                    'DOCKER_CERT_PATH': '/Users/root/.boot2docker/certs/boot2docker-vm'}
+                    'DOCKER_CERT_PATH': '/Users/root/.docker/machine/machines/dusty/cert.pem'}
         result = get_docker_env()
         self.assertItemsEqual(result, expected)
 
@@ -77,10 +77,10 @@ class TestComposeSystem(DustyTestCase):
         fake_config_value.return_value = 'root'
         fake_check_output.return_value = """    export DOCKER_TLS_VERIFY=1
         export DOCKER_HOST=tcp://192.168.59.103:2376
-        export DOCKER_CERT_PATH=/Users/root/.boot2docker/certs/boot2docker-vm"""
+        export DOCKER_CERT_PATH=/Users/root/.docker/machine/machines/dusty/cert.pem"""
         expected = {'DOCKER_TLS_VERIFY': '1',
                     'DOCKER_HOST': 'tcp://192.168.59.103:2376',
-                    'DOCKER_CERT_PATH': '/Users/root/.boot2docker/certs/boot2docker-vm'}
+                    'DOCKER_CERT_PATH': '/Users/root/.docker/machine/machines/dusty/cert.pem'}
         result = get_docker_env()
         self.assertItemsEqual(result, expected)
 

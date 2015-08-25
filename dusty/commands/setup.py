@@ -57,7 +57,7 @@ def _get_recommended_vm_size(system_memory):
     else:
         return 2 * 2**10
 
-def _get_boot2docker_vm_size():
+def _get_vm_size():
     memory_megs = virtual_memory().total / 2**20
     vm_megs = _get_recommended_vm_size(memory_megs)
     response = _get_raw_input('Your system seems to have {} megabytes of memory. We would like to allocate {} to your vm. Is that ok? (y/n) '.format(memory_megs, vm_megs))
@@ -66,7 +66,7 @@ def _get_boot2docker_vm_size():
     else:
         return _get_raw_input('Please input the number of megabytes to allocate to the vm: ')
 
-def setup_dusty_config(mac_username=None, specs_repo=None, boot2docker_vm_memory=None, update=True):
+def setup_dusty_config(mac_username=None, specs_repo=None, vm_memory=None, update=True):
     print "We just need to verify a few settings before we get started.\n"
     if mac_username:
         print 'Setting mac_username to {} based on flag'.format(mac_username)
@@ -81,16 +81,16 @@ def setup_dusty_config(mac_username=None, specs_repo=None, boot2docker_vm_memory
         specs_repo = _get_specs_repo()
     print ''
 
-    if boot2docker_vm_memory:
-        print 'Setting boot2docker_vm_memory to {} based on flag'.format(boot2docker_vm_memory)
+    if vm_memory:
+        print 'Setting vm_memory to {} based on flag'.format(vm_memory)
     else:
-        boot2docker_vm_memory = _get_boot2docker_vm_size()
+        vm_memory = _get_vm_size()
 
-    boot2docker_vm_memory = int(boot2docker_vm_memory)
+    vm_memory = int(vm_memory)
 
     config_dictionary = {constants.CONFIG_MAC_USERNAME_KEY: mac_username,
                          constants.CONFIG_SPECS_REPO_KEY: specs_repo,
-                         constants.CONFIG_VM_MEM_SIZE: boot2docker_vm_memory}
+                         constants.CONFIG_VM_MEM_SIZE: vm_memory}
     payload = Payload(complete_setup, config_dictionary, update=update)
     payload.suppress_warnings = True
     return payload

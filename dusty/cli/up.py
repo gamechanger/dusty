@@ -2,7 +2,7 @@
 
 Up compiles your specs (subject to your activated bundles),
 configures local port forwarding through your hosts file and
-nginx, initializes your boot2docker VM and prepares it for
+nginx, initializes your Docker VM and prepares it for
 use by Dusty, and starts any containers specified by your
 currently activated bundles.
 

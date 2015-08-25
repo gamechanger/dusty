@@ -12,7 +12,7 @@ Dusty leverages several programs and system components:
 
  * /etc/hosts file
  * [Docker](https://www.docker.com/)
- * [boot2docker](http://boot2docker.io/) and [Virtualbox](https://www.virtualbox.org/wiki/VirtualBox)
+ * [Docker Machine](https://docs.docker.com/machine/) and [VirtualBox](https://www.virtualbox.org/wiki/VirtualBox)
  * [Docker Compose](https://docs.docker.com/compose/)
  * [Network File System](https://en.wikipedia.org/wiki/Network_File_System)
 
@@ -27,7 +27,7 @@ The compile step uses the Dusty specs to do the following:
 
 During the run step Dusty does the following:
 
- * Ensures that the boot2docker VM (linux) is running
+ * Ensures that the Docker VM (Linux) is running
  * Uses NFS to mount repos on your local machine to the VM
  * Uses Docker Compose to launch your apps and services
 
@@ -42,14 +42,14 @@ local host names.  An example addition to your hostfile:
 192.168.1.5 local.example-app.com
 # END section for Dusty
 ```
-This points `local.example-app.com` to your boot2docker VM, where the request is then handled
+This points `local.example-app.com` to your Docker VM, where the request is then handled
 by the containerized nginx which Dusty manages inside the VM.
 
 ### nginx
 
-Dusty runs a containerized nginx which is used to route requests from your boot2docker VM to
+Dusty runs a containerized nginx which is used to route requests from your Docker VM to
 the appropriate application container. The config for this nginx instance is stored at
-`/persist/dustyNginx/dustyNginx.conf` inside the boot2docker VM.
+`/persist/dustyNginx/dustyNginx.conf` inside the Docker VM.
 
 An example `dustyNginx.conf` is:
 ```
@@ -65,11 +65,12 @@ http {
 }
 ```
 
-### Boot2docker Virtual Machine
+### Docker Virtual Machine
 
-Docker can be used on OSX via the boot2docker virtual machine (managed by Virtualbox).
+Docker can be used on OSX via the Docker Machine virtual machine (created using VirtualBox).
 The Docker containers and Docker daemon are actually running on this
-linux virtual machine.  The docker client is run on OSX using the daemon's exposed socket.
+Linux virtual machine.  The Docker client is run on OS X locally and sends commands through
+to the Docker daemon's exposed socket.
 
 #### NFS
 
@@ -78,7 +79,7 @@ One way to do this is to use a Virtualbox shared folder. However, [the performan
 folders is very poor](http://mitchellh.com/comparing-filesystem-performance-in-virtual-machines).
 As an alternative, we use NFS to allow your host and VM to access the same folders.
 
-In our NFS setup, your host Mac acts as a server, and the boot2docker VM acts as a client.
+In our NFS setup, your host Mac acts as a server, and the Docker VM acts as a client.
 The server makes available folders which need to be shared (folders containing both managed and
 overridden repositories).  The client VM can then mount these folders as needed, and can even
 setup container volumes to mount from these folders.
@@ -88,8 +89,8 @@ in containers. This is similar to, but more performant than Virtualbox shared fo
 
 #### Persistent Data
 
-Dusty stores persistent data in the `/persist` folder on the boot2docker VM, which is symlinked to
-boot2docker's persistent virtual disk. All data in this location will survive stops and restarts of the VM.
+Dusty stores persistent data in the `/persist` folder on the Docker VM, which is symlinked to
+the Docker VM's persistent virtual disk. All data in this location will survive stops and restarts of the VM.
 
 ### Docker Compose
 

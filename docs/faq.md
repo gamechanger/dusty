@@ -8,7 +8,7 @@ $ docker ps
 FATA[0000] Get http:///var/run/docker.sock/v1.18/containers/json: dial unix /var/run/docker.sock: no such file or directory. Are you trying to connect to a TLS-enabled daemon without TLS?
 ```
 
-You probably just need to run `$(boot2docker shellinit)`
+You probably just need to run `eval $(docker-machine env dusty)`
 
 ### How can Dusty access my private GitHub repos?
 

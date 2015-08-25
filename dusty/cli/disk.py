@@ -1,4 +1,4 @@
-"""Basic tools for managing disk usage in the boot2docker VM
+"""Basic tools for managing disk usage in the Docker VM
 
 Usage:
   disk inspect
@@ -11,7 +11,7 @@ Commands:
   inspect             Prints VM disk usage information
   cleanup_containers  Cleans docker containers that have exited
   cleanup_images      Removes docker images that can be removed without the --force flag
-  backup              Backs up the /persist directory on your boot2docker to your local file system
+  backup              Backs up the /persist directory on your Docker VM to your local file system
   restore             Restores a backed up /persist directory
 """
 

@@ -17,7 +17,7 @@ def _has_active_container(spec_type, service_name):
 @daemon_command
 def get_dusty_status():
     if not docker_vm_is_running():
-        log_to_client('boot2docker VM is powered off.  You can start it with `boot2docker up` or `dusty up`')
+        log_to_client('Docker VM is powered off.  You can start it with `dusty up`')
         return
     assembled_specs = get_assembled_specs()
     table = PrettyTable(["Name", "Type", "Has Active Container"])
