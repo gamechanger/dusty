@@ -2,6 +2,9 @@
 
 ## 0.6.0 (In Progress)
 
+* **New**
+    * Managed repos are now updated in parallel during `dusty up` and `dusty test`.
+
 ## 0.5.0 (August 25, 2015)
 
 * **Breaking**
