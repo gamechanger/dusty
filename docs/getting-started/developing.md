@@ -76,8 +76,7 @@ it'd pick up the new code. Let's refresh `local.flaskone.com` now and see our ch
 ![Howdy!](../assets/howdy.png)
 
 That's all there is to it! Just remember to `dusty restart` whenever you want to update your
-running applications with any new code. You can also sync over your changed code without
-restarting the app by using `dusty sync`.
+running applications with any new code.
 
 ## Running Tests
 
