@@ -162,6 +162,7 @@ class Repo(object):
         managed_repo = git.Repo(self.managed_path)
         with git_error_handling():
             managed_repo.remote().pull('master')
+            log_to_client('Updated managed copy of {}'.format(self.remote_path))
         if not self.local_is_up_to_date():
             if force:
                 with git_error_handling():
@@ -171,3 +172,10 @@ class Repo(object):
                               'A container may have modified files in the repos\'s directory. '
                               'Your code generally shouldn\'t be manipulating the contents of your repo folder - '
                               'please fix this and run `dusty up`'.format(self.managed_path))
+
+    def update_local_repo_async(self, task_queue, force=False):
+        """Local repo updating suitable for asynchronous, parallel execution.
+        We still need to run `ensure_local_repo` synchronously because it
+        does a bunch of non-threadsafe filesystem operations."""
+        self.ensure_local_repo()
+        task_queue.enqueue_task(self.update_local_repo, force=force)

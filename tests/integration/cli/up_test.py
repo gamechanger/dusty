@@ -36,9 +36,9 @@ class TestUpCLI(DustyIntegrationTestCase):
 
     def test_basic_up_no_pull(self):
         run_output = self.run_command('up')
-        self.assertIn('Updating managed copy of file:///tmp/fake-repo', run_output)
+        self.assertIn('Updated managed copy of file:///tmp/fake-repo', run_output)
         run_output = self.run_command('up --no-pull')
-        self.assertNotIn('Updating managed copy of file:///tmp/fake-repo', run_output)
+        self.assertNotIn('Updated managed copy of file:///tmp/fake-repo', run_output)
 
     # Regression test for https://github.com/gamechanger/dusty/issues/475
     # Concerning commands failing after changing capitalization of specs on
