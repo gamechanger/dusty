@@ -4,10 +4,12 @@ import docker
 import logging
 
 from ...log import log_to_client
+from ...memoize import memoized
 from ...subprocess import check_output_demoted
 from ...compiler.spec_assembler import get_specs
 
-def exec_in_container(client, container, command, *args):
+def exec_in_container(container, command, *args):
+    client = get_docker_client()
     exec_instance = client.exec_create(container['Id'],
                                        ' '.join([command] + list(args)))
     return client.exec_start(exec_instance['Id'])
@@ -41,6 +43,7 @@ def get_docker_env():
             env[k] = v
     return env
 
+@memoized
 def get_docker_client():
     """Ripped off and slightly modified based on docker-py's
     kwargs_from_env utility function."""
@@ -60,19 +63,21 @@ def get_docker_client():
             assert_hostname=False)
     return docker.Client(**params)
 
-def get_dusty_containers_with_client(client, services, include_exited=False):
+def get_dusty_containers(services, include_exited=False):
     """Get a list of containers associated with the list
     of services. If no services are provided, attempts to
     return all containers associated with Dusty."""
+    client = get_docker_client()
     if services:
-        containers = [get_container_for_app_or_service(client, service, include_exited=include_exited) for service in services]
+        containers = [get_container_for_app_or_service(service, include_exited=include_exited) for service in services]
         return [container for container in containers if container]
     else:
         return [container
                 for container in client.containers(all=include_exited)
                 if any(name.startswith('/dusty') for name in container.get('Names', []))]
 
-def get_container_for_app_or_service(client, app_or_service_name, raise_if_not_found=False, include_exited=False):
+def get_container_for_app_or_service(app_or_service_name, raise_if_not_found=False, include_exited=False):
+    client = get_docker_client()
     for container in client.containers(all=include_exited):
         if '/{}'.format(get_dusty_container_name(app_or_service_name)) in container['Names']:
             return container
@@ -90,7 +95,3 @@ def get_canonical_container_name(container):
 
 def get_app_or_service_name_from_container(container):
     return get_canonical_container_name(container).split('_')[1]
-
-def get_dusty_containers(app_or_service_names, include_exited=False, client=None):
-    client = get_docker_client() if client is None else client
-    return get_dusty_containers_with_client(client, app_or_service_names, include_exited=include_exited)

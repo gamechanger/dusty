@@ -69,8 +69,7 @@ class TestTestsCommands(DustyTestCase):
         test.run_app_or_lib_tests('lib-a', 'nose', [])
 
         fake_update_nfs.assert_has_calls([])
-        fake_ensure_image.assert_has_calls([call('docker-client',
-                                                 'lib-a',
+        fake_ensure_image.assert_has_calls([call('lib-a',
                                                  self.specs,
                                                  force_recreate=False)])
         fake_exit.assert_has_calls([call(0)])
@@ -89,8 +88,7 @@ class TestTestsCommands(DustyTestCase):
 
         test.run_app_or_lib_tests('app-a','nose', [], force_recreate=True)
 
-        fake_ensure_image.assert_has_calls([call('docker-client',
-                                                 'app-a',
+        fake_ensure_image.assert_has_calls([call('app-a',
                                                  self.specs,
                                                  force_recreate=True)])
         fake_exit.assert_has_calls([call(1)])

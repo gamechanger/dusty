@@ -201,8 +201,7 @@ class DustyIntegrationTestCase(TestCase):
         return False
 
     def _container_exists_in_set(self, service_name, include_exited):
-        client = get_docker_client()
-        container = get_container_for_app_or_service(client, service_name, include_exited=include_exited)
+        container = get_container_for_app_or_service(service_name, include_exited=include_exited)
         return bool(container)
 
     def _image_exists(self, image_to_find):
@@ -217,9 +216,8 @@ class DustyIntegrationTestCase(TestCase):
         return file_exists_str == 'yes'
 
     def exec_in_container(self, service_name, command):
-        client = get_docker_client()
-        container = get_container_for_app_or_service(client, service_name, raise_if_not_found=True)
-        return exec_in_container(client, container, *command.split(' '))
+        container = get_container_for_app_or_service(service_name, raise_if_not_found=True)
+        return exec_in_container(container, *command.split(' '))
 
     def remove_path_in_container(self, service_name, file_path):
         self.exec_in_container(service_name, 'rm -rf {}'.format(file_path))
@@ -229,8 +227,7 @@ class DustyIntegrationTestCase(TestCase):
         self.exec_in_container(service_name, 'sh -c "echo -n {} > {}"'.format(contents, file_path))
 
     def container_id(self, service_name):
-        client = get_docker_client()
-        return get_container_for_app_or_service(client, service_name, include_exited=True, raise_if_not_found=True)['Id']
+        return get_container_for_app_or_service(service_name, include_exited=True, raise_if_not_found=True)['Id']
 
     def inspect_container(self, service_name):
         container_id = self.container_id(service_name)

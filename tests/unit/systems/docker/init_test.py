@@ -6,7 +6,7 @@ from mock import Mock, patch
 import yaml
 
 from dusty import constants
-from dusty.systems.docker import (get_docker_env, get_dusty_containers_with_client, get_dusty_images, get_container_for_app_or_service,
+from dusty.systems.docker import (get_docker_env, get_dusty_containers, get_dusty_images, get_container_for_app_or_service,
                                   get_canonical_container_name, exec_in_container)
 
 from dusty.systems.docker.compose import write_composefile
@@ -84,49 +84,62 @@ class TestComposeSystem(DustyTestCase):
         result = get_docker_env()
         self.assertItemsEqual(result, expected)
 
-    def test_get_dusty_containers_falsy(self):
-        self.assertEqual(get_dusty_containers_with_client(self.fake_docker_client, []),
-                         self.containers_return[:-1])
+    @patch('dusty.systems.docker.get_docker_client')
+    def test_get_dusty_containers_falsy(self, patch_docker_client):
+        patch_docker_client.return_value = self.fake_docker_client
+        self.assertEqual(get_dusty_containers([]), self.containers_return[:-1])
 
-    def test_get_dusty_containers_short_name(self):
-        self.assertEqual(get_dusty_containers_with_client(self.fake_docker_client, ['app-a']),
-                         [self.containers_return[0]])
+    @patch('dusty.systems.docker.get_docker_client')
+    def test_get_dusty_containers_short_name(self, patch_docker_client):
+        patch_docker_client.return_value = self.fake_docker_client
+        self.assertEqual(get_dusty_containers(['app-a']), [self.containers_return[0]])
 
-    def test_get_dusty_containers_long_name(self):
-        self.assertEqual(get_dusty_containers_with_client(self.fake_docker_client, ['app-b']),
-                         [self.containers_return[1]])
+    @patch('dusty.systems.docker.get_docker_client')
+    def test_get_dusty_containers_long_name(self, patch_docker_client):
+        patch_docker_client.return_value = self.fake_docker_client
+        self.assertEqual(get_dusty_containers(['app-b']), [self.containers_return[1]])
 
     def test_get_canonical_container_name(self):
         self.assertEqual(get_canonical_container_name(self.containers_return[1]), 'dusty_app-b_1')
 
-    def test_get_exited_containers(self):
-        self.assertEqual(get_exited_dusty_containers(self.fake_docker_client), [self.containers_return[0]])
+    @patch('dusty.systems.docker.get_docker_client')
+    def test_get_exited_containers(self, patch_docker_client):
+        patch_docker_client.return_value = self.fake_docker_client
+        self.assertEqual(get_exited_dusty_containers(), [self.containers_return[0]])
 
     def test_get_dusty_images(self):
         self.assertEqual(get_dusty_images(), set(['app/a:latest', 'app/b:latest', 'app/c:latest', 'service/a:latest']))
 
-    def test_get_container_for_app_or_service(self):
-        result = get_container_for_app_or_service(self.fake_docker_client, 'app-a')
+    @patch('dusty.systems.docker.get_docker_client')
+    def test_get_container_for_app_or_service(self, patch_docker_client):
+        patch_docker_client.return_value = self.fake_docker_client
+        result = get_container_for_app_or_service('app-a')
         self.assertIn('/dusty_app-a_1', result['Names'])
 
-    def test_get_container_for_app_or_service_none_found(self):
-        result = get_container_for_app_or_service(self.fake_docker_client, 'app-c')
+    @patch('dusty.systems.docker.get_docker_client')
+    def test_get_container_for_app_or_service_none_found(self, patch_docker_client):
+        patch_docker_client.return_value = self.fake_docker_client
+        result = get_container_for_app_or_service('app-c')
         self.assertIsNone(result)
 
-    def test_get_container_for_app_or_service_none_found_with_raise(self):
+    @patch('dusty.systems.docker.get_docker_client')
+    def test_get_container_for_app_or_service_none_found_with_raise(self, patch_docker_client):
+        patch_docker_client.return_value = self.fake_docker_client
         with self.assertRaises(RuntimeError):
-            get_container_for_app_or_service(self.fake_docker_client,
-                                              'app-c',
-                                              raise_if_not_found=True)
+            get_container_for_app_or_service('app-c', raise_if_not_found=True)
 
-    def test_exec_in_container_with_args(self):
+    @patch('dusty.systems.docker.get_docker_client')
+    def test_exec_in_container_with_args(self, patch_docker_client):
+        patch_docker_client.return_value = self.fake_docker_client
         self.fake_docker_client.exec_create.return_value = {'Id': 'exec-id'}
         fake_container = {'Id': 'container-id'}
-        exec_in_container(self.fake_docker_client, fake_container, 'cp -r', '/tmp/a', '/tmp/b')
+        exec_in_container(fake_container, 'cp -r', '/tmp/a', '/tmp/b')
         self.fake_docker_client.exec_create.assert_called_once_with('container-id', 'cp -r /tmp/a /tmp/b')
 
-    def test_exec_in_container_without_args(self):
+    @patch('dusty.systems.docker.get_docker_client')
+    def test_exec_in_container_without_args(self, patch_docker_client):
+        patch_docker_client.return_value = self.fake_docker_client
         self.fake_docker_client.exec_create.return_value = {'Id': 'exec-id'}
         fake_container = {'Id': 'container-id'}
-        exec_in_container(self.fake_docker_client, fake_container, 'ls')
+        exec_in_container(fake_container, 'ls')
         self.fake_docker_client.exec_create.assert_called_once_with('container-id', 'ls')

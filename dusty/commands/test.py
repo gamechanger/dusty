@@ -66,16 +66,15 @@ def pull_repos_and_sync(app_or_lib_name, pull_repos=False):
     nfs.update_nfs_with_repos(get_same_container_repos_from_spec(spec))
 
 def run_app_or_lib_tests(app_or_lib_name, suite_name, test_arguments, should_exit=True, force_recreate=False):
-    client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
     test_command = _construct_test_command(spec, suite_name, test_arguments)
     try:
-        ensure_test_image(client, app_or_lib_name, expanded_specs, force_recreate=force_recreate)
+        ensure_test_image(app_or_lib_name, expanded_specs, force_recreate=force_recreate)
     except ImageCreationError as e:
         log_to_client('Failed to create test container with error {}'.format(e.code))
         sys.exit(e.code)
-    exit_code = _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name)
+    exit_code = _run_tests_with_image(expanded_specs, app_or_lib_name, test_command, suite_name)
     if should_exit:
         log_to_client('TESTS {} {}'.format(suite_name, 'FAILED' if exit_code != 0 else 'PASSED'))
         sys.exit(exit_code)
@@ -160,7 +159,8 @@ def _get_suite_spec(testing_spec, suite_name):
             return suite
     raise RuntimeError('Couldn\'t find suite named {}'.format(suite_name))
 
-def _run_tests_with_image(client, expanded_specs, app_or_lib_name, test_command, suite_name):
+def _run_tests_with_image(expanded_specs, app_or_lib_name, test_command, suite_name):
+    client = get_docker_client()
     testing_spec = expanded_specs.get_app_or_lib(app_or_lib_name)['test']
     suite_spec = _get_suite_spec(testing_spec, suite_name)
 
