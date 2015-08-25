@@ -37,6 +37,12 @@ def _validate_lib_references(lib, specs):
     if not_present:
         raise ValidationException('Libs {} are not present in your specs'.format(', '.join(not_present)))
 
+def _check_nginx_name_conflict(specs):
+    apps = set(specs['apps'].keys())
+    services = set(specs['services'].keys())
+    if constants.DUSTY_NGINX_NAME in apps.union(services):
+        raise ValidationException('The name {} is reserved for use by Dusty\'s internal nginx - please choose a different name'.format(constants.DUSTY_NGINX_NAME))
+
 def _check_name_overlap(specs):
     apps = set(specs['apps'].keys())
     libs = set(specs['libs'].keys())
@@ -53,6 +59,7 @@ def _check_name_overlap(specs):
 
 def _validate_spec_names(specs):
     _check_name_overlap(specs)
+    _check_nginx_name_conflict(specs)
     for app in specs['apps'].values():
         _validate_app_references(app, specs)
     for bundle in specs['bundles'].values():
