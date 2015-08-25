@@ -11,7 +11,6 @@
     * Dusty now uses the name `dustyInternalNginx` for its own nginx container, to make naming conflicts less likely.
 
 ## 0.5.0 (August 25, 2015)
-=======
 
 * **Breaking**
     * Dusty now uses NFS instead of rsync to get repository code from your host Mac to running containers.
