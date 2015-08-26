@@ -9,6 +9,7 @@ Commands:
   cp         Copy files between local filesystem and containers
   disk       Manage and inspect the Docker VM's disk usage
   dump       Print diagnostic information for bug reports
+  env        Set environment variable overrides in containers
   logs       Tail logs for a Dusty-managed service
   repos      Manage Git repos used for running Dusty applications
   restart    Restart Dusty-managed containers
