@@ -20,7 +20,7 @@ class TestSetupCLI(DustyIntegrationTestCase):
         self.run_command('setup --no-update')
         self.assertConfigValue(constants.CONFIG_MAC_USERNAME_KEY, self.current_user)
         self.assertConfigValue(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/dusty-example-specs')
-        self.assertConfigValue(constants.CONFIG_VM_MEM_SIZE, 2048)
+        self.assertConfigValue(constants.CONFIG_VM_MEM_SIZE, '2048')
 
     @patch('dusty.commands.setup._get_raw_input')
     def test_setup_override_user(self, fake_raw_input):
@@ -38,10 +38,10 @@ class TestSetupCLI(DustyIntegrationTestCase):
     def test_setup_override_memory(self, fake_raw_input):
         fake_raw_input.side_effect = ['y', '', 'n', '1024']
         self.run_command('setup --no-update')
-        self.assertConfigValue(constants.CONFIG_VM_MEM_SIZE, 1024)
+        self.assertConfigValue(constants.CONFIG_VM_MEM_SIZE, '1024')
 
     def test_setup_flags(self):
         self.run_command('setup --no-update --mac_username={} --default_specs_repo=github.com/gamechanger/dusty-specs --vm_memory=1024'.format(self.current_user))
         self.assertConfigValue(constants.CONFIG_MAC_USERNAME_KEY, self.current_user)
         self.assertConfigValue(constants.CONFIG_SPECS_REPO_KEY, 'github.com/gamechanger/dusty-specs')
-        self.assertConfigValue(constants.CONFIG_VM_MEM_SIZE, 1024)
+        self.assertConfigValue(constants.CONFIG_VM_MEM_SIZE, '1024')
