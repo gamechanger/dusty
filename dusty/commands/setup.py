@@ -86,7 +86,7 @@ def setup_dusty_config(mac_username=None, specs_repo=None, vm_memory=None, updat
     else:
         vm_memory = _get_vm_size()
 
-    vm_memory = int(vm_memory)
+    vm_memory = str(vm_memory)
 
     config_dictionary = {constants.CONFIG_MAC_USERNAME_KEY: mac_username,
                          constants.CONFIG_SPECS_REPO_KEY: specs_repo,
