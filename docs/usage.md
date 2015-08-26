@@ -23,6 +23,35 @@ this daemon automatically for you.
 To get more usage information, including arguments and options,
 about any of these commands, use `dusty <command> -h`.
 
+#### assets
+```
+Place files in Dusty containers
+
+Assets are files to be put in containers, but which don't live in a repository.
+Assets are declared in Dusty specs of apps and libraries, and their values are
+managed with the CLI.
+
+Usage:
+    assets list [<app_or_lib>]
+    assets read <asset_key>
+    assets set <asset_key> <local_path>
+    assets unset <asset_key>
+
+Commands:
+    list        List all assets that are defined in specs for active apps and libs
+    read        Print the current value of an asset
+    set         Associate an asset with the contents of a local file
+    unset       Delete the currently registered value of an asset
+
+Examples:
+    To set the value of the asset GITHUB_KEY to the contents of ~/.ssh/id_rsa:
+        dusty assets set GITHUB_KEY ~/.ssh/id_rsa
+```
+
+Assets are set to the contents of the local file - Dusty doesn't keep
+them up to date with changes you make to the local file.  If you need to update
+an asset, just re-run the `dusty assets set` command.
+
 #### bundles
 ```
 Manage application bundles known to Dusty.

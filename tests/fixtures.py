@@ -67,6 +67,18 @@ def basic_specs_fixture():
                             },
                             'image': 'app/a',
                             'mount': '/app/a',
+                            'depends': {
+                                'libs': ['lib-a']
+                            },
+                            'assets': [
+                                {'name': 'required_asset',
+                                 'path': 'required_path'},
+                                {'name': 'optional_asset',
+                                 'path': 'optional_path',
+                                 'required': False},
+                                {'name': 'common_asset',
+                                 'path': '/some_path',}
+                            ],
                             'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
                                         'name': 'example'}]})
@@ -86,7 +98,17 @@ def basic_specs_fixture():
                             'image': 'app/c',
                             'mount': '/app/c',})
     _write('lib', 'lib-a', {'repo': 'github.com/lib/a',
-                            'mount': '/lib/a',})
+                            'mount': '/lib/a',
+                            'assets': [
+                                {'name': 'required_lib_asset',
+                                 'path': 'required_path'},
+                                {'name': 'optional_lib_asset',
+                                 'path': 'optional_path',
+                                 'required': False},
+                                {'name': 'common_asset',
+                                 'path': '/some_path',
+                                 'required': False}
+                            ]})
     _write('service', 'service-a', {'image': 'service/a'})
 
 def specs_fixture_with_depends():
@@ -188,3 +210,30 @@ def busybox_single_app_bundle_fixture(num_bundles=1, command=['sleep 999999999']
 
 def invalid_fixture():
     _write('app', 'invalid', {'spaghetti': 'meatballs'})
+
+
+def assets_fixture():
+    _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['app-a']})
+    _write('app', 'app-a', {'commands': {
+                                'always': ['sleep 1000']
+                            },
+                            'image': 'busybox',
+                            'depends': {
+                                'libs': ['lib-a']
+                            },
+                            'assets': [
+                                {'name': 'required_app_asset',
+                                 'path': '/required_app_path'},
+                                {'name': 'optional_app_asset',
+                                 'path': '/optional_app_path',
+                                 'required': False},
+                            ]})
+    _write('lib', 'lib-a', {'repo': 'github.com/lib/a',
+                            'mount': '/lib/a',
+                            'assets': [
+                                {'name': 'required_lib_asset',
+                                 'path': '/required_lib_path'},
+                                {'name': 'optional_lib_asset',
+                                 'path': '/optional_lib_path',
+                                 'required': False},
+                            ]})
