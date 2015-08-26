@@ -42,7 +42,7 @@ from ..daemon import main as run_daemon
 from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
-from . import (bundles, config, cp, dump, disk, logs, repos, restart, scripts, shell, stop,
+from . import (bundles, config, cp, dump, disk, env, logs, repos, restart, scripts, shell, stop,
                up, upgrade, validate, version, setup, test, status)
 from .. import constants
 
@@ -52,6 +52,7 @@ MODULE_MAP = {
     'cp': cp,
     'disk': disk,
     'dump': dump,
+    'env': env,
     'logs': logs,
     'repos': repos,
     'restart': restart,

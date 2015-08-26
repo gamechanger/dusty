@@ -50,7 +50,13 @@ def single_specs_fixture():
                                  'name': 'example_ls'},
                                 {'description': 'A touch script',
                                  'command': ['touch'],
-                                 'name': 'example_touch'}]})
+                                 'name': 'example_touch'}],
+                            'compose': {
+                                'environment': {
+                                    'SPEC_VALUE': 'spec-specified-value',
+                                    'SPEC_VALUE2': 'spec-specified-value'
+                                }
+                            }})
 
 def basic_specs_fixture():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['app-a']})

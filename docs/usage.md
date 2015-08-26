@@ -133,6 +133,32 @@ Commands:
 ```
 Used to dump state of Dusty and your system.  This is used for debugging.
 
+#### env
+```
+Set environment variable overrides.
+
+Environment variables specified will be added to app
+and service container environments, overriding variables
+specified in a `compose.env` spec (if present).
+
+Usage:
+  env list [<app_or_service>]
+  env set <app_or_service> (<var_name> <value> | --file <local_file>)
+  env unset <app_or_service> (--all | <var_name>)
+
+Commands:
+  list        List all environment variables and their current values.
+  set         Set a variable name to a new value for the given app or service.
+  unset       Unset a variable for the given app or service.
+```
+
+Environment overrides can be specified for apps and services.  These
+are placed inside containers by adding them to Docker Compose's `environment`
+key.  These environment changes take effect when `dusty up` is run.
+
+Use the `--file` flag to specify a file to read the env from.  This file
+should be of the same format that Docker Compose `env_file` supports.
+
 #### logs
 ```
 Tail out Docker logs for a container running a Dusty application

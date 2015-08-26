@@ -26,6 +26,7 @@ def _dump(doc):
 def write_default_config():
     default_config = {constants.CONFIG_BUNDLES_KEY: [],
                       constants.CONFIG_REPO_OVERRIDES_KEY: {},
+                      constants.CONFIG_ENV_KEY: {},
                       constants.CONFIG_SETUP_KEY: False,
                       constants.CONFIG_VM_MEM_SIZE: '2048'}
     save_config(default_config)
@@ -39,6 +40,9 @@ def save_config(config):
 
 def get_config_value(key):
     return get_config().get(key)
+
+def get_env_config():
+    return get_config_value(constants.CONFIG_ENV_KEY) or {}
 
 def save_config_value(key, value):
     current_config = get_config()

@@ -65,6 +65,7 @@ CONFIG_REPO_OVERRIDES_KEY = 'repo_overrides'
 CONFIG_MAC_USERNAME_KEY = 'mac_username'
 CONFIG_SPECS_REPO_KEY = 'specs_repo'
 CONFIG_SETUP_KEY = 'setup_has_run'
+CONFIG_ENV_KEY = 'dusty_env_overrides'
 CONFIG_VM_MEM_SIZE = 'vm_memory_size'
 
 CONFIG_SETTINGS = {
@@ -73,7 +74,8 @@ CONFIG_SETTINGS = {
     CONFIG_MAC_USERNAME_KEY: 'The user on the host OS who will own and be able to access the Docker VM. Dusty runs all VirtualBox, Docker, Docker Machine, and Docker Compose commands as this user.',
     CONFIG_SPECS_REPO_KEY: 'This repository is used for storing the specs used by Dusty.  It is managed the same way as other repos',
     CONFIG_SETUP_KEY: 'Key indicating if you have run the required command `dusty setup`',
-    CONFIG_VM_MEM_SIZE: 'Specifies how much memory (in megabytes) you want your Docker VM to have'
+    CONFIG_VM_MEM_SIZE: 'Specifies how much memory (in megabytes) you want your Docker VM to have',
+    CONFIG_ENV_KEY: 'Environment overrides for apps and services that are specified with `dusty env`',
 }
 
 WARN_ON_MISSING_CONFIG_KEYS = [CONFIG_MAC_USERNAME_KEY, CONFIG_SPECS_REPO_KEY, CONFIG_VM_MEM_SIZE]

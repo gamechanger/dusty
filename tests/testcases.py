@@ -297,3 +297,11 @@ class DustyIntegrationTestCase(TestCase):
     def assertConfigValue(self, key, value):
         config = get_config()
         self.assertEqual(config[key], value)
+
+    def assertEnvInContainer(self, app_or_service, var, value):
+        env = self.exec_in_container(app_or_service, 'printenv {}'.format(var)).rstrip()
+        self.assertEqual(env, value)
+
+    def assertEnvNotInContainer(self, app_or_service, var):
+        env = self.exec_in_container(app_or_service, 'printenv {}'.format(var)).rstrip()
+        self.assertEqual(env, '')
