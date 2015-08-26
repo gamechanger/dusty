@@ -41,7 +41,7 @@ class TestSetupCommands(DustyTestCase):
         fake_get_vm_size.return_value = 6
         expected_dict_argument = {constants.CONFIG_MAC_USERNAME_KEY: 'user',
                                   constants.CONFIG_SPECS_REPO_KEY: 'github.com/gamechanger/dusty',
-                                  constants.CONFIG_VM_MEM_SIZE: 6}
+                                  constants.CONFIG_VM_MEM_SIZE: '6'}
         return_payload = setup_dusty_config()
         self.assertEqual(return_payload.fn, complete_setup)
         self.assertEqual(return_payload.args[0], expected_dict_argument)
