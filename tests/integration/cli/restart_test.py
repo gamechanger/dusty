@@ -8,7 +8,9 @@ import dateutil.parser
 from nose.tools import nottest
 
 from dusty.compiler.spec_assembler import get_all_repos
+from dusty import constants
 from dusty.source import Repo
+from dusty.subprocess import check_output_demoted
 from ...testcases import DustyIntegrationTestCase
 from ...fixtures import specs_fixture_with_depends
 
@@ -21,7 +23,9 @@ class TestRestartCLI(DustyIntegrationTestCase):
         self.run_command('bundles activate bundle-a bundle-b')
         self.run_command('up')
         time.sleep(.1)
-        self.up_complete_time = datetime.datetime.utcnow()
+        # VM time and host time may deviate so we need to take our benchmark
+        # of when setUp has completed from the VM
+        self.up_complete_time = self.vm_current_time()
 
     def tearDown(self):
         try:
@@ -35,6 +39,10 @@ class TestRestartCLI(DustyIntegrationTestCase):
 
     def assertContainerNotRestarted(self, app_name):
         self.assertFalse(self.container_has_restarted(app_name))
+
+    def vm_current_time(self):
+        result = check_output_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME, 'date "+%Y-%m-%dT%X.%s"'])
+        return dateutil.parser.parse(result)
 
     @nottest
     def container_has_restarted(self, app_name):
