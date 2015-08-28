@@ -9,9 +9,7 @@ class TestEnvCLI(DustyIntegrationTestCase):
     def setUp(self):
         super(TestEnvCLI, self).setUp()
         single_specs_fixture()
-        local_dir = Repo('github.com/app/a').managed_path
-        if not os.path.exists(local_dir):
-            os.makedirs(local_dir)
+        self.run_command('repos override github.com/app/a {}'.format(self.fake_local_repo_location))
         self.run_command('bundles activate bundle-a')
 
     def tearDown(self):
