@@ -14,9 +14,7 @@ class TestAssetsCLI(DustyIntegrationTestCase):
         super(TestAssetsCLI, self).setUp()
         assets_fixture()
 
-        local_dir = Repo('github.com/lib/a').managed_path
-        if not os.path.exists(local_dir):
-            os.makedirs(local_dir)
+        self.run_command('repos override github.com/lib/a {}'.format(self.fake_local_repo_location))
 
         self.required_app_file = tempfile.mkstemp()[1]
         with open(self.required_app_file, 'w') as f:
