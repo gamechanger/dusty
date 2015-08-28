@@ -91,7 +91,7 @@ def _filter_active(spec_type, specs):
     for item_name in all_specs:
         if item_name not in active:
             del specs[spec_type][item_name]
-    logging.info("Spec Assembler: filtered active {} to {}".format(spec_type, set(specs[spec_type].keys())))
+    logging.debug("Spec Assembler: filtered active {} to {}".format(spec_type, set(specs[spec_type].keys())))
 
 def _add_active_assets(specs):
     """
@@ -128,7 +128,7 @@ def _get_expanded_libs_specs(specs):
 
 @memoized
 def get_assembled_specs():
-    logging.info("Spec Assembler: running...")
+    logging.debug("Spec Assembler: running...")
     specs = get_specs()
     _get_expanded_active_specs(specs)
     return specs
