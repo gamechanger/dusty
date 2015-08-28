@@ -42,7 +42,7 @@ class TestParallel(DustyTestCase):
         self.queue.enqueue_task(_fake_task, 3, b=4)
         self.queue.execute()
         global_mock.assert_has_calls([call(1, a=2),
-                                      call(3, b=4)])
+                                      call(3, b=4)], any_order=True)
 
     def test_execute_with_exceptions(self):
         self.queue.enqueue_task(_fake_task, 1, a=2)
@@ -55,7 +55,7 @@ class TestParallel(DustyTestCase):
             queue.enqueue_task(_fake_task, 1, a=2)
             queue.enqueue_task(_fake_task, 3, b=4)
         global_mock.assert_has_calls([call(1, a=2),
-                                      call(3, b=4)])
+                                      call(3, b=4)], any_order=True)
 
     def test_context_manager_exception(self):
         with self.assertRaises(RuntimeError):
