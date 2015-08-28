@@ -33,7 +33,7 @@ def read_asset(asset_key):
     log_to_client(asset_value(asset_key))
 
 def set_asset(asset_key, local_path):
-    sync_local_path_to_vm(local_path, asset_vm_path(asset_key), demote=True)
+    sync_local_path_to_vm(local_path, asset_vm_path(asset_key))
 
 def unset_asset(asset_key):
     if not asset_is_set(asset_key):
