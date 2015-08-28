@@ -8,6 +8,7 @@
 * **New**
     * Managed repos are now updated in parallel during `dusty up` and `dusty test`.
     * New command `dusty env` can set environment variable overrides per app or service. These variables can also be read from a file, as with Docker Compose's `env_file` key.
+    * New command `dusty assets` can be used to place files like private keys inside containers, without the need to keep them in version control.
 * **Misc**
     * Dusty now uses the name `dustyInternalNginx` for its own nginx container to make naming conflicts less likely.
 

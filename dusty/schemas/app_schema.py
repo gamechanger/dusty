@@ -1,6 +1,7 @@
 from schemer import Schema, Array
 
 from .test_schema import test_schema
+from .asset_schema import asset_schema
 
 def image_build_isolation_validator():
     def validator(document):
@@ -62,6 +63,7 @@ app_schema = Schema({
     'mount': {'type': basestring, 'default': str},
     'commands': {'type': commands_schema, 'required': True},
     'scripts': {'type': Array(script_schema), 'default': list},
+    'assets': {'type': Array(asset_schema), 'default': list},
     'compose': {'type': dusty_app_compose_schema, 'default': dict},
     'test': {'type': test_schema, 'default': dict}
     }, validates=[

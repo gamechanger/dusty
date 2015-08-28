@@ -5,6 +5,9 @@ from ... import constants
 def get_command_files_volume_mount(app_or_lib_name, test=False):
     return "{}{}:{}".format(vm_command_files_path(app_or_lib_name), '/test' if test else '', constants.CONTAINER_COMMAND_FILES_DIR)
 
+def get_asset_volume_mount(app_name):
+    return "{}:{}".format(constants.VM_ASSETS_DIR, constants.IN_CONTAINER_ASSETS_DIR)
+
 def get_volume_mounts(app_or_lib_name, assembled_specs, test=False):
     if app_or_lib_name in assembled_specs['apps']:
         return get_app_volume_mounts(app_or_lib_name, assembled_specs, test=test)
@@ -17,6 +20,7 @@ def get_app_volume_mounts(app_name, assembled_specs, test=False):
     and mounts declared in all lib specs the app depends on"""
     app_spec = assembled_specs['apps'][app_name]
     volumes = [get_command_files_volume_mount(app_name, test=test)]
+    volumes.append(get_asset_volume_mount(app_name))
     repo_mount = _get_app_repo_volume_mount(app_spec)
     if repo_mount:
         volumes.append(repo_mount)

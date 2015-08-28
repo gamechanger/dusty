@@ -13,10 +13,16 @@ from ...config import get_config_value
 from ...subprocess import check_and_log_output_and_error_demoted, check_output_demoted, check_call_demoted, call_demoted
 from ...log import log_to_client
 
-def _run_command_on_vm(command_list):
+def _command_for_vm(command_list):
     ssh_command = ['docker-machine', 'ssh', constants.VM_MACHINE_NAME]
     ssh_command.extend([command_list])
-    check_and_log_output_and_error_demoted(ssh_command)
+    return ssh_command
+
+def _run_command_on_vm(command_list):
+    return check_and_log_output_and_error_demoted(_command_for_vm(command_list))
+
+def _check_output_on_vm(command_list):
+    return check_output_demoted(_command_for_vm(command_list))
 
 def _ensure_rsync_is_installed():
     logging.info('Installing rsync inside the Docker VM')
@@ -33,10 +39,16 @@ def _ensure_persist_dir_is_linked():
     _run_command_on_vm(mkdir_if_cmd)
     _run_command_on_vm(mount_if_cmd)
 
-def _ensure_cp_dir_exists():
-    logging.info('Creating {} in VM to support dusty cp'.format(constants.VM_CP_DIR))
-    mkdir_if_cmd = 'if [ ! -d {0} ]; then sudo mkdir {0}; fi'.format(constants.VM_CP_DIR)
+def _ensure_vm_dir_exists(vm_dir):
+    logging.info('Creating {} in VM to support dusty'.format(vm_dir))
+    mkdir_if_cmd = 'if [ ! -d {0} ]; then sudo mkdir {0}; fi'.format(vm_dir)
     _run_command_on_vm(mkdir_if_cmd)
+
+def _ensure_cp_dir_exists():
+    _ensure_vm_dir_exists(constants.VM_CP_DIR)
+
+def _ensure_assets_dir_exists():
+    _ensure_vm_dir_exists(constants.VM_ASSETS_DIR)
 
 def _dusty_vm_exists():
     existing_vms = check_output_demoted(['docker-machine', 'ls', '-q'])
@@ -80,6 +92,7 @@ def initialize_docker_vm():
     _ensure_rsync_is_installed()
     _ensure_persist_dir_is_linked()
     _ensure_cp_dir_exists()
+    _ensure_assets_dir_exists()
 
 @memoized
 def get_docker_vm_ip():
@@ -131,3 +144,27 @@ def get_host_ip():
             if line.startswith('IPAddress'):
                 return line.split()[1]
     raise RuntimeError('Host IP in host only network not found')
+
+def required_absent_assets(assembled_specs):
+    required_and_absent = []
+    for asset_key, asset_info in assembled_specs['assets'].iteritems():
+        if asset_info['required_by'] and not asset_is_set(asset_key):
+            required_and_absent.append(asset_key)
+    return required_and_absent
+
+@memoized
+def get_assets_on_vm():
+    dir_contents = _check_output_on_vm('ls {}'.format(constants.VM_ASSETS_DIR))
+    return set(dir_contents.splitlines())
+
+def asset_vm_path(asset_key):
+    return os.path.join(constants.VM_ASSETS_DIR, asset_key)
+
+def asset_is_set(asset_key):
+    return asset_key in get_assets_on_vm()
+
+def asset_value(asset_key):
+    return _check_output_on_vm('sudo cat {}'.format(asset_vm_path(asset_key)))
+
+def remove_asset(asset_key):
+    _run_command_on_vm('sudo rm -f {}'.format(asset_vm_path(asset_key)))

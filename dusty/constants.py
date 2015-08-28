@@ -41,6 +41,9 @@ VM_PERSIST_DIR = '/persist'
 VM_REPOS_DIR = '/dusty_repos'
 LOCAL_BACKUP_DIR = 'dusty-backup'
 
+VM_ASSETS_DIR = '/dusty_assets'
+IN_CONTAINER_ASSETS_DIR = '/dusty_assets'
+
 DUSTY_NGINX_NAME = 'dustyInternalNginx'
 NGINX_CONFIG_DIR_IN_VM = os.path.join(VM_PERSIST_DIR, 'dustyNginx')
 NGINX_CONFIG_DIR_IN_CONTAINER = '/etc/nginx/conf.d'

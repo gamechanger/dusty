@@ -9,6 +9,7 @@ import getpass
 import subprocess
 import threading
 import time
+from contextlib import contextmanager
 
 from unittest import TestCase
 from nose.tools import nottest
@@ -305,3 +306,11 @@ class DustyIntegrationTestCase(TestCase):
     def assertEnvNotInContainer(self, app_or_service, var):
         env = self.exec_in_container(app_or_service, 'printenv {}'.format(var)).rstrip()
         self.assertEqual(env, '')
+
+    @contextmanager
+    def assertLogToClientOutput(self, expected_output):
+        self.handler.log_to_client_output = ''
+        try:
+            yield
+        finally:
+            self.assertEqual(self.handler.log_to_client_output.rstrip(), expected_output)

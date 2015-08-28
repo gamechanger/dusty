@@ -64,6 +64,21 @@ def _get_always_commands(app_spec):
         commands_with_function.append('dusty_always_fn')
     return commands_with_function
 
+def _copy_asset_command(asset):
+    return 'if [ -f {0} ]; then cp {0} {1}; fi'.format(
+        os.path.join(constants.IN_CONTAINER_ASSETS_DIR, asset['name']), asset['path'])
+
+def _copy_assets_commands_for_lib(lib_spec):
+    return [_copy_asset_command(asset) for asset in lib_spec['assets']]
+
+def _copy_assets_commands_for_app(app_spec, assembled_specs):
+    commands = []
+    for asset in app_spec['assets']:
+        commands.append(_copy_asset_command(asset))
+    for lib in app_spec['depends']['libs']:
+        commands.extend(_copy_assets_commands_for_lib(assembled_specs['libs'][lib]))
+    return commands
+
 def _compile_docker_commands(app_name, assembled_specs):
     """ This is used to compile the command that will be run when the docker container starts
     up. This command has to install any libs that the app uses, run the `always` command, and
@@ -74,6 +89,7 @@ def _compile_docker_commands(app_name, assembled_specs):
     if app_spec['mount']:
         commands.append("cd {}".format(container_code_path(app_spec)))
         commands.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
+    commands += _copy_assets_commands_for_app(app_spec, assembled_specs)
     commands += _get_once_commands(app_spec)
     commands += _get_always_commands(app_spec)
     return commands

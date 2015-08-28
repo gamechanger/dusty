@@ -93,6 +93,22 @@ def _filter_active(spec_type, specs):
             del specs[spec_type][item_name]
     logging.info("Spec Assembler: filtered active {} to {}".format(spec_type, set(specs[spec_type].keys())))
 
+def _add_active_assets(specs):
+    """
+    This function adds an assets key to the specs, which is filled in with a dictionary
+    of all assets defined by apps and libs in the specs
+    """
+    specs['assets'] = {}
+    for spec in specs.get_apps_and_libs():
+        for asset in spec['assets']:
+            if not specs['assets'].get(asset['name']):
+                specs['assets'][asset['name']] = {}
+                specs['assets'][asset['name']]['required_by'] = set()
+                specs['assets'][asset['name']]['used_by'] = set()
+            specs['assets'][asset['name']]['used_by'].add(spec.name)
+            if asset['required']:
+                specs['assets'][asset['name']]['required_by'].add(spec.name)
+
 def _get_expanded_active_specs(specs):
     """
     This function removes any unnecessary bundles, apps, libs, and services that aren't needed by
@@ -104,6 +120,7 @@ def _get_expanded_active_specs(specs):
     _expand_libs_in_apps(specs)
     _filter_active('libs', specs)
     _filter_active('services', specs)
+    _add_active_assets(specs)
 
 def _get_expanded_libs_specs(specs):
     _expand_libs_in_apps(specs)

@@ -4,6 +4,7 @@ Usage:
   dusty [options] [<command>] [<args>...]
 
 Commands:
+  assets     Manage files that don't live in version control
   bundles    Manage which sets of applications to run
   config     Get or set Dusty config variables
   cp         Copy files between local filesystem and containers
@@ -43,11 +44,12 @@ from ..daemon import main as run_daemon
 from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
-from . import (bundles, config, cp, dump, disk, env, logs, repos, restart, scripts, shell, stop,
+from . import (assets, bundles, config, cp, dump, disk, env, logs, repos, restart, scripts, shell, stop,
                up, upgrade, validate, version, setup, test, status)
 from .. import constants
 
 MODULE_MAP = {
+    'assets': assets,
     'bundles': bundles,
     'config': config,
     'cp': cp,
