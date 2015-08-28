@@ -21,7 +21,6 @@ def get_dusty_status():
         return
     assembled_specs = get_assembled_specs()
     table = PrettyTable(["Name", "Type", "Has Active Container"])
-    logging.error(assembled_specs._document)
     # Check for Dusty's special nginx container (used for host forwarding)
     table.add_row([constants.DUSTY_NGINX_NAME, '', 'X' if get_dusty_containers([constants.DUSTY_NGINX_NAME]) != [] else ''])
     for spec in assembled_specs.get_apps_libs_and_services():
