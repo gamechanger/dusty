@@ -3,7 +3,7 @@
 ## 0.6.0 (In Progress)
 
 * **Breaking**
-    * Dusty has upgraded to [Docker Machine](https://docs.docker.com/machine/)! This replaces boot2docker as the tool for managing Docker-enabled VMs.
+    * Dusty has upgraded to [Docker Machine](https://docs.docker.com/machine/)! This replaces boot2docker as the tool for managing Docker-enabled VMs. Migration help can be found [here](https://gist.github.com/jsingle/bd1d8c04f45040b24c28)
     * The setup override flag `--boot2docker_vm_memory` has been renamed to `--vm_memory`
 * **New**
     * Managed repos are now updated in parallel during `dusty up` and `dusty test`.
