@@ -36,7 +36,7 @@ class TestUpgrade(DustyIntegrationTestCase):
         output = self.run_command('upgrade {}'.format(version))
         self.assertInSameLine(output, 'Downloading', version)
         self.assertInSameLine(output, 'Finished upgrade', version)
-        sleep(1)
+        sleep(2)
         output = self.run_command('version', raise_on_error=False)
         self.assertInSameLine(output, 'daemon', 'version', version)
         self.assertInSameLine(output, 'client', 'version', constants.VERSION)
