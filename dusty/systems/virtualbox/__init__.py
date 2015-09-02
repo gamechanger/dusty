@@ -63,7 +63,7 @@ def _init_docker_vm():
         logging.info('Initializing new Dusty VM with Docker Machine')
         machine_options = ['--driver', 'virtualbox',
                            '--virtualbox-cpu-count', '-1',
-                           '--virtualbox-memory', get_config_value(constants.CONFIG_VM_MEM_SIZE)]
+                           '--virtualbox-memory', str(get_config_value(constants.CONFIG_VM_MEM_SIZE))]
         check_call_demoted(['docker-machine', 'create'] + machine_options + [constants.VM_MACHINE_NAME],
                            redirect_stderr=True)
 
