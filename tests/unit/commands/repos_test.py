@@ -91,14 +91,16 @@ class TestReposCommands(DustyTestCase):
                                'github.com/app/b': os.path.join(self.temp_repos_path, 'b'),
                                'github.com/lib/a': os.path.join(self.temp_repos_path, 'a')})
 
+    @patch('dusty.commands.repos.add_known_hosts_for_repos')
     @patch('dusty.source.Repo.update_local_repo_async')
-    def test_update_managed_repos(self, fake_update_local_repo_async):
+    def test_update_managed_repos(self, fake_update_local_repo_async, fake_add_known_hosts):
         activate_bundle(['bundle-a'])
         update_managed_repos()
         fake_update_local_repo_async.assert_has_calls([call(ANY, force=False)])
 
+    @patch('dusty.commands.repos.add_known_hosts_for_repos')
     @patch('dusty.source.Repo.update_local_repo_async')
-    def test_update_managed_repos_for_both(self, fake_update_local_repo_async):
+    def test_update_managed_repos_for_both(self, fake_update_local_repo_async, fake_add_known_hosts):
         activate_bundle(['bundle-a'])
         activate_bundle(['bundle-b'])
         update_managed_repos()

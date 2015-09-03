@@ -75,18 +75,6 @@ def _ensure_command_files_dir_exists():
     if not os.path.exists(constants.COMMAND_FILES_DIR):
         os.makedirs(constants.COMMAND_FILES_DIR)
 
-def _ensure_github_known_host():
-    ssh_dir = os.path.expanduser('~root/.ssh')
-    if not os.path.isdir(ssh_dir):
-        os.makedirs(ssh_dir)
-    known_hosts_path = os.path.join(ssh_dir, 'known_hosts')
-    with open(known_hosts_path, 'w+') as f:
-        contents = f.read()
-        if 'github.com' not in contents:
-            logging.info('Adding github ssh key to roots ssh known_hosts file')
-            command = ['sh', '-c', 'ssh-keyscan -t rsa github.com >> {}'.format(known_hosts_path)]
-            check_and_log_output_and_error(command, demote=False)
-
 def _check_executables():
     return [check() for check in [_check_git, _check_rsync, _check_virtualbox,
                                   _check_docker_machine, _check_docker, _check_docker_compose]]
@@ -106,7 +94,6 @@ def preflight_check():
     _ensure_run_dir_exists()
     _ensure_config_dir_exists()
     _ensure_command_files_dir_exists()
-    _ensure_github_known_host()
     if not os.path.exists(constants.CONFIG_PATH):
         logging.info('Creating default config file at {}'.format(constants.CONFIG_PATH))
         write_default_config()
