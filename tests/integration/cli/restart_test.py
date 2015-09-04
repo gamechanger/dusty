@@ -22,10 +22,8 @@ class TestRestartCLI(DustyIntegrationTestCase):
             self._set_up_fake_local_repo(path=repo.remote_path)
         self.run_command('bundles activate bundle-a bundle-b')
         self.run_command('up')
-        time.sleep(.1)
-        # VM time and host time may deviate so we need to take our benchmark
-        # of when setUp has completed from the VM
-        self.up_complete_time = self.vm_current_time()
+        time.sleep(.5)
+        self.up_complete_time = datetime.datetime.utcnow()
 
     def tearDown(self):
         try:
