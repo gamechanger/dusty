@@ -4,7 +4,7 @@
 
 * **Misc**
     * Dusty now adds any known hosts specified in the `repo` field of specs to root's known host file.  Previously, users had to manually add hosts as root, or Dusty couldn't pull repos other than GitHub.
-
+    * `dusty upgrade` will check that requirements of the new version are satisfied before completing the upgrade.
 
 ## 0.6.0 (September 8, 2015)
 
