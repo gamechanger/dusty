@@ -38,6 +38,23 @@ mount: /my-app
 
 All Dusty commands (once and always) are started in the `mount` directory.  You might need to change to or copy from another directory.
 
+## assets
+
+```
+assets:
+  - name: GITHUB_KEY
+    path: /root/.ssh/id_rsa
+  - name: AWS_KEY
+    path: /root/.aws_key
+    required: false
+```
+
+Assets are files which your containers need access to, but which you don't have in a repository.  The main usecase here is for private keys.
+
+You must register a local file as an asset with the `dusty assets set` command. When you specify the file, its contents are copied to your VM and shared with your running Dusty containers. Assets are placed in your container at the absolute path specified at `path`.
+
+The `required` key defaults to `true`, and `dusty up` will not succeed if any required assets have not been registered.
+
 ## depends
 
 ```
