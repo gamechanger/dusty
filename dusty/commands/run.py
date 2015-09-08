@@ -24,11 +24,13 @@ def start_local_env(recreate_containers=True, pull_repos=True):
     assembled_spec = spec_assembler.get_assembled_specs()
     if not assembled_spec[constants.CONFIG_BUNDLES_KEY]:
         raise RuntimeError('No bundles are activated. Use `dusty bundles` to activate bundles before running `dusty up`.')
+
+    virtualbox.initialize_docker_vm()
+
     required_absent_assets = virtualbox.required_absent_assets(assembled_spec)
     if required_absent_assets:
         raise RuntimeError('Assets {} are specified as required but are not set. Set them with `dusty assets set`'.format(required_absent_assets))
 
-    virtualbox.initialize_docker_vm()
     docker_ip = virtualbox.get_docker_vm_ip()
 
     # Stop will fail if we've never written a Composefile before
