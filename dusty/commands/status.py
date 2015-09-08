@@ -1,5 +1,3 @@
-import logging
-
 from prettytable import PrettyTable
 
 from ..compiler.spec_assembler import get_assembled_specs

@@ -88,7 +88,7 @@ class TestComposeCompiler(DustyTestCase):
         expected_volumes = [
             '/cp/app1:/cp',
             '/command_files/app1:/command_files',
-            '/dusty_assets:/dusty_assets',
+            '/persist/dusty_assets:/dusty_assets',
             '/Users/gc/app1:/gc/app1',
             '/Users/gc/lib1:/gc/lib1',
             '/Users/gc/lib2:/gc/lib2'
@@ -102,14 +102,14 @@ class TestComposeCompiler(DustyTestCase):
             '/command_files/app1:/command_files',
             '/Users/gc/lib1:/gc/lib1',
             '/Users/gc/lib2:/gc/lib2',
-            '/dusty_assets:/dusty_assets',
+            '/persist/dusty_assets:/dusty_assets',
         ]
         returned_volumes = get_app_volume_mounts('app1', basic_specs)
         self.assertEqual(set(expected_volumes), set(returned_volumes))
 
     def testget_app_volume_mounts_2(self, *args):
         expected_volumes = ['/Users/gc/app2:/gc/app2',
-                            '/command_files/app2:/command_files', '/dusty_assets:/dusty_assets']
+                            '/command_files/app2:/command_files', '/persist/dusty_assets:/dusty_assets']
         returned_volumes = get_app_volume_mounts('app2', basic_specs)
         self.assertEqual(set(expected_volumes), set(returned_volumes))
 
@@ -165,7 +165,7 @@ class TestComposeCompiler(DustyTestCase):
             'volumes': [
                 '/cp/app1:/cp',
                 '/command_files/app1:/command_files',
-                '/dusty_assets:/dusty_assets',
+                '/persist/dusty_assets:/dusty_assets',
                 '/Users/gc/app1:/gc/app1',
                 '/Users/gc/lib1:/gc/lib1',
                 '/Users/gc/lib2:/gc/lib2'
