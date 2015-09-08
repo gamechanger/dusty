@@ -11,6 +11,7 @@ from .. import constants
 from ..daemon import close_client_connection, clean_up_socket
 from ..log import log_to_client
 from ..payload import daemon_command
+from ..subprocess import check_and_log_output_and_error
 
 
 def _get_latest_version():
@@ -51,6 +52,7 @@ def _test_dusty_binary(binary_path, version):
         return
     if test_version != version:
         raise RuntimeError('Version of downloaded binary {} does not match expected {}'.format(test_version, version))
+    check_and_log_output_and_error([binary_path, '-d', '--preflight-only'], demote=False, quiet_on_success=True)
 
 def _move_temp_binary_to_path(tmp_binary_path):
     """Moves the temporary binary to the location of the binary that's currently being run.
