@@ -32,14 +32,12 @@ def _ensure_rsync_is_installed():
     _run_command_on_vm('which rsync || tce-load -wi rsync || tce-load -wi rsync')
 
 def _ensure_persist_dir_is_linked():
-    logging.info('Linking {} to VBox disk (if it is not already linked)'.format(constants.VM_PERSIST_DIR))
     mkdir_if_cmd = 'if [ ! -d /mnt/sda1{0} ]; then sudo mkdir /mnt/sda1{0}; fi'.format(constants.VM_PERSIST_DIR)
     mount_if_cmd = 'if [ ! -d {0} ]; then sudo ln -s /mnt/sda1{0} {0}; fi'.format(constants.VM_PERSIST_DIR)
     _run_command_on_vm(mkdir_if_cmd)
     _run_command_on_vm(mount_if_cmd)
 
 def _ensure_vm_dir_exists(vm_dir):
-    logging.info('Creating {} in VM to support dusty'.format(vm_dir))
     mkdir_if_cmd = 'if [ ! -d {0} ]; then sudo mkdir {0}; fi'.format(vm_dir)
     _run_command_on_vm(mkdir_if_cmd)
 
@@ -68,12 +66,10 @@ def _init_docker_vm():
 
 def _start_docker_vm():
     """Start the Dusty VM if it is not already running."""
-    logging.info('Making sure the Dusty VM is started')
-    check_call_demoted(['docker-machine', 'start', constants.VM_MACHINE_NAME], redirect_stderr=True)
+    check_and_log_output_and_error_demoted(['docker-machine', 'start', constants.VM_MACHINE_NAME], quiet_on_success=True)
 
 def _stop_docker_vm():
     """Stop the Dusty VM if it is not already stopped."""
-    logging.info('Stopping the Dusty VM')
     check_call_demoted(['docker-machine', 'stop', constants.VM_MACHINE_NAME], redirect_stderr=True)
 
 def _get_vm_config():

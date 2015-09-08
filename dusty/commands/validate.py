@@ -1,5 +1,4 @@
 from copy import copy
-import logging
 import os
 
 from schemer import ValidationException
