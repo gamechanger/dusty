@@ -1,6 +1,9 @@
 # Changelog
 
-## 0.6.0 (In Progress)
+## 0.6.1 (In Progress)
+
+
+## 0.6.0 (September 8, 2015)
 
 * **Breaking**
     * Dusty has upgraded to [Docker Machine](https://docs.docker.com/machine/)! This replaces boot2docker as the tool for managing Docker-enabled VMs. Migration help can be found [here](https://gist.github.com/jsingle/bd1d8c04f45040b24c28)
