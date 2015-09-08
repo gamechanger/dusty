@@ -119,7 +119,7 @@ class TestTestingImages(DustyTestCase):
         fake_ensure_base_image.assert_has_calls([call(self.specs['apps']['fake-app']['test'])])
         fake_make_installed_image.assert_has_calls([call('dusty_testing/image',
                                                          'sh /command_files/dusty_command_file_fake-app.sh', new_image_name,
-                                                         ['/command_files/fake-app/test:/command_files', '/dusty_assets:/dusty_assets', '/dusty_repos/tmp/fake-repo:/repo'])])
+                                                         ['/command_files/fake-app/test:/command_files', '/persist/dusty_assets:/dusty_assets', '/dusty_repos/tmp/fake-repo:/repo'])])
 
     @patch('dusty.systems.docker.testing_image.get_docker_client')
     @patch('dusty.systems.docker.testing_image._make_installed_testing_image')

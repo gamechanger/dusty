@@ -3,7 +3,7 @@ import os
 from prettytable import PrettyTable
 
 from ..compiler.spec_assembler import get_specs, get_assembled_specs
-from ..systems.virtualbox import asset_is_set, asset_value, asset_vm_path, remove_asset
+from ..systems.virtualbox import asset_is_set, asset_value, asset_vm_path, remove_asset, initialize_docker_vm
 from ..systems.rsync import sync_local_path_to_vm
 from ..log import log_to_client
 
@@ -33,6 +33,7 @@ def read_asset(asset_key):
     log_to_client(asset_value(asset_key))
 
 def set_asset(asset_key, local_path):
+    initialize_docker_vm()
     sync_local_path_to_vm(local_path, asset_vm_path(asset_key))
 
 def unset_asset(asset_key):

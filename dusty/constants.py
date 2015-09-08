@@ -41,7 +41,7 @@ VM_PERSIST_DIR = '/persist'
 VM_REPOS_DIR = '/dusty_repos'
 LOCAL_BACKUP_DIR = 'dusty-backup'
 
-VM_ASSETS_DIR = '/dusty_assets'
+VM_ASSETS_DIR = os.path.join(VM_PERSIST_DIR, 'dusty_assets')
 IN_CONTAINER_ASSETS_DIR = '/dusty_assets'
 
 DUSTY_NGINX_NAME = 'dustyInternalNginx'

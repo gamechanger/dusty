@@ -18,14 +18,13 @@ def _command_for_vm(command_list):
     ssh_command.extend([command_list])
     return ssh_command
 
-def _run_command_on_vm(command_list):
-    return check_and_log_output_and_error_demoted(_command_for_vm(command_list))
+def _run_command_on_vm(command_list, quiet_on_success=True):
+    return check_and_log_output_and_error_demoted(_command_for_vm(command_list), quiet_on_success=quiet_on_success)
 
 def _check_output_on_vm(command_list):
     return check_output_demoted(_command_for_vm(command_list))
 
 def _ensure_rsync_is_installed():
-    logging.info('Installing rsync inside the Docker VM')
     # We're running tce-load twice as a hack to get around the fact that, for
     # completely unknown reasons, tce-load will return with an exit code of 1 after
     # initial install even if it works just fine. Subsequent install attempts will
