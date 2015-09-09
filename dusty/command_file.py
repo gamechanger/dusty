@@ -39,8 +39,17 @@ def _tee_output_commands(command_to_tee):
     ]
     return commands
 
-def _get_once_commands(app_spec):
-    once_commands = app_spec['commands']['once']
+def _hosts_export_commands(port_spec):
+    if not port_spec['hosts_file']:
+        return []
+    commands = ['DOCKERHOST=`/sbin/ip route|awk \'/default/ { print $3 }\'`']
+    commands.extend(['echo "$DOCKERHOST    {}" >> /etc/hosts'.format(host['host_address'])
+        for host in port_spec['hosts_file']])
+    return commands
+
+def _get_once_commands(app_spec, port_spec):
+    once_commands = _hosts_export_commands(port_spec)
+    once_commands += app_spec['commands']['once']
     commands_with_function = []
     if once_commands:
         commands_with_function.append('dusty_once_fn () {')
@@ -79,7 +88,7 @@ def _copy_assets_commands_for_app(app_spec, assembled_specs):
         commands.extend(_copy_assets_commands_for_lib(assembled_specs['libs'][lib]))
     return commands
 
-def _compile_docker_commands(app_name, assembled_specs):
+def _compile_docker_commands(app_name, assembled_specs, port_spec):
     """ This is used to compile the command that will be run when the docker container starts
     up. This command has to install any libs that the app uses, run the `always` command, and
     run the `once` command if the container is being launched for the first time """
@@ -90,7 +99,7 @@ def _compile_docker_commands(app_name, assembled_specs):
         commands.append("cd {}".format(container_code_path(app_spec)))
         commands.append("export PATH=$PATH:{}".format(container_code_path(app_spec)))
     commands += _copy_assets_commands_for_app(app_spec, assembled_specs)
-    commands += _get_once_commands(app_spec)
+    commands += _get_once_commands(app_spec, port_spec)
     commands += _get_always_commands(app_spec)
     return commands
 
@@ -141,8 +150,8 @@ def dusty_command_file_name(app_or_lib_name, script_name=None, test_name=None):
         command_file_name = '{}_test_{}'.format(command_file_name, test_name)
     return "{}.sh".format(command_file_name)
 
-def _write_up_command(app_name, assembled_specs):
-    commands = _compile_docker_commands(app_name, assembled_specs)
+def _write_up_command(app_name, assembled_specs, port_spec):
+    commands = _compile_docker_commands(app_name, assembled_specs, port_spec)
     command_file_name = dusty_command_file_name(app_name)
     local_path = '{}/{}/{}'.format(constants.COMMAND_FILES_DIR, app_name, command_file_name)
     _write_commands_to_file(commands, app_name, local_path)
@@ -167,10 +176,10 @@ def _write_test_suite_command(app_or_lib_spec, suite_spec):
     local_path = '{}/{}/test/{}'.format(constants.COMMAND_FILES_DIR, app_or_lib_spec.name, command_file_name)
     _write_commands_to_file(commands, app_or_lib_spec.name, local_path)
 
-def make_up_command_files(assembled_specs):
+def make_up_command_files(assembled_specs, port_spec):
     for app_name in assembled_specs['apps'].keys():
         spec = assembled_specs['apps'][app_name]
-        _write_up_command(app_name, assembled_specs)
+        _write_up_command(app_name, assembled_specs, port_spec)
         script_specs = spec['scripts']
         for script_spec in script_specs:
             _write_up_script_command(app_name, spec, script_spec)

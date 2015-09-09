@@ -106,15 +106,14 @@ host_forwarding:
     container_port: 80
 ```
 
-`host_forwarding` allows you to specify multiple routes which should be linked between your host OS
-and the application running inside this app's container.
+`host_forwarding` allows you to specify routes which can be used to reach this app's container.  These routes expose access to containers from your host OS, as well as from any other Dusty app containers.
 
 **host_name**: local hostname exposed on your host OS.
 **host_port**: local port which routes through to the container port.
 **container_port**: remote port the app is running on in the Docker container.
 
-In this example, we would be able to go to `local.website.com:80` on our host OS and talk to
-the process inside this app's container on port 80.
+In this example, we would be able to go to `local.website.com:80` on our host OS and talk to the process inside this app's container on port 80.
+We would also be able to `curl local.website.com` from another app container.
 
 ## image
 

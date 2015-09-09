@@ -73,7 +73,8 @@ class TestCommandFile(DustyTestCase):
                               'repo': '/gc/lib2',
                               'mount': '/gc/lib2'})}
         }
-        command_file.make_up_command_files(assembled_spec)
+        port_spec = {'hosts_file': []}
+        command_file.make_up_command_files(assembled_spec, port_spec)
 
         commands1 = ['set -e',
                      'cd /gc/lib1',
@@ -120,7 +121,8 @@ class TestCommandFile(DustyTestCase):
                                 'once': ['app1 once 1', 'app1 once 2 &'],
                                 'always': ['app1 always 1', 'app1 always 2']
                               }})}}
-        command_file.make_up_command_files(assembled_spec)
+        port_spec = {'hosts_file': []}
+        command_file.make_up_command_files(assembled_spec, port_spec)
 
         commands1 = ['set -e',
                      'dusty_once_fn () {',
@@ -232,6 +234,7 @@ class TestCommandFile(DustyTestCase):
                 ]
             }
         }
+        port_spec = {'hosts_file': []}
         expected = [
             'dusty_once_fn () {',
             'once_script.sh',
@@ -241,7 +244,7 @@ class TestCommandFile(DustyTestCase):
             ] + command_file._tee_output_commands('dusty_once_fn') + [
             'fi'
         ]
-        actual = command_file._get_once_commands(spec)
+        actual = command_file._get_once_commands(spec, port_spec)
         self.assertEqual(expected, actual)
 
     def test_once_commands_blank(self):
@@ -250,12 +253,33 @@ class TestCommandFile(DustyTestCase):
                 'once': []
             }
         }
+        port_spec = {'hosts_file': []}
         expected = [
             'if [ ! -f {} ]; then'.format(constants.FIRST_RUN_FILE_PATH),
             'touch {}'.format(constants.FIRST_RUN_FILE_PATH),
             'fi'
         ]
-        actual = command_file._get_once_commands(spec)
+        actual = command_file._get_once_commands(spec, port_spec)
+        self.assertEqual(expected, actual)
+
+    def test_once_commands_with_hosts(self):
+        spec = {
+            'commands': {
+                'once': []
+            }
+        }
+        port_spec = {'hosts_file': [{'host_address': 'local.something.com'}]}
+        expected = [
+            'dusty_once_fn () {',
+            'DOCKERHOST=`/sbin/ip route|awk \'/default/ { print $3 }\'`',
+            'echo "$DOCKERHOST    local.something.com" >> /etc/hosts',
+            '}',
+            'if [ ! -f {} ]; then'.format(constants.FIRST_RUN_FILE_PATH),
+            'touch {}'.format(constants.FIRST_RUN_FILE_PATH),
+            ] + command_file._tee_output_commands('dusty_once_fn') + [
+            'fi'
+        ]
+        actual = command_file._get_once_commands(spec, port_spec)
         self.assertEqual(expected, actual)
 
     def test_always_commands(self):
