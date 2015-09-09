@@ -1,4 +1,4 @@
-from ..fixtures import fixture_with_commands
+from ..fixtures import fixture_with_commands, specs_fixture_with_depends
 from ..testcases import DustyIntegrationTestCase
 
 class TestCommandFile(DustyIntegrationTestCase):
@@ -81,3 +81,12 @@ class TestCommandFile(DustyIntegrationTestCase):
         self.assertInSameLine(self.handler.log_to_client_output, 'random-command', 'not found')
         self.assertFalse('tests running' in self.handler.log_to_client_output)
         self.assertFalse('tests passed' in self.handler.log_to_client_output)
+
+    def test_app_hosts_are_added(self):
+        specs_fixture_with_depends()
+        self.run_command('bundles activate bundle-b')
+        self.run_command('up --no-pull')
+        hosts_contents = self.exec_in_container('appa', 'cat /etc/hosts')
+        ip_route = self.exec_in_container('appa', '/sbin/ip route')
+        dockerhost = filter(lambda line: 'default' in line, ip_route.splitlines())[0].split()[2]
+        self.assertInSameLine(hosts_contents, 'local.appc.com', dockerhost)

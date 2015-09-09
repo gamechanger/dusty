@@ -144,6 +144,11 @@ def specs_fixture_with_depends():
                            'commands': {
                                'always': ['sleep 1000']
                            },
+                           'host_forwarding': [{
+                                'host_name': 'local.appc.com',
+                                'host_port': 80,
+                                'container_port': 80,
+                            }],
                            'image': 'busybox',})
     _write('lib', 'lib-a', {'repo': '/tmp/repo-lib-a',
                             'mount': '/lib/a',})
