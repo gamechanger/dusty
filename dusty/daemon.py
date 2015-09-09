@@ -17,7 +17,7 @@ from docopt import docopt
 from .preflight import preflight_check, refresh_preflight_warnings
 from .log import configure_logging, make_socket_logger, close_socket_logger
 from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
-from .payload import Payload, get_payload_function
+from .payload import Payload, get_payload_function, init_yaml_constructor
 from .memoize import reset_memoize_cache
 from .warnings import daemon_warnings
 from .config import refresh_config_warnings, check_and_load_ssh_auth
@@ -110,6 +110,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
 def main():
     args = docopt(__doc__)
     configure_logging()
+    init_yaml_constructor()
     preflight_check()
     if args['--preflight-only']:
         return

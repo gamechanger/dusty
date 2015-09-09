@@ -18,7 +18,7 @@ def write_composefile(compose_config, compose_file_location):
     if not os.path.exists(compose_dir_location):
         os.makedirs(compose_dir_location)
     with open(compose_file_location, 'w') as f:
-        f.write(yaml.dump(compose_config, default_flow_style=False))
+        f.write(yaml.safe_dump(compose_config, default_flow_style=False))
 
 def _compose_base_command(core_command, compose_file_location, project_name):
     command = ['docker-compose']

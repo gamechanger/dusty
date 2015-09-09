@@ -14,7 +14,10 @@ class DustySocketHandler(logging.Handler):
 
     def emit(self, record):
         msg = self.format(record)
-        self.connection_socket.sendall("{}\n".format(msg.encode('utf-8').strip()))
+        if isinstance(msg, unicode):
+            msg = msg.encode('utf-8')
+        msg = msg.strip()
+        self.connection_socket.sendall("{}\n".format(msg))
 
 class DustyClientTestingSocketHandler(logging.Handler):
     def __init__(self):

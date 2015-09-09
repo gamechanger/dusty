@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from mock import patch
 import os
 import yaml
@@ -21,7 +23,7 @@ def _write(spec_type, name, spec_doc):
     if os.path.exists(spec_path):
         os.remove(spec_path)
     with open(spec_path, 'w') as f:
-        f.write(yaml.dump(spec_doc, default_flow_style=False))
+        f.write(yaml.safe_dump(spec_doc, default_flow_style=False))
 
 def premade_app():
     return DustySchema(app_schema, {'repo': '/tmp/fake-repo',
@@ -29,6 +31,16 @@ def premade_app():
                                     'image': 'busybox',
                                     'commands': {'always': ['sleep 999999999']}},
                        'fake_app', 'apps')
+
+def unicode_fixture():
+    _write('bundle', 'bundle-Ɯ', {'description': 'unicode woohoooၕഇഞƺ', 'apps': ['appa']})
+    _write('app', 'appa', {'repo': 'github.com/app/a',
+                            'commands': {
+                                'always': ['sleep 9999999']
+                            },
+                            'image': 'busybox',
+                            'mount': '/app/a'
+                      })
 
 def single_specs_fixture():
     _write('bundle', 'bundle-a', {'description': 'Bundle A', 'apps': ['appa']})
