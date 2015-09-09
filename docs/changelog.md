@@ -2,6 +2,9 @@
 
 ## 0.6.2 (In Progress)
 
+* **New**
+    * Host names specified in app specs (`host_forwarding.host_name`) can now be used from inside any Dusty app container - previously they only worked from the host Mac.
+
 
 ## 0.6.1 (September 9, 2015)
 
