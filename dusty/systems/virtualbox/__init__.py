@@ -64,12 +64,9 @@ def _init_docker_vm():
         check_call_demoted(['docker-machine', 'create'] + machine_options + [constants.VM_MACHINE_NAME],
                            redirect_stderr=True)
 
-def _docker_vm_is_running():
-    return check_output_demoted(['docker-machine', 'status', constants.VM_MACHINE_NAME]).rstrip() == 'Running'
-
 def _start_docker_vm():
     """Start the Dusty VM if it is not already running."""
-    if not _docker_vm_is_running():
+    if not docker_vm_is_running():
         logging.info('Starting docker-machine VM {}'.format(constants.VM_MACHINE_NAME))
         check_and_log_output_and_error_demoted(['docker-machine', 'start', constants.VM_MACHINE_NAME], quiet_on_success=True)
 
