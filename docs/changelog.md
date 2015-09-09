@@ -1,6 +1,9 @@
 # Changelog
 
-## 0.6.1 (In Progress)
+## 0.6.2 (In Progress)
+
+
+## 0.6.1 (September 9, 2015)
 
 * **Misc**
     * Dusty now adds any known hosts specified in the `repo` field of specs to root's known host file.  Previously, users had to manually add hosts as root, or Dusty couldn't pull repos other than GitHub.
