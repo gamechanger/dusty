@@ -147,7 +147,10 @@ class DustyIntegrationTestCase(TestCase):
     def stdout(self):
         """Returns any stdout that has been generated *since* the last time
         clear_stdout was called."""
-        return sys.stdout.getvalue()[self.stdout_start:].strip()
+        out = sys.stdout.getvalue()[self.stdout_start:].strip()
+        if isinstance(out, unicode):
+            out = out.encode('utf-8')
+        return out
 
     def exec_docker_patch(self, *args):
         docker_executable = subprocess.check_output('which docker', shell=True).rstrip('\n')

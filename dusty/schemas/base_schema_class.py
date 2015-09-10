@@ -90,7 +90,7 @@ def get_specs_from_path(specs_path):
         for spec_path in glob.glob('{}/*.yml'.format(key_path)):
             spec_name = os.path.splitext(os.path.split(spec_path)[-1])[0]
             with open(spec_path, 'r') as f:
-                spec = yaml.load(f.read())
+                spec = yaml.safe_load(f.read())
                 spec = DustySchema(schema, spec, spec_name, key)
                 specs[key][spec_name] = spec
     return specs

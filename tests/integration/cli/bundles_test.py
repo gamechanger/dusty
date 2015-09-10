@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from ...testcases import DustyIntegrationTestCase
-from ...fixtures import busybox_single_app_bundle_fixture
+from ...fixtures import busybox_single_app_bundle_fixture, unicode_fixture
 
 class TestBundlesCLI(DustyIntegrationTestCase):
     def setUp(self):
@@ -36,3 +38,9 @@ class TestBundlesCLI(DustyIntegrationTestCase):
         result = self.run_command('bundles list')
         self.assertNotInSameLine(result, 'busyboxa', 'X')
         self.assertNotInSameLine(result, 'busyboxb', 'X')
+
+    def test_bundles_with_unicode_names(self):
+        unicode_fixture()
+        self.run_command('bundles activate bundle-Ɯ')
+        result = self.run_command('bundles list')
+        self.assertInSameLine(result, 'bundle-Ɯ', 'X', 'unicode woohoooၕഇഞƺ')

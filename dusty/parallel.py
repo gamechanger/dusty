@@ -5,6 +5,7 @@ import multiprocessing
 import multiprocessing.pool
 from contextlib import contextmanager
 from Queue import Queue
+import logging
 
 from .log import log_to_client
 
@@ -23,7 +24,7 @@ class TaskQueue(Queue, object):
         try:
             fn(*args, **kwargs)
         except Exception as e:
-            self.errors.append(e.message)
+            self.errors.append(e)
 
     def execute(self):
         self.pool = multiprocessing.pool.ThreadPool(self.pool_size)
@@ -35,7 +36,9 @@ class TaskQueue(Queue, object):
 
         if self.errors:
             for error in self.errors:
-                log_to_client(error)
+                logging.exception(error)
+                error_msg = error.message or str(error)
+                log_to_client(error_msg)
             raise RuntimeError("Exceptions encountered during parallel task execution")
 
 @contextmanager
