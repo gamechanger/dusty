@@ -54,6 +54,17 @@ def _dusty_vm_exists():
             return True
     return False
 
+def _apply_nat_dns_host_resolver():
+    """
+    This will make the Dusty VM always use the host's DNS resolver for lookups.
+    It solves an issue we were seeing where the VM's resolving settings would get
+    out of date when a laptop was moved between routers with different settings,
+    resulting in DNS lookup failures on the VM.
+    """
+    check_and_log_output_and_error_demoted(
+        ['VBoxManage', 'modifyvm', constants.VM_MACHINE_NAME, '--natdnshostresolver1', 'on'],
+        quiet_on_success=True)
+
 def _init_docker_vm():
     """Initialize the Dusty VM if it does not already exist."""
     if not _dusty_vm_exists():
@@ -68,6 +79,7 @@ def _start_docker_vm():
     """Start the Dusty VM if it is not already running."""
     if not docker_vm_is_running():
         logging.info('Starting docker-machine VM {}'.format(constants.VM_MACHINE_NAME))
+        _apply_nat_dns_host_resolver()
         check_and_log_output_and_error_demoted(['docker-machine', 'start', constants.VM_MACHINE_NAME], quiet_on_success=True)
 
 def _stop_docker_vm():
