@@ -80,7 +80,7 @@ def _run_command(sock, command):
         data = sock.recv(65535)
         timer.cancel()
         if data:
-            stripped = data.decode('utf-8').replace(constants.SOCKET_TERMINATOR, '').replace(constants.SOCKET_ERROR_TERMINATOR, '')
+            stripped = data.decode('utf-8').replace(constants.SOCKET_ACK, '').replace(constants.SOCKET_TERMINATOR, '').replace(constants.SOCKET_ERROR_TERMINATOR, '')
             sys.stdout.write(stripped)
             if data.endswith(constants.SOCKET_TERMINATOR):
                 break
