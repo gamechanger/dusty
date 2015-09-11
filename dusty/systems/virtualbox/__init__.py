@@ -65,6 +65,15 @@ def _apply_nat_dns_host_resolver():
         ['VBoxManage', 'modifyvm', constants.VM_MACHINE_NAME, '--natdnshostresolver1', 'on'],
         quiet_on_success=True)
 
+def _apply_nat_net_less_greedy_subnet():
+    """By default, VirtualBox claims 10.0.2.x for itself as part of its NAT routing
+    scheme. This subnet is commonly used on internal networks, making this a pretty
+    damn greedy choice. We instead alter the VM to use the less greedy subnet of
+    10.174.249.x which is less likely to conflict."""
+    check_and_log_output_and_error_demoted(
+        ['VBoxManage', 'modifyvm', constants.VM_MACHINE_NAME, '--natnet1', '10.174.249/24'],
+        quiet_on_success=True)
+
 def _init_docker_vm():
     """Initialize the Dusty VM if it does not already exist."""
     if not _dusty_vm_exists():
@@ -80,6 +89,7 @@ def _start_docker_vm():
     if not docker_vm_is_running():
         logging.info('Starting docker-machine VM {}'.format(constants.VM_MACHINE_NAME))
         _apply_nat_dns_host_resolver()
+        _apply_nat_net_less_greedy_subnet()
         check_and_log_output_and_error_demoted(['docker-machine', 'start', constants.VM_MACHINE_NAME], quiet_on_success=True)
 
 def _stop_docker_vm():
