@@ -16,7 +16,7 @@ from docopt import docopt
 
 from .preflight import preflight_check, refresh_preflight_warnings
 from .log import configure_logging, make_socket_logger, close_socket_logger
-from .constants import SOCKET_PATH, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
+from .constants import SOCKET_PATH, SOCKET_ACK, SOCKET_TERMINATOR, SOCKET_ERROR_TERMINATOR
 from .payload import Payload, get_payload_function, init_yaml_constructor
 from .memoize import reset_memoize_cache
 from .warnings import daemon_warnings
@@ -73,6 +73,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
     while True:
         try:
             connection, client_address = sock.accept()
+            connection.sendall(SOCKET_ACK)
             make_socket_logger(connection)
             try:
                 data = connection.recv(1024)
