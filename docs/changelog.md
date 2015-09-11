@@ -4,7 +4,8 @@
 
 * **New**
     * Host names specified in app specs (`host_forwarding.host_name`) can now be used from inside any Dusty app container - previously they only worked from the host Mac.
-
+* **Misc**
+    * The Dusty VM now reserves 10.174.249.x for NAT routing inside the VM. Previously, it reserved 10.0.2.x.
 
 ## 0.6.1 (September 9, 2015)
 
