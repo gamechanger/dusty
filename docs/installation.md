@@ -27,7 +27,7 @@ to talk to your remote git repository (GitHub for instance).
 
 To download and install Dusty, run:
 ```
-bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.6.1/install.sh`"
+bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.6.2/install.sh`"
 ```
 
 This script will install Dusty as a service and run the preflight check to ensure that all
