@@ -11,6 +11,8 @@ def _get_known_hosts_path():
 
 def ensure_known_hosts(hosts):
     known_hosts_path = _get_known_hosts_path()
+    if not os.path.exists(known_hosts_path):
+        open(known_hosts_path, 'a+').close()
     modified = False
     with open(known_hosts_path, 'r+') as f:
         contents = f.read()
