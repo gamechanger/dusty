@@ -271,7 +271,7 @@ class TestCommandFile(DustyTestCase):
         port_spec = {'hosts_file': [{'host_address': 'local.something.com'}]}
         expected = [
             'dusty_once_fn () {',
-            'DOCKERHOST=`/sbin/ip route|awk \'/default/ { print $3 }\'`',
+            'DOCKERHOST=`ip route|awk \'/default/ { print $3 }\'`',
             'echo "$DOCKERHOST    local.something.com" >> /etc/hosts',
             '}',
             'if [ ! -f {} ]; then'.format(constants.FIRST_RUN_FILE_PATH),
