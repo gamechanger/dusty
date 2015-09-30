@@ -19,7 +19,7 @@ def _compose_dict_for_nginx(port_specs):
     Dusty's nginx container used for host forwarding."""
     spec = {'image': constants.NGINX_IMAGE,
             'volumes': ['{}:{}'.format(constants.NGINX_CONFIG_DIR_IN_VM, constants.NGINX_CONFIG_DIR_IN_CONTAINER)],
-            'command': 'nginx -g "daemon off;"'}
+            'command': 'nginx -g "daemon off;" -c /etc/nginx/conf.d/nginx.primary'}
     all_host_ports = set([nginx_spec['host_port'] for nginx_spec in port_specs['nginx']])
     if all_host_ports:
         spec['ports'] = []

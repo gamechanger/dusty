@@ -20,6 +20,8 @@ def update_nginx_from_config(nginx_config):
     or tell it to reload its config to pick up what we've
     just written."""
     logging.info('Updating nginx with new Dusty config')
-    temp_path = tempfile.mkstemp()[1]
-    _write_nginx_config(nginx_config, temp_path)
-    sync_local_path_to_vm(temp_path, os.path.join(constants.NGINX_CONFIG_DIR_IN_VM, 'dustyNginx.conf'))
+    temp_dir = tempfile.mkdtemp()
+    _write_nginx_config(constants.NGINX_BASE_CONFIG, os.path.join(temp_dir, constants.NGINX_PRIMARY_CONFIG_NAME))
+    _write_nginx_config(nginx_config['http'], os.path.join(temp_dir, constants.NGINX_HTTP_CONFIG_NAME))
+    _write_nginx_config(nginx_config['stream'], os.path.join(temp_dir, constants.NGINX_STREAM_CONFIG_NAME))
+    sync_local_path_to_vm(temp_dir, constants.NGINX_CONFIG_DIR_IN_VM)

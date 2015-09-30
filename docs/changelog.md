@@ -2,6 +2,9 @@
 
 ## 0.6.3 (In Progress)
 
+* **New**
+    * Dusty can now forward arbitrary TCP connections (for example, SSH) through to running containers by specifying a `type: stream` key as part of `host_forwarding` configuration in app specs. See the [SSH server app spec](https://github.com/gamechanger/dusty-example-specs/blob/master/apps/sshServer.yml) for an example.
+
 ## 0.6.2 (September 14, 2015)
 
 * **New**

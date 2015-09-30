@@ -104,6 +104,14 @@ host_forwarding:
   - host_name: local.website.com
     host_port: 80
     container_port: 80
+
+  -or-
+
+host_forwarding:
+  - host_name: local.ssh.com
+    host_port: 2222
+    container_port: 22
+    type: stream
 ```
 
 `host_forwarding` allows you to specify routes which can be used to reach this app's container.  These routes expose access to containers from your host OS, as well as from any other Dusty app containers.
@@ -111,9 +119,11 @@ host_forwarding:
 **host_name**: local hostname exposed on your host OS.
 **host_port**: local port which routes through to the container port.
 **container_port**: remote port the app is running on in the Docker container.
+**type**: Optional. Either `http` or `stream` based on the type of connection you want to forward. Defaults to `http`.
 
-In this example, we would be able to go to `local.website.com:80` on our host OS and talk to the process inside this app's container on port 80.
-We would also be able to `curl local.website.com` from another app container.
+In the first example, we would be able to go to `local.website.com:80` on our host OS and talk to the process inside this app's container on port 80. We would also be able to `curl local.website.com` from another app container.
+
+The `stream` forwarding type can be used for passing arbitrary TCP traffic through to a container without any specific HTTP handling. This is useful for non-HTTP services like SSH.
 
 ## image
 
