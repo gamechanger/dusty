@@ -15,6 +15,7 @@ class TestReposCLI(DustyIntegrationTestCase):
     def setUp(self):
         super(TestReposCLI, self).setUp()
         busybox_single_app_bundle_fixture(num_bundles=1)
+        single_specs_fixture()
 
         self.temp_repos_dir = mkdtemp()
         self.fake_override_dir = mkdtemp()
@@ -30,7 +31,6 @@ class TestReposCLI(DustyIntegrationTestCase):
         self._set_up_fake_local_repo(path=self.fake_from_repo_location)
         self.fake_source_repo_location = '/tmp/fake-repo'
         self._set_up_fake_local_repo(path=self.fake_source_repo_location)
-        single_specs_fixture()
 
     def tearDown(self):
         rmtree(self.temp_repos_dir)

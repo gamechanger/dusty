@@ -14,7 +14,6 @@ from contextlib import contextmanager
 from unittest import TestCase
 from nose.tools import nottest
 from mock import patch
-import git
 
 from dusty import constants
 from dusty.config import write_default_config, save_config_value, get_config, save_config
@@ -27,7 +26,7 @@ from dusty.systems.nfs import client as nfs_client
 from dusty.systems.nfs import server as nfs_server
 from dusty.path import parent_dir
 from dusty.subprocess import call_demoted
-from .fixtures import basic_specs_fixture
+from .fixtures import basic_specs_fixture, set_up_fake_local_repo
 from dusty.log import client_logger, DustyClientTestingSocketHandler
 from dusty.memoize import reset_memoize_cache
 
@@ -192,11 +191,7 @@ class DustyIntegrationTestCase(TestCase):
             raise RuntimeError('Exec docker processes didn\'t complete before timeout of {}s'.format(timeout))
 
     def _set_up_fake_local_repo(self, path='/tmp/fake-repo'):
-        repo = git.Repo.init(path)
-        with open(os.path.join(path, 'README.md'), 'w') as f:
-            f.write('# {}'.format(path.split('/')[-1]))
-        repo.index.add([os.path.join(path, 'README.md')])
-        repo.index.commit('Initial commit')
+        set_up_fake_local_repo(path)
 
     def _in_same_line(self, string, *values):
         for line in string.splitlines():

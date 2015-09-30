@@ -4,6 +4,9 @@ from mock import patch
 import os
 import yaml
 
+import git
+
+from dusty.source import Repo
 from dusty.compiler.spec_assembler import get_specs_path
 from dusty.schemas.base_schema_class import DustySchema, DustySpecs
 from dusty.schemas.app_schema import app_schema
@@ -13,17 +16,31 @@ def _num_to_alpha(num):
         raise ValueError('Only supports up to 26')
     return chr(num + 97)
 
+def set_up_fake_local_repo(path='/tmp/fake-repo'):
+    repo = git.Repo.init(path)
+    with open(os.path.join(path, 'README.md'), 'w') as f:
+        f.write('# {}'.format(path.split('/')[-1]))
+    repo.index.add([os.path.join(path, 'README.md')])
+    repo.index.commit('Initial commit')
+
 def _write(spec_type, name, spec_doc):
     spec_type_path = os.path.join(get_specs_path(), '{}s'.format(spec_type))
+
     try:
         os.makedirs(spec_type_path)
     except OSError:
         pass
+
     spec_path = os.path.join(spec_type_path, '{}.yml'.format(name))
     if os.path.exists(spec_path):
         os.remove(spec_path)
     with open(spec_path, 'w') as f:
         f.write(yaml.safe_dump(spec_doc, default_flow_style=False))
+
+    if 'repo' in spec_doc:
+        repo = Repo(spec_doc['repo'])
+        if repo.is_local_repo:
+            set_up_fake_local_repo('/{}'.format(repo.rel_path))
 
 def premade_app():
     return DustySchema(app_schema, {'repo': '/tmp/fake-repo',
@@ -103,7 +120,7 @@ def basic_specs_fixture():
                             'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
                                         'name': 'example'}]})
-    _write('app', 'app-c', {'repo': '/gc/repos/c',
+    _write('app', 'app-c', {'repo': '/tmp/repo-c',
                             'commands': {
                                 'always': ['sleep 10']
                             },
