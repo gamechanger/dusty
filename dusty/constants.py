@@ -51,6 +51,43 @@ NGINX_CONFIG_DIR_IN_CONTAINER = '/etc/nginx/conf.d'
 NGINX_MAX_FILE_SIZE = "500M"
 NGINX_IMAGE = "nginx:1.9.3"
 
+NGINX_PRIMARY_CONFIG_NAME = 'nginx.primary'
+NGINX_HTTP_CONFIG_NAME = 'dusty.http.conf'
+NGINX_STREAM_CONFIG_NAME = 'dusty.stream.conf'
+
+NGINX_BASE_CONFIG = """
+user  nginx;
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+events {
+    worker_connections  1024;
+}
+
+stream {
+    include /etc/nginx/conf.d/*.stream.conf;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+
+    keepalive_timeout  65;
+
+    include /etc/nginx/conf.d/*.http.conf;
+}
+"""
+
 VM_CP_DIR = '/cp'
 CONTAINER_CP_DIR = '/cp'
 

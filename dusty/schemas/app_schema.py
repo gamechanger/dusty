@@ -1,4 +1,5 @@
 from schemer import Schema, Array
+from schemer.validators import one_of
 
 from .test_schema import test_schema
 from .asset_schema import asset_schema
@@ -35,7 +36,8 @@ conditional_links_schema = Schema({
 host_forwarding_schema = Schema({
     'host_name': {'type': basestring},
     'host_port': {'type': int},
-    'container_port': {'type': int}
+    'container_port': {'type': int},
+    'type': {'type': basestring, 'default': 'http', 'validates': one_of('http', 'stream')}
     })
 
 commands_schema = Schema({
