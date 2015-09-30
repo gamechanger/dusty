@@ -40,7 +40,7 @@ def _write(spec_type, name, spec_doc):
     if 'repo' in spec_doc:
         repo = Repo(spec_doc['repo'])
         if repo.is_local_repo:
-            set_up_fake_local_repo(repo.local_path)
+            set_up_fake_local_repo('/{}'.format(repo.rel_path))
 
 def premade_app():
     return DustySchema(app_schema, {'repo': '/tmp/fake-repo',
@@ -120,7 +120,7 @@ def basic_specs_fixture():
                             'scripts': [{'description': 'A script description',
                                         'command': ['ls /'],
                                         'name': 'example'}]})
-    _write('app', 'app-c', {'repo': '/gc/repos/c',
+    _write('app', 'app-c', {'repo': '/tmp/repo-c',
                             'commands': {
                                 'always': ['sleep 10']
                             },
