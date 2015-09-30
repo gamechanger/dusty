@@ -87,6 +87,6 @@ class TestCommandFile(DustyIntegrationTestCase):
         self.run_command('bundles activate bundle-b')
         self.run_command('up --no-pull')
         hosts_contents = self.exec_in_container('appa', 'cat /etc/hosts')
-        ip_route = self.exec_in_container('appa', '/sbin/ip route')
+        ip_route = self.exec_in_container('appa', 'ip route')
         dockerhost = filter(lambda line: 'default' in line, ip_route.splitlines())[0].split()[2]
         self.assertInSameLine(hosts_contents, 'local.appc.com', dockerhost)

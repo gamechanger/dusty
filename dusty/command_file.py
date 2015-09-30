@@ -42,7 +42,7 @@ def _tee_output_commands(command_to_tee):
 def _hosts_export_commands(port_spec):
     if not port_spec['hosts_file']:
         return []
-    commands = ['DOCKERHOST=`/sbin/ip route|awk \'/default/ { print $3 }\'`']
+    commands = ['DOCKERHOST=`ip route|awk \'/default/ { print $3 }\'`']
     commands.extend(['echo "$DOCKERHOST    {}" >> /etc/hosts'.format(host['host_address'])
         for host in port_spec['hosts_file']])
     return commands
