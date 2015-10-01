@@ -107,7 +107,8 @@ def _get_test_image_setup_commands(app_or_lib_name, expanded_specs, testing_spec
     commands = ['set -e']
     commands += lib_install_commands_for_app_or_lib(app_or_lib_name, expanded_specs)
     commands += ['cd {}'.format(container_code_path(spec_for_service(app_or_lib_name, expanded_specs)))]
-    commands += testing_spec['once']
+    if testing_spec['once']:
+        commands += testing_spec['once']
     return commands
 
 def _lib_install_commands_for_libs(assembled_specs, libs):
@@ -188,9 +189,9 @@ def make_up_command_files(assembled_specs, port_spec):
 def make_test_command_files(app_or_lib_name, expanded_specs):
     app_or_lib_spec = expanded_specs.get_app_or_lib(app_or_lib_name)
     test_spec = app_or_lib_spec['test']
-    if test_spec and test_spec['once']:
-        suite_specs = test_spec['suites']
-        _write_test_command(app_or_lib_spec, expanded_specs)
-        for suite_spec in suite_specs:
-            _write_test_suite_command(app_or_lib_spec, suite_spec)
+    if not test_spec:
+        raise RuntimeError('No tests defined for {}'.format(app_or_lib_name))
+    _write_test_command(app_or_lib_spec, expanded_specs)
+    for suite_spec in test_spec['suites']:
+        _write_test_suite_command(app_or_lib_spec, suite_spec)
     sync_local_path_to_vm(constants.COMMAND_FILES_DIR, constants.VM_COMMAND_FILES_DIR)

@@ -2,6 +2,9 @@
 
 ## 0.6.4 (In Progress)
 
+* **Misc**
+    * Fixed a bug which could prevent tests without `once` commands from running correctly.
+
 ## 0.6.3 (October 1, 2015)
 
 * **New**
