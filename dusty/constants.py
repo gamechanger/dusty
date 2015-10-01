@@ -1,7 +1,7 @@
 import os
 import re
 
-VERSION = '0.6.3'
+VERSION = '0.6.4'
 BINARY = False # overridden by PyInstaller when we build a binary
 PRERELEASE = False # overridden by PyInstaller when we build a prerelease binary
 
