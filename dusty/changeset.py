@@ -24,9 +24,7 @@ class RepoChangeSet(object):
     @property
     def primary_spec(self):
         expanded_specs = get_expanded_libs_specs()
-        if self.app_or_library_name in expanded_specs['apps']:
-            return expanded_specs['apps'][self.app_or_library_name]
-        return expanded_specs['libs'][self.app_or_library_name]
+        return expanded_specs.get_app_or_lib(self.app_or_library_name)
 
     def _get_current_sha_dict(self):
         return {repo.remote_path: repo.local_commit_sha
