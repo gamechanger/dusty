@@ -138,6 +138,10 @@ class Repo(object):
         with git_error_handling():
             git.Repo.clone_from(self.assemble_remote_path(), self.managed_path)
 
+    @property
+    def local_commit_sha(self):
+        return git.Repo(self.local_path).commit().hexsha
+
     def get_latest_commit(self):
         repo = git.Repo(self.managed_path)
         for ref in repo.refs:
@@ -148,9 +152,9 @@ class Repo(object):
     def local_is_up_to_date(self):
         self.ensure_local_repo()
         repo = git.Repo(self.managed_path)
-        local_commit = repo.commit()
+        managed_commit = repo.commit()
         latest_commit = self.get_latest_commit()
-        return local_commit.hexsha == latest_commit.hexsha
+        return managed_commit.hexsha == latest_commit.hexsha
 
     def update_local_repo(self, force=False):
         """Given a remote path (e.g. github.com/gamechanger/gclib), pull the latest
