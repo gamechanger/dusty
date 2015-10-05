@@ -48,6 +48,6 @@ class TestRepoChangeset(DustyTestCase):
         current_config = get_config_value(constants.CONFIG_CHANGESET_KEY) or {}
         self.assertIsNone(current_config.get(self.changeset.set_key))
         self.changeset.update()
-        expected = {'github.com/app/a': 'sha_github.com/app/a', 'github.com/lib/a': 'sha_github.com/lib/a'}
+        expected = {'app-a': {'github.com/app/a': 'sha_github.com/app/a', 'github.com/lib/a': 'sha_github.com/lib/a'}}
         updated_config = get_config_value(constants.CONFIG_CHANGESET_KEY) or {}
         self.assertItemsEqual(expected, updated_config.get(self.changeset.set_key))

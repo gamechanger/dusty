@@ -12,7 +12,7 @@ class RepoChangeSet(object):
     time I made a testing image for it?" You could make a changeset for
     that this way:
 
-    RepoChangeSet('testing_image_myapp', 'myapp')
+    RepoChangeSet('testing_image', 'myapp')
     """
     def __init__(self, set_key, app_or_library_name):
         self.set_key = set_key
@@ -32,9 +32,11 @@ class RepoChangeSet(object):
 
     def has_changed(self):
         stored = get_config_value(constants.CONFIG_CHANGESET_KEY) or {}
-        return self._get_current_sha_dict() != stored.get(self.set_key, {})
+        return self._get_current_sha_dict() != stored.get(self.set_key, {}).get(self.app_or_library_name, {})
 
     def update(self):
         stored = get_config_value(constants.CONFIG_CHANGESET_KEY) or {}
-        stored[self.set_key] = self._get_current_sha_dict()
+        if self.set_key not in stored:
+            stored[self.set_key] = {}
+        stored[self.set_key][self.app_or_library_name] = self._get_current_sha_dict()
         save_config_value(constants.CONFIG_CHANGESET_KEY, stored)
