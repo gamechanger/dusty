@@ -108,6 +108,7 @@ CONFIG_SPECS_REPO_KEY = 'specs_repo'
 CONFIG_SETUP_KEY = 'setup_has_run'
 CONFIG_ENV_KEY = 'dusty_env_overrides'
 CONFIG_VM_MEM_SIZE = 'vm_memory_size'
+CONFIG_CHANGESET_KEY = 'changeset'
 
 CONFIG_SETTINGS = {
     CONFIG_BUNDLES_KEY: 'All currently activated bundles. These are the bundles that Dusty will set up for you when you run "dusty up".',
