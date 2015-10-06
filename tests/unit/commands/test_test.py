@@ -69,7 +69,6 @@ class TestTestsCommands(DustyTestCase):
         test.run_one_suite('lib-a', 'nose', [])
 
         fake_update_nfs.assert_has_calls([])
-        fake_ensure_current_image.assert_has_calls([call('lib-a', False)])
         fake_exit.assert_has_calls([call(0)])
 
     @patch('dusty.commands.test._run_tests_with_image')
@@ -84,9 +83,8 @@ class TestTestsCommands(DustyTestCase):
         fake_get_docker_client.return_value = 'docker-client'
         fake_run_tests.return_value = 1
 
-        test.run_one_suite('app-a','nose', [], force_recreate=True)
+        test.run_one_suite('app-a','nose', [])
 
-        fake_ensure_current_image.assert_has_calls([call('app-a', True)])
         fake_exit.assert_has_calls([call(1)])
 
     @patch('dusty.commands.test._run_tests_with_image')
@@ -97,7 +95,7 @@ class TestTestsCommands(DustyTestCase):
         fake_expanded_libs.return_value = self.specs
         fake_run_tests.side_effect = [0, 1]
 
-        test.run_all_suites('multi-suite-lib', force_recreate=True)
+        test.run_all_suites('multi-suite-lib')
 
         fake_run_tests.assert_has_calls([call('multi-suite-lib', 'nose1', None),
                                        call('multi-suite-lib', 'nose2', None)])

@@ -58,7 +58,7 @@ def ensure_valid_suite_name(app_or_lib_name, suite_name):
     _get_suite_spec(app_or_lib_name, suite_name)
 
 @daemon_command
-def setup_for_test(app_or_lib_name, pull_repos=False):
+def setup_for_test(app_or_lib_name, pull_repos=False, force_recreate=False):
     initialize_docker_vm()
     expanded_specs = get_expanded_libs_specs()
     make_test_command_files(app_or_lib_name, expanded_specs)
@@ -66,6 +66,7 @@ def setup_for_test(app_or_lib_name, pull_repos=False):
         _update_test_repos(app_or_lib_name)
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
     nfs.update_nfs_with_repos(get_same_container_repos_from_spec(spec))
+    ensure_current_image(app_or_lib_name, force_recreate)
 
 def ensure_current_image(app_or_lib_name, force_recreate):
     changeset = RepoChangeSet(constants.CHANGESET_TESTING_KEY, app_or_lib_name)
@@ -76,17 +77,13 @@ def ensure_current_image(app_or_lib_name, force_recreate):
         update_test_image(app_or_lib_name)
         changeset.update()
 
-def run_one_suite(app_or_lib_name, suite_name, test_arguments, force_recreate=False):
-    ensure_current_image(app_or_lib_name, force_recreate)
-
+def run_one_suite(app_or_lib_name, suite_name, test_arguments):
     exit_code = _run_tests_with_image(app_or_lib_name, suite_name, test_arguments)
 
     log_to_client('TESTS {} {}'.format(suite_name, 'FAILED' if exit_code != 0 else 'PASSED'))
     sys.exit(exit_code)
 
-def run_all_suites(app_or_lib_name, force_recreate=False):
-    ensure_current_image(app_or_lib_name, force_recreate)
-
+def run_all_suites(app_or_lib_name):
     spec = get_expanded_libs_specs().get_app_or_lib(app_or_lib_name)
 
     summary_table = PrettyTable(['Suite', 'Description', 'Result', 'Time (s)'])

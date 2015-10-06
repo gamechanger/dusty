@@ -30,22 +30,22 @@ def main(argv):
     if args['<suite_name>'] == 'all':
         payload0 = Payload(setup_for_test,
                            args['<app_or_lib_name>'],
-                           pull_repos=not args['--no-pull'])
-        payload1 = Payload(run_all_suites,
-                           args['<app_or_lib_name>'],
+                           pull_repos=not args['--no-pull'],
                            force_recreate=args['--recreate'])
+        payload1 = Payload(run_all_suites,
+                           args['<app_or_lib_name>'])
         payload1.run_on_daemon = False
         return [payload0, payload1]
     elif args['<suite_name>']:
         payload0 = Payload(ensure_valid_suite_name, args['<app_or_lib_name>'], args['<suite_name>'])
         payload1 = Payload(setup_for_test,
                            args['<app_or_lib_name>'],
-                           pull_repos=not args['--no-pull'])
+                           pull_repos=not args['--no-pull'],
+                           force_recreate=args['--recreate'])
         payload2 = Payload(run_one_suite,
                            args['<app_or_lib_name>'],
                            args['<suite_name>'],
-                           args['<args>'],
-                           force_recreate=args['--recreate'])
+                           args['<args>'])
         payload2.run_on_daemon = False
         return [payload0, payload1, payload2]
 
