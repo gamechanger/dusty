@@ -77,10 +77,9 @@ class TestCommandFile(DustyIntegrationTestCase):
 
     def test_test_recreate_stops_on_error(self):
         fixture_with_commands(test_fail=True)
-        with self.assertRaises(ImageCreationError):
-            self.run_command('test --recreate appa test')
-        self.assertTrue('tests starting' in self.handler.log_to_client_output)
-        self.assertInSameLine(self.handler.log_to_client_output, 'random-command', 'not found')
+        result = self.run_command('test --recreate appa test', raise_on_error=False)
+        self.assertTrue('tests starting' in result)
+        self.assertInSameLine(result, 'random-command', 'not found')
         self.assertFalse('tests running' in self.handler.log_to_client_output)
         self.assertFalse('tests passed' in self.handler.log_to_client_output)
 
