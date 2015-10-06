@@ -104,7 +104,7 @@ def test_image_exists(app_or_lib_name):
     image_name = test_image_name(app_or_lib_name)
     docker_client = get_docker_client()
     images = docker_client.images()
-    return any((image_name in image['RepoTags'] or '{}:latest'.format(image_name))
+    return any((image_name in image['RepoTags'] or '{}:latest'.format(image_name) in image['RepoTags'])
                for image in images)
 
 def create_test_image(app_or_lib_name):
