@@ -37,7 +37,7 @@ class TestPortSpecCompiler(DustyTestCase):
                 }
             }
         """)
-        output = cleanse(get_nginx_configuration_spec(self.port_spec_dict_1)['http'])
+        output = cleanse(get_nginx_configuration_spec(self.port_spec_dict_1, '172.17.42.1')['http'])
         self.assertEqual(output, expected_output)
 
     def test_get_nginx_configuration_spec_2(self):
@@ -56,7 +56,7 @@ class TestPortSpecCompiler(DustyTestCase):
                 }
             }
         """)
-        output = cleanse(get_nginx_configuration_spec(self.port_spec_dict_2)['http'])
+        output = cleanse(get_nginx_configuration_spec(self.port_spec_dict_2, '172.17.42.1')['http'])
         self.assertEqual(output, expected_output)
 
     def test_get_nginx_configuration_spec_3(self):
@@ -97,7 +97,7 @@ class TestPortSpecCompiler(DustyTestCase):
                 }
             }
         """)
-        output = cleanse(get_nginx_configuration_spec(port_spec)['http'])
+        output = cleanse(get_nginx_configuration_spec(port_spec, '172.17.42.1')['http'])
         self.assertEqual(output, expected_output)
 
     def test_get_nginx_configuration_spec_stream(self):
@@ -107,7 +107,7 @@ class TestPortSpecCompiler(DustyTestCase):
                 proxy_pass 172.17.42.1:8000;
             }
         """)
-        output = cleanse(get_nginx_configuration_spec(self.port_spec_dict_3)['stream'])
+        output = cleanse(get_nginx_configuration_spec(self.port_spec_dict_3, '172.17.42.1')['stream'])
         self.assertEqual(output, expected_output)
 
     def test_nginx_listen_string_1(self):
@@ -123,10 +123,13 @@ class TestPortSpecCompiler(DustyTestCase):
         self.assertEqual("server_name local.gcapi.com;", _nginx_server_name_string(self.port_spec_dict_2['nginx'][0]))
 
     def test_nginx_proxy_string_1(self):
-        self.assertEqual("proxy_pass http://172.17.42.1:80;", _nginx_proxy_string(self.port_spec_dict_1['nginx'][0]))
+        self.assertEqual("proxy_pass http://172.17.42.1:80;", _nginx_proxy_string(self.port_spec_dict_1['nginx'][0],
+                                                                                  '172.17.42.1'))
 
     def test_nginx_proxy_string_2(self):
-        self.assertEqual("proxy_pass http://172.17.42.1:8000;", _nginx_proxy_string(self.port_spec_dict_2['nginx'][0]))
+        self.assertEqual("proxy_pass http://172.17.42.1:8000;", _nginx_proxy_string(self.port_spec_dict_2['nginx'][0],
+                                                                                    '172.17.42.1'))
 
     def test_nginx_proxy_string_3(self):
-        self.assertEqual("proxy_pass 172.17.42.1:8000;", _nginx_proxy_string(self.port_spec_dict_3['nginx'][0]))
+        self.assertEqual("proxy_pass 172.17.42.1:8000;", _nginx_proxy_string(self.port_spec_dict_3['nginx'][0],
+                                                                             '172.17.42.1'))

@@ -3,6 +3,8 @@
 ## 0.6.4 (In Progress)
 
 * **Misc**
+    * Added support for Docker 1.9 following breaking changes to the default Docker bridge IP.
+    * Test images are now automatically rebuilt when repos they depend on have new commits.
     * Fixed a bug which could prevent tests without `once` commands from running correctly.
 
 ## 0.6.3 (October 1, 2015)
