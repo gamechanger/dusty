@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.6.4 (In Progress)
+## 0.6.5 (In Progress)
+
+## 0.6.4 (November 23, 2015)
 
 * **Misc**
     * Added support for Docker 1.9 following breaking changes to the default Docker bridge IP.
