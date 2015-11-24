@@ -111,8 +111,9 @@ def _load_ssh_auth_pre_yosemite():
 def _set_ssh_auth_sock(ssh_auth_sock):
     daemon_warnings.clear_namespace('ssh')
     if ssh_auth_sock:
-        logging.info("Setting SSH_AUTH_SOCK to {}".format(ssh_auth_sock))
-        os.environ['SSH_AUTH_SOCK'] = ssh_auth_sock
+        if ssh_auth_sock != os.getenv('SSH_AUTH_SOCK'):
+            logging.info("Setting SSH_AUTH_SOCK to {}".format(ssh_auth_sock))
+            os.environ['SSH_AUTH_SOCK'] = ssh_auth_sock
     else:
         daemon_warnings.warn('ssh', 'SSH_AUTH_SOCK not determined; git operations may fail')
 
@@ -122,9 +123,6 @@ def check_and_load_ssh_auth():
     SSH_AUTH_SOCK environment variable to the current environment.  This allows git clones
     to behave the same for the daemon as they do for the user
     """
-    if os.getenv('SSH_AUTH_SOCK'):
-        logging.info('SSH_AUTH_SOCK already set')
-        return _set_ssh_auth_sock(os.getenv('SSH_AUTH_SOCK'))
 
     mac_username = get_config_value(constants.CONFIG_MAC_USERNAME_KEY)
     if not mac_username:
