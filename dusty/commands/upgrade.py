@@ -57,6 +57,7 @@ def _test_dusty_binary(binary_path, version):
 def _move_temp_binary_to_path(tmp_binary_path):
     """Moves the temporary binary to the location of the binary that's currently being run.
     Preserves owner, group, and permissions of original binary"""
+    # pylint: disable=E1101
     binary_path = _get_binary_location()
     if not binary_path.endswith(constants.DUSTY_BINARY_NAME):
         raise RuntimeError('Refusing to overwrite binary {}'.format(binary_path))
