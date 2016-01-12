@@ -29,7 +29,7 @@ def get_dusty_container_name(service_name):
 @memoized
 def get_docker_env():
     env = {}
-    output = check_output_demoted(['docker-machine', 'env', constants.VM_MACHINE_NAME], redirect_stderr=True)
+    output = check_output_demoted(['docker-machine', 'env', constants.VM_MACHINE_NAME, '--shell', 'bash'], redirect_stderr=True)
     for line in output.splitlines():
         if not line.strip().startswith('export'):
             continue
