@@ -4,6 +4,7 @@
 
 * **Misc**
     * Dusty now recognizes if the SSH agent socket path has changed on each command and resets the value if necessary
+    * Dusty is now compatible with recent versions of `docker-machine env` by passing the `--shell` flag
 
 ## 0.6.4 (November 23, 2015)
 
