@@ -4,7 +4,7 @@ cask 'dusty' do
 
   url "https://github.com/gamechanger/dusty/releases/download/#{version}/dusty.tar.gz"
   appcast 'https://github.com/gamechanger/dusty/releases.atom',
-          :sha256 => '14dd655e5ed3a55495436c0fc9fb426bedb461a600083d10f72f330c66181d7a'
+          :checkpoint => '14dd655e5ed3a55495436c0fc9fb426bedb461a600083d10f72f330c66181d7a'
   name 'Dusty'
   homepage 'https://github.com/gamechanger/dusty'
   license :mit
