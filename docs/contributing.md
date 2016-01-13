@@ -57,3 +57,5 @@ into one of three types:
 * Bump the version number in `dusty/constants.py` to the new, in-progress version
 
 * Go update the release on GitHub to include the new version's notes from the changelog
+
+* Follow [Homebrew's instructions](https://github.com/caskroom/homebrew-cask/blob/master/CONTRIBUTING.md#updating-a-cask) to update our cask
