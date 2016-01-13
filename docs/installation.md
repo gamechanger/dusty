@@ -1,13 +1,5 @@
 # Installing Dusty
 
-## Requirements
-
-You must have the following installed in order to run Dusty:
-
- * [VirtualBox](https://www.virtualbox.org/wiki/VirtualBox)
- * [Docker Machine](https://docs.docker.com/machine/)
- * [Docker Compose](https://docs.docker.com/compose/)
-
 ## Pre-Dusty Install
 
 Dusty's requirements are all included in [Docker Toolbox](https://www.docker.com/toolbox).
@@ -25,7 +17,26 @@ to talk to your remote git repository (GitHub for instance).
 
 ## Dusty Installation
 
-To download and install Dusty, run:
+The easiest way to install Dusty is with [Homebrew](http://brew.sh/):
+
+```
+brew cask install dusty
+```
+
+If that worked, [continue to Setup.](setup.md)
+
+### Manual Installation
+
+You can also install Dusty manually. First, make sure you have the following requirements installed:
+
+ * [VirtualBox](https://www.virtualbox.org/wiki/VirtualBox)
+ * [Docker Machine](https://docs.docker.com/machine/)
+ * [Docker Compose](https://docs.docker.com/compose/)
+
+These can be obtained all together from [Docker Toolbox](https://www.docker.com/docker-toolbox).
+
+Then, run the following to download and install Dusty:
+
 ```
 bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.6.5/install.sh`"
 ```
@@ -33,5 +44,3 @@ bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.6.5/i
 This script will install Dusty as a service and run the preflight check to ensure that all
 dependencies are installed. If the script throws an error, make sure to resolve that before
 continuing.
-
-If that worked, [continue to Setup.](setup.md)
