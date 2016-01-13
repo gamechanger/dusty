@@ -1,4 +1,6 @@
 import os
+import tarfile
+
 from github3 import login
 
 token = os.getenv('GITHUB_TOKEN')
@@ -22,3 +24,12 @@ for binary in ['dusty']:
         release.upload_asset(content_type='application/octet-stream',
                              name=binary,
                              asset=f)
+
+with tarfile.open('dusty.tar.gz', 'w:gz') as tarball:
+    tarball.add('dist/dusty', arcname='dusty')
+    tarball.add('setup/com.gamechanger.dusty.plist', arcname='com.gamechanger.dusty.plist')
+
+with open('dusty.tar.gz', 'r') as f:
+    release.upload_asset(content_type='application/octet-stream',
+                         name='dusty.tar.gz',
+                         asset=f)
