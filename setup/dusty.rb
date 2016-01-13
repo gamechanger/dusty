@@ -19,4 +19,6 @@ cask 'dusty' do
   binary 'dusty'
 
   uninstall :launchctl => 'com.gamechanger.dusty'
+
+  zap :delete => '/etc/dusty'
 end
