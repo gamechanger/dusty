@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.6.5 (In Progress)
+## 0.6.6 (In Progress)
+
+## 0.6.5 (January 13, 2016)
 
 * **Misc**
     * Dusty now recognizes if the SSH agent socket path has changed on each command and resets the value if necessary
