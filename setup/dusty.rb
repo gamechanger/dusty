@@ -1,10 +1,10 @@
 cask 'dusty' do
   version '0.6.5'
-  sha256 'd71115ca9029dcd82ba2394824d2da0a7a5a794eb07d2be936868f1f163383db'
+  sha256 '6e88894c7062f24bb8b4b7b2faa149b6b638c7d3fa2be86a56266e2d1789ea60'
 
   url "https://github.com/gamechanger/dusty/releases/download/#{version}/dusty.tar.gz"
   appcast 'https://github.com/gamechanger/dusty/releases.atom',
-          :sha256 => 'c38f94f0be6d2b29a458994ca3f415c66557f4329de0b5926d66624264618b56'
+          :sha256 => '14dd655e5ed3a55495436c0fc9fb426bedb461a600083d10f72f330c66181d7a'
   name 'Dusty'
   homepage 'https://github.com/gamechanger/dusty'
   license :mit
@@ -13,6 +13,7 @@ cask 'dusty' do
   container :type => :tar
 
   installer :script       => 'brew-install.sh',
+            :args         => %W[#{staged_path}],
             :must_succeed => true,
             :sudo         => true
   binary 'dusty'
