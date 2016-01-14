@@ -2,8 +2,7 @@
 
 ## Pre-Dusty Install
 
-Dusty's requirements are all included in [Docker Toolbox](https://www.docker.com/toolbox).
-Please install this before continuing.
+Make sure that Dusty can access your SSH keys for pulling down repositories:
 
 ```
 ssh-add -K
