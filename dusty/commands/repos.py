@@ -19,7 +19,7 @@ def list_repos():
     for repo in repos:
         table.add_row([repo.remote_path, repo.short_name,
                        repo.override_path if repo.is_overridden else ''])
-    log_to_client(table.get_string(sortby='Full Name'))
+    log_to_client(table.get_string(sortby='Short Name'))
 
 @daemon_command
 def override_repo(repo_name, source_path):
