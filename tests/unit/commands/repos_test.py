@@ -28,26 +28,29 @@ class TestReposCommands(DustyTestCase):
     def test_list_repos_with_no_overrides(self):
         list_repos()
         self._assert_listed_repos(self.last_client_output,
-                                  [['github.com/app/a', False],
-                                   ['github.com/app/b', False]],
-                                  offset=1)
+                                  [['github.com/app/a', False]])
+        self._assert_listed_repos(self.last_client_output,
+                                  [['github.com/app/b', False]],
+                                  offset=2)
 
     def test_list_repos_with_one_override(self):
         override_repo('github.com/app/a', self.temp_specs_path)
         list_repos()
         self._assert_listed_repos(self.last_client_output,
-                                  [['github.com/app/a', self.temp_specs_path],
-                                   ['github.com/app/b', False]],
-                                  offset=1)
+                                  [['github.com/app/a', self.temp_specs_path]])
+        self._assert_listed_repos(self.last_client_output,
+                                  [['github.com/app/b', False]],
+                                  offset=2)
 
     def test_list_repos_with_both_overridden(self):
         override_repo('github.com/app/a', self.temp_specs_path)
         override_repo('github.com/app/b', self.temp_specs_path)
         list_repos()
         self._assert_listed_repos(self.last_client_output,
-                                  [['github.com/app/a', self.temp_specs_path],
-                                   ['github.com/app/b', self.temp_specs_path]],
-                                  offset=1)
+                                  [['github.com/app/a', self.temp_specs_path]])
+        self._assert_listed_repos(self.last_client_output,
+                                  [['github.com/app/b', self.temp_specs_path]],
+                                  offset=2)
 
     def test_override_repo(self):
         override_repo('github.com/app/a', self.temp_specs_path)
@@ -62,9 +65,10 @@ class TestReposCommands(DustyTestCase):
             override_repo('github.com/app/a', bad_path)
         list_repos()
         self._assert_listed_repos(self.last_client_output,
-                                  [['github.com/app/a', False],
-                                   ['github.com/app/b', False]],
-                                  offset=1)
+                                  [['github.com/app/a', False]])
+        self._assert_listed_repos(self.last_client_output,
+                                  [['github.com/app/b', False]],
+                                  offset=2)
 
     def test_override_then_manage_repo(self):
         override_repo('github.com/app/a', self.temp_specs_path)
