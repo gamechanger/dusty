@@ -1,6 +1,8 @@
 # Changelog
 
 ## 0.6.6 (In Progress)
+* **Misc**
+    * Added support of Docker Compose 1.6
 
 ## 0.6.5 (January 13, 2016)
 
