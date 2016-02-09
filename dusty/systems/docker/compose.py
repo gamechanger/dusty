@@ -30,7 +30,7 @@ def _compose_base_command(core_command, compose_file_location, project_name):
     return command
 
 def compose_up(compose_file_location, project_name, recreate_containers=True, quiet=False):
-    command = _compose_base_command(['up', '-d', '--allow-insecure-ssl'], compose_file_location, project_name)
+    command = _compose_base_command(['up', '-d'], compose_file_location, project_name)
     if not recreate_containers:
         command.append('--no-recreate')
     # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
