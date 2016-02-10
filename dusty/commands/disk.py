@@ -30,8 +30,10 @@ def inspect_vm_disk():
     log_to_client("Dusty VM Disk Usage:")
     log_to_client(get_docker_vm_disk_info())
 
-def _full_destination_dir(destination_path):
-    return os.path.join(destination_path, constants.LOCAL_BACKUP_DIR)
+def _full_backup_dir(path):
+    if path.endswith(constants.LOCAL_BACKUP_DIR):
+        return path
+    return os.path.join(path, constants.LOCAL_BACKUP_DIR)
 
 def _ensure_backup_dir_exists(destination_path):
     if not os.path.exists(destination_path):
@@ -39,7 +41,7 @@ def _ensure_backup_dir_exists(destination_path):
 
 @daemon_command
 def backup(path):
-    destination_path = _full_destination_dir(path)
+    destination_path = _full_backup_dir(path)
     _ensure_backup_dir_exists(destination_path)
     initialize_docker_vm()
     log_to_client("Syncing data from your VM to {}...".format(destination_path))
@@ -47,7 +49,8 @@ def backup(path):
     set_mac_user_ownership(destination_path)
 
 @daemon_command
-def restore(source_path):
+def restore(path):
+    source_path = _full_backup_dir(path)
     if not os.path.exists(source_path):
         log_to_client("Can't find backup data to restore at {}".format(source_path))
         return
