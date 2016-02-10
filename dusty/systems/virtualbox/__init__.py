@@ -80,14 +80,15 @@ def _init_docker_vm():
         logging.info('Initializing new Dusty VM with Docker Machine')
         machine_options = ['--driver', 'virtualbox',
                            '--virtualbox-cpu-count', '-1',
-                           '--virtualbox-memory', str(get_config_value(constants.CONFIG_VM_MEM_SIZE))]
+                           '--virtualbox-memory', str(get_config_value(constants.CONFIG_VM_MEM_SIZE)),
+                           '--virtualbox-hostonly-nictype', constants.VM_NIC_TYPE]
         check_call_demoted(['docker-machine', 'create'] + machine_options + [constants.VM_MACHINE_NAME],
                            redirect_stderr=True)
 
 def _start_docker_vm():
     """Start the Dusty VM if it is not already running."""
     if not docker_vm_is_running():
-        logging.info('Starting docker-machine VM {}'.format(constants.VM_MACHINE_NAME))
+        log_to_client('Starting docker-machine VM {}'.format(constants.VM_MACHINE_NAME))
         _apply_nat_dns_host_resolver()
         _apply_nat_net_less_greedy_subnet()
         check_and_log_output_and_error_demoted(['docker-machine', 'start', constants.VM_MACHINE_NAME], quiet_on_success=True)
@@ -102,8 +103,29 @@ def _get_vm_config():
 def docker_vm_is_running():
     return check_output_demoted(['docker-machine', 'status', constants.VM_MACHINE_NAME]).strip().lower() == 'running'
 
+def _vm_not_using_pcnet_fast_iii():
+    for line in _get_vm_config():
+        if 'nictype' in line and constants.VM_NIC_TYPE not in line:
+            return True
+    return False
+
+def _apply_nic_fix():
+    """Set NIC 1 to use PCnet-FAST III. The host-only NIC type is
+    set during docker-machine create (and Machine will change it
+    back if it is changed manually), which is why we only change
+    NIC 1 here."""
+    log_to_client('Setting NIC 1 to use PCnet-FAST III')
+    check_call_demoted(['VBoxManage', 'modifyvm', constants.VM_MACHINE_NAME, '--nictype1', constants.VM_NIC_TYPE])
+
 def ensure_docker_vm_is_started():
     _init_docker_vm()
+    # Switch VM to use PCnet-FAST III which we have observed to
+    # have much better performance than the default.
+    if _vm_not_using_pcnet_fast_iii():
+        log_to_client('Stopping Dusty VM to apply NIC fix for faster networking performance')
+        if docker_vm_is_running():
+            _stop_docker_vm()
+        _apply_nic_fix()
     _start_docker_vm()
 
 def initialize_docker_vm():
