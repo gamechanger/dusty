@@ -1,9 +1,6 @@
 class ReusedHostFullAddress(Exception):
     pass
 
-class ReusedContainerPort(Exception):
-    pass
-
 class ReusedStreamHostPort(Exception):
     pass
 
@@ -26,12 +23,6 @@ def _add_full_addresses(host_forwarding_spec, host_full_addresses):
     if host_full_address in host_full_addresses:
         raise ReusedHostFullAddress("{} has already been specified and used".format(host_full_address))
     host_full_addresses.add(host_full_address)
-
-def _add_container_ports(host_forwarding_spec, container_ports):
-    container_port = host_forwarding_spec['container_port']
-    if container_port in container_ports:
-        raise ReusedContainerPort("{} has already been specified and used".format(container_port))
-    container_ports.add(container_port)
 
 def _add_stream_host_port(host_forwarding_spec, stream_host_ports):
     stream_host_port = host_forwarding_spec['host_port']
@@ -59,11 +50,9 @@ def get_port_spec_document(expanded_active_specs, docker_vm_ip):
         if 'host_forwarding' not in app_spec:
             continue
         port_spec['docker_compose'][app_name] = []
-        container_ports = set()
         for host_forwarding_spec in app_spec['host_forwarding']:
             # These functions are just used for validating the set of specs all works together
             _add_full_addresses(host_forwarding_spec, host_full_addresses)
-            _add_container_ports(host_forwarding_spec, container_ports)
             if host_forwarding_spec['type'] == 'stream':
                 _add_stream_host_port(host_forwarding_spec, stream_host_ports)
 

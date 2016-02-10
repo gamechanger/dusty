@@ -3,8 +3,7 @@ from mock import patch
 from ....testcases import DustyTestCase
 from dusty.compiler.port_spec import (_docker_compose_port_spec, _nginx_port_spec,
                                       _hosts_file_port_spec, get_port_spec_document,
-                                      ReusedHostFullAddress, ReusedContainerPort,
-                                      ReusedStreamHostPort)
+                                      ReusedHostFullAddress, ReusedStreamHostPort)
 
 class TestPortSpecCompiler(DustyTestCase):
     def setUp(self):
@@ -153,25 +152,6 @@ class TestPortSpecCompiler(DustyTestCase):
                                                               'container_port': 81,
                                                               'type': 'http'}]}}}
         with self.assertRaises(ReusedHostFullAddress):
-            get_port_spec_document(expanded_spec, '192.168.5.10')
-
-    def test_port_spec_throws_container_port(self):
-        expanded_spec = {'apps':
-                                {'gcweb':
-                                         {'host_forwarding':[{'host_name': 'local.gc.com',
-                                                              'host_port': 80,
-                                                              'container_port': 80,
-                                                              'type': 'http'},
-                                                             {'host_name': 'local.gc.com',
-                                                             'host_port': 81,
-                                                              'container_port': 80,
-                                                              'type': 'http'}]},
-                                 'gcapi':
-                                         {'host_forwarding':[{'host_name': 'local.gc.com',
-                                                              'host_port': 82,
-                                                              'container_port': 81,
-                                                              'type': 'http'}]}}}
-        with self.assertRaises(ReusedContainerPort):
             get_port_spec_document(expanded_spec, '192.168.5.10')
 
     def test_port_spec_throws_stream_host_port(self):
