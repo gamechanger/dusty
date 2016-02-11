@@ -9,7 +9,7 @@ from ...testcases import DustyTestCase
 class TestEnvCommands(DustyTestCase):
     def setUp(self):
         super(TestEnvCommands, self).setUp()
-        activate_bundle(['bundle-a', 'bundle-b'])
+        activate_bundle(['bundle-a', 'bundle-b'], False)
         self.temp_file = tempfile.mkstemp()[1]
 
     def tearDown(self):

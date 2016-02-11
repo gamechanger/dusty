@@ -25,6 +25,13 @@ class TestBundlesCLI(DustyIntegrationTestCase):
         self.assertInSameLine(result, 'busyboxa', 'X')
         self.assertInSameLine(result, 'busyboxb', 'X')
 
+    def test_bundles_activate_only(self):
+        self.run_command('bundles activate busyboxa')
+        self.run_command('bundles activate --only busyboxb')
+        result = self.run_command('bundles list')
+        self.assertNotInSameLine(result, 'busyboxa', 'X')
+        self.assertInSameLine(result, 'busyboxb', 'X')
+
     def test_bundles_deactivate(self):
         self.run_command('bundles activate busyboxa')
         self.run_command('bundles deactivate busyboxa')

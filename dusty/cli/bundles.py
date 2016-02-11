@@ -10,12 +10,14 @@ your environment to what you're working on at the moment.
 You don't need to run your entire stack all the time!
 
 Usage:
-  bundles activate <bundle_names>...
+  bundles activate [--only] <bundle_names>...
   bundles deactivate <bundle_names>...
   bundles list
 
 Commands:
-  activate     Activate one or more bundles.
+  activate     Activate one or more bundles. If --only is passed,
+               all bundles not provided in this command will
+               be deactivated.
   deactivate   Deactivate one or more bundles.
   list         List all bundles and whether they are currently active.
 """
@@ -30,6 +32,6 @@ def main(argv):
     if args['list']:
         return Payload(list_bundles)
     elif args['activate']:
-        return Payload(activate_bundle, args['<bundle_names>'])
+        return Payload(activate_bundle, args['<bundle_names>'], args['--only'])
     elif args['deactivate']:
         return Payload(deactivate_bundle, args['<bundle_names>'])

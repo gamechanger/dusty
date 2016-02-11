@@ -24,25 +24,30 @@ class TestBundlesCommands(DustyTestCase):
                                      ['bundle-b', False]])
 
     def test_list_bundles_with_one_activated(self):
-        activate_bundle(['bundle-a'])
+        activate_bundle(['bundle-a'], False)
         list_bundles()
         self._assert_listed_bundles(self.last_client_output,
                                     [['bundle-a', True],
                                      ['bundle-b', False]])
 
     def test_list_bundles_with_both_activated(self):
-        activate_bundle(['bundle-a', 'bundle-b'])
+        activate_bundle(['bundle-a', 'bundle-b'], False)
         list_bundles()
         self._assert_listed_bundles(self.last_client_output,
                                     [['bundle-a', True],
                                      ['bundle-b', True]])
 
     def test_activate_bundle(self):
-        activate_bundle(['bundle-a'])
+        activate_bundle(['bundle-a'], False)
         self.assertItemsEqual(get_config_value(constants.CONFIG_BUNDLES_KEY), ['bundle-a'])
 
+    def test_activate_bundle_only(self):
+        activate_bundle(['bundle-a'], False)
+        activate_bundle(['bundle-b'], True)
+        self.assertItemsEqual(get_config_value(constants.CONFIG_BUNDLES_KEY), ['bundle-b'])
+
     def test_deactivate_bundle(self):
-        activate_bundle(['bundle-a', 'bundle-b'])
+        activate_bundle(['bundle-a', 'bundle-b'], False)
         self.assertItemsEqual(get_config_value(constants.CONFIG_BUNDLES_KEY), ['bundle-a', 'bundle-b'])
         deactivate_bundle(['bundle-a', 'bundle-b'])
         self.assertItemsEqual(get_config_value(constants.CONFIG_BUNDLES_KEY), [])

@@ -29,7 +29,7 @@ class TestAssetsCommands(DustyTestCase):
 
     def test_list(self, fake_asset_is_set, *args):
         fake_asset_is_set.return_value = True
-        bundles.activate_bundle(['bundle-a'])
+        bundles.activate_bundle(['bundle-a'], False)
         assets.list_all()
         self.assertAssetListed('required_asset', ['app-a'], ['app-a'])
         self.assertAssetListed('optional_asset', ['app-a'], [])
