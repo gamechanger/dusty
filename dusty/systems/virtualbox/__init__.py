@@ -105,7 +105,7 @@ def docker_vm_is_running():
 
 def _vm_not_using_pcnet_fast_iii():
     for line in _get_vm_config():
-        if 'nictype' in line and constants.VM_NIC_TYPE not in line:
+        if 'nictype1' in line and constants.VM_NIC_TYPE not in line:
             return True
     return False
 
