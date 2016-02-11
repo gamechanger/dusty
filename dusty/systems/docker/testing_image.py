@@ -89,6 +89,7 @@ def _create_tagged_image(base_image_tag, new_image_tag, app_or_lib_name):
     except:
         log_to_client('Not able to remove image {}'.format(new_image_tag))
     docker_client.tag(image=new_image['Id'], repository=new_image_tag, force=True)
+    docker_client.remove_container(container=container['Id'], v=True)
 
 def _testing_spec(app_or_lib_name):
     expanded_specs = get_expanded_libs_specs()
