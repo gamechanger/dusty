@@ -126,7 +126,7 @@ class TestSource(DustyTestCase):
         temp_dir = os.path.join(self.temp_dir, 'c')
         self.MockableRepo.managed_path = property(lambda repo: temp_dir)
         self.MockableRepo('/tmp/repo-c').ensure_local_repo()
-        fake_clone_from.assert_called_with('file:////tmp/repo-c', temp_dir)
+        fake_clone_from.assert_called_with('file:///tmp/repo-c', temp_dir)
 
     @patch('git.Repo.clone_from')
     def test_ensure_local_repo_when_does_not_exist_with_https_remote(self, fake_clone_from):
@@ -174,3 +174,60 @@ class TestSource(DustyTestCase):
         fake_repo.return_value = repo_mock
         Repo('github.com/app/a').update_local_repo()
         pull_mock.pull.assert_called_once_with('master')
+
+    def test_assemble_remote_path_1(self):
+        repo_url = 'file:///path/to/repo'
+        repo = Repo(repo_url)
+        expected_url = 'file:///path/to/repo'
+
+        self.assertEqual(repo.assemble_remote_path(), expected_url)
+
+    def test_assemble_remote_path_2(self):
+        repo_url = '/path/to/repo'
+        repo = Repo(repo_url)
+        expected_url = 'file:///path/to/repo'
+
+        self.assertEqual(repo.assemble_remote_path(), expected_url)
+
+    def test_assemble_remote_path_3(self):
+        repo_url = 'http://path/to/repo.git'
+        repo = Repo(repo_url)
+        expected_url = 'http://path/to/repo.git'
+
+        self.assertEqual(repo.assemble_remote_path(), expected_url)
+
+    def test_assemble_remote_path_4(self):
+        repo_url = 'http://path/to/repo'
+        repo = Repo(repo_url)
+        expected_url = 'http://path/to/repo.git'
+
+        self.assertEqual(repo.assemble_remote_path(), expected_url)
+
+    def test_assemble_remote_path_5(self):
+        repo_url = 'ssh://path/to/repo/more_stuff'
+        repo = Repo(repo_url)
+        expected_url = 'ssh://path/to/repo/more_stuff'
+
+        self.assertEqual(repo.assemble_remote_path(), expected_url)
+
+    def test_assemble_remote_path_6(self):
+        repo_url = 'ssh://path/to/repo:80/more_stuff'
+        repo = Repo(repo_url)
+        expected_url = 'ssh://path/to/repo:80/more_stuff'
+
+        self.assertEqual(repo.assemble_remote_path(), expected_url)
+
+    def test_assemble_remote_path_7(self):
+        repo_url = 'git@path/to/repo:more_stuff'
+        repo = Repo(repo_url)
+        expected_url = 'git@path/to/repo:more_stuff'
+
+        self.assertEqual(repo.assemble_remote_path(), expected_url)
+
+    def test_assemble_remote_path_8(self):
+        repo_url = 'path/to/repo'
+        repo = Repo(repo_url)
+        expected_url = 'ssh://git@path/to/repo'
+
+        self.assertEqual(repo.assemble_remote_path(), expected_url)
+
