@@ -211,23 +211,37 @@ class TestSource(DustyTestCase):
         self.assertEqual(repo.assemble_remote_path(), expected_url)
 
     def test_assemble_remote_path_6(self):
-        repo_url = 'ssh://path/to/repo:80/more_stuff'
+        repo_url = 'ssh://git@path/to/repo:80/more_stuff'
         repo = Repo(repo_url)
-        expected_url = 'ssh://path/to/repo:80/more_stuff'
+        expected_url = 'ssh://git@path/to/repo:80/more_stuff'
 
         self.assertEqual(repo.assemble_remote_path(), expected_url)
 
     def test_assemble_remote_path_7(self):
+        repo_url = 'ssh://user@path/to/repo:80/more_stuff'
+        repo = Repo(repo_url)
+        expected_url = 'ssh://user@path/to/repo:80/more_stuff'
+
+        self.assertEqual(repo.assemble_remote_path(), expected_url)
+
+    def test_assemble_remote_path_8(self):
         repo_url = 'git@path/to/repo:more_stuff'
         repo = Repo(repo_url)
         expected_url = 'git@path/to/repo:more_stuff'
 
         self.assertEqual(repo.assemble_remote_path(), expected_url)
 
-    def test_assemble_remote_path_8(self):
+    def test_assemble_remote_path_9(self):
         repo_url = 'path/to/repo'
         repo = Repo(repo_url)
         expected_url = 'ssh://git@path/to/repo'
+
+        self.assertEqual(repo.assemble_remote_path(), expected_url)
+
+    def test_assemble_remote_path_10(self):
+        repo_url = 'alex@path/to/repo:more_stuff'
+        repo = Repo(repo_url)
+        expected_url = 'alex@path/to/repo:more_stuff'
 
         self.assertEqual(repo.assemble_remote_path(), expected_url)
 

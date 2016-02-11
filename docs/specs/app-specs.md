@@ -19,7 +19,7 @@ repo: https://github.com/my-org/my-app.git
   -or-
 repo: /Users/myuser/my-app
   -or-
-repo: git@github.com:my-org/my-app.git
+repo: <github_user>@git_server.com:my-org/my-app.git
   -or-
 repo: ssh://<github_user>@github.com/my-org/my-app.git
 ```
