@@ -207,7 +207,7 @@ def get_docker_bridge_ip():
         result = check_output_on_vm("ip route | grep docker0 | awk '{print $NF}'").rstrip()
         if result:
             return result
-        sleep(1)
+        time.sleep(1)
         logging.info('Retrying...')
 
     raise ValueError('Could not get Docker bridge IP from Virtualbox, VM may not be fully initialized')
