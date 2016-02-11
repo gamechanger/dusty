@@ -4,6 +4,7 @@
 
 * **New**
     * Added `--only` flag to `bundles activate` which makes it easier to turn on a selection of bundles and deactivate all others
+    * Added support for SCP style GitHub urls. Example: git@github.com:gamechanger/dusty.git
 * **Misc**
     * Added support for Docker Compose 1.6
     * `dusty disk restore` now appends the `dusty-backup` suffix to the restore path if not provided, which should make the `restore` command a bit more intuitive to use

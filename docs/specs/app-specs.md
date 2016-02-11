@@ -11,11 +11,17 @@ You can tell Dusty to use your own locally checked out copy of the source using 
 ## repo
 
 ```
+repo: file:///local/repo/path
+  -or-
 repo: github.com/my-org/my-app
   -or-
 repo: https://github.com/my-org/my-app.git
   -or-
 repo: /Users/myuser/my-app
+  -or-
+repo: <github_user>@git_server.com:my-org/my-app.git
+  -or-
+repo: ssh://<github_user>@github.com/my-org/my-app.git
 ```
 
 `repo` specifies the repo containing the source for an app. By default, Dusty manages this

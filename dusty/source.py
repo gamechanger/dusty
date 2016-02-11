@@ -111,17 +111,17 @@ class Repo(object):
             if self.remote_path.startswith('file:///'):
                 return self.remote_path
             else:
-                return 'file:///{}'.format(self.remote_path)
+                return 'file://{}'.format(self.remote_path)
         elif self.is_http_repo:
             if self.remote_path.endswith('.git'):
                 return self.remote_path
             else:
                 return self.remote_path + '.git'
-        else:
-            if self.remote_path.startswith('ssh://'):
+
+        if self.remote_path.startswith('ssh://') or '@' in self.remote_path:
                 return self.remote_path
-            else:
-                return 'ssh://{}@{}'.format(constants.GIT_USER, self.remote_path)
+
+        return 'ssh://{}@{}'.format(constants.GIT_USER, self.remote_path)
 
     def ensure_local_repo(self):
         """Given a Dusty repo object, clone the remote into Dusty's local repos
