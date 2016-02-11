@@ -119,8 +119,11 @@ def get_docker_vm_ip():
 
 @memoized
 def get_docker_bridge_ip():
-    return check_output_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
-                                 "ip route | grep docker0 | awk '{print $NF}'"]).rstrip()
+    result = check_output_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
+                                   "ip route | grep docker0 | awk '{print $NF}'"]).rstrip()
+    if not result:
+        raise ValueError('Could not get Docker bridge IP from Virtualbox, VM may not be fully initialized')
+    return result
 
 def _parse_df_output(df_line):
     split_line = df_line.split()
