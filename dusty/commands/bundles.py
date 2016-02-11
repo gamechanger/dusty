@@ -19,14 +19,19 @@ def list_bundles():
     log_to_client(table.get_string(sortby="Name"))
 
 @daemon_command
-def activate_bundle(bundle_names):
+def activate_bundle(bundle_names, exclusive):
     specs = get_specs()
     for bundle_name in bundle_names:
         if bundle_name not in specs[constants.CONFIG_BUNDLES_KEY]:
             raise KeyError('No bundle exists named {}'.format(bundle_name))
-    activated_bundles = set(get_config_value(constants.CONFIG_BUNDLES_KEY)).union(bundle_names)
+    if exclusive:
+        activated_bundles = bundle_names
+    else:
+        activated_bundles = set(get_config_value(constants.CONFIG_BUNDLES_KEY)).union(bundle_names)
     save_config_value(constants.CONFIG_BUNDLES_KEY, list(activated_bundles))
     log_to_client('Activated bundles {}'.format(', '.join(bundle_names)))
+    if exclusive:
+        log_to_client('All other bundles have been deactivated')
 
 @daemon_command
 def deactivate_bundle(bundle_names):
