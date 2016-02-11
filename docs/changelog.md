@@ -5,6 +5,7 @@
     * Added support of Docker Compose 1.6
     * `dusty disk restore` now appends the `dusty-backup` suffix to the restore path if not provided, which should make the `restore` command a bit more intuitive to use
     * Host forwarding now supports multiple forwarding rules per app to the same container port for HTTP forwarding
+    * Fixed a bug where intermediate containers were not removed when creating testing images
 
 ## 0.6.5 (January 13, 2016)
 
