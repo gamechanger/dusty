@@ -10,9 +10,7 @@ here should be fine. Setting this to `root` is probably a **bad** idea.
 
 #### Specs Repo
 
-Dusty needs to know where your Dusty specs live.  You can enter a git
-repository here if you want to manage them that way (recommended).  You
-can also just specify a local file path.
+Dusty needs to know where your Dusty specs live.  See [this link](./specs/app-specs.md#repo) on how to specify git urls.
 
 If you're new to Dusty and would like to try things out, leave this blank
 to use the example specs.

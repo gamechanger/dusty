@@ -16,6 +16,10 @@ repo: github.com/my-org/my-app
 repo: https://github.com/my-org/my-app.git
   -or-
 repo: /Users/myuser/my-app
+  -or-
+repo: git@github.com:my-org/my-app.git
+  -or-
+repo: ssh://<github_user>@github.com/my-org/my-app.git
 ```
 
 `repo` specifies the repo containing the source for an app. By default, Dusty manages this
