@@ -11,6 +11,8 @@ You can tell Dusty to use your own locally checked out copy of the source using 
 ## repo
 
 ```
+repo: file:///local/repo/path
+  -or-
 repo: github.com/my-org/my-app
   -or-
 repo: https://github.com/my-org/my-app.git
