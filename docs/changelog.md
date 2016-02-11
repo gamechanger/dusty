@@ -3,6 +3,7 @@
 ## 0.6.6 (In Progress)
 * **Misc**
     * Added support of Docker Compose 1.6
+    * `dusty disk restore` now appends the `dusty-backup` suffix to the restore path if not provided, which should make the `restore` command a bit more intuitive to use
 
 ## 0.6.5 (January 13, 2016)
 
