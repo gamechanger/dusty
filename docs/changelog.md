@@ -1,11 +1,13 @@
 # Changelog
 
 ## 0.6.6 (In Progress)
+
 * **Misc**
-    * Added support of Docker Compose 1.6
+    * Added support for Docker Compose 1.6
     * `dusty disk restore` now appends the `dusty-backup` suffix to the restore path if not provided, which should make the `restore` command a bit more intuitive to use
     * Host forwarding now supports multiple forwarding rules per app to the same container port for HTTP forwarding
     * Fixed a bug where intermediate containers were not removed when creating testing images
+    * Revived a previous networking fix that was removed after Dusty moved to Docker Machine. This fix improves external networking performance by up to 50% for large file transfers.
 
 ## 0.6.5 (January 13, 2016)
 
