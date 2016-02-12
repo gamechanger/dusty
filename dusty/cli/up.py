@@ -19,9 +19,14 @@ Options:
 from docopt import docopt
 
 from ..payload import Payload
-from ..commands.run import start_local_env
+from ..commands.run import (prep_for_start_local_env,
+                            log_in_to_required_registries,
+                            start_local_env)
 
 def main(argv):
     args = docopt(__doc__, argv)
-    return Payload(start_local_env, recreate_containers=not args['--no-recreate'],
-                   pull_repos=not args['--no-pull'])
+    payload0 = Payload(prep_for_start_local_env, pull_repos=not args['--no-pull'])
+    payload1 = Payload(log_in_to_required_registries)
+    payload1.run_on_daemon = False
+    payload2 = Payload(start_local_env, recreate_containers=not args['--no-recreate'])
+    return [payload0, payload1, payload2]

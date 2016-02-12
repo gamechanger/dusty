@@ -140,6 +140,10 @@ image: ubuntu:15.04
 `image` specifies a Docker image on which to base the container which will run this
 app. If the image does not exist locally, Dusty will pull it.
 
+If the `image` is hosted in a private registry which requires authentication,
+you can add `image_requires_login: True` to force the user to authenticate
+before Dusty attempts to pull down the image.
+
 Either `build` or `image` must be supplied in the spec. They cannot both be supplied.
 
 ## build

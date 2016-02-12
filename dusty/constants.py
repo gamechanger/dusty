@@ -7,6 +7,9 @@ PRERELEASE = False # overridden by PyInstaller when we build a prerelease binary
 
 EXAMPLE_SPECS_REPO = 'github.com/gamechanger/dusty-example-specs'
 
+PUBLIC_DOCKER_REGISTRY = 'index.docker.io'
+DOCKER_CONFIG_PATH = os.path.expanduser('~/.docker/config.json')
+
 DUSTY_CONFIG_BEGIN = '# BEGIN section for Dusty\n'
 DUSTY_CONFIG_END = '# END section for Dusty\n'
 DUSTY_CONFIG_REGEX = re.compile('\\{}.*\\{}'.format(DUSTY_CONFIG_BEGIN, DUSTY_CONFIG_END), flags=re.DOTALL | re.MULTILINE)
