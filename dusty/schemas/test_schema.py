@@ -18,6 +18,7 @@ test_suite_schema = Schema({
 
 test_schema = Schema({
     'image': {'type': basestring},
+    'image_requires_login': {'type': bool, 'default': False},
     'build': {'type': basestring},
     'once': {'type': Array(basestring), 'default': []},
     'suites': {'type': Array(test_suite_schema), 'default': list},

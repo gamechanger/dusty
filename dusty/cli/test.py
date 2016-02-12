@@ -23,31 +23,38 @@ from docopt import docopt
 
 from ..payload import Payload
 from ..commands.test import (run_one_suite, run_all_suites, test_info_for_app_or_lib, setup_for_test,
-                             ensure_valid_suite_name)
+                             ensure_valid_suite_name, ensure_vm_initialized,
+                             log_in_to_required_registries)
 
 def main(argv):
     args = docopt(__doc__, argv, options_first=True)
     if args['<suite_name>'] == 'all':
-        payload0 = Payload(setup_for_test,
+        payload0 = Payload(ensure_vm_initialized)
+        payload1 = Payload(log_in_to_required_registries, args['<app_or_lib_name>'])
+        payload1.run_on_daemon = False
+        payload2 = Payload(setup_for_test,
                            args['<app_or_lib_name>'],
                            pull_repos=not args['--no-pull'],
                            force_recreate=args['--recreate'])
-        payload1 = Payload(run_all_suites,
+        payload3 = Payload(run_all_suites,
                            args['<app_or_lib_name>'])
-        payload1.run_on_daemon = False
-        return [payload0, payload1]
+        payload3.run_on_daemon = False
+        return [payload0, payload1, payload2, payload3]
     elif args['<suite_name>']:
         payload0 = Payload(ensure_valid_suite_name, args['<app_or_lib_name>'], args['<suite_name>'])
-        payload1 = Payload(setup_for_test,
+        payload1 = Payload(ensure_vm_initialized)
+        payload2 = Payload(log_in_to_required_registries, args['<app_or_lib_name>'])
+        payload2.run_on_daemon = False
+        payload3 = Payload(setup_for_test,
                            args['<app_or_lib_name>'],
                            pull_repos=not args['--no-pull'],
                            force_recreate=args['--recreate'])
-        payload2 = Payload(run_one_suite,
+        payload4 = Payload(run_one_suite,
                            args['<app_or_lib_name>'],
                            args['<suite_name>'],
                            args['<args>'])
-        payload2.run_on_daemon = False
-        return [payload0, payload1, payload2]
+        payload4.run_on_daemon = False
+        return [payload0, payload1, payload2, payload3, payload4]
 
     else:
         return Payload(test_info_for_app_or_lib, args['<app_or_lib_name>'])

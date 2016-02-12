@@ -7,11 +7,13 @@ from prettytable import PrettyTable
 
 from .. import constants
 from ..compiler.spec_assembler import (get_expanded_libs_specs, get_specs_repo,
-    get_same_container_repos, get_same_container_repos_from_spec)
+                                       get_same_container_repos, get_same_container_repos_from_spec)
 from ..compiler.compose import get_volume_mounts, get_testing_compose_dict, container_code_path
 from ..systems.docker.testing_image import test_image_exists, create_test_image, update_test_image, test_image_name, ImageCreationError
 from ..systems.docker import get_docker_client
 from ..systems.docker.compose import write_composefile, compose_up
+from ..systems.docker.config import (get_authed_registries, registry_from_image,
+                                     log_in_to_registry)
 from ..systems import nfs
 from ..systems.virtualbox import initialize_docker_vm
 from ..log import log_to_client
@@ -58,8 +60,19 @@ def ensure_valid_suite_name(app_or_lib_name, suite_name):
     _get_suite_spec(app_or_lib_name, suite_name)
 
 @daemon_command
-def setup_for_test(app_or_lib_name, pull_repos=False, force_recreate=False):
+def ensure_vm_initialized():
     initialize_docker_vm()
+
+def log_in_to_required_registries(app_or_lib_name):
+    spec = get_expanded_libs_specs().get_app_or_lib(app_or_lib_name)
+    if not spec['test'].get('image') or not spec['test'].get('image_requires_login'):
+        return
+    registry = registry_from_image(spec['test']['image'])
+    if registry not in get_authed_registries():
+        log_in_to_registry(registry)
+
+@daemon_command
+def setup_for_test(app_or_lib_name, pull_repos=False, force_recreate=False):
     expanded_specs = get_expanded_libs_specs()
     make_test_command_files(app_or_lib_name, expanded_specs)
     if pull_repos:

@@ -5,6 +5,8 @@ from ..compiler import (compose as compose_compiler, nginx as nginx_compiler,
                         port_spec as port_spec_compiler, spec_assembler)
 from ..systems import docker, hosts, nginx, virtualbox, nfs
 from ..systems.docker import compose
+from ..systems.docker.config import (get_authed_registries, registry_from_image,
+                                     log_in_to_registry)
 from ..log import log_to_client
 from .repos import update_managed_repos
 from .. import constants
@@ -12,19 +14,41 @@ from ..command_file import make_up_command_files
 from ..source import Repo
 from ..payload import daemon_command
 from ..warnings import daemon_warnings
+from ..subprocess import check_call_demoted
 
 @daemon_command
-def start_local_env(recreate_containers=True, pull_repos=True):
-    """This command will use the compilers to get compose specs
-    will pass those specs to the systems that need them. Those
-    systems will in turn launch the services needed to make the
-    local environment go."""
+def prep_for_start_local_env(pull_repos):
+    """Daemon-side command to ensure we're running the latest
+    versions of any managed repos, including the
+    specs repo, before we do anything else in the up flow."""
     if pull_repos:
         update_managed_repos(force=True)
     assembled_spec = spec_assembler.get_assembled_specs()
     if not assembled_spec[constants.CONFIG_BUNDLES_KEY]:
         raise RuntimeError('No bundles are activated. Use `dusty bundles` to activate bundles before running `dusty up`.')
 
+def log_in_to_required_registries():
+    """Client-side command which runs the user through a login flow
+    (via the Docker command-line client so auth is persisted)
+    for any registries of active images which require a login. This
+    is based on the `image_requires_login` key in the individual specs."""
+    registries = set()
+    specs = spec_assembler.get_assembled_specs()
+    for spec in specs.get_apps_and_services():
+        if 'image' in spec and spec.get('image_requires_login'):
+            registries.add(registry_from_image(spec['image']))
+    unauthed_registries = registries.difference(get_authed_registries())
+    for registry in unauthed_registries:
+        log_in_to_registry(registry)
+
+@daemon_command
+def start_local_env(recreate_containers):
+    """This command will use the compilers to get compose specs
+    will pass those specs to the systems that need them. Those
+    systems will in turn launch the services needed to make the
+    local environment go."""
+
+    assembled_spec = spec_assembler.get_assembled_specs()
     virtualbox.initialize_docker_vm()
 
     required_absent_assets = virtualbox.required_absent_assets(assembled_spec)
