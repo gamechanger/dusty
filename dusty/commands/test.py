@@ -61,6 +61,7 @@ def ensure_valid_suite_name(app_or_lib_name, suite_name):
 
 @daemon_command
 def ensure_vm_initialized():
+    log_to_client('Making sure Dusty VM is initialized and running')
     initialize_docker_vm()
 
 def log_in_to_required_registries(app_or_lib_name):
@@ -74,10 +75,12 @@ def log_in_to_required_registries(app_or_lib_name):
 @daemon_command
 def setup_for_test(app_or_lib_name, pull_repos=False, force_recreate=False):
     expanded_specs = get_expanded_libs_specs()
+    log_to_client('Writing test command files to VM')
     make_test_command_files(app_or_lib_name, expanded_specs)
     if pull_repos:
         _update_test_repos(app_or_lib_name)
     spec = expanded_specs.get_app_or_lib(app_or_lib_name)
+    log_to_client('Rigging up NFS mounts for repos under test')
     nfs.update_nfs_with_repos(get_same_container_repos_from_spec(spec))
     ensure_current_image(app_or_lib_name, force_recreate)
 

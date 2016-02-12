@@ -48,9 +48,11 @@ def _ensure_assets_dir_exists():
     _ensure_vm_dir_exists(constants.VM_ASSETS_DIR)
 
 def _dusty_vm_exists():
-    existing_vms = check_output_demoted(['docker-machine', 'ls', '-q'])
+    """We use VBox directly instead of Docker Machine because it
+    shaves about 0.5 seconds off the runtime of this check."""
+    existing_vms = check_output_demoted(['VBoxManage', 'list', 'vms'])
     for line in existing_vms.splitlines():
-        if line == constants.VM_MACHINE_NAME:
+        if '"{}"'.format(constants.VM_MACHINE_NAME) in line:
             return True
     return False
 
@@ -87,11 +89,13 @@ def _init_docker_vm():
 
 def _start_docker_vm():
     """Start the Dusty VM if it is not already running."""
-    if not docker_vm_is_running():
+    is_running = docker_vm_is_running()
+    if not is_running:
         log_to_client('Starting docker-machine VM {}'.format(constants.VM_MACHINE_NAME))
         _apply_nat_dns_host_resolver()
         _apply_nat_net_less_greedy_subnet()
         check_and_log_output_and_error_demoted(['docker-machine', 'start', constants.VM_MACHINE_NAME], quiet_on_success=True)
+    return is_running
 
 def _stop_docker_vm():
     """Stop the Dusty VM if it is not already stopped."""
@@ -101,7 +105,12 @@ def _get_vm_config():
     return check_output_demoted(['VBoxManage', 'showvminfo', '--machinereadable', constants.VM_MACHINE_NAME]).splitlines()
 
 def docker_vm_is_running():
-    return check_output_demoted(['docker-machine', 'status', constants.VM_MACHINE_NAME]).strip().lower() == 'running'
+    """Using VBoxManage is 0.5 seconds or so faster than Machine."""
+    running_vms = check_output_demoted(['VBoxManage', 'list', 'runningvms'])
+    for line in running_vms.splitlines():
+        if '"{}"'.format(constants.VM_MACHINE_NAME) in line:
+            return True
+    return False
 
 def _vm_not_using_pcnet_fast_iii():
     for line in _get_vm_config():
@@ -126,14 +135,20 @@ def ensure_docker_vm_is_started():
         if docker_vm_is_running():
             _stop_docker_vm()
         _apply_nic_fix()
-    _start_docker_vm()
+    was_already_running = _start_docker_vm()
+    return was_already_running
 
 def initialize_docker_vm():
-    ensure_docker_vm_is_started()
-    _ensure_rsync_is_installed()
-    _ensure_persist_dir_is_linked()
-    _ensure_cp_dir_exists()
-    _ensure_assets_dir_exists()
+    was_already_running = ensure_docker_vm_is_started()
+    # These operations are somewhat expensive, so we only
+    # run them if there's a chance we are bringing up a
+    # fresh VM or temporary filesystems may need to be
+    # reinitialized following a restart.
+    if not was_already_running:
+        _ensure_rsync_is_installed()
+        _ensure_persist_dir_is_linked()
+        _ensure_cp_dir_exists()
+        _ensure_assets_dir_exists()
 
 @memoized
 def get_docker_vm_ip():
