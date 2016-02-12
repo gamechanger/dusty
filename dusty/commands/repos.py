@@ -21,10 +21,19 @@ def list_repos():
                        repo.override_path if repo.is_overridden else ''])
     log_to_client(table.get_string(sortby='Short Name'))
 
+def nfs_path_exists(path):
+    split_path = path.lstrip('/').split('/')
+    recreated_path = '/'
+    for path_element in split_path:
+        if path_element not in os.listdir(recreated_path):
+            return False
+        recreated_path = "{}{}/".format(recreated_path, path_element)
+    return True
+
 @daemon_command
 def override_repo(repo_name, source_path):
     repo = Repo.resolve(get_all_repos(), repo_name)
-    if not os.path.exists(source_path):
+    if not nfs_path_exists(source_path):
         raise OSError('Source path {} does not exist'.format(source_path))
     if not os.path.isdir(source_path):
         raise OSError('Source path {} is a file not a directory; please select a directory'.format(source_path))
