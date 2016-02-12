@@ -14,32 +14,46 @@ from ...subprocess import check_and_log_output_and_error_demoted, check_output_d
 from ...log import log_to_client
 
 def _command_for_vm(command_list):
-    ssh_command = ['docker-machine', 'ssh', constants.VM_MACHINE_NAME]
+    ssh_command = ['ssh', '-i', _vm_key_path(), 'docker@{}'.format(get_docker_vm_ip())]
     ssh_command.extend([command_list])
     return ssh_command
 
-def _run_command_on_vm(command_list, quiet_on_success=True):
-    return check_and_log_output_and_error_demoted(_command_for_vm(command_list), quiet_on_success=quiet_on_success)
+@memoized
+def _vm_key_path():
+    dusty_user = get_config_value(constants.CONFIG_MAC_USERNAME_KEY)
+    return os.path.expanduser('~{}/.docker/machine/machines/{}/id_rsa'.format(dusty_user,
+                                                                              constants.VM_MACHINE_NAME))
 
-def _check_output_on_vm(command_list):
-    return check_output_demoted(_command_for_vm(command_list))
+def run_command_on_vm(command_list, redirect_stderr=False, quiet_on_success=True):
+    return check_and_log_output_and_error_demoted(_command_for_vm(command_list),
+                                                  redirect_stderr=redirect_stderr,
+                                                  quiet_on_success=quiet_on_success)
+
+def check_output_on_vm(command_list, redirect_stderr=False):
+    return check_output_demoted(_command_for_vm(command_list), redirect_stderr=redirect_stderr)
+
+def check_call_on_vm(command_list, redirect_stderr=False):
+    return check_call_demoted(_command_for_vm(command_list), redirect_stderr=redirect_stderr)
+
+def call_on_vm(command_list, redirect_stderr=False):
+    return call_demoted(_command_for_vm(command_list), redirect_stderr=redirect_stderr)
 
 def _ensure_rsync_is_installed():
     # We're running tce-load twice as a hack to get around the fact that, for
     # completely unknown reasons, tce-load will return with an exit code of 1 after
     # initial install even if it works just fine. Subsequent install attempts will
     # be no-ops with a return code of 0.
-    _run_command_on_vm('which rsync || tce-load -wi rsync || tce-load -wi rsync')
+    run_command_on_vm('which rsync || tce-load -wi rsync || tce-load -wi rsync')
 
 def _ensure_persist_dir_is_linked():
     mkdir_if_cmd = 'if [ ! -d /mnt/sda1{0} ]; then sudo mkdir /mnt/sda1{0}; fi'.format(constants.VM_PERSIST_DIR)
     mount_if_cmd = 'if [ ! -d {0} ]; then sudo ln -s /mnt/sda1{0} {0}; fi'.format(constants.VM_PERSIST_DIR)
-    _run_command_on_vm(mkdir_if_cmd)
-    _run_command_on_vm(mount_if_cmd)
+    run_command_on_vm(mkdir_if_cmd)
+    run_command_on_vm(mount_if_cmd)
 
 def _ensure_vm_dir_exists(vm_dir):
     mkdir_if_cmd = 'if [ ! -d {0} ]; then sudo mkdir {0}; fi'.format(vm_dir)
-    _run_command_on_vm(mkdir_if_cmd)
+    run_command_on_vm(mkdir_if_cmd)
 
 def _ensure_cp_dir_exists():
     _ensure_vm_dir_exists(constants.VM_CP_DIR)
@@ -152,12 +166,30 @@ def initialize_docker_vm():
 
 @memoized
 def get_docker_vm_ip():
+    ssh_port = None
+    for line in _get_vm_config():
+        if line.startswith('Forwarding'):
+            spec = line.split('=')[1].strip('"')
+            name, protocol, host, host_port, target, target_port = spec.split(',')
+            if name == 'ssh' and protocol == 'tcp' and target_port == '22':
+                ssh_port = host_port
+                break
+
+    if ssh_port:
+        ip_addr = check_output_demoted(['ssh', '-i', _vm_key_path(), '-p', ssh_port,
+                                        'docker@127.0.0.1', 'ip addr show dev eth1'])
+        for line in ip_addr.splitlines():
+            line = line.strip()
+            if line.startswith('inet') and not line.startswith('inet6'):
+                ip = line.split(' ')[1].split('/')[0]
+                return ip
+
+    logging.warning('Could not get IP the fast way, falling back to Docker Machine')
     return check_output_demoted(['docker-machine', 'ip', constants.VM_MACHINE_NAME]).rstrip()
 
 @memoized
 def get_docker_bridge_ip():
-    result = check_output_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
-                                   "ip route | grep docker0 | awk '{print $NF}'"]).rstrip()
+    result = check_output_on_vm("ip route | grep docker0 | awk '{print $NF}'").rstrip()
     if not result:
         raise ValueError('Could not get Docker bridge IP from Virtualbox, VM may not be fully initialized')
     return result
@@ -177,8 +209,7 @@ def _format_df_dict(df_dict):
     return formatted_usage
 
 def get_docker_vm_disk_info(as_dict=False):
-    df_output = check_output_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
-                                      'df -h /mnt/sda1 | grep /dev/sda1'])
+    df_output = check_output_on_vm('df -h /mnt/sda1 | grep /dev/sda1')
     df_line = df_output.split('\n')[0]
     df_dict = _parse_df_output(df_line)
     return df_dict if as_dict else _format_df_dict(df_dict)
@@ -218,7 +249,7 @@ def required_absent_assets(assembled_specs):
 
 @memoized
 def get_assets_on_vm():
-    dir_contents = _check_output_on_vm('ls {}'.format(constants.VM_ASSETS_DIR))
+    dir_contents = check_output_on_vm('ls {}'.format(constants.VM_ASSETS_DIR))
     return set(dir_contents.splitlines())
 
 def asset_vm_path(asset_key):
@@ -228,7 +259,7 @@ def asset_is_set(asset_key):
     return asset_key in get_assets_on_vm()
 
 def asset_value(asset_key):
-    return _check_output_on_vm('sudo cat {}'.format(asset_vm_path(asset_key)))
+    return check_output_on_vm('sudo cat {}'.format(asset_vm_path(asset_key)))
 
 def remove_asset(asset_key):
-    _run_command_on_vm('sudo rm -f {}'.format(asset_vm_path(asset_key)))
+    run_command_on_vm('sudo rm -f {}'.format(asset_vm_path(asset_key)))

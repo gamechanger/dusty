@@ -9,11 +9,10 @@ from ...source import Repo
 from ...path import parent_dir
 from ...log import log_to_client
 from ...compiler.spec_assembler import get_same_container_repos_from_spec
-from ...systems.virtualbox import get_docker_vm_ip
+from ...systems.virtualbox import get_docker_vm_ip, check_call_on_vm
 
 def _ensure_vm_dir_exists(remote_dir):
-    check_call_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
-                        'sudo mkdir -p {0}; sudo chown -R docker {0}'.format(remote_dir)])
+    check_call_on_vm('sudo mkdir -p {0}; sudo chown -R docker {0}'.format(remote_dir))
 
 def _rsync_command(local_path, remote_path, is_dir=True, from_local=True, exclude_git=True):
     key_format_string = '~{}/.docker/machine/machines/{}/id_rsa'
@@ -35,7 +34,7 @@ def vm_path_is_directory(remote_path):
     This function returns False on any process error, so False may indicate
     other failures such as the path not actually existing."""
     try:
-        check_call_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME, 'test -d {}'.format(remote_path)])
+        check_call_on_vm('test -d {}'.format(remote_path))
     except CalledProcessError:
         return False
     return True
