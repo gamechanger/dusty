@@ -125,11 +125,6 @@ class TestReposCommands(DustyTestCase):
     def test_nfs_path_exists_real(self):
         current_dir = os.path.dirname(os.path.realpath(__file__))
         test_dir = current_dir.split('/unit')[0]
-        import logging
-        logging.error(current_dir)
-        logging.error(test_dir)
-        logging.error(os.listdir(test_dir))
-        logging.error(os.listdir('{}/{}'.format(test_dir, 'hfs_nfs_insync')))
         self.assertTrue(nfs_path_exists('{}/hfs_nfs_insync/test_1'.format(test_dir)))
         self.assertFalse(nfs_path_exists('{}/hfs_nfs_insync/test_2'.format(test_dir)))
         self.assertTrue(nfs_path_exists('{}/hfs_nfs_insync/test_1/sub_test_1'.format(test_dir)))
