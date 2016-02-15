@@ -3,6 +3,7 @@
 ## 0.7.0 (In Progress)
 * **Breaking**
     * Dusty app and lib spec filenames must now abide by Docker image naming conventions: `[a-z0-9]+(?:[._-][a-z0-9]+)*`. Your file name must start with a number or lowercase letter, cannot have uppercase letters, and can only have `.`, `_`, and `-` as special characters.
+    * Dusty requires Docker Machine 0.5.0+
 * **New**
     * Added `--only` flag to `bundles activate` which makes it easier to turn on a selection of bundles and deactivate all others
     * Added support for SCP style GitHub urls. Example: git@github.com:gamechanger/dusty.git
