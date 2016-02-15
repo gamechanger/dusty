@@ -10,6 +10,7 @@ from ... import constants
 from ...log import log_to_client
 from ...memoize import memoized
 from ...subprocess import check_call_demoted
+from . import get_docker_env
 
 def registry_from_image(image_name):
     """Returns the Docker registry host associated with
@@ -59,7 +60,7 @@ def log_in_to_registry(registry):
             args.append(registry)
 
         try:
-            check_call_demoted(['docker', 'login'] + args)
+            check_call_demoted(['docker', 'login'] + args, env=get_docker_env())
         except CalledProcessError:
             log_to_client('\nLogin failed, please try again for {} (Ctrl-C to quit)\n'.format(registry))
         else:
