@@ -3,6 +3,7 @@ import logging
 import logging.handlers
 from .constants import SOCKET_PATH, SOCKET_LOGGER_NAME
 from threading import RLock
+import contextlib
 
 handler = None
 log_to_client_lock = RLock()
@@ -11,18 +12,21 @@ class DustySocketHandler(logging.Handler):
     def __init__(self, connection_socket):
         super(DustySocketHandler, self).__init__()
         self.connection_socket = connection_socket
+        self.append_newlines = True
 
     def emit(self, record):
         msg = self.format(record)
         if isinstance(msg, unicode):
             msg = msg.encode('utf-8')
-        msg = msg.strip()
-        self.connection_socket.sendall("{}\n".format(msg))
+        if self.append_newlines:
+            msg = msg.strip()
+        self.connection_socket.sendall("{}{}".format(msg, '\n' if self.append_newlines else ''))
 
 class DustyClientTestingSocketHandler(logging.Handler):
     def __init__(self):
         super(DustyClientTestingSocketHandler, self).__init__()
         self.log_to_client_output = ''
+        self.append_newlines = True
 
     def emit(self, record):
         msg = self.format(record)
@@ -57,3 +61,18 @@ def configure_client_logging():
     logging.basicConfig(stream=sys.stdout,
                         level=logging.INFO,
                         format='%(message)s')
+
+@contextlib.contextmanager
+def streaming_to_client():
+    """Puts the client logger into streaming mode, which sends
+    unbuffered input through to the socket one character at a time.
+    We also disable propagation so the root logger does not
+    receive many one-byte emissions. This context handler
+    was originally created for streaming Compose up's
+    terminal output through to the client and should only be
+    used for similarly complex circumstances."""
+    handler = client_logger.handlers[0]
+    old_propagate, old_append = client_logger.propagate, handler.append_newlines
+    client_logger.propagate, handler.append_newlines = False, False
+    yield
+    client_logger.propagate, handler.append_newlines = old_propagate, old_append
