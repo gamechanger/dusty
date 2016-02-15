@@ -6,7 +6,8 @@ from mock import patch, call, ANY
 from dusty.config import get_config_value
 from dusty.commands.bundles import activate_bundle
 from dusty.commands.repos import (list_repos, override_repo, manage_repo, manage_all_repos,
-                                  override_repos_from_directory, update_managed_repos)
+                                  override_repos_from_directory, update_managed_repos,
+                                  nfs_path_exists)
 from dusty.compiler.spec_assembler import get_specs_repo
 from ...testcases import DustyTestCase
 from dusty import constants
@@ -109,3 +110,24 @@ class TestReposCommands(DustyTestCase):
         activate_bundle(['bundle-b'], False)
         update_managed_repos()
         fake_update_local_repo_async.assert_has_calls([call(ANY, force=False), call(ANY, force=False)])
+
+    @patch('dusty.commands.repos.os.listdir')
+    def test_nfs_path_exists(self, fake_list_dir):
+        fake_list_dir.return_value = ['Users', 'path', 'To', 'dir']
+
+        self.assertTrue(nfs_path_exists('/Users/path/To/dir'))
+        self.assertFalse(nfs_path_exists('/users/path/To/dir'))
+        self.assertFalse(nfs_path_exists('/Users/Path/To/dir'))
+        self.assertFalse(nfs_path_exists('/Users/path/to/dir'))
+        self.assertFalse(nfs_path_exists('/Users/path/To/Dir'))
+        self.assertFalse(nfs_path_exists('/User'))
+
+    def test_nfs_path_exists_real(self):
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        test_dir = current_dir.split('/unit')[0]
+        self.assertTrue(nfs_path_exists('{}/hfs_nfs_insync/test_1'.format(test_dir)))
+        self.assertFalse(nfs_path_exists('{}/hfs_nfs_insync/test_2'.format(test_dir)))
+        self.assertTrue(nfs_path_exists('{}/hfs_nfs_insync/test_1/sub_test_1'.format(test_dir)))
+        self.assertFalse(nfs_path_exists('{}/hfs_nfs_insync/test_1/sub_test_2'.format(test_dir)))
+        self.assertTrue(nfs_path_exists('{}/hfs_nfs_insync/test_1/Sub_test_2/sub_sub_test_1'.format(test_dir)))
+        self.assertTrue(nfs_path_exists('{}/hfs_nfs_insync/Test_2/sub_test_3'.format(test_dir)))

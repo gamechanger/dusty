@@ -13,6 +13,7 @@
     * Host forwarding now supports multiple forwarding rules per app to the same container port for HTTP forwarding
     * Fixed a bug where intermediate containers were not removed when creating testing images
     * Revived a previous networking fix that was removed after Dusty moved to Docker Machine. This fix improves external networking performance by up to 50% for large file transfers.
+    * Fixed a case sensitive bug between HFS and NFS.
 
 ## 0.6.5 (January 13, 2016)
 
