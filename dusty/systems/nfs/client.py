@@ -5,7 +5,7 @@ from subprocess import CalledProcessError
 import time
 
 from ... import constants
-from ..virtualbox import get_host_ip
+from ..virtualbox import get_host_ip, check_output_on_vm, check_call_on_vm, call_on_vm
 from ...log import log_to_client
 from ...subprocess import call_demoted, check_call_demoted, check_output_demoted, check_output_demoted
 from ...compiler.spec_assembler import get_all_repos
@@ -20,8 +20,7 @@ def remount_repos(repos):
         _mount_repo(repo, wait_for_server=(i==0))
 
 def unmount_all_repos():
-    mounts = check_output_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
-                                   'mount | {{ grep {} || true; }}'.format(constants.VM_REPOS_DIR)])
+    mounts = check_output_on_vm('mount | {{ grep {} || true; }}'.format(constants.VM_REPOS_DIR))
     mounted_dirs = []
     for mount in mounts.splitlines():
         for word in mount.split(' '):
@@ -31,15 +30,13 @@ def unmount_all_repos():
         _unmount_vm_dir(mounted_dir)
 
 def _start_nfs_client():
-    check_call_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
-                        'sudo /usr/local/etc/init.d/nfs-client start'])
+    check_call_on_vm('sudo /usr/local/etc/init.d/nfs-client start')
 
 def _unmount_repo(repo):
     _unmount_vm_dir(repo.vm_path)
 
 def _unmount_vm_dir(vm_dir):
-    call_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
-                  'sudo umount -l {}'.format(vm_dir)])
+    call_on_vm('sudo umount -l {}'.format(vm_dir))
 
 def _mount_repo(repo, wait_for_server=False):
     """
@@ -49,8 +46,7 @@ def _mount_repo(repo, wait_for_server=False):
 
     If wait_for_server is not set, it will attempt to run the mount command once
     """
-    check_call_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
-                        'sudo mkdir -p {}'.format(repo.vm_path)])
+    check_call_on_vm('sudo mkdir -p {}'.format(repo.vm_path))
     if wait_for_server:
         for i in range(0,10):
             try:
@@ -70,8 +66,7 @@ def _mount_repo(repo, wait_for_server=False):
 
 def _run_mount_command(repo):
     # Check output is used here so that if it raises an error, the output can be parsed
-    return check_output_demoted(['docker-machine', 'ssh', constants.VM_MACHINE_NAME,
-                                 'sudo mount {}'.format(_nfs_mount_args_string(repo))], redirect_stderr=True)
+    return check_output_on_vm('sudo mount {}'.format(_nfs_mount_args_string(repo)), redirect_stderr=True)
 
 def _nfs_mount_args_string(repo):
     mount_string = '-t nfs {} '.format(_nfs_options_string())

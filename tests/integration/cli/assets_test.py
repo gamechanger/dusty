@@ -2,7 +2,7 @@ import os
 import tempfile
 import time
 
-from dusty.systems.virtualbox import asset_is_set, _run_command_on_vm
+from dusty.systems.virtualbox import asset_is_set, run_command_on_vm
 from dusty import constants
 from dusty.source import Repo
 from dusty.memoize import reset_memoize_cache
@@ -39,7 +39,7 @@ class TestAssetsCLI(DustyIntegrationTestCase):
         os.remove(self.optional_app_file)
         os.remove(self.optional_lib_file)
 
-        _run_command_on_vm('sudo rm -rf {}'.format(constants.VM_ASSETS_DIR))
+        run_command_on_vm('sudo rm -rf {}'.format(constants.VM_ASSETS_DIR))
         try:
             self.run_command('stop --rm')
         except:
