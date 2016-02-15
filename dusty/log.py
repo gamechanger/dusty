@@ -58,6 +58,7 @@ def close_socket_logger():
     handler = None
 
 def configure_client_logging():
+    client_logger.addHandler(logging.NullHandler())
     logging.basicConfig(stream=sys.stdout,
                         level=logging.INFO,
                         format='%(message)s')
@@ -71,14 +72,11 @@ def streaming_to_client():
     was originally created for streaming Compose up's
     terminal output through to the client and should only be
     used for similarly complex circumstances."""
-    handler = None
-    # Avoid annoying "No handlers could be found" warning
-    if client_logger.handlers:
-        for handler in client_logger.handlers:
-            if hasattr(handler, 'append_newlines'):
-                break
-        else:
-            handler = None
+    for handler in client_logger.handlers:
+        if hasattr(handler, 'append_newlines'):
+            break
+    else:
+        handler = None
     old_propagate = client_logger.propagate
     client_logger.propagate = False
     if handler is not None:
