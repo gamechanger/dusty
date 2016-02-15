@@ -26,6 +26,7 @@ class DustyClientTestingSocketHandler(logging.Handler):
     def __init__(self):
         super(DustyClientTestingSocketHandler, self).__init__()
         self.log_to_client_output = ''
+        self.append_newlines = True
 
     def emit(self, record):
         msg = self.format(record)
@@ -70,9 +71,8 @@ def streaming_to_client():
     was originally created for streaming Compose up's
     terminal output through to the client and should only be
     used for similarly complex circumstances."""
-    client_logger.propagate = False
     handler = client_logger.handlers[0]
-    handler.append_newlines = False
+    old_propagate, old_append = client_logger.propagate, handler.append_newlines
+    client_logger.propagate, handler.append_newlines = False, False
     yield
-    client_logger.propagate = True
-    handler.append_newlines = True
+    client_logger.propagate, handler.append_newlines = old_propagate, old_append
