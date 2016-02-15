@@ -21,7 +21,7 @@ class TestCommandFile(DustyTestCase):
         lib_spec = get_lib_dusty_schema({
             'repo': 'some repo',
             'mount': '/mount/point'
-        })
+        }, name='lib')
         expected_command = []
         actual_command = command_file._lib_install_commands(lib_spec)
         self.assertEqual(expected_command, actual_command)
@@ -65,13 +65,16 @@ class TestCommandFile(DustyTestCase):
                               'depends': {'libs': ['lib1', 'lib2']},
                               'scripts': [
                                 {'name': 'script1', 'description': '', 'command': ['script1 1', 'script1 2']},
-                                {'name': 'script2', 'description': '', 'command': ['script2 1', 'script2 2']}]})},
+                                {'name': 'script2', 'description': '', 'command': ['script2 1', 'script2 2']}]},
+                              name='app1')},
             'libs': {'lib1': get_lib_dusty_schema({'install': ['lib1 command 1', 'lib1 command 2'],
                               'repo': '/gc/lib1',
-                              'mount': '/gc/lib1'}),
+                              'mount': '/gc/lib1'},
+                              name='lib1'),
                      'lib2': get_lib_dusty_schema({'install': ['lib2 command 1', 'lib2 command 2'],
                               'repo': '/gc/lib2',
-                              'mount': '/gc/lib2'})}
+                              'mount': '/gc/lib2'},
+                              name='lib2')}
         }
         port_spec = {'hosts_file': []}
         command_file.make_up_command_files(assembled_spec, port_spec)
@@ -120,7 +123,7 @@ class TestCommandFile(DustyTestCase):
                               'commands': {
                                 'once': ['app1 once 1', 'app1 once 2 &'],
                                 'always': ['app1 always 1', 'app1 always 2']
-                              }})}}
+                              }}, name='app1')}}
         port_spec = {'hosts_file': []}
         command_file.make_up_command_files(assembled_spec, port_spec)
 

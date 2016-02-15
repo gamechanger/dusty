@@ -39,13 +39,3 @@ class TestUpCLI(DustyIntegrationTestCase):
         self.assertIn('Updated managed copy of file:///tmp/fake-repo', run_output)
         run_output = self.run_command('up --no-pull')
         self.assertNotIn('Updated managed copy of file:///tmp/fake-repo', run_output)
-
-    # Regression test for https://github.com/gamechanger/dusty/issues/475
-    # Concerning commands failing after changing capitalization of specs on
-    # case-insensitive host filesystems (like HFS on Mac)
-    def test_up_after_app_rename(self):
-        self.run_command('up')
-        busybox_single_app_bundle_fixture(num_bundles=2, app_name_transformer=lambda x: x.upper())
-        self.run_command('up')
-        time.sleep(1)
-        self.assertContainerRunning('BUSYBOXA')

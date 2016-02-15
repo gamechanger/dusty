@@ -64,27 +64,27 @@ class TestSpecAssemblerTestCases(DustyTestCase):
                     {'depends': {'apps': ['app2']},
                     'repo': '',
                     'image': ''
-                }),
+                }, name='app1'),
                 'app2': get_app_dusty_schema(
                     {
                     'depends': {'apps': ['app3']},
                     'repo': '',
                     'image': ''
-                }),
+                }, name='app2'),
                 'app3': get_app_dusty_schema(
                      {
                     'depends': {'apps': ['app4', 'app5']},
                     'repo': '',
                     'image': ''
-                }),
+                }, name='app3'),
                 'app4': get_app_dusty_schema(
                      {
                     'depends': {'apps': ['app5']},
                     'repo': '',
                     'image': ''
-                }),
-                'app5': get_app_dusty_schema({'repo': '', 'image': ''}),
-                'app6': get_app_dusty_schema({'repo': '', 'image': ''})
+                }, name='app4'),
+                'app5': get_app_dusty_schema({'repo': '', 'image': ''}, name='app5'),
+                'app6': get_app_dusty_schema({'repo': '', 'image': ''}, name='app6')
             }
         }
         self.assertEqual(set(['app2', 'app3', 'app4', 'app5']),
@@ -99,18 +99,18 @@ class TestSpecAssemblerTestCases(DustyTestCase):
                         'libs': ['lib1']},
                     'repo': '',
                     'image': ''
-                }),
+                }, name='app1'),
                 'app2': get_app_dusty_schema(
                     {'repo': '',
                      'image': ''
-                })
+                }, name='app2')
             },
             'libs': {
                 'lib1': get_lib_dusty_schema(
                     {'depends': {'libs': ['lib2']},
-                     'repo': ''}),
-                'lib2': get_lib_dusty_schema({'repo': ''}),
-                'lib3': get_lib_dusty_schema({'repo': ''})
+                     'repo': ''}, name='lib1'),
+                'lib2': get_lib_dusty_schema({'repo': ''}, name='lib2'),
+                'lib3': get_lib_dusty_schema({'repo': ''}, name='lib3')
             }
         }
         self.assertEqual(set(['lib1', 'lib2']),
@@ -138,12 +138,12 @@ class TestGetExpandedLibSpecs(DustyTestCase):
                         },
                         'repo': '',
                         'image': ''
-                    }),
+                    }, name='app1'),
                     'app2': get_app_dusty_schema({
                         'depends': {},
                         'repo': '',
                         'image': ''
-                    })
+                    }, name='app2')
                 },
                 'libs': {
                     'lib1': get_lib_dusty_schema({
@@ -151,17 +151,17 @@ class TestGetExpandedLibSpecs(DustyTestCase):
                             'libs': ['lib2']
                         },
                         'repo': ''
-                    }),
+                    }, name='lib1'),
                     'lib2': get_lib_dusty_schema({
                         'depends': {
                             'libs': ['lib3']
                         },
                         'repo': ''
-                    }),
+                    }, name='lib2'),
                     'lib3': get_lib_dusty_schema({
                         'depends': {},
                         'repo': ''
-                    })
+                    }, name='lib3')
                 }
             }
         expected_expanded_specs = {

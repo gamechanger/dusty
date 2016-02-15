@@ -189,10 +189,10 @@ class TestComposeCompiler(DustyTestCase):
                                     'conditional_links': {
                                         'apps':['app-c']
                                     }
-                                }),
+                                }, name='app-a'),
                                 'app-b': get_app_dusty_schema({
                                     'depends': {}
-                                })
+                                }, name='app-b')
                             }}
         self.assertEqual(_conditional_links(assembled_specs, 'app-a'), [])
 
@@ -205,13 +205,13 @@ class TestComposeCompiler(DustyTestCase):
                                     'conditional_links':{
                                         'apps': ['app-c']
                                     }
-                                }),
+                                }, name='app-a'),
                                 'app-b': get_app_dusty_schema({
                                     'depends': {}
-                                }),
+                                }, name='app-b'),
                                 'app-c': get_app_dusty_schema({
                                     'depends': {}
-                                })
+                                }, name='app-c')
                             }}
         self.assertEqual(_conditional_links(assembled_specs, 'app-a'), ['app-c'])
 
@@ -224,10 +224,10 @@ class TestComposeCompiler(DustyTestCase):
                                     'conditional_links': {
                                         'services': ['ser-b']
                                     }
-                                }),
+                                }, name='app-a'),
                                 'app-b': get_app_dusty_schema({
                                     'depends': {}
-                                })
+                                }, name='app-b')
                             },
                             'services': {
                                 'ser-a': {
@@ -245,10 +245,10 @@ class TestComposeCompiler(DustyTestCase):
                                     'conditional_links': {
                                         'services': ['ser-b']
                                     }
-                                }),
+                                }, name='app-a'),
                                 'app-b': get_app_dusty_schema({
                                     'depends': {}
-                                })
+                                }, name='app-b')
                             },
                             'services': {
                                 'ser-b': {
@@ -265,10 +265,10 @@ class TestComposeCompiler(DustyTestCase):
                                         'services': ['ser-b'],
                                         'apps': ['app-b']
                                     }
-                                }),
+                                }, name='app-a'),
                                 'app-b': get_app_dusty_schema({
                                     'depends': {}
-                                })
+                                }, name='app-b')
                             },
                             'services': {
                                 'ser-b': {

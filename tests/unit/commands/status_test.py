@@ -55,7 +55,7 @@ class TestStatusCommands(DustyTestCase):
         fake_get_specs.return_value = {'apps': {'app1': get_app_dusty_schema({}, 'app1'), 'app2':get_app_dusty_schema({}, 'app2')},
                                        'libs': {'lib1': get_lib_dusty_schema({}, 'lib1')},
                                        'services': {'ser1': DustySchema(None, {}, 'ser1', 'services'), 'ser2': DustySchema(None, {}, 'ser2', 'services'), 'ser3': DustySchema(None, {}, 'ser3', 'services')},
-                                       'bundles': get_lib_dusty_schema({})}
+                                       'bundles': get_lib_dusty_schema({}, 'bundle')}
         fake_get_docker_client.return_value = None
         fake_vm_is_running.return_value = True
         get_dusty_status()
@@ -88,7 +88,7 @@ class TestStatusCommands(DustyTestCase):
         fake_get_specs.return_value = {'apps': {'app1': get_app_dusty_schema({}, 'app1'), 'app2':get_app_dusty_schema({}, 'app2')},
                                        'libs': {'lib1': get_lib_dusty_schema({}, 'lib1')},
                                        'services': {'ser1': DustySchema(None, {}, 'ser1', 'services'), 'ser2': DustySchema(None, {}, 'ser2', 'services'), 'ser3': DustySchema(None, {}, 'ser3', 'services')},
-                                       'bundles': get_lib_dusty_schema({})}
+                                       'bundles': get_lib_dusty_schema({}, 'bundle')}
         fake_get_docker_client.return_value = None
         fake_vm_is_running.return_value = True
         get_dusty_status()
