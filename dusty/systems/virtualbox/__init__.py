@@ -202,10 +202,15 @@ def get_docker_vm_ip():
 
 @memoized
 def get_docker_bridge_ip():
-    result = check_output_on_vm("ip route | grep docker0 | awk '{print $NF}'").rstrip()
-    if not result:
-        raise ValueError('Could not get Docker bridge IP from Virtualbox, VM may not be fully initialized')
-    return result
+    logging.info('Attempting to get the docker bridge IP')
+    for _ in range(5):
+        result = check_output_on_vm("ip route | grep docker0 | awk '{print $NF}'").rstrip()
+        if result:
+            return result
+        time.sleep(1)
+        logging.info('Retrying...')
+
+    raise ValueError('Could not get Docker bridge IP from Virtualbox, VM may not be fully initialized')
 
 def _parse_df_output(df_line):
     split_line = df_line.split()
