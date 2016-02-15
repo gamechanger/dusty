@@ -12,6 +12,7 @@ from ...subprocess import check_output_demoted, check_and_log_output_and_error_d
 from ...compiler.spec_assembler import get_assembled_specs
 from ...compiler.compose import links_for_app_or_service
 from ...path import parent_dir
+from ...commands.utils import pty_fork
 
 def write_composefile(compose_config, compose_file_location):
     compose_dir_location = parent_dir(compose_file_location)
@@ -33,8 +34,11 @@ def compose_up(compose_file_location, project_name, recreate_containers=True, qu
     command = _compose_base_command(['up', '-d'], compose_file_location, project_name)
     if not recreate_containers:
         command.append('--no-recreate')
-    # strip_newlines should be True here so that we handle blank lines being caused by `docker pull <image>`
-    check_and_log_output_and_error_demoted(command, env=get_docker_env(), strip_newlines=True, quiet_on_success=quiet)
+    # We need to execute the Compose up command with a PTY attached
+    # so that we can get the progress updates on pull. This is a
+    # rather complicated dance, but it gives the user feedback
+    # on when pulls are taking a long time, which is important.
+    pty_fork(*command)
 
 def _compose_stop(compose_file_location, project_name, services):
     command = _compose_base_command(['stop', '-t', '1'], compose_file_location, project_name)

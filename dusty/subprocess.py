@@ -7,6 +7,7 @@ from __future__ import absolute_import
 import os
 import pwd
 import subprocess
+import pty
 from copy import copy
 
 from .config import get_config_value
