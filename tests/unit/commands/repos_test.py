@@ -121,3 +121,13 @@ class TestReposCommands(DustyTestCase):
         self.assertFalse(nfs_path_exists('/Users/path/to/dir'))
         self.assertFalse(nfs_path_exists('/Users/path/To/Dir'))
         self.assertFalse(nfs_path_exists('/User'))
+
+    def test_nfs_path_exists_real(self):
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        test_dir = current_dir.split('/unit')[0]
+        self.assertTrue(nfs_path_exists('{}/hfs_nfs_insync/test_1'.format(test_dir)))
+        self.assertFalse(nfs_path_exists('{}/hfs_nfs_insync/test_2'.format(test_dir)))
+        self.assertTrue(nfs_path_exists('{}/hfs_nfs_insync/test_1/sub_test_1'.format(test_dir)))
+        self.assertFalse(nfs_path_exists('{}/hfs_nfs_insync/test_1/sub_test_2'.format(test_dir)))
+        self.assertTrue(nfs_path_exists('{}/hfs_nfs_insync/test_1/Sub_test_2/sub_sub_test_1'.format(test_dir)))
+        self.assertTrue(nfs_path_exists('{}/hfs_nfs_insync/Test_2/sub_test_3'.format(test_dir)))
