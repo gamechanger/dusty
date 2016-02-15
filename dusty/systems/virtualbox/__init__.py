@@ -14,7 +14,8 @@ from ...subprocess import check_and_log_output_and_error_demoted, check_output_d
 from ...log import log_to_client
 
 def _command_for_vm(command_list):
-    ssh_command = ['ssh', '-i', _vm_key_path(), 'docker@{}'.format(get_docker_vm_ip())]
+    ssh_command = ['ssh', '-o', 'StrictHostKeyChecking=no', '-o', 'UserKnownHostsFile=/dev/null',
+                   '-i', _vm_key_path(), 'docker@{}'.format(get_docker_vm_ip())]
     ssh_command.extend([command_list])
     return ssh_command
 
@@ -24,9 +25,8 @@ def _vm_key_path():
     return os.path.expanduser('~{}/.docker/machine/machines/{}/id_rsa'.format(dusty_user,
                                                                               constants.VM_MACHINE_NAME))
 
-def run_command_on_vm(command_list, redirect_stderr=False, quiet_on_success=True):
+def run_command_on_vm(command_list, quiet_on_success=True):
     return check_and_log_output_and_error_demoted(_command_for_vm(command_list),
-                                                  redirect_stderr=redirect_stderr,
                                                   quiet_on_success=quiet_on_success)
 
 def check_output_on_vm(command_list, redirect_stderr=False):
@@ -168,6 +168,10 @@ def initialize_docker_vm():
 def get_docker_vm_ip():
     ssh_port = None
     for line in _get_vm_config():
+        # Something in the VM chain, either VirtualBox or Machine, helpfully
+        # sets up localhost-to-VM forwarding on port 22. We can inspect this
+        # rule to determine the port on localhost which gets forwarded to
+        # 22 in the VM.
         if line.startswith('Forwarding'):
             spec = line.split('=')[1].strip('"')
             name, protocol, host, host_port, target, target_port = spec.split(',')
@@ -176,7 +180,13 @@ def get_docker_vm_ip():
                 break
 
     if ssh_port:
-        ip_addr = check_output_demoted(['ssh', '-i', _vm_key_path(), '-p', ssh_port,
+        # Now we can SSH to the VM on localhost:ssh_port. We do this to
+        # get inside the VM and determine the VM's local address on
+        # the virtualized network. This IP is what we're ultimately
+        # trying to return from this function.
+        ip_addr = check_output_demoted(['ssh', '-o', 'StrictHostKeyChecking=no',
+                                        '-o', 'UserKnownHostsFile=/dev/null',
+                                        '-i', _vm_key_path(), '-p', ssh_port,
                                         'docker@127.0.0.1', 'ip addr show dev eth1'])
         for line in ip_addr.splitlines():
             line = line.strip()
@@ -184,6 +194,9 @@ def get_docker_vm_ip():
                 ip = line.split(' ')[1].split('/')[0]
                 return ip
 
+    # If all our crazy hacks up there don't work, we can still get the IP
+    # from Machine directly. The reason we don't do this normally is
+    # because it's really slow, taking around 600ms on my fast machine.
     logging.warning('Could not get IP the fast way, falling back to Docker Machine')
     return check_output_demoted(['docker-machine', 'ip', constants.VM_MACHINE_NAME]).rstrip()
 
