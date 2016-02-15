@@ -93,7 +93,7 @@ def _apply_nat_net_less_greedy_subnet():
 def _init_docker_vm():
     """Initialize the Dusty VM if it does not already exist."""
     if not _dusty_vm_exists():
-        logging.info('Initializing new Dusty VM with Docker Machine')
+        log_to_client('Initializing new Dusty VM with Docker Machine')
         machine_options = ['--driver', 'virtualbox',
                            '--virtualbox-cpu-count', '-1',
                            '--virtualbox-memory', str(get_config_value(constants.CONFIG_VM_MEM_SIZE)),
