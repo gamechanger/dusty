@@ -22,6 +22,12 @@ def list_repos():
     log_to_client(table.get_string(sortby='Short Name'))
 
 def nfs_path_exists(path):
+    """
+        The normal HFS file system that your mac uses does not work the same way
+        as the NFS file system.  In HFS, capitalization does not matter, but in
+        NFS it does. This function checks if a folder exists in HFS file system
+        using NFS semantics (case sensitive)
+    """
     split_path = path.lstrip('/').split('/')
     recreated_path = '/'
     for path_element in split_path:
@@ -33,6 +39,7 @@ def nfs_path_exists(path):
 @daemon_command
 def override_repo(repo_name, source_path):
     repo = Repo.resolve(get_all_repos(), repo_name)
+    # Align the NFS and HFS file system
     if not nfs_path_exists(source_path):
         raise OSError('Source path {} does not exist'.format(source_path))
     if not os.path.isdir(source_path):
