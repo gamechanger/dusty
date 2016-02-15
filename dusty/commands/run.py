@@ -26,6 +26,7 @@ def prep_for_start_local_env(pull_repos):
     assembled_spec = spec_assembler.get_assembled_specs()
     if not assembled_spec[constants.CONFIG_BUNDLES_KEY]:
         raise RuntimeError('No bundles are activated. Use `dusty bundles` to activate bundles before running `dusty up`.')
+    virtualbox.initialize_docker_vm()
 
 def log_in_to_required_registries():
     """Client-side command which runs the user through a login flow
@@ -49,8 +50,6 @@ def start_local_env(recreate_containers):
     local environment go."""
 
     assembled_spec = spec_assembler.get_assembled_specs()
-    virtualbox.initialize_docker_vm()
-
     required_absent_assets = virtualbox.required_absent_assets(assembled_spec)
     if required_absent_assets:
         raise RuntimeError('Assets {} are specified as required but are not set. Set them with `dusty assets set`'.format(required_absent_assets))
