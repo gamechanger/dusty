@@ -3,6 +3,7 @@ from copy import deepcopy
 import glob
 import os
 import yaml
+import re
 
 from schemer import ValidationException
 
@@ -76,8 +77,15 @@ class DustySchema(BaseMutable):
         if schema is not None:
             schema.apply_defaults(self._document)
 
+    def ensure_file_naming_convention(self):
+        if self.spec_type in ['apps', 'libs']:
+            match_object = re.match('[a-z0-9]+(?:[._-][a-z0-9]+)*', self.name)
+            if match_object.group(0) != self.name:
+                raise ValueError("Dusty .yml file naming error for {}. {} yml files can only have names that match the pattern: '[a-z0-9]+(?:[._-][a-z0-9]+)*'. No camelCase".format(self.name, self.spec_type))
+
     @notifies_validation_exception
     def validate(self, schema, document):
+        self.ensure_file_naming_convention()
         if schema is not None:
             schema.validate(document)
 
