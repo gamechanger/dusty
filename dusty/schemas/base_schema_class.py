@@ -81,7 +81,7 @@ class DustySchema(BaseMutable):
         if self.spec_type in ['apps', 'libs']:
             match_object = re.match('[a-z0-9]+(?:[._-][a-z0-9]+)*', self.name)
             if match_object.group(0) != self.name:
-                raise ValueError("Dusty .yml file naming error for {}. {} yml files can only have names that match the pattern: '[a-z0-9]+(?:[._-][a-z0-9]+)*'. No camelCase".format(self.name, self.spec_type))
+                raise ValueError("Dusty .yml file naming error for {}. {} yml files can only have names that match the pattern: '[a-z0-9]+(?:[._-][a-z0-9]+)*'. \n Your file name must start with a number or character, cannot have uppercase letters, and can only have ., _, and - as special characters".format(self.name, self.spec_type))
 
     @notifies_validation_exception
     def validate(self, schema, document):
