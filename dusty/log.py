@@ -71,8 +71,20 @@ def streaming_to_client():
     was originally created for streaming Compose up's
     terminal output through to the client and should only be
     used for similarly complex circumstances."""
-    handler = client_logger.handlers[0]
-    old_propagate, old_append = client_logger.propagate, handler.append_newlines
-    client_logger.propagate, handler.append_newlines = False, False
+    handler = None
+    # Avoid annoying "No handlers could be found" warning
+    if client_logger.handlers:
+        for handler in client_logger.handlers:
+            if hasattr(handler, 'append_newlines'):
+                break
+        else:
+            handler = None
+    old_propagate = client_logger.propagate
+    client_logger.propagate = False
+    if handler is not None:
+        old_append = handler.append_newlines
+        handler.append_newlines = False
     yield
-    client_logger.propagate, handler.append_newlines = old_propagate, old_append
+    client_logger.propagate = old_propagate
+    if handler is not None:
+        handler.append_newlines = old_append
