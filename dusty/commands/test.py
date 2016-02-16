@@ -183,9 +183,6 @@ def _cleanup_bad_test_container(client, compose_container_name):
         client.remove_container(compose_container_name, v=True)
 
 def exit_handler(app_or_lib_name, suite_name, services):
-    import logging
-    logging.error("CLEANING UP")
-    logging.error(app_or_lib_name)
     compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
     client = get_docker_client()
     for service_name in services:
