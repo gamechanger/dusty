@@ -143,15 +143,14 @@ def _cleanup_bad_test_state(app_or_lib_name, suite_name, service_name):
     client = get_docker_client()
     compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
     compose_container_name = _test_compose_container_name(compose_project_name, service_name)
-    try:
-        client.kill(compose_container_name)
-    except:
-        pass
 
-    try:
+    running_containers = client.containers(filters={'name': compose_container_name})
+    if running_containers != []:
+        client.kill(compose_container_name)
+
+    containers = client.containers(all=True, filters={'name': compose_container_name})
+    if containers != []:
         client.remove_container(compose_container_name, v=True)
-    except:
-        pass
 
     return compose_container_name
 
