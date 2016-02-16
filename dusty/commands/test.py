@@ -183,15 +183,15 @@ def _cleanup_test_container(client, container_name):
     if containers != []:
         client.remove_container(container_name, v=True)
 
-def exit_handler(app_or_lib_name, suite_name, services):
+def _cleanup_containers(app_or_lib_name, suite_name, services):
     compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
     client = get_docker_client()
     for service_name in services:
-        compose_container_name = _test_compose_container_name(compose_project_name, service_name)
-        _cleanup_bad_test_container(client, compose_container_name)
+        service_container_name = _test_compose_container_name(compose_project_name, service_name)
+        _cleanup_test_container(client, service_container_name)
 
     app_container_name = _test_compose_container_name(compose_project_name, app_or_lib_name)
-    _cleanup_bad_test_container(client, compose_container_name)
+    _cleanup_test_container(client, app_container_name)
 
 def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
     client = get_docker_client()
@@ -200,7 +200,7 @@ def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
     test_command = _construct_test_command(app_or_lib_name, suite_name, test_arguments)
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs, test=True)
 
-    atexit.register(exit_handler, app_or_lib_name, suite_name, suite_spec['services'])
+    atexit.register(_cleanup_containers, app_or_lib_name, suite_name, suite_spec['services'])
     previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, suite_spec['services'], suite_name)
     previous_container_name = previous_container_names[-1] if previous_container_names else None
     test_container_name = _app_or_lib_compose_up(suite_spec['compose'], app_or_lib_name,
@@ -208,4 +208,7 @@ def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
 
     for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
         log_to_client(line.strip())
-    return client.wait(test_container_name)
+    exit_code = client.wait(test_container_name)
+    _cleanup_containers(app_or_lib_name, suite_name, suite_spec['services'])
+
+    return exit_code
