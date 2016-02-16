@@ -208,9 +208,4 @@ def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
 
     for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
         log_to_client(line.strip())
-    exit_code = client.wait(test_container_name)
-    client.remove_container(container=test_container_name, v=True)
-
-    for service_container in previous_container_names:
-        _cleanup_test_container(client, service_container)
-    return exit_code
+    return client.wait(test_container_name)
