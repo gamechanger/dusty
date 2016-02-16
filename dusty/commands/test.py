@@ -170,17 +170,18 @@ def _app_or_lib_compose_up(test_suite_compose_spec, app_or_lib_name, app_or_lib_
     compose_up(composefile_path, compose_project_name, quiet=True)
     return _test_compose_container_name(compose_project_name, app_or_lib_name)
 
-def _cleanup_bad_test_container(client, compose_container_name):
+def _cleanup_test_container(client, container_name):
     """
        It is possible that the past test run exited in a bad state.  This will clean it up
     """
-    running_containers = client.containers(filters={'name': compose_container_name})
+    log_to_client('Killing testing container {}'.format(container_name))
+    running_containers = client.containers(filters={'name': container_name})
     if running_containers != []:
-        client.kill(compose_container_name)
+        client.kill(container_name)
 
-    containers = client.containers(all=True, filters={'name': compose_container_name})
+    containers = client.containers(all=True, filters={'name': container_name})
     if containers != []:
-        client.remove_container(compose_container_name, v=True)
+        client.remove_container(container_name, v=True)
 
 def exit_handler(app_or_lib_name, suite_name, services):
     compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
@@ -211,7 +212,5 @@ def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
     client.remove_container(container=test_container_name, v=True)
 
     for service_container in previous_container_names:
-        log_to_client('Killing service container {}'.format(service_container))
-        client.kill(service_container)
-        client.remove_container(container=service_container, v=True)
+        _cleanup_test_container(client, service_container)
     return exit_code
