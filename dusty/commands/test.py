@@ -133,6 +133,28 @@ def _compose_project_name(service_name, suite_name):
     # Suite names should be able to have underscores. docker-compose does not allow project name to have underscores
     return 'test{}{}'.format(service_name.lower(), suite_name.lower().replace('_', ''))
 
+def _test_compose_container_name(compose_project_name, app_or_lib_name):
+    return '{}_{}_1'.format(compose_project_name, app_or_lib_name)
+
+def _cleanup_bad_test_state(app_or_lib_name, suite_name, service_name):
+    """
+       It is possible that the past test run exited in a bad state.  This will clean it up
+    """
+    client = get_docker_client()
+    compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
+    compose_container_name = _test_compose_container_name(compose_project_name, service_name)
+    try:
+        client.kill(compose_container_name)
+    except:
+        pass
+
+    try:
+        client.remove_container(compose_container_name, v=True)
+    except:
+        pass
+
+    return compose_container_name
+
 def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
     previous_container_names = []
     for service_name in services:
@@ -145,8 +167,10 @@ def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
         composefile_path = _test_composefile_path(service_name)
         write_composefile(service_compose_config, composefile_path)
 
+        compose_container_name = _cleanup_bad_test_state(app_or_lib_name, suite_name, service_name)
+
         compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name), quiet=True)
-        previous_container_names.append("{}_{}_1".format(_compose_project_name(app_or_lib_name, suite_name), service_name))
+        previous_container_names.append(compose_container_name)
     return previous_container_names
 
 def _app_or_lib_compose_up(test_suite_compose_spec, app_or_lib_name, app_or_lib_volumes, test_command, previous_container_name, suite_name):
@@ -160,8 +184,11 @@ def _app_or_lib_compose_up(test_suite_compose_spec, app_or_lib_name, app_or_lib_
     composefile_path = _test_composefile_path(app_or_lib_name)
     compose_config = get_testing_compose_dict(app_or_lib_name, test_suite_compose_spec, **kwargs)
     write_composefile(compose_config, composefile_path)
+
+    compose_container_name = _cleanup_bad_test_state(app_or_lib_name, suite_name, app_or_lib_name)
+
     compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name), quiet=True)
-    return '{}_{}_1'.format(_compose_project_name(app_or_lib_name, suite_name), app_or_lib_name)
+    return compose_container_name
 
 def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
     client = get_docker_client()
