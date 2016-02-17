@@ -300,6 +300,14 @@ Example:
     dusty shell website
 ```
 
+#### shutdown
+```
+Shut down the Dusty VM.
+
+Usage:
+shutdown
+```
+
 #### status
 ```
 Give information on activated apps, services and
