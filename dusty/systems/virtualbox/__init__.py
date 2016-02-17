@@ -164,6 +164,13 @@ def initialize_docker_vm():
         _ensure_cp_dir_exists()
         _ensure_assets_dir_exists()
 
+def shut_down_docker_vm():
+    if docker_vm_is_running():
+        check_call_demoted(['docker-machine', 'stop', constants.VM_MACHINE_NAME])
+        log_to_client('Dusty VM was shut down')
+    else:
+        log_to_client('Dusty VM is already shut down')
+
 @memoized
 def get_docker_vm_ip():
     ssh_port = None

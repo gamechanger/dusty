@@ -17,6 +17,7 @@ Commands:
   scripts    Execute predefined scripts inside running containers
   setup      Configure Dusty after installation
   shell      Open a shell inside a running container
+  shutdown   Shut down the Dusty VM
   status     Show info on activated apps, services and libs
   stop       Stop Dusty-managed containers
   test       Run test scripts in isolated environments
@@ -44,8 +45,8 @@ from ..daemon import main as run_daemon
 from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
-from . import (assets, bundles, config, cp, dump, disk, env, logs, repos, restart, scripts, shell, stop,
-               up, upgrade, validate, version, setup, test, status)
+from . import (assets, bundles, config, cp, dump, disk, env, logs, repos, restart, scripts, shell,
+               shutdown, stop, up, upgrade, validate, version, setup, test, status)
 from .. import constants
 
 MODULE_MAP = {
@@ -62,6 +63,7 @@ MODULE_MAP = {
     'scripts': scripts,
     'setup': setup,
     'shell': shell,
+    'shutdown': shutdown,
     'status': status,
     'stop': stop,
     'test': test,
