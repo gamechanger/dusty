@@ -7,6 +7,7 @@ from ..systems import docker, hosts, nginx, virtualbox, nfs
 from ..systems.docker import compose
 from ..systems.docker.config import (get_authed_registries, registry_from_image,
                                      log_in_to_registry)
+from ..systems.virtualbox import docker_vm_is_running, shut_down_docker_vm
 from ..log import log_to_client
 from .repos import update_managed_repos
 from .. import constants
@@ -14,7 +15,7 @@ from ..command_file import make_up_command_files
 from ..source import Repo
 from ..payload import daemon_command
 from ..warnings import daemon_warnings
-from ..subprocess import check_call_demoted
+from ..subprocess import check_call_demoted, check_and_log_output_and_error_demoted
 
 @daemon_command
 def prep_for_start_local_env(pull_repos):
@@ -139,3 +140,10 @@ def restart_apps_by_repo(repo_names):
         if spec_assembler.get_same_container_repos_from_spec(app_spec).intersection(resolved_repos):
             apps_with_repos.add(app_spec.name)
     restart_apps_or_services(apps_with_repos)
+
+@daemon_command
+def shutdown_dusty_vm():
+    if docker_vm_is_running():
+        stop_apps_or_services()
+    log_to_client('Shutting down Dusty VM')
+    shut_down_docker_vm()
