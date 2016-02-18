@@ -193,11 +193,11 @@ def _cleanup_containers(app_or_lib_name, suite_name, services):
     app_container_name = _test_compose_container_name(compose_project_name, app_or_lib_name)
     _cleanup_test_container(client, app_container_name)
 
-
 @contextmanager
 def run_safe_tests(app_or_lib_name, suite_name, services):
     try:
         yield
+    #Except needs to be here to catch KeyboardInterrupts
     except:
         raise
     finally:
