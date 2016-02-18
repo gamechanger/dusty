@@ -2,6 +2,7 @@ import os
 import sys
 import textwrap
 import time
+from contextlib import contextmanager
 
 from prettytable import PrettyTable
 
@@ -133,6 +134,9 @@ def _compose_project_name(service_name, suite_name):
     # Suite names should be able to have underscores. docker-compose does not allow project name to have underscores
     return 'test{}{}'.format(service_name.lower(), suite_name.lower().replace('_', ''))
 
+def _test_compose_container_name(compose_project_name, app_or_lib_name):
+    return '{}_{}_1'.format(compose_project_name, app_or_lib_name)
+
 def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
     previous_container_names = []
     for service_name in services:
@@ -145,8 +149,9 @@ def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
         composefile_path = _test_composefile_path(service_name)
         write_composefile(service_compose_config, composefile_path)
 
-        compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name), quiet=True)
-        previous_container_names.append("{}_{}_1".format(_compose_project_name(app_or_lib_name, suite_name), service_name))
+        compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
+        compose_up(composefile_path, compose_project_name, quiet=True)
+        previous_container_names.append(_test_compose_container_name(compose_project_name, service_name))
     return previous_container_names
 
 def _app_or_lib_compose_up(test_suite_compose_spec, app_or_lib_name, app_or_lib_volumes, test_command, previous_container_name, suite_name):
@@ -160,28 +165,59 @@ def _app_or_lib_compose_up(test_suite_compose_spec, app_or_lib_name, app_or_lib_
     composefile_path = _test_composefile_path(app_or_lib_name)
     compose_config = get_testing_compose_dict(app_or_lib_name, test_suite_compose_spec, **kwargs)
     write_composefile(compose_config, composefile_path)
-    compose_up(composefile_path, _compose_project_name(app_or_lib_name, suite_name), quiet=True)
-    return '{}_{}_1'.format(_compose_project_name(app_or_lib_name, suite_name), app_or_lib_name)
+
+    compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
+    compose_up(composefile_path, compose_project_name, quiet=True)
+    return _test_compose_container_name(compose_project_name, app_or_lib_name)
+
+def _cleanup_test_container(client, container_name):
+    """
+       It is possible that the past test run exited in a bad state.  This will clean it up
+    """
+    log_to_client('Killing testing container {}'.format(container_name))
+    running_containers = client.containers(filters={'name': container_name})
+    if running_containers != []:
+        client.kill(container_name)
+
+    containers = client.containers(all=True, filters={'name': container_name})
+    if containers != []:
+        client.remove_container(container_name, v=True)
+
+def _cleanup_containers(app_or_lib_name, suite_name, services):
+    compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
+    client = get_docker_client()
+    for service_name in services:
+        service_container_name = _test_compose_container_name(compose_project_name, service_name)
+        _cleanup_test_container(client, service_container_name)
+
+    app_container_name = _test_compose_container_name(compose_project_name, app_or_lib_name)
+    _cleanup_test_container(client, app_container_name)
+
+@contextmanager
+def run_safe_tests(app_or_lib_name, suite_name, services):
+    try:
+        yield
+    #Except needs to be here to catch KeyboardInterrupts
+    except:
+        raise
+    finally:
+        _cleanup_containers(app_or_lib_name, suite_name, services)
 
 def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
     suite_spec = _get_suite_spec(app_or_lib_name, suite_name)
     test_command = _construct_test_command(app_or_lib_name, suite_name, test_arguments)
-
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs, test=True)
-    previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, suite_spec['services'], suite_name)
-    previous_container_name = previous_container_names[-1] if previous_container_names else None
-    test_container_name = _app_or_lib_compose_up(suite_spec['compose'], app_or_lib_name,
-                                                 volumes, test_command, previous_container_name, suite_name)
 
-    for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
-        log_to_client(line.strip())
-    exit_code = client.wait(test_container_name)
-    client.remove_container(container=test_container_name, v=True)
+    with run_safe_tests(app_or_lib_name, suite_name, suite_spec['services']):
+        previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, suite_spec['services'], suite_name)
+        previous_container_name = previous_container_names[-1] if previous_container_names else None
+        test_container_name = _app_or_lib_compose_up(suite_spec['compose'], app_or_lib_name,
+                                                     volumes, test_command, previous_container_name, suite_name)
 
-    for service_container in previous_container_names:
-        log_to_client('Killing service container {}'.format(service_container))
-        client.kill(service_container)
-        client.remove_container(container=service_container, v=True)
+        for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
+            log_to_client(line.strip())
+        exit_code = client.wait(test_container_name)
+
     return exit_code
