@@ -2,6 +2,7 @@ import os
 import sys
 import textwrap
 import time
+from contextlib import contextmanager
 
 from prettytable import PrettyTable
 
@@ -192,6 +193,16 @@ def _cleanup_containers(app_or_lib_name, suite_name, services):
     app_container_name = _test_compose_container_name(compose_project_name, app_or_lib_name)
     _cleanup_test_container(client, app_container_name)
 
+
+@contextmanager
+def run_safe_tests(app_or_lib_name, suite_name, services):
+    try:
+        yield
+    except:
+        raise
+    finally:
+        _cleanup_containers(app_or_lib_name, suite_name, services)
+
 def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
     client = get_docker_client()
     expanded_specs = get_expanded_libs_specs()
@@ -199,7 +210,7 @@ def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
     test_command = _construct_test_command(app_or_lib_name, suite_name, test_arguments)
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs, test=True)
 
-    try:
+    with run_safe_tests(app_or_lib_name, suite_name, suite_spec['services']):
         previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, suite_spec['services'], suite_name)
         previous_container_name = previous_container_names[-1] if previous_container_names else None
         test_container_name = _app_or_lib_compose_up(suite_spec['compose'], app_or_lib_name,
@@ -208,10 +219,5 @@ def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
         for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
             log_to_client(line.strip())
         exit_code = client.wait(test_container_name)
-    except KeyboardInterrupt as e:
-        _cleanup_containers(app_or_lib_name, suite_name, suite_spec['services'])
-        raise
-
-    _cleanup_containers(app_or_lib_name, suite_name, suite_spec['services'])
 
     return exit_code
