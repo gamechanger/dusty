@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.7.0 (In Progress)
+## 0.7.1 (In Progress)
+
+## 0.7.0 (February 18, 2016)
 * **Breaking**
     * Dusty app and lib spec filenames must now abide by Docker image naming conventions: `[a-z0-9]+(?:[._-][a-z0-9]+)*`. Your file name must start with a number or lowercase letter, cannot have uppercase letters, and can only have `.`, `_`, and `-` as special characters.
     * Dusty requires Docker Machine 0.5.0+
