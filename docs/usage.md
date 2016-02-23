@@ -150,6 +150,19 @@ which is 20G max (dynamically allocated by VirtualBox).  Cleanup_containers uses
 Backup and restore are usefull for saving persistent data.  You may want to save the data and
 send it to someone else, or save your data after recreating your Docker VM.
 
+#### doctor
+```
+Attempt to fix networking issues with your Dusty VM
+
+VirtualBox can get itself in a state where the network between
+your host Mac and the Dusty VM stops functioning. This command
+automatically tries a few debugging commands which are known
+to fix the networking bugs in certain situations.
+
+Usage:
+doctor
+```
+
 #### dump
 ```
 Output diagnostic data, useful for filing bug reports.
