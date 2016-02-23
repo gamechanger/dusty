@@ -140,6 +140,22 @@ def _apply_nic_fix():
     log_to_client('Setting NIC 1 to use PCnet-FAST III')
     check_call_demoted(['VBoxManage', 'modifyvm', constants.VM_MACHINE_NAME, '--nictype1', constants.VM_NIC_TYPE])
 
+def delete_docker_vm_host_only_interface():
+    """Attempt to delete the host-only interface attached
+    to the current Dusty VM. VM should be stopped
+    before calling this."""
+    adapter_name = get_vm_hostonly_adapter()
+    log_to_client('Deleting host-only interface {}'.format(adapter_name))
+    check_call_demoted(['VBoxManage', 'hostonlyif', 'remove', adapter_name])
+
+def regenerate_docker_vm_certificates():
+    """Regenerate certificates for a running VM through Docker Machine.
+    This may be necessary following a restart if there were previously
+    networking issues preventing Machine from doing this as part
+    of normal startup."""
+    log_to_client('Attempting to regenerate certificates for Dusty VM')
+    check_call_demoted(['docker-machine', 'regenerate-certs', '-f', constants.VM_MACHINE_NAME])
+
 def ensure_docker_vm_is_started():
     _init_docker_vm()
     # Switch VM to use PCnet-FAST III which we have observed to

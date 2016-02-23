@@ -8,7 +8,8 @@ Commands:
   bundles    Manage which sets of applications to run
   config     Get or set Dusty config variables
   cp         Copy files between local filesystem and containers
-  disk       Manage and inspect the Docker VM's disk usage
+  disk       Manage and inspect the Dusty VM's disk usage
+  doctor     Attempt to fix networking issues with your Dusty VM
   dump       Print diagnostic information for bug reports
   env        Set environment variable overrides in containers
   logs       Tail logs for a Dusty-managed service
@@ -45,8 +46,8 @@ from ..daemon import main as run_daemon
 from ..config import get_config_value
 from ..log import configure_client_logging, log_to_client
 from ..payload import Payload
-from . import (assets, bundles, config, cp, dump, disk, env, logs, repos, restart, scripts, shell,
-               shutdown, stop, up, upgrade, validate, version, setup, test, status)
+from . import (assets, bundles, config, cp, dump, disk, doctor, env, logs, repos, restart,
+               scripts, shell, shutdown, stop, up, upgrade, validate, version, setup, test, status)
 from .. import constants
 
 MODULE_MAP = {
@@ -55,6 +56,7 @@ MODULE_MAP = {
     'config': config,
     'cp': cp,
     'disk': disk,
+    'doctor': doctor,
     'dump': dump,
     'env': env,
     'logs': logs,
