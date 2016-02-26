@@ -42,7 +42,7 @@ class TaskQueue(Queue, object):
             raise RuntimeError("Exceptions encountered during parallel task execution")
 
 @contextmanager
-def parallel_task_queue(pool_size=multiprocessing.cpu_count()*2):
+def parallel_task_queue(pool_size=multiprocessing.cpu_count()):
     """Context manager for setting up a TaskQueue. Upon leaving the
     context manager, all tasks that were enqueued will be executed
     in parallel subject to `pool_size` concurrency constraints."""
