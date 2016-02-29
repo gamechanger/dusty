@@ -1,5 +1,8 @@
 import os
+import sys
 import re
+
+from pkg_resources import resource_string
 
 VERSION = '0.7.1'
 BINARY = False # overridden by PyInstaller when we build a binary
@@ -23,6 +26,9 @@ SOCKET_LOGGER_NAME = 'socket_logger'
 
 RUN_DIR = '/var/run/dusty'
 SOCKET_PATH = os.getenv('DUSTY_SOCKET_PATH', os.path.join(RUN_DIR, 'dusty.sock'))
+
+DAEMON_HTTP_BIND_IP = '127.0.0.1'
+DAEMON_HTTP_BIND_PORT = 60912
 
 FIRST_RUN_FILE_PATH = '/.dusty_first_time_started'
 CONTAINER_LOG_PATH = "/var/log"
@@ -56,39 +62,15 @@ NGINX_IMAGE = "nginx:1.9.3"
 NGINX_PRIMARY_CONFIG_NAME = 'nginx.primary'
 NGINX_HTTP_CONFIG_NAME = 'dusty.http.conf'
 NGINX_STREAM_CONFIG_NAME = 'dusty.stream.conf'
+NGINX_502_PAGE_NAME = 'dusty_custom_502.html'
 
-NGINX_BASE_CONFIG = """
-user  nginx;
-worker_processes  1;
+NGINX_BASE_CONFIG = resource_string(__name__, 'resources/nginx_base_config.txt')
+NGINX_502_PAGE_HTML_TEMPLATE = resource_string(__name__, 'resources/nginx_502_page.html')
 
-error_log  /var/log/nginx/error.log warn;
-pid        /var/run/nginx.pid;
-
-events {
-    worker_connections  1024;
-}
-
-stream {
-    include /etc/nginx/conf.d/*.stream.conf;
-}
-
-http {
-    include       /etc/nginx/mime.types;
-    default_type  application/octet-stream;
-
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                      '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
-
-    access_log  /var/log/nginx/access.log  main;
-
-    sendfile        on;
-
-    keepalive_timeout  65;
-
-    include /etc/nginx/conf.d/*.http.conf;
-}
-"""
+# Inline JS and CSS resources in our 502 HTML
+NGINX_502_PAGE_HTML = NGINX_502_PAGE_HTML_TEMPLATE.format(jquery_source=resource_string(__name__, 'resources/jquery-2.2.1.min.js'),
+                                                          skeleton_source=resource_string(__name__, 'resources/skeleton.min.css'),
+                                                          custom_js_source=resource_string(__name__, 'resources/502.js'))
 
 VM_CP_DIR = '/cp'
 CONTAINER_CP_DIR = '/cp'
