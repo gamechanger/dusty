@@ -1,4 +1,4 @@
-from ...constants import NGINX_MAX_FILE_SIZE
+from ...constants import NGINX_MAX_FILE_SIZE, NGINX_502_PAGE_NAME
 
 def _nginx_proxy_string(port_spec, bridge_ip):
     return "proxy_pass {}{}:{};".format('http://' if port_spec['type'] == 'http' else '',
@@ -27,6 +27,14 @@ def _nginx_server_name_string(port_spec):
 def _nginx_max_file_size_string():
     return "client_max_body_size {};".format(NGINX_MAX_FILE_SIZE)
 
+def _custom_502_page():
+    return """
+\t \t error_page 502 /{0};
+\t \t location = /{0} {{
+\t \t \t root /etc/nginx/conf.d/html;
+\t \t \t internal;
+\t \t }}\n""".format(NGINX_502_PAGE_NAME)
+
 def _nginx_http_spec(port_spec, bridge_ip):
     """This will output the nginx HTTP config string for specific port spec """
     server_string_spec = "\t server {\n"
@@ -34,6 +42,7 @@ def _nginx_http_spec(port_spec, bridge_ip):
     server_string_spec += "\t \t {}\n".format(_nginx_listen_string(port_spec))
     server_string_spec += "\t \t {}\n".format(_nginx_server_name_string(port_spec))
     server_string_spec += _nginx_location_spec(port_spec, bridge_ip)
+    server_string_spec += _custom_502_page()
     server_string_spec += "\t }\n"
     return server_string_spec
 

@@ -11,6 +11,7 @@ Options:
 import os
 import logging
 import socket
+import threading
 
 from docopt import docopt
 
@@ -21,7 +22,7 @@ from .payload import Payload, get_payload_function, init_yaml_constructor
 from .memoize import reset_memoize_cache
 from .warnings import daemon_warnings
 from .config import refresh_config_warnings, check_and_load_ssh_auth
-from . import constants
+from . import constants, http_server
 
 connection = None
 
@@ -60,6 +61,15 @@ def close_client_connection(terminator=SOCKET_TERMINATOR):
     finally:
         close_socket_logger()
         connection.close()
+
+def _start_http_server():
+    """Start the daemon's HTTP server on a separate thread.
+    This server is only used for servicing container status
+    requests from Dusty's custom 502 page."""
+    thread = threading.Thread(target=http_server.app.run, args=(constants.DAEMON_HTTP_BIND_IP,
+                                                                constants.DAEMON_HTTP_BIND_PORT))
+    thread.daemon = True
+    thread.start()
 
 def _listen_on_socket(socket_path, suppress_warnings):
     global connection
@@ -116,6 +126,7 @@ def main():
     if args['--preflight-only']:
         return
     refresh_config_warnings()
+    _start_http_server()
     _listen_on_socket(SOCKET_PATH, args['--suppress-warnings'])
 
 if __name__ == '__main__':

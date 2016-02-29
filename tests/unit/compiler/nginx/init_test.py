@@ -35,6 +35,12 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_set_header Host $host;
                     proxy_pass http://172.17.42.1:80;
                 }
+
+                error_page 502 /dusty_custom_502.html;
+                location = /dusty_custom_502.html {
+                    root /etc/nginx/conf.d/html;
+                    internal;
+                }
             }
         """)
         output = cleanse(get_nginx_configuration_spec(self.port_spec_dict_1, '172.17.42.1')['http'])
@@ -53,6 +59,12 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                     proxy_set_header Host $host;
                     proxy_pass http://172.17.42.1:8000;
+                }
+
+                error_page 502 /dusty_custom_502.html;
+                location = /dusty_custom_502.html {
+                    root /etc/nginx/conf.d/html;
+                    internal;
                 }
             }
         """)
@@ -82,6 +94,12 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_set_header Host $host;
                     proxy_pass http://172.17.42.1:8000;
                 }
+
+                error_page 502 /dusty_custom_502.html;
+                location = /dusty_custom_502.html {
+                    root /etc/nginx/conf.d/html;
+                    internal;
+                }
             }
             server {
                 client_max_body_size 500M;
@@ -94,6 +112,12 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                     proxy_set_header Host $host;
                     proxy_pass http://172.17.42.1:80;
+                }
+
+                error_page 502 /dusty_custom_502.html;
+                location = /dusty_custom_502.html {
+                    root /etc/nginx/conf.d/html;
+                    internal;
                 }
             }
         """)
