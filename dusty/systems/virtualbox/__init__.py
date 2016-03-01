@@ -226,7 +226,7 @@ def get_docker_vm_ip():
 @memoized
 def get_docker_bridge_ip():
     logging.info('Attempting to get the docker bridge IP')
-    for _ in range(5):
+    for _ in range(15):
         result = check_output_on_vm("ip route | grep docker0 | awk '{print $NF}'").rstrip()
         if result:
             return result
