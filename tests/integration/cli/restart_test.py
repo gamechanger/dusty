@@ -22,8 +22,7 @@ class TestRestartCLI(DustyIntegrationTestCase):
             self._set_up_fake_local_repo(path=repo.remote_path)
         self.run_command('bundles activate bundle-a bundle-b')
         self.run_command('up')
-        time.sleep(.5)
-        self.up_complete_time = datetime.datetime.utcnow()
+        self.up_complete_time = max([self.container_start_time(app) for app in ['appa', 'appb', 'appc']])
 
     def tearDown(self):
         try:
@@ -43,9 +42,14 @@ class TestRestartCLI(DustyIntegrationTestCase):
         return dateutil.parser.parse(result)
 
     @nottest
-    def container_has_restarted(self, app_name):
+    def container_start_time(self, app_name):
         inspected = self.inspect_container(app_name)
-        start_time = dateutil.parser.parse(inspected['State']['StartedAt']).replace(tzinfo=None)
+        return dateutil.parser.parse(inspected['State']['StartedAt']).replace(tzinfo=None)
+
+    @nottest
+    def container_has_restarted(self, app_name):
+        start_time = self.container_start_time(app_name)
+        print 'Container for {} started: {}, Up complete: {}'.format(app_name, start_time, self.up_complete_time)
         return start_time > self.up_complete_time
 
     def test_restart_one(self):

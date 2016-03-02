@@ -8,7 +8,7 @@ import time
 from subprocess import CalledProcessError
 
 from ... import constants
-from ...memoize import memoized
+from ...memoize import memoized, reset_memoize_cache
 from ...config import get_config_value
 from ...subprocess import check_and_log_output_and_error_demoted, check_output_demoted, check_call_demoted, call_demoted
 from ...log import log_to_client
@@ -115,6 +115,7 @@ def _stop_docker_vm():
     """Stop the Dusty VM if it is not already stopped."""
     check_call_demoted(['docker-machine', 'stop', constants.VM_MACHINE_NAME], redirect_stderr=True)
 
+@memoized
 def _get_vm_config():
     return check_output_demoted(['VBoxManage', 'showvminfo', '--machinereadable', constants.VM_MACHINE_NAME]).splitlines()
 
@@ -157,6 +158,7 @@ def regenerate_docker_vm_certificates():
     check_call_demoted(['docker-machine', 'regenerate-certs', '-f', constants.VM_MACHINE_NAME])
 
 def ensure_docker_vm_is_started():
+    reset_memoize_cache()
     _init_docker_vm()
     # Switch VM to use PCnet-FAST III which we have observed to
     # have much better performance than the default.
@@ -186,42 +188,73 @@ def shut_down_docker_vm():
         log_to_client('Dusty VM was shut down')
     else:
         log_to_client('Dusty VM is already shut down')
+    reset_memoize_cache()
 
-@memoized
-def get_docker_vm_ip():
-    ssh_port = None
+def _get_localhost_ssh_port():
+    """Something in the VM chain, either VirtualBox or Machine, helpfully
+    sets up localhost-to-VM forwarding on port 22. We can inspect this
+    rule to determine the port on localhost which gets forwarded to
+    22 in the VM."""
     for line in _get_vm_config():
-        # Something in the VM chain, either VirtualBox or Machine, helpfully
-        # sets up localhost-to-VM forwarding on port 22. We can inspect this
-        # rule to determine the port on localhost which gets forwarded to
-        # 22 in the VM.
         if line.startswith('Forwarding'):
             spec = line.split('=')[1].strip('"')
             name, protocol, host, host_port, target, target_port = spec.split(',')
             if name == 'ssh' and protocol == 'tcp' and target_port == '22':
-                ssh_port = host_port
-                break
+                return host_port
+    raise ValueError('Could not determine localhost port for SSH forwarding')
 
-    if ssh_port:
-        # Now we can SSH to the VM on localhost:ssh_port. We do this to
-        # get inside the VM and determine the VM's local address on
-        # the virtualized network. This IP is what we're ultimately
-        # trying to return from this function.
-        ip_addr = check_output_demoted(['ssh', '-o', 'StrictHostKeyChecking=no',
-                                        '-o', 'UserKnownHostsFile=/dev/null',
-                                        '-i', _vm_key_path(), '-p', ssh_port,
-                                        'docker@127.0.0.1', 'ip addr show dev eth1'])
-        for line in ip_addr.splitlines():
-            line = line.strip()
-            if line.startswith('inet') and not line.startswith('inet6'):
-                ip = line.split(' ')[1].split('/')[0]
-                return ip
+def _get_host_only_mac_address():
+    """Returns the MAC address assigned to the host-only adapter,
+    using output from VBoxManage. Returned MAC address has no colons
+    and is lower-cased."""
+    # Get the number of the host-only adapter
+    vm_config = _get_vm_config()
+    for line in vm_config:
+        if line.startswith('hostonlyadapter'):
+            adapter_number = int(line[15:16])
+            break
+    else:
+        raise ValueError('No host-only adapter is defined for the Dusty VM')
 
-    # If all our crazy hacks up there don't work, we can still get the IP
-    # from Machine directly. The reason we don't do this normally is
-    # because it's really slow, taking around 600ms on my fast machine.
-    logging.warning('Could not get IP the fast way, falling back to Docker Machine')
-    return check_output_demoted(['docker-machine', 'ip', constants.VM_MACHINE_NAME]).rstrip()
+    for line in vm_config:
+        if line.startswith('macaddress{}'.format(adapter_number)):
+            return line.split('=')[1].strip('"').lower()
+    raise ValueError('Could not find MAC address for adapter number {}'.format(adapter_number))
+
+def _ip_for_mac_from_ip_addr_show(ip_addr_show, target_mac):
+    """Given the rather-complex output from an 'ip addr show' command
+    on the VM, parse the output to determine the IP address
+    assigned to the interface with the given MAC."""
+    return_next_ip = False
+    for line in ip_addr_show.splitlines():
+        line = line.strip()
+        if line.startswith('link/ether'):
+            line_mac = line.split(' ')[1].replace(':', '')
+            if line_mac == target_mac:
+                return_next_ip = True
+        elif return_next_ip and line.startswith('inet') and not line.startswith('inet6'):
+            ip = line.split(' ')[1].split('/')[0]
+            return ip
+
+def _get_host_only_ip():
+    """Determine the host-only IP of the Dusty VM through Virtualbox and SSH
+    directly, bypassing Docker Machine. We do this because Docker Machine is
+    much slower, taking about 600ms total. We are basically doing the same
+    flow Docker Machine does in its own code."""
+    mac = _get_host_only_mac_address()
+    ip_addr_show = check_output_demoted(['ssh', '-o', 'StrictHostKeyChecking=no',
+                                         '-o', 'UserKnownHostsFile=/dev/null',
+                                         '-i', _vm_key_path(), '-p', _get_localhost_ssh_port(),
+                                         'docker@127.0.0.1', 'ip addr show'])
+    return _ip_for_mac_from_ip_addr_show(ip_addr_show, mac)
+
+@memoized
+def get_docker_vm_ip():
+    try:
+        return _get_host_only_ip()
+    except Exception as e:
+        logging.exception('Failed getting host only IP through optimized path, trying Docker Machine')
+        return check_output_demoted(['docker-machine', 'ip', constants.VM_MACHINE_NAME]).rstrip()
 
 @memoized
 def get_docker_bridge_ip():
