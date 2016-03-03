@@ -7,6 +7,7 @@ install_requires = [
     'Schemer==0.2.9',
     'psutil==2.2.1',
     'Flask==0.10.1',
+    'requests==2.9.1',
 ]
 
 test_requires = [

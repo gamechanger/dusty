@@ -25,6 +25,15 @@ def _app_name_from_forwarding_info(hostname, port):
                 return app.name
     raise ValueError('Could not find app for {}:{}'.format(hostname, port))
 
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    logging.info('Received POST request to shut down HTTP server')
+    shutdown_function = request.environ.get('werkzeug.server.shutdown')
+    if shutdown_function is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    shutdown_function()
+    return 'Dusty HTTP server shutting down'
+
 @app.route('/register-consumer', methods=['POST'])
 def register_consumer():
     """Given a hostname and port attempting to be accessed,
