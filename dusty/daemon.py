@@ -12,9 +12,10 @@ import os
 import logging
 import socket
 import threading
+# requests refused to play nicely with pyinstaller
+import httplib
 
 from docopt import docopt
-import requests
 
 from .preflight import preflight_check, refresh_preflight_warnings
 from .log import configure_logging, make_socket_logger, close_socket_logger
@@ -66,10 +67,12 @@ def close_client_connection(terminator=SOCKET_TERMINATOR):
 def shut_down_http_server():
     logging.info('Daemon is shutting down HTTP server')
     try:
-        r = requests.post('http://{}:{}/shutdown'.format(constants.DAEMON_HTTP_BIND_IP,
-                                                         constants.DAEMON_HTTP_BIND_PORT),
-                          timeout=2)
-        r.raise_for_status()
+        h = httplib.HTTPConnection('{}:{}'.format(constants.DAEMON_HTTP_BIND_IP,
+                                                  constants.DAEMON_HTTP_BIND_PORT))
+        h.request('POST', '/shutdown')
+        r = h.getresponse()
+        if r.status != 200:
+            raise ValueError('Got status code {} from response'.format(r.status))
     except Exception as e:
         logging.exception('Exception trying to shut down HTTP server')
 
