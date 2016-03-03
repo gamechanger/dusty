@@ -14,6 +14,7 @@ import socket
 import threading
 
 from docopt import docopt
+import requests
 
 from .preflight import preflight_check, refresh_preflight_warnings
 from .log import configure_logging, make_socket_logger, close_socket_logger
