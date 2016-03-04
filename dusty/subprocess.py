@@ -33,7 +33,7 @@ def run_subprocess(fn, shell_args, demote=True, env=None, **kwargs):
         passed_env = None
     if demote:
         kwargs['preexec_fn'] = _demote_to_user(get_config_value(constants.CONFIG_MAC_USERNAME_KEY))
-    output = fn(shell_args, env=passed_env, **kwargs)
+    output = fn(shell_args, env=passed_env, close_fds=True, **kwargs)
     return output
 
 def call_demoted(shell_args, env=None, redirect_stderr=False):
