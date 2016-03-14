@@ -7,6 +7,7 @@
     * Added a custom 502 page for apps which use host forwarding. This lets you see the status and logs of your container while you're waiting for its HTTP service to come online
 * **Misc**
     * Implemented a [networking fix](https://github.com/docker/machine/pull/3112) the Dusty team implemented in Docker Machine within Dusty
+    * The daemon now raises its open file handle limit to 8192, which should prevent some OSErrors during parallelized Git operations
 
 ## 0.7.0 (February 18, 2016)
 

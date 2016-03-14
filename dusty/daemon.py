@@ -12,6 +12,7 @@ import os
 import logging
 import socket
 import threading
+import resource
 # requests refused to play nicely with pyinstaller
 import httplib
 
@@ -63,6 +64,14 @@ def close_client_connection(terminator=SOCKET_TERMINATOR):
     finally:
         close_socket_logger()
         connection.close()
+
+def _increase_file_handle_limit():
+    """Raise the open file handles permitted by the Dusty daemon process
+    and its child processes. The number we choose here needs to be within
+    the OS X default kernel hard limit, which is 10240."""
+    logging.info('Increasing file handle limit to {}'.format(constants.FILE_HANDLE_LIMIT))
+    resource.setrlimit(resource.RLIMIT_NOFILE,
+                       (constants.FILE_HANDLE_LIMIT, resource.RLIM_INFINITY))
 
 def shut_down_http_server():
     logging.info('Daemon is shutting down HTTP server')
@@ -137,6 +146,7 @@ def _listen_on_socket(socket_path, suppress_warnings):
 def main():
     args = docopt(__doc__)
     configure_logging()
+    _increase_file_handle_limit()
     init_yaml_constructor()
     preflight_check()
     if args['--preflight-only']:
