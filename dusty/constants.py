@@ -30,6 +30,8 @@ SOCKET_PATH = os.getenv('DUSTY_SOCKET_PATH', os.path.join(RUN_DIR, 'dusty.sock')
 DAEMON_HTTP_BIND_IP = '127.0.0.1'
 DAEMON_HTTP_BIND_PORT = 60912
 
+FILE_HANDLE_LIMIT = 8192
+
 FIRST_RUN_FILE_PATH = '/.dusty_first_time_started'
 CONTAINER_LOG_PATH = "/var/log"
 
