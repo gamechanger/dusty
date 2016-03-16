@@ -32,7 +32,7 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_set_header Upgrade $http_upgrade;
                     proxy_set_header Connection "upgrade";
                     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header Host $host;
+                    proxy_set_header Host $http_host;
                     proxy_pass http://172.17.42.1:80;
                 }
 
@@ -57,7 +57,7 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_set_header Upgrade $http_upgrade;
                     proxy_set_header Connection "upgrade";
                     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header Host $host;
+                    proxy_set_header Host $http_host;
                     proxy_pass http://172.17.42.1:8000;
                 }
 
@@ -91,7 +91,7 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_set_header Upgrade $http_upgrade;
                     proxy_set_header Connection "upgrade";
                     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header Host $host;
+                    proxy_set_header Host $http_host;
                     proxy_pass http://172.17.42.1:8000;
                 }
 
@@ -110,7 +110,7 @@ class TestPortSpecCompiler(DustyTestCase):
                     proxy_set_header Upgrade $http_upgrade;
                     proxy_set_header Connection "upgrade";
                     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header Host $host;
+                    proxy_set_header Host $http_host;
                     proxy_pass http://172.17.42.1:80;
                 }
 
