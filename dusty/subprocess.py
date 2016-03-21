@@ -13,7 +13,7 @@ from .config import get_config_value
 from .log import log_to_client
 from . import constants
 
-def _demote_to_user(user_name):
+def demote_to_user(user_name):
     def _demote():
         pw_record = pwd.getpwnam(user_name)
         _set_demoted_home_dir(user_name)
@@ -32,7 +32,7 @@ def run_subprocess(fn, shell_args, demote=True, env=None, **kwargs):
     else:
         passed_env = None
     if demote:
-        kwargs['preexec_fn'] = _demote_to_user(get_config_value(constants.CONFIG_MAC_USERNAME_KEY))
+        kwargs['preexec_fn'] = demote_to_user(get_config_value(constants.CONFIG_MAC_USERNAME_KEY))
     output = fn(shell_args, env=passed_env, close_fds=True, **kwargs)
     return output
 

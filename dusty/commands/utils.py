@@ -8,6 +8,9 @@ import psutil
 
 from ..systems.docker import get_docker_env
 from ..log import log_to_client, streaming_to_client
+from ..subprocess import demote_to_user
+from ..config import get_config_value
+from .. import constants
 
 def _executable_path(executable_name):
     return subprocess.check_output(['which', executable_name]).strip()
@@ -35,9 +38,11 @@ def pty_fork(*args):
     updated_env.update(get_docker_env())
     args += (updated_env,)
     executable = args[0]
+    demote_fn = demote_to_user(get_config_value(constants.CONFIG_MAC_USERNAME_KEY))
 
     child_pid, pty_fd = pty.fork()
     if child_pid == 0:
+        demote_fn()
         os.execle(_executable_path(executable), *args)
     else:
         child_process = psutil.Process(child_pid)
