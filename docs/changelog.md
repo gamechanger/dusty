@@ -1,6 +1,8 @@
 # Changelog
 
-## 0.7.1 (In Progress)
+## 0.7.2 (In Progress)
+
+## 0.7.1 (April 14, 2016)
 
 * **New**
     * Added `dusty doctor` command to attempt to fix some common VirtualBox networking problems
