@@ -4,7 +4,7 @@ import re
 
 from pkg_resources import resource_string
 
-VERSION = '0.7.1'
+VERSION = '0.7.2'
 BINARY = False # overridden by PyInstaller when we build a binary
 PRERELEASE = False # overridden by PyInstaller when we build a prerelease binary
 
