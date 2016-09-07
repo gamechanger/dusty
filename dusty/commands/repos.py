@@ -28,7 +28,7 @@ def nfs_path_exists(path):
         NFS it does. This function checks if a folder exists in HFS file system
         using NFS semantics (case sensitive)
     """
-    split_path = path.lstrip('/').split('/')
+    split_path = filter(None, path.lstrip('/').split('/'))
     recreated_path = '/'
     for path_element in split_path:
         if path_element not in os.listdir(recreated_path):
