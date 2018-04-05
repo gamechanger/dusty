@@ -2,7 +2,7 @@ install_requires = [
     'docker-py==1.7.0',
     'PyYAML==3.11',
     'PrettyTable==0.7.0',
-    'GitPython==1.0.1',
+    'GitPython==2.1.9',
     'docopt==0.6.2',
     'Schemer==0.2.9',
     'psutil==2.2.1',
