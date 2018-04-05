@@ -4,7 +4,7 @@
 * **Misc**
     * Upgraded the version of GitPython that dusty is using from 1.0.1 -> 2.1.9.  This should fix an issue with how git response were being parsed, leading to dusty failing to manage its own repositories on newer Apple computers.
     * A fix to the install script that will make it install to a temp directory, then copy over the installed binary with correct permissions to the intended installation directory.
-    * A more robust solition to parsing the `RepoTags` configuration for testing.
+    * A more robust solution to parsing the `RepoTags` configuration for testing.
 
 ## 0.7.1 (April 14, 2016)
 
