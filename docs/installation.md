@@ -37,7 +37,7 @@ These can be obtained all together from [Docker Toolbox](https://www.docker.com/
 Then, run the following to download and install Dusty:
 
 ```
-bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.7.1/install.sh`"
+bash -c "`curl -L https://github.com/gamechanger/dusty/releases/download/0.7.2/install.sh`"
 ```
 
 This script will install Dusty as a service and run the preflight check to ensure that all
