@@ -4,7 +4,7 @@ import re
 
 from pkg_resources import resource_string
 
-VERSION = '0.7.2'
+VERSION = '0.7.4'
 BINARY = False # overridden by PyInstaller when we build a binary
 PRERELEASE = False # overridden by PyInstaller when we build a prerelease binary
 
@@ -35,7 +35,7 @@ FILE_HANDLE_LIMIT = 8192
 FIRST_RUN_FILE_PATH = '/.dusty_first_time_started'
 CONTAINER_LOG_PATH = "/var/log"
 
-CONFIG_DIR = '/etc/dusty'
+CONFIG_DIR = '/Users/jhsu/work/dusty_root'
 CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.yml')
 REPOS_DIR = os.path.join(CONFIG_DIR, 'repos')
 COMPOSE_DIR = os.path.join(CONFIG_DIR, 'compose')

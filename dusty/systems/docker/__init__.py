@@ -40,6 +40,10 @@ def get_docker_env():
 
 @memoized
 def get_docker_client():
+    return docker.from_env()
+
+@memoized
+def old_get_docker_client():
     """Ripped off and slightly modified based on docker-py's
     kwargs_from_env utility function."""
     env = get_docker_env()

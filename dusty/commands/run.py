@@ -27,7 +27,7 @@ def prep_for_start_local_env(pull_repos):
     assembled_spec = spec_assembler.get_assembled_specs()
     if not assembled_spec[constants.CONFIG_BUNDLES_KEY]:
         raise RuntimeError('No bundles are activated. Use `dusty bundles` to activate bundles before running `dusty up`.')
-    virtualbox.initialize_docker_vm()
+    # virtualbox.initialize_docker_vm()
 
 def log_in_to_required_registries():
     """Client-side command which runs the user through a login flow
@@ -51,11 +51,12 @@ def start_local_env(recreate_containers):
     local environment go."""
 
     assembled_spec = spec_assembler.get_assembled_specs()
-    required_absent_assets = virtualbox.required_absent_assets(assembled_spec)
-    if required_absent_assets:
-        raise RuntimeError('Assets {} are specified as required but are not set. Set them with `dusty assets set`'.format(required_absent_assets))
+    # required_absent_assets = virtualbox.required_absent_assets(assembled_spec)
+    # if required_absent_assets:
+    #     raise RuntimeError('Assets {} are specified as required but are not set. Set them with `dusty assets set`'.format(required_absent_assets))
 
-    docker_ip = virtualbox.get_docker_vm_ip()
+    # docker_ip = virtualbox.get_docker_vm_ip()
+    docker_ip = "127.0.0.1"
 
     # Stop will fail if we've never written a Composefile before
     if os.path.exists(constants.COMPOSEFILE_PATH):
@@ -66,21 +67,22 @@ def start_local_env(recreate_containers):
             log_to_client(str(e))
 
     daemon_warnings.clear_namespace('disk')
-    df_info = virtualbox.get_docker_vm_disk_info(as_dict=True)
-    if 'M' in df_info['free'] or 'K' in df_info['free']:
-        warning_msg = 'VM is low on disk. Available disk: {}'.format(df_info['free'])
-        daemon_warnings.warn('disk', warning_msg)
-        log_to_client(warning_msg)
+    # df_info = virtualbox.get_docker_vm_disk_info(as_dict=True)
+    # if 'M' in df_info['free'] or 'K' in df_info['free']:
+    #     warning_msg = 'VM is low on disk. Available disk: {}'.format(df_info['free'])
+    #     daemon_warnings.warn('disk', warning_msg)
+    #     log_to_client(warning_msg)
 
     log_to_client("Compiling together the assembled specs")
     active_repos = spec_assembler.get_all_repos(active_only=True, include_specs_repo=False)
     log_to_client("Compiling the port specs")
     port_spec = port_spec_compiler.get_port_spec_document(assembled_spec, docker_ip)
     log_to_client("Compiling the nginx config")
-    docker_bridge_ip = virtualbox.get_docker_bridge_ip()
+    # docker_bridge_ip = virtualbox.get_docker_bridge_ip()
+    docker_bridge_ip = "127.0.0.1"
     nginx_config = nginx_compiler.get_nginx_configuration_spec(port_spec, docker_bridge_ip)
-    log_to_client("Creating setup and script bash files")
-    make_up_command_files(assembled_spec, port_spec)
+    # log_to_client("Creating setup and script bash files")
+    # make_up_command_files(assembled_spec, port_spec)
     log_to_client("Compiling docker-compose config")
     compose_config = compose_compiler.get_compose_dict(assembled_spec, port_spec)
 
