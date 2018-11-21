@@ -141,7 +141,9 @@ def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
     previous_container_names = []
     for service_name in services:
         service_spec = expanded_specs['services'][service_name]
-        kwargs = {}
+        compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
+        container_name = _test_compose_container_name(compose_project_name, service_name)
+        kwargs = {'container_name': container_name}
         if previous_container_names:
             kwargs['net_container_identifier'] = previous_container_names[-1]
         service_compose_config = get_testing_compose_dict(service_name, service_spec.plain_dict(), **kwargs)
@@ -149,16 +151,18 @@ def _services_compose_up(expanded_specs, app_or_lib_name, services, suite_name):
         composefile_path = _test_composefile_path(service_name)
         write_composefile(service_compose_config, composefile_path)
 
-        compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
         compose_up(composefile_path, compose_project_name, quiet=True)
-        previous_container_names.append(_test_compose_container_name(compose_project_name, service_name))
+        previous_container_names.append(container_name)
     return previous_container_names
 
 def _app_or_lib_compose_up(test_suite_compose_spec, app_or_lib_name, app_or_lib_volumes, test_command, previous_container_name, suite_name):
     image_name = test_image_name(app_or_lib_name)
+    compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
+    container_name = _test_compose_container_name(compose_project_name, app_or_lib_name)
     kwargs = {'testing_image_identifier': image_name,
               'volumes': app_or_lib_volumes,
-              'command': test_command}
+              'command': test_command,
+              'container_name': container_name}
 
     if previous_container_name is not None:
         kwargs['net_container_identifier'] = previous_container_name
@@ -166,9 +170,8 @@ def _app_or_lib_compose_up(test_suite_compose_spec, app_or_lib_name, app_or_lib_
     compose_config = get_testing_compose_dict(app_or_lib_name, test_suite_compose_spec, **kwargs)
     write_composefile(compose_config, composefile_path)
 
-    compose_project_name = _compose_project_name(app_or_lib_name, suite_name)
     compose_up(composefile_path, compose_project_name, quiet=True)
-    return _test_compose_container_name(compose_project_name, app_or_lib_name)
+    return container_name
 
 def _cleanup_test_container(client, container_name):
     """
