@@ -52,8 +52,8 @@ def _ensure_persist_dir_is_linked():
     run_command_on_vm(mount_if_cmd)
 
 def _ensure_vm_dir_exists(vm_dir):
-    mkdir_if_cmd = 'if [ ! -d {0} ]; then sudo mkdir {0}; fi'.format(vm_dir)
-    run_command_on_vm(mkdir_if_cmd)
+    if not os.path.exists(vm_dir):
+        os.makedirs(vm_dir)
 
 def _ensure_cp_dir_exists():
     _ensure_vm_dir_exists(constants.VM_CP_DIR)
@@ -175,16 +175,16 @@ def ensure_docker_vm_is_started():
     return was_already_running
 
 def initialize_docker_vm():
-    was_already_running = ensure_docker_vm_is_started()
-    # These operations are somewhat expensive, so we only
-    # run them if there's a chance we are bringing up a
-    # fresh VM or temporary filesystems may need to be
-    # reinitialized following a restart.
-    if not was_already_running:
-        _ensure_rsync_is_installed()
-        _ensure_persist_dir_is_linked()
-        _ensure_cp_dir_exists()
-        _ensure_assets_dir_exists()
+    # was_already_running = ensure_docker_vm_is_started()
+    # # These operations are somewhat expensive, so we only
+    # # run them if there's a chance we are bringing up a
+    # # fresh VM or temporary filesystems may need to be
+    # # reinitialized following a restart.
+    # if not was_already_running:
+    #     _ensure_rsync_is_installed()
+    # _ensure_persist_dir_is_linked()
+    _ensure_cp_dir_exists()
+    _ensure_assets_dir_exists()
 
 def shut_down_docker_vm():
     if docker_vm_is_running():
@@ -254,11 +254,12 @@ def _get_host_only_ip():
 
 @memoized
 def get_docker_vm_ip():
-    try:
-        return _get_host_only_ip()
-    except Exception as e:
-        logging.exception('Failed getting host only IP through optimized path, trying Docker Machine')
-        return check_output_demoted(['docker-machine', 'ip', constants.VM_MACHINE_NAME]).rstrip()
+    return '127.0.0.1'
+    # try:
+    #     return _get_host_only_ip()
+    # except Exception as e:
+    #     logging.exception('Failed getting host only IP through optimized path, trying Docker Machine')
+    #     return check_output_demoted(['docker-machine', 'ip', constants.VM_MACHINE_NAME]).rstrip()
 
 @memoized
 def get_docker_bridge_ip():

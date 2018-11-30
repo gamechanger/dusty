@@ -84,6 +84,7 @@ def setup_for_test(app_or_lib_name, pull_repos=False, force_recreate=False):
     log_to_client('Rigging up NFS mounts for repos under test')
     nfs.update_nfs_with_repos(get_same_container_repos_from_spec(spec))
     ensure_current_image(app_or_lib_name, force_recreate)
+    log_to_client('setup_for_test done')
 
 def ensure_current_image(app_or_lib_name, force_recreate):
     changeset = RepoChangeSet(constants.CHANGESET_TESTING_KEY, app_or_lib_name)
@@ -93,8 +94,10 @@ def ensure_current_image(app_or_lib_name, force_recreate):
     elif changeset.has_changed():
         update_test_image(app_or_lib_name)
         changeset.update()
+    log_to_client('image stuff done')
 
 def run_one_suite(app_or_lib_name, suite_name, test_arguments):
+    log_to_client('Running suite')
     exit_code = _run_tests_with_image(app_or_lib_name, suite_name, test_arguments)
 
     log_to_client('TESTS {} {}'.format(suite_name, 'FAILED' if exit_code != 0 else 'PASSED'))
@@ -208,16 +211,24 @@ def run_safe_tests(app_or_lib_name, suite_name, services):
 
 def _run_tests_with_image(app_or_lib_name, suite_name, test_arguments):
     client = get_docker_client()
+    log_to_client('1')
     expanded_specs = get_expanded_libs_specs()
+    log_to_client('2')
     suite_spec = _get_suite_spec(app_or_lib_name, suite_name)
+    log_to_client('3')
     test_command = _construct_test_command(app_or_lib_name, suite_name, test_arguments)
+    log_to_client('4')
     volumes = get_volume_mounts(app_or_lib_name, expanded_specs, test=True)
+    log_to_client('5')
 
     with run_safe_tests(app_or_lib_name, suite_name, suite_spec['services']):
         previous_container_names = _services_compose_up(expanded_specs, app_or_lib_name, suite_spec['services'], suite_name)
+        log_to_client('6')
         previous_container_name = previous_container_names[-1] if previous_container_names else None
+        log_to_client('7')
         test_container_name = _app_or_lib_compose_up(suite_spec['compose'], app_or_lib_name,
                                                      volumes, test_command, previous_container_name, suite_name)
+        log_to_client('8')
 
         for line in client.logs(test_container_name, stdout=True, stderr=True, stream=True):
             log_to_client(line.strip())

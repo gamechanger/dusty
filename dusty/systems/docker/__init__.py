@@ -44,7 +44,7 @@ def get_docker_env():
 
 @memoized
 def get_docker_client():
-    return docker.from_env()
+    return docker.Client()
 
 @memoized
 def old_get_docker_client():

@@ -80,7 +80,7 @@ def start_local_env(recreate_containers):
     port_spec = port_spec_compiler.get_port_spec_document(assembled_spec, docker_ip)
     log_to_client("Compiling the nginx config")
     # docker_bridge_ip = virtualbox.get_docker_bridge_ip()
-    docker_bridge_ip = "127.0.0.1"
+    docker_bridge_ip = "172.17.0.1"
     nginx_config = nginx_compiler.get_nginx_configuration_spec(port_spec, docker_bridge_ip)
     log_to_client("Creating setup and script bash files")
     make_up_command_files(assembled_spec, port_spec)
