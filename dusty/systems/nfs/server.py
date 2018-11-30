@@ -12,6 +12,7 @@ from ...source import Repo
 from ..virtualbox import get_docker_vm_ip
 from ...subprocess import check_and_log_output_and_error, check_output, check_call
 
+# NFS managed by D4M. Only need to ensure repos dir is present for D4M NFS.
 def configure_nfs_server():
     """
     This function is used with `dusty up`.  It will check all active repos to see if
@@ -19,20 +20,20 @@ def configure_nfs_server():
     exports that are needed for currently active repos, and restart
     the nfs server
     """
-    repos_for_export = get_all_repos(active_only=True, include_specs_repo=False)
+    # repos_for_export = get_all_repos(active_only=True, include_specs_repo=False)
 
-    current_exports = _get_current_exports()
-    needed_exports = _get_exports_for_repos(repos_for_export)
+    # current_exports = _get_current_exports()
+    # needed_exports = _get_exports_for_repos(repos_for_export)
 
     _ensure_managed_repos_dir_exists()
 
-    if not needed_exports.difference(current_exports):
-        if not _server_is_running():
-            _restart_server()
-        return
+    # if not needed_exports.difference(current_exports):
+    #     if not _server_is_running():
+    #         _restart_server()
+    #     return
 
-    _write_exports_config(needed_exports)
-    _restart_server()
+    # _write_exports_config(needed_exports)
+    # _restart_server()
 
 def add_exports_for_repos(repos):
     """

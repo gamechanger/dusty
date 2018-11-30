@@ -58,6 +58,10 @@ def _ensure_vm_dir_exists(vm_dir):
 def _ensure_cp_dir_exists():
     _ensure_vm_dir_exists(constants.VM_CP_DIR)
 
+def ensure_assets_dir_exists():
+    if not os.path.exists(constants.VM_ASSETS_DIR):
+        os.makedirs(constants.VM_ASSETS_DIR)
+
 def _ensure_assets_dir_exists():
     _ensure_vm_dir_exists(constants.VM_ASSETS_DIR)
 

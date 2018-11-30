@@ -27,7 +27,7 @@ def get_dusty_container_name(service_name):
     return 'dusty_{}_1'.format(service_name)
 
 @memoized
-def get_docker_env():
+def old_get_docker_env():
     env = {}
     output = check_output_demoted(['docker-machine', 'env', constants.VM_MACHINE_NAME, '--shell', 'bash'], redirect_stderr=True)
     for line in output.splitlines():
@@ -37,6 +37,10 @@ def get_docker_env():
         v = v.replace('"', '')
         env[k] = v
     return env
+
+@memoized
+def get_docker_env():
+    return {}
 
 @memoized
 def get_docker_client():

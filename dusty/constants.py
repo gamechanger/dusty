@@ -37,6 +37,7 @@ CONTAINER_LOG_PATH = "/var/log"
 
 CONFIG_DIR = '/Users/jhsu/work/dusty_root'
 CONFIG_PATH = os.path.join(CONFIG_DIR, 'config.yml')
+PERSIST_DIR = os.path.join(CONFIG_DIR, 'persist')
 REPOS_DIR = os.path.join(CONFIG_DIR, 'repos')
 COMPOSE_DIR = os.path.join(CONFIG_DIR, 'compose')
 COMPOSEFILE_PATH = os.path.join(COMPOSE_DIR, 'docker-compose.yml')
@@ -48,8 +49,10 @@ DUSTY_BINARY_NAME = 'dusty'
 VM_MACHINE_NAME = 'dusty'
 VM_NIC_TYPE = 'Am79C973'
 
-VM_PERSIST_DIR = '/persist'
-VM_REPOS_DIR = '/dusty_repos'
+VM_PERSIST_DIR = PERSIST_DIR
+VM_REPOS_DIR = REPOS_DIR
+# VM_PERSIST_DIR = '/persist'
+# VM_REPOS_DIR = '/dusty_repos'
 LOCAL_BACKUP_DIR = 'dusty-backup'
 
 VM_ASSETS_DIR = os.path.join(VM_PERSIST_DIR, 'dusty_assets')
@@ -74,10 +77,12 @@ NGINX_502_PAGE_HTML = NGINX_502_PAGE_HTML_TEMPLATE.format(jquery_source=resource
                                                           skeleton_source=resource_string(__name__, 'resources/skeleton.min.css'),
                                                           custom_js_source=resource_string(__name__, 'resources/502.js'))
 
-VM_CP_DIR = '/cp'
+# VM_CP_DIR = '/cp'
+VM_CP_DIR = os.path.join(CONFIG_DIR, 'cp')
 CONTAINER_CP_DIR = '/cp'
 
-VM_COMMAND_FILES_DIR = '/command_files'
+# VM_COMMAND_FILES_DIR = '/command_files'
+VM_COMMAND_FILES_DIR = COMMAND_FILES_DIR
 CONTAINER_COMMAND_FILES_DIR = '/command_files'
 
 GIT_USER = 'git'

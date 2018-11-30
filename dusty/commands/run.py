@@ -28,6 +28,7 @@ def prep_for_start_local_env(pull_repos):
     if not assembled_spec[constants.CONFIG_BUNDLES_KEY]:
         raise RuntimeError('No bundles are activated. Use `dusty bundles` to activate bundles before running `dusty up`.')
     # virtualbox.initialize_docker_vm()
+    virtualbox.ensure_assets_dir_exists()
 
 def log_in_to_required_registries():
     """Client-side command which runs the user through a login flow
@@ -81,8 +82,8 @@ def start_local_env(recreate_containers):
     # docker_bridge_ip = virtualbox.get_docker_bridge_ip()
     docker_bridge_ip = "127.0.0.1"
     nginx_config = nginx_compiler.get_nginx_configuration_spec(port_spec, docker_bridge_ip)
-    # log_to_client("Creating setup and script bash files")
-    # make_up_command_files(assembled_spec, port_spec)
+    log_to_client("Creating setup and script bash files")
+    make_up_command_files(assembled_spec, port_spec)
     log_to_client("Compiling docker-compose config")
     compose_config = compose_compiler.get_compose_dict(assembled_spec, port_spec)
 
