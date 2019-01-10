@@ -75,4 +75,4 @@ def _nfs_mount_args_string(repo):
     return mount_string
 
 def _nfs_options_string():
-    return '-o async,udp,noatime'
+    return '-o async,udp,noatime,nfsvers=3'

@@ -19,7 +19,8 @@ def _compose_dict_for_nginx(port_specs):
     Dusty's nginx container used for host forwarding."""
     spec = {'image': constants.NGINX_IMAGE,
             'volumes': ['{}:{}'.format(constants.NGINX_CONFIG_DIR_IN_VM, constants.NGINX_CONFIG_DIR_IN_CONTAINER)],
-            'command': 'nginx -g "daemon off;" -c /etc/nginx/conf.d/nginx.primary'}
+            'command': 'nginx -g "daemon off;" -c /etc/nginx/conf.d/nginx.primary',
+            'container_name': 'dusty_{}_1'.format(constants.DUSTY_NGINX_NAME)}
     all_host_ports = set([nginx_spec['host_port'] for nginx_spec in port_specs['nginx']])
     if all_host_ports:
         spec['ports'] = []
@@ -37,7 +38,7 @@ def get_compose_dict(assembled_specs, port_specs):
         compose_dict[service_spec.name] = _composed_service_dict(service_spec)
     return compose_dict
 
-def get_testing_compose_dict(service_name, base_compose_spec, command=None, volumes=None, testing_image_identifier=None, net_container_identifier=None):
+def get_testing_compose_dict(service_name, base_compose_spec, command=None, volumes=None, testing_image_identifier=None, net_container_identifier=None, container_name=None):
     app_compose_dict = copy.deepcopy(base_compose_spec)
     if command is not None:
         app_compose_dict['command'] = command
@@ -47,6 +48,8 @@ def get_testing_compose_dict(service_name, base_compose_spec, command=None, volu
         app_compose_dict['net'] = "container:{}".format(net_container_identifier)
     if testing_image_identifier is not None:
         app_compose_dict['image'] = testing_image_identifier
+    if container_name is not None:
+        app_compose_dict['container_name'] = container_name
     compose_dict = {service_name: app_compose_dict}
     return compose_dict
 
@@ -112,6 +115,7 @@ def _composed_app_dict(app_name, assembled_specs, port_specs):
         raise RuntimeError("Neither image nor build was specified in the spec for {}".format(app_name))
     compose_dict['entrypoint'] = []
     compose_dict['command'] = _compile_docker_command(app_spec)
+    compose_dict['container_name'] = "dusty_{}_1".format(app_name)
     logging.info("Compose Compiler: compiled command {}".format(compose_dict['command']))
     compose_dict['links'] = _links_for_app(app_spec, assembled_specs)
     logging.info("Compose Compiler: links {}".format(compose_dict['links']))
@@ -131,6 +135,7 @@ def _composed_service_dict(service_spec):
     compose_dict = service_spec.plain_dict()
     _apply_env_overrides(env_overrides_for_app_or_service(service_spec.name), compose_dict)
     compose_dict.setdefault('volumes', []).append(_get_cp_volume_mount(service_spec.name))
+    compose_dict['container_name'] = "dusty_{}_1".format(service_spec.name)
     return compose_dict
 
 def _get_ports_list(app_name, port_specs):
