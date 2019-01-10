@@ -94,6 +94,7 @@ CONFIG_SPECS_REPO_KEY = 'specs_repo'
 CONFIG_SETUP_KEY = 'setup_has_run'
 CONFIG_ENV_KEY = 'dusty_env_overrides'
 CONFIG_VM_MEM_SIZE = 'vm_memory_size'
+CONFIG_BOOT2DOCKER_URL = 'https://github.com/boot2docker/boot2docker/releases/download/v18.06.1-ce/boot2docker.iso'
 CONFIG_CHANGESET_KEY = 'changeset'
 CHANGESET_TESTING_KEY = 'testing_image'
 
