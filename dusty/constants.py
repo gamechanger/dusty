@@ -46,7 +46,7 @@ DUSTY_GITHUB_PATH = 'gamechanger/dusty'
 DUSTY_BINARY_NAME = 'dusty'
 
 VM_MACHINE_NAME = 'dusty'
-VM_NIC_TYPE = 'Am79C973'
+VM_NIC_TYPE = '82540EM'
 
 VM_PERSIST_DIR = '/persist'
 VM_REPOS_DIR = '/dusty_repos'
