@@ -1,5 +1,5 @@
 install_requires = [
-    'docker-py==1.7.0',
+    'docker-py==1.10.6',
     'PyYAML==3.11',
     'PrettyTable==0.7.0',
     'GitPython==2.1.9',
