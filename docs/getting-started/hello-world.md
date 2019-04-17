@@ -51,6 +51,9 @@ A bunch of lines go here...
 Your local environment is now started!
 ```
 
+Newer versions of `boot2docker` might produce an error during `dusty up`. If so, 
+please see [resolving installation errors](./resolving-installation-errors.md) before continuing.
+
 If we check the status again, we should see everything running. We can also
 see the containers directly using `docker ps`. Keep in mind that everything
 you can normally do with Docker will still work when you're using Dusty!
