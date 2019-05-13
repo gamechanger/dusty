@@ -96,6 +96,8 @@ The workaround for this in defined in [Dusty Issue #680](https://github.com/game
 # END section for Dusty
 ```
 
+**Note:** The IP address to use in the file must match your Dusty docker machine IP address. You can see the IP for Dusty's docker machine by running `docker-machine ls`.
+
 ### Verify
 After saving the changes to `/etc/exports`, restart `nfsd` and re-run dusty.
 
