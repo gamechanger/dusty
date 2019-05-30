@@ -28,6 +28,13 @@ ssh-add -K <path-of-private-key>
 ssh-add adds private key identities to the authentication agent, ssh-agent. This will allow Dusty
 to pull repos using your `mac_username`'s ssh credentials.
 
+If you arent using default SSH agent but instead use something like `gnupg` as SSH agent
+you might need to adjust `SSH_AUTH_SOCK`:
+
+```
+$ launchctl asuser $(id -u) launchctl setenv SSH_AUTH_SOCK $SSH_AUTH_SOCK
+```
+
 ### My tests are hanging at this step: `Creating test...`.  What do I do?
 Dusty tests use docker logs, which streams one line at a time.  So if you are using a test library which outputs its results on a single line (like python's nosetests) this can give the illusion that your tests are hanging when they running fine.
 
