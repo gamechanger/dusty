@@ -5,6 +5,52 @@
 Please run a `dusty dump`, save the results to a [gist](https://gist.github.com/),
 and include a link to the gist in any bug reports.
 
+## Running Locally
+
+If dusty is already installed and its running as a system daemon,
+that needs to be stopped first:
+
+```
+$ sudo launchctl unload /Library/LaunchDaemons/com.gamechanger.dusty.plist
+```
+
+You can verify dusty daemon is not running by checking `ps`:
+
+```
+$ ps aux | grep dusty | grep -v grep | wc -l
+```
+
+Now you can install dusty as a Python package:
+
+```
+$ git clone git@github.com:gamechanger/dusty.git
+$ cd dusty
+$ virtualenv --python=$(which python2.7) venv
+$ source venv/bin/activate
+$ python -m pip install -e .
+```
+
+Since it is installed as a source distribution `dusty` should resolve to within virtualenv:
+
+```
+$ which dusty
+$ dusty -v
+```
+
+Alternatively dusty can be invoked as Python module:
+
+```
+$ python -m dusty.cli -v
+```
+
+To use dusty daemon needs to be running which can be started with:
+
+```
+$ python -m dusty.cli -d
+```
+
+Note that it will run as a foreground process which is useful to monitor daemon log output.
+
 ## Running Tests
 
 Unit tests are pretty simple:
