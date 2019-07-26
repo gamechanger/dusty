@@ -156,6 +156,7 @@ class TestComposeCompiler(DustyTestCase):
         expected_app_config = {
             'image': 'awesomeGCimage',
             'command': 'what command?',
+            'container_name': 'dusty_app1_1',
             'entrypoint': [],
             'links': [
                 'service1',
