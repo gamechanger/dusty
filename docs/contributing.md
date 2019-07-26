@@ -53,6 +53,12 @@ Note that it will run as a foreground process which is useful to monitor daemon 
 
 ## Running Tests
 
+Install test deps:
+
+```
+$ pip install -r requirements-dev.txt
+```
+
 Unit tests are pretty simple:
 
 ```
