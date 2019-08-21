@@ -23,14 +23,14 @@ def configure_nfs_server():
 
     current_exports = _get_current_exports()
     needed_exports = _get_exports_for_repos(repos_for_export)
-
+    
     _ensure_managed_repos_dir_exists()
 
     if not needed_exports.difference(current_exports):
         if not _server_is_running():
             _restart_server()
         return
-
+    ''.join(exports_set)
     _write_exports_config(needed_exports)
     _restart_server()
 
@@ -68,6 +68,11 @@ def _get_exports_for_repos(repos):
 
 def _write_exports_config(exports_set):
     exports_config = ''.join(exports_set)
+    log_to_client("Your /etc/exports file is missing a configuration that dusty expects, so we will try and update the file to look like this:")
+    log_to_client("------------")
+    log_to_client(exports_config)
+    log_to_client("------------")
+    log_to_client("If the write fails, you might try manually updating your /etc/exports file to include the above lines.")
     current_config = _read_exports_contents()
     current_config = config_file.remove_current_dusty_config(current_config)
     current_config += config_file.create_config_section(exports_config)
