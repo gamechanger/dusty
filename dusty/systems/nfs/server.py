@@ -23,14 +23,14 @@ def configure_nfs_server():
 
     current_exports = _get_current_exports()
     needed_exports = _get_exports_for_repos(repos_for_export)
-    
+
     _ensure_managed_repos_dir_exists()
 
     if not needed_exports.difference(current_exports):
         if not _server_is_running():
             _restart_server()
         return
-    ''.join(exports_set)
+
     _write_exports_config(needed_exports)
     _restart_server()
 
