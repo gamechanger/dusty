@@ -1,5 +1,11 @@
 # Dusty
 
+.. note::
+
+    As there are better ways of working with Docker on a Mac now such as
+    Docker for Mac, Dusty is officially deprecated and is no longer maintained.
+    For similar capabilities, please check out `docker-compose <https://docs.docker.com/compose/>`_.
+
 Docker-powered Development Environments
 
 ## Installation

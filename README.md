@@ -1,6 +1,10 @@
 ![](http://i.imgur.com/XITuXg3.png)
 Docker-powered development environments
 
+As there are better ways of working with Docker on a Mac now such as
+Docker for Mac, Dusty is officially deprecated and is no longer maintained.
+For similar capabilities, please check out [docker-compose](https://docs.docker.com/compose/).
+
 [![Join the Dusty chat](https://dusty-slackin.herokuapp.com/badge.svg)](https://dusty-slackin.herokuapp.com/)
 [![Dusty Documentation](https://readthedocs.org/projects/dusty/badge/)](http://dusty.readthedocs.org/en/latest/)
 [![Github Downloads](https://img.shields.io/github/downloads/gamechanger/dusty/latest/total.svg)](https://github.com/gamechanger/dusty/releases/latest)
